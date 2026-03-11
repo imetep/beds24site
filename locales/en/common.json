@@ -1,0 +1,17 @@
+{
+  "nav": {
+    "home": "Home",
+    "location": "Location",
+    "contact": "Contact",
+    "residences": "Residences",
+    "book": "Book"
+  },
+  "home": {
+    "hero_title": "Welcome to Living Apple",
+    "hero_subtitle": "Apartments, houses and villas in the heart of South Tyrol",
+    "cta": "Discover and book"
+  },
+  "footer": {
+    "rights": "All rights reserved"
+  }
+}

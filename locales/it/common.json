@@ -1,0 +1,17 @@
+{
+  "nav": {
+    "home": "Home",
+    "location": "Dove siamo",
+    "contact": "Contatti",
+    "residences": "Residenze",
+    "book": "Prenota"
+  },
+  "home": {
+    "hero_title": "Benvenuto su Living Apple",
+    "hero_subtitle": "Appartamenti, case e ville nel cuore dell'Alto Adige",
+    "cta": "Scopri e prenota"
+  },
+  "footer": {
+    "rights": "Tutti i diritti riservati"
+  }
+}

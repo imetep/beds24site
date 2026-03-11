@@ -1,0 +1,17 @@
+{
+  "nav": {
+    "home": "Home",
+    "location": "Lokalizacja",
+    "contact": "Kontakt",
+    "residences": "Rezydencje",
+    "book": "Rezerwuj"
+  },
+  "home": {
+    "hero_title": "Witamy w Living Apple",
+    "hero_subtitle": "Apartamenty, domy i wille w sercu Południowego Tyrolu",
+    "cta": "Odkryj i zarezerwuj"
+  },
+  "footer": {
+    "rights": "Wszelkie prawa zastrzeżone"
+  }
+}

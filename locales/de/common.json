@@ -1,0 +1,17 @@
+{
+  "nav": {
+    "home": "Home",
+    "location": "Lage",
+    "contact": "Kontakt",
+    "residences": "Residenzen",
+    "book": "Buchen"
+  },
+  "home": {
+    "hero_title": "Willkommen bei Living Apple",
+    "hero_subtitle": "Apartments, Häuser und Villen im Herzen Südtirols",
+    "cta": "Entdecken und buchen"
+  },
+  "footer": {
+    "rights": "Alle Rechte vorbehalten"
+  }
+}
