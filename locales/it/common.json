@@ -1,17 +1,112 @@
 {
+  "home": {
+    "hero_title": "Benvenuti a LivingApple",
+    "hero_subtitle": "Appartamenti vacanza a Scauri, nel cuore del Lazio — tra Roma e Napoli, a pochi passi dal mare.",
+    "cta": "Cerca disponibilità",
+    "groups": {
+      "campagna": {
+        "title": "LivingApple",
+        "description": "10 appartamenti immersi nella campagna, a 1.5 km dal mare."
+      },
+      "mare": {
+        "title": "LivingApple Beach",
+        "description": "3 appartamenti a 3 minuti dal mare."
+      }
+    }
+  },
   "nav": {
     "home": "Home",
     "location": "Dove siamo",
-    "contact": "Contatti",
     "residences": "Residenze",
-    "book": "Prenota"
+    "book": "Prenota",
+    "contact": "Contatti"
   },
-  "home": {
-    "hero_title": "Benvenuto su Living Apple",
-    "hero_subtitle": "Appartamenti, case e ville nel cuore dell'Alto Adige",
-    "cta": "Scopri e prenota"
+  "wizard": {
+    "step1": {
+      "title": "Quante persone siete?",
+      "adults": "Adulti",
+      "children": "Bambini",
+      "next": "Continua"
+    },
+    "step2": {
+      "title": "Quando volete venire?",
+      "checkin": "Check-in",
+      "checkout": "Check-out",
+      "next": "Continua",
+      "back": "Indietro"
+    },
+    "step3": {
+      "title": "Che tipo di alloggio preferite?",
+      "apartment": "Appartamento",
+      "house": "Casa",
+      "villa": "Villa",
+      "next": "Continua",
+      "back": "Indietro"
+    },
+    "step4": {
+      "title": "Dove volete soggiornare?",
+      "campagna": "LivingApple — Campagna",
+      "campagna_desc": "1.5 km dal mare, immerso nella natura",
+      "mare": "LivingApple Beach — Mare",
+      "mare_desc": "3 minuti a piedi dalla spiaggia",
+      "next": "Continua",
+      "back": "Indietro"
+    },
+    "step5": {
+      "title": "Quali servizi vi servono?",
+      "subtitle": "Selezionate gli optional che desiderate aggiungere al soggiorno.",
+      "next": "Continua",
+      "back": "Indietro"
+    },
+    "step6": {
+      "title": "Riepilogo e prezzo finale",
+      "checkin": "Check-in",
+      "checkout": "Check-out",
+      "guests": "Ospiti",
+      "adults": "adulti",
+      "children": "bambini",
+      "total": "Totale",
+      "voucher_placeholder": "Codice promozionale (opzionale)",
+      "apply_voucher": "Applica",
+      "guest_firstname": "Nome",
+      "guest_lastname": "Cognome",
+      "guest_email": "Email",
+      "guest_phone": "Telefono",
+      "guest_country": "Paese",
+      "guest_arrival": "Ora di arrivo prevista",
+      "guest_notes": "Richieste speciali",
+      "confirm": "Prenota ora",
+      "back": "Indietro",
+      "terms": "Confermando la prenotazione accetti le",
+      "terms_link": "condizioni generali di vendita"
+    },
+    "progress": "Step {current} di {total}",
+    "loading": "Caricamento disponibilità...",
+    "no_availability": "Nessuna disponibilità per le date selezionate.",
+    "booking_success": "Prenotazione confermata! Riceverai una email di conferma a breve.",
+    "booking_error": "Si è verificato un errore. Riprova o contattaci via WhatsApp."
   },
   "footer": {
-    "rights": "Tutti i diritti riservati"
+    "company": "LivingApple",
+    "address": "Traversa Carmen Rosati, 04028 Scauri (LT)",
+    "whatsapp": "+39 328 3131500",
+    "phone": "07711763103",
+    "vat": "P.IVA 02710130598",
+    "rea": "REA LT193161",
+    "privacy": "Privacy Policy",
+    "terms": "Condizioni generali",
+    "cookies": "Cookie Policy"
+  },
+  "meta": {
+    "home_title": "LivingApple — Appartamenti vacanza a Scauri (LT)",
+    "home_description": "Appartamenti vacanza a Scauri, Lazio. Tra Roma e Napoli, a pochi passi dal mare del Golfo di Gaeta. Prenota direttamente senza commissioni.",
+    "residences_title": "Le nostre residenze — LivingApple",
+    "book_title": "Prenota — LivingApple"
+  },
+  "errors": {
+    "required": "Campo obbligatorio",
+    "invalid_email": "Email non valida",
+    "invalid_dates": "Le date selezionate non sono valide",
+    "checkin_before_checkout": "Il check-in deve essere prima del check-out"
   }
 }

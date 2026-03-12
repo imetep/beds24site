@@ -1,17 +1,112 @@
 {
+  "home": {
+    "hero_title": "Welcome to LivingApple",
+    "hero_subtitle": "Holiday apartments in Scauri, Lazio — between Rome and Naples, steps from the sea.",
+    "cta": "Check availability",
+    "groups": {
+      "campagna": {
+        "title": "LivingApple",
+        "description": "10 apartments in the countryside, 1.5 km from the sea."
+      },
+      "mare": {
+        "title": "LivingApple Beach",
+        "description": "3 apartments 3 minutes from the beach."
+      }
+    }
+  },
   "nav": {
     "home": "Home",
     "location": "Location",
-    "contact": "Contact",
     "residences": "Residences",
-    "book": "Book"
+    "book": "Book",
+    "contact": "Contact"
   },
-  "home": {
-    "hero_title": "Welcome to Living Apple",
-    "hero_subtitle": "Apartments, houses and villas in the heart of South Tyrol",
-    "cta": "Discover and book"
+  "wizard": {
+    "step1": {
+      "title": "How many guests?",
+      "adults": "Adults",
+      "children": "Children",
+      "next": "Continue"
+    },
+    "step2": {
+      "title": "When would you like to come?",
+      "checkin": "Check-in",
+      "checkout": "Check-out",
+      "next": "Continue",
+      "back": "Back"
+    },
+    "step3": {
+      "title": "What type of accommodation?",
+      "apartment": "Apartment",
+      "house": "House",
+      "villa": "Villa",
+      "next": "Continue",
+      "back": "Back"
+    },
+    "step4": {
+      "title": "Where would you like to stay?",
+      "campagna": "LivingApple — Countryside",
+      "campagna_desc": "1.5 km from the sea, surrounded by nature",
+      "mare": "LivingApple Beach — Seaside",
+      "mare_desc": "3-minute walk to the beach",
+      "next": "Continue",
+      "back": "Back"
+    },
+    "step5": {
+      "title": "Which services do you need?",
+      "subtitle": "Select any optional extras you'd like to add.",
+      "next": "Continue",
+      "back": "Back"
+    },
+    "step6": {
+      "title": "Summary and final price",
+      "checkin": "Check-in",
+      "checkout": "Check-out",
+      "guests": "Guests",
+      "adults": "adults",
+      "children": "children",
+      "total": "Total",
+      "voucher_placeholder": "Promotional code (optional)",
+      "apply_voucher": "Apply",
+      "guest_firstname": "First name",
+      "guest_lastname": "Last name",
+      "guest_email": "Email",
+      "guest_phone": "Phone",
+      "guest_country": "Country",
+      "guest_arrival": "Expected arrival time",
+      "guest_notes": "Special requests",
+      "confirm": "Book now",
+      "back": "Back",
+      "terms": "By confirming you agree to our",
+      "terms_link": "terms and conditions"
+    },
+    "progress": "Step {current} of {total}",
+    "loading": "Loading availability...",
+    "no_availability": "No availability for the selected dates.",
+    "booking_success": "Booking confirmed! You will receive a confirmation email shortly.",
+    "booking_error": "An error occurred. Please try again or contact us via WhatsApp."
   },
   "footer": {
-    "rights": "All rights reserved"
+    "company": "LivingApple",
+    "address": "Traversa Carmen Rosati, 04028 Scauri (LT), Italy",
+    "whatsapp": "+39 328 3131500",
+    "phone": "+39 0771 763103",
+    "vat": "VAT 02710130598",
+    "rea": "REA LT193161",
+    "privacy": "Privacy Policy",
+    "terms": "Terms & Conditions",
+    "cookies": "Cookie Policy"
+  },
+  "meta": {
+    "home_title": "LivingApple — Holiday Apartments in Scauri, Italy",
+    "home_description": "Holiday apartments in Scauri, Lazio. Between Rome and Naples, steps from the Gulf of Gaeta. Book directly with no commission.",
+    "residences_title": "Our Residences — LivingApple",
+    "book_title": "Book — LivingApple"
+  },
+  "errors": {
+    "required": "This field is required",
+    "invalid_email": "Invalid email address",
+    "invalid_dates": "Selected dates are not valid",
+    "checkin_before_checkout": "Check-in must be before check-out"
   }
 }
