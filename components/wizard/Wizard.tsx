@@ -2,6 +2,7 @@
 
 import { useWizardStore } from '@/store/wizard-store';
 import WizardStep1 from './WizardStep1';
+import WizardStep2 from './WizardStep2';
 
 interface Props {
   translations: any;
@@ -30,7 +31,7 @@ export default function Wizard({ translations: t }: Props) {
       {/* Contenuto step */}
       <div style={bodyStyle}>
         {currentStep === 1 && <WizardStep1 translations={t.wizard} />}
-        {currentStep === 2 && <StepPlaceholder label="Step 2 — Quando?" />}
+        {currentStep === 2 && <WizardStep2 translations={t.wizard} />}
         {currentStep === 3 && <StepPlaceholder label="Step 3 — Tipo alloggio" />}
         {currentStep === 4 && <StepPlaceholder label="Step 4 — Quale proprietà?" />}
         {currentStep === 5 && <StepPlaceholder label="Step 5 — Servizi extra" />}
@@ -73,7 +74,7 @@ const progressBarBg: React.CSSProperties = {
 
 const progressBarFill: React.CSSProperties = {
   height: '4px',
-  background: '#1D9E75',
+  background: '#1E73BE',
   borderRadius: '2px',
   transition: 'width 0.3s ease',
 };
