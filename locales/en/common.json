@@ -25,7 +25,9 @@
     "step1": {
       "title": "How many guests?",
       "adults": "Adults",
+      "adultsAge": "age 2+",
       "children": "Children",
+      "childrenAge": "age 0-2",
       "next": "Continue"
     },
     "step2": {

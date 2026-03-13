@@ -23,11 +23,13 @@
   },
   "wizard": {
     "step1": {
-      "title": "Quante persone siete?",
-      "adults": "Adulti",
-      "children": "Bambini",
-      "next": "Continua"
-    },
+  "title": "Quante persone siete?",
+  "adults": "Adulti",
+  "adultsAge": "età 2+",
+  "children": "Bambini",
+  "childrenAge": "età 0–2",
+  "next": "Continua"
+},
     "step2": {
       "title": "Quando volete venire?",
       "checkin": "Check-in",

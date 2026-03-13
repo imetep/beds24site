@@ -22,10 +22,12 @@
     "contact": "Kontakt"
   },
   "wizard": {
-    "step1": {
+      "step1": {
       "title": "Wie viele Personen?",
       "adults": "Erwachsene",
+      "adultsAge": "Alter 2+",
       "children": "Kinder",
+      "childrenAge": "Alter 0–2",
       "next": "Weiter"
     },
     "step2": {

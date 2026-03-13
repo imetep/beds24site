@@ -23,11 +23,13 @@
   },
   "wizard": {
     "step1": {
-      "title": "Ile osób przyjeżdża?",
-      "adults": "Dorośli",
-      "children": "Dzieci",
-      "next": "Dalej"
-    },
+  "title": "Ile osób przyjeżdża?",
+  "adults": "Dorośli",
+  "adultsAge": "wiek 2+",
+  "children": "Dzieci",
+  "childrenAge": "wiek 0-2",
+  "next": "Dalej"
+},
     "step2": {
       "title": "Kiedy chcecie przyjechać?",
       "checkin": "Przyjazd",
