@@ -1,5 +1,6 @@
 import { getTranslations } from '@/lib/i18n';
 import { Locale } from '@/config/i18n';
+import Wizard from '@/components/wizard/Wizard';
 
 export default async function LocalePage({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
@@ -7,9 +8,7 @@ export default async function LocalePage({ params }: { params: Promise<{ locale:
 
   return (
     <main>
-      <h1>{t.home.hero_title}</h1>
-      <p>{t.home.hero_subtitle}</p>
-      <button>{t.home.cta}</button>
+      <Wizard translations={t} />
     </main>
   );
 }

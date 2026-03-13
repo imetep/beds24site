@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { locales, isValidLocale, type Locale } from '@/config/i18n';
 import { getTranslations } from '@/lib/i18n';
+import Image from 'next/image';
 
 interface Props {
   children: React.ReactNode;
@@ -19,6 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: t.meta.home_title,
     description: t.meta.home_description,
+    icons: { icon: '/logo.png' },
   };
 }
 
@@ -29,51 +31,55 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   const t = await getTranslations(locale);
 
-  return (
-    <html lang={locale}>
-      <body>
-        <header style={styles.header}>
-          <div style={styles.headerInner}>
-            <a href={`/${locale}`} style={styles.logo}>
-              LivingApple
-            </a>
-            <nav style={styles.nav}>
-              <a href={`/${locale}`} style={styles.navLink}>{t.nav.home}</a>
-              <a href={`/${locale}/residenze`} style={styles.navLink}>{t.nav.residences}</a>
-              <a href={`/${locale}/dove-siamo`} style={styles.navLink}>{t.nav.location}</a>
-              <a href={`/${locale}/contatti`} style={styles.navLink}>{t.nav.contact}</a>
-            </nav>
-            <a href={`/${locale}/prenota`} style={styles.cta}>
-              {t.nav.book}
-            </a>
-          </div>
-        </header>
+ return (
+  <>
+    <header style={styles.header}>
+      <div style={styles.headerInner}>
+        <a href={`/${locale}`} style={styles.logoLink}>
+          <Image
+            src="/logo.png"
+            alt="LivingApple"
+            height={40}
+            width={160}
+            style={{ objectFit: 'contain' }}
+            priority
+          />
+        </a>
+        <nav style={styles.nav}>
+          <a href={`/${locale}`} style={styles.navLink}>{t.nav.home}</a>
+          <a href={`/${locale}/residenze`} style={styles.navLink}>{t.nav.residences}</a>
+          <a href={`/${locale}/dove-siamo`} style={styles.navLink}>{t.nav.location}</a>
+          <a href={`/${locale}/contatti`} style={styles.navLink}>{t.nav.contact}</a>
+        </nav>
+        <a href={`/${locale}/prenota`} style={styles.cta}>
+          {t.nav.book}
+        </a>
+      </div>
+    </header>
 
-        <main>{children}</main>
+    <main>{children}</main>
 
-        <footer style={styles.footer}>
-          <div style={styles.footerInner}>
-            <p style={styles.footerCompany}>{t.footer.company}</p>
-            <p style={styles.footerText}>{t.footer.address}</p>
-            <p style={styles.footerText}>
-              WhatsApp: {t.footer.whatsapp} &nbsp;|&nbsp; Tel: {t.footer.phone}
-            </p>
-            <p style={styles.footerText}>
-              {t.footer.vat} &nbsp;|&nbsp; {t.footer.rea}
-            </p>
-            <div style={styles.footerLinks}>
-              <a href={`/${locale}/privacy`} style={styles.footerLink}>{t.footer.privacy}</a>
-              <a href={`/${locale}/condizioni`} style={styles.footerLink}>{t.footer.terms}</a>
-              <a href={`/${locale}/cookie`} style={styles.footerLink}>{t.footer.cookies}</a>
-            </div>
-          </div>
-        </footer>
-      </body>
-    </html>
-  );
+    <footer style={styles.footer}>
+      <div style={styles.footerInner}>
+        <p style={styles.footerCompany}>{t.footer.company}</p>
+        <p style={styles.footerText}>{t.footer.address}</p>
+        <p style={styles.footerText}>
+          WhatsApp: {t.footer.whatsapp} &nbsp;|&nbsp; Tel: {t.footer.phone}
+        </p>
+        <p style={styles.footerText}>
+          {t.footer.vat} &nbsp;|&nbsp; {t.footer.rea}
+        </p>
+        <div style={styles.footerLinks}>
+          <a href={`/${locale}/privacy`} style={styles.footerLink}>{t.footer.privacy}</a>
+          <a href={`/${locale}/condizioni`} style={styles.footerLink}>{t.footer.terms}</a>
+          <a href={`/${locale}/cookie`} style={styles.footerLink}>{t.footer.cookies}</a>
+        </div>
+      </div>
+    </footer>
+  </>
+);
 }
 
-// Stili inline temporanei — verranno sostituiti con Tailwind/CSS modules
 const styles: Record<string, React.CSSProperties> = {
   header: {
     position: 'sticky',
@@ -91,12 +97,11 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     gap: '2rem',
   },
-  logo: {
-    fontWeight: 700,
-    fontSize: '1.25rem',
-    color: '#1a1a1a',
-    textDecoration: 'none',
+  logoLink: {
     marginRight: 'auto',
+    display: 'flex',
+    alignItems: 'center',
+    textDecoration: 'none',
   },
   nav: {
     display: 'flex',
@@ -108,7 +113,7 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '0.95rem',
   },
   cta: {
-    backgroundColor: '#16a34a',
+    backgroundColor: '#1E73BE',
     color: '#fff',
     padding: '0.5rem 1.25rem',
     borderRadius: '6px',
