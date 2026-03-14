@@ -57,6 +57,8 @@ export interface Beds24UpsellItem {
 
 export interface Beds24Offer {
   offerId: number;
+  offerName?: string;        // es. "Non Rimborsabile", "Parzialmente Rimborsabile"
+  offerDescription?: string; // può contenere "CUSTOMSTAYFEE {n} SECURITYDEPOSIT"
   roomId: number;
   checkIn: string;
   checkOut: string;
@@ -238,17 +240,17 @@ export async function getRoomCalendar(
 }
 
 /**
- * Ottiene il prezzo finale reale per date + occupancy specifiche.
- * NON cachato — chiamata real-time solo al momento della conferma (step 6).
+ * Ottiene tutte le offerte disponibili per date + occupancy specifiche.
+ * NON cachato — chiamata real-time (step 5 e step 6).
  */
-export async function getRoomOffer(params: {
+export async function getRoomOffers(params: {
   roomId: number;
   checkIn: string;
   checkOut: string;
   numAdult: number;
   numChild: number;
   voucherCode?: string;
-}): Promise<Beds24Offer | null> {
+}): Promise<Beds24Offer[]> {
   const query = new URLSearchParams({
     roomId: String(params.roomId),
     checkIn: params.checkIn,
@@ -262,7 +264,22 @@ export async function getRoomOffer(params: {
     `/inventory/rooms/offers?${query}`
   );
 
-  return data.offers?.[0] ?? null;
+  return data.offers ?? [];
+}
+
+/**
+ * Ottiene la prima offerta disponibile (compatibilità con codice esistente).
+ */
+export async function getRoomOffer(params: {
+  roomId: number;
+  checkIn: string;
+  checkOut: string;
+  numAdult: number;
+  numChild: number;
+  voucherCode?: string;
+}): Promise<Beds24Offer | null> {
+  const offers = await getRoomOffers(params);
+  return offers[0] ?? null;
 }
 
 /**

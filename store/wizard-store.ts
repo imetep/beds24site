@@ -22,6 +22,9 @@ export interface WizardState {
   // Step 5 — Quanti under 12?
   numUnder12: number; // per calcolo imposta di soggiorno
 
+  // Step 5 → 6 — Offerte caricate da /api/offers (cache locale, evita doppia chiamata)
+  cachedOffers: any[];  // Beds24Offer[]
+
   // Step 6 — Riepilogo
   selectedOfferId: number | null;
   voucherCode: string;
@@ -47,6 +50,7 @@ export interface WizardState {
   setNumUnder12: (n: number) => void;
   setSelectedOfferId: (id: number | null) => void;
   setVoucherCode: (code: string) => void;
+  setOffers: (offers: any[]) => void;
   setGuestField: (field: string, value: string) => void;
   setCurrentStep: (step: number) => void;
   nextStep: () => void;
@@ -63,6 +67,7 @@ const initialState = {
   selectedRoomId: null,
   selectedExtras: [],
   numUnder12: 0,
+  cachedOffers: [],
   selectedOfferId: null,
   voucherCode: '',
   guestFirstName: '',
@@ -93,6 +98,7 @@ export const useWizardStore = create<WizardState>((set) => ({
   setNumUnder12: (n) => set((state) => ({ numUnder12: Math.min(Math.max(0, n), state.numAdult) })),
   setSelectedOfferId: (id) => set({ selectedOfferId: id }),
   setVoucherCode: (code) => set({ voucherCode: code }),
+  setOffers: (offers) => set({ cachedOffers: offers }),
   setGuestField: (field, value) => set({ [field]: value } as any),
   setCurrentStep: (step) => set({ currentStep: step }),
   nextStep: () => set((state) => ({ currentStep: Math.min(6, state.currentStep + 1) })),
