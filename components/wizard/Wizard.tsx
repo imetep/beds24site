@@ -3,17 +3,16 @@
 import { useWizardStore } from '@/store/wizard-store';
 import WizardStep1 from './WizardStep1';
 import WizardStep2 from './WizardStep2';
+import WizardStep3 from './WizardStep3';
+import WizardStep4 from './WizardStep4';
+import WizardStep5 from './WizardStep5';
 
 interface Props {
   translations: any;
 }
 
-const STEP_KEYS = [
-  'step1', 'step2', 'step3', 'step4', 'step5', 'step6'
-];
-
 export default function Wizard({ translations: t }: Props) {
-  const { currentStep, prevStep } = useWizardStore();
+  const { currentStep } = useWizardStore();
 
   return (
     <div style={containerStyle}>
@@ -32,18 +31,12 @@ export default function Wizard({ translations: t }: Props) {
       <div style={bodyStyle}>
         {currentStep === 1 && <WizardStep1 translations={t.wizard} />}
         {currentStep === 2 && <WizardStep2 translations={t.wizard} />}
-        {currentStep === 3 && <StepPlaceholder label="Step 3 — Tipo alloggio" />}
-        {currentStep === 4 && <StepPlaceholder label="Step 4 — Quale proprietà?" />}
-        {currentStep === 5 && <StepPlaceholder label="Step 5 — Servizi extra" />}
-        {currentStep === 6 && <StepPlaceholder label="Step 6 — Riepilogo" />}
+        {currentStep === 3 && <WizardStep3 />}
+        {currentStep === 4 && <WizardStep4 />}
+        {currentStep === 5 && <WizardStep5 />}
+        {currentStep === 6 && <StepPlaceholder label="Step 6 — Riepilogo e prezzo" />}
       </div>
 
-      {/* Pulsante indietro */}
-      {currentStep > 1 && (
-        <button onClick={prevStep} style={backBtnStyle}>
-          ← {t.wizard?.back ?? 'Indietro'}
-        </button>
-      )}
     </div>
   );
 }
@@ -89,15 +82,4 @@ const bodyStyle: React.CSSProperties = {
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
-};
-
-const backBtnStyle: React.CSSProperties = {
-  marginTop: '1rem',
-  background: 'none',
-  border: 'none',
-  color: '#888',
-  fontSize: '0.9rem',
-  cursor: 'pointer',
-  padding: '0.5rem 0',
-  textAlign: 'left',
 };
