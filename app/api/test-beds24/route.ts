@@ -1,24 +1,28 @@
 import { NextResponse } from 'next/server';
- 
+
 export async function GET() {
-  const refreshToken = process.env.BEDS24_REFRESH_TOKEN;
-  if (!refreshToken) return NextResponse.json({ error: 'no token' }, { status: 500 });
- 
-  // 1. Get token
-  const authRes = await fetch('https://beds24.com/api/v2/authentication/token', {
-    headers: { refreshToken },
-  });
-  const { token } = await authRes.json();
- 
-  // 2. Call /offers
-  const offersRes = await fetch(
-    'https://beds24.com/api/v2/inventory/rooms/offers?propertyId=46487&roomId=107847&arrival=2026-03-20&departure=2026-03-27&numAdults=2&numChildren=0&includeTexts=it',
-    { headers: { token } }
+  const res = await fetch(
+    'https://beds24.com/booking2.php?propid=46487&roomid=107773&layout=3&lang=it',
+    { headers: { 'User-Agent': 'Mozilla/5.0' } }
   );
-  const offersData = await offersRes.json();
- 
-  // 3. Return pretty printed
-  return new Response(JSON.stringify(offersData, null, 2), {
+  const html = await res.text();
+
+  // Estrai features dal div b24-room-features-107773
+  const featuresMatch = html.match(
+    /class="b24-features b24-room-features-107773">([\s\S]*?)<\/div><script/
+  );
+
+  // Estrai tutti i testi dentro i tag <p>
+  const features: string[] = [];
+  if (featuresMatch) {
+    const featureHtml = featuresMatch[1];
+    const pMatches = featureHtml.matchAll(/<p[^>]*>[\s\S]*?glyphicon-ok[^>]*><\/span>&nbsp;(.*?)<\/p>/g);
+    for (const m of pMatches) {
+      features.push(m[1].trim());
+    }
+  }
+
+  return new Response(JSON.stringify({ features }, null, 2), {
     headers: { 'Content-Type': 'application/json' },
   });
 }
