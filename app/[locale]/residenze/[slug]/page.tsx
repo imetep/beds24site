@@ -4,6 +4,10 @@ import { v2 as cloudinary } from 'cloudinary';
 import { getRoomBySlug, getPropertyForRoom, PROPERTIES } from '@/config/properties';
 import { locales, isValidLocale, type Locale } from '@/config/i18n';
 import ThingsToKnow from '@/components/residenze/ThingsToKnow';
+import PhotoLightbox from '@/components/residenze/PhotoLightbox';
+import PropertyMap from '@/components/residenze/PropertyMap';
+import AvailabilityCalendar from '@/components/residenze/AvailabilityCalendar';
+
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -14,6 +18,8 @@ cloudinary.config({
 interface Props {
   params: Promise<{ locale: Locale; slug: string }>;
 }
+
+export const revalidate = 3600; // ISR: rigenera ogni ora, 0 chiamate Cloudinary tra un refresh e l'altro
 
 export async function generateStaticParams() {
   const params = [];
@@ -159,9 +165,6 @@ export default async function RoomPage({ params }: Props) {
     getRoomDescription(property.propertyId, room.roomId, locale),
   ]);
 
-  const coverPhoto = photos[0] ?? null;
-  const galleryPhotos = photos.slice(1, 5);
-
   const floorLabel = room.floor === 0 ? t.floorGround : `${t.floor} ${room.floor}`;
   const poolLabel = room.privatePool ? t.privatePool : room.sharedPool ? t.sharedPool : t.noPool;
 
@@ -183,19 +186,7 @@ export default async function RoomPage({ params }: Props) {
         {property.distanceLabel} · {floorLabel}
       </div>
 
-      {/* Griglia foto stile Airbnb */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 8, borderRadius: 16, overflow: 'hidden', marginBottom: 32, height: 400 }}>
-        {/* Foto grande */}
-        <div style={{ gridRow: '1 / 3', background: '#f0f0f0', overflow: 'hidden' }}>
-          {coverPhoto && <img src={coverPhoto} alt={room.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
-        </div>
-        {/* 4 foto piccole */}
-        {galleryPhotos.map((url, i) => (
-          <div key={i} style={{ background: '#f0f0f0', overflow: 'hidden' }}>
-            <img src={url} alt={`${room.name} ${i + 2}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          </div>
-        ))}
-      </div>
+      <PhotoLightbox photos={photos} roomName={room.name} />
 
       {/* Caratteristiche principali */}
       <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', padding: '20px 0', borderTop: '1px solid #eee', borderBottom: '1px solid #eee', marginBottom: 28 }}>
@@ -233,12 +224,12 @@ export default async function RoomPage({ params }: Props) {
       {/* Servizi */}
       <div style={{ marginBottom: 32 }}>
         <h2 style={sectionTitleStyle}>{t.services}</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '2px 16px' }}>
           {featureCodes.map((code) => {
             const feature = FEATURE_LABELS[code];
             if (!feature) return null;
             return (
-              <div key={code} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: '#333' }}>
+              <div key={code} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, color: '#333', padding: '1px 0' }}>
                 <span style={{ fontSize: 20 }}>{feature.icon}</span>
                 <span>{feature[locale as keyof typeof feature] ?? feature.it}</span>
               </div>
@@ -247,6 +238,16 @@ export default async function RoomPage({ params }: Props) {
         </div>
       </div>
 
+      {/* Mappa */}
+      <PropertyMap
+        latitude={property.latitude}
+        longitude={property.longitude}
+        name={room.name}
+        locale={locale}
+      />
+
+
+
       {/* Cose da sapere */}
       <ThingsToKnow
         locale={locale}
@@ -254,6 +255,13 @@ export default async function RoomPage({ params }: Props) {
         checkInEnd={property.propertyId === 46487 ? '19:00' : '19:00'}
         checkOutEnd="10:00"
         securityDeposit={room.securityDeposit}
+      />
+
+      {/* Calendario disponibilità — 12 mesi */}
+      <AvailabilityCalendar
+        roomId={room.roomId}
+        locale={locale}
+        bookingUrl={`/${locale}/prenota?roomId=${room.roomId}`}
       />
 
       {/* Bottone Prenota fisso in basso su mobile */}
@@ -265,7 +273,7 @@ export default async function RoomPage({ params }: Props) {
         zIndex: 100,
       }}>
         <Link
-          href={`/${locale}?roomId=${room.roomId}`}
+          href={`/${locale}/prenota?roomId=${room.roomId}`}
           style={{
             display: 'block', width: '100%', maxWidth: 480,
             padding: '16px', borderRadius: 12,

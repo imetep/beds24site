@@ -1,7 +1,11 @@
 // config/properties.ts
 // Dati statici delle proprietà pubblicate su livingapple.com
 // Fonte: Excel cliente + API Beds24 verificata
-// v3.7 — aggiunto slug, sqm, bathrooms, floor, features, cloudinaryFolder
+// v3.9 — aggiunto CIN/CIR, coordinate GPS per Google Maps
+
+// ─── CODICI IDENTIFICATIVI STRUTTURA (obbligatori per legge italiana) ─────────
+export const CIN = 'IT059014B47RVOMN2D';
+export const CIR = '059014-CAV-00072';
 
 export type PoolType = 'none' | 'private' | 'shared';
 
@@ -35,6 +39,8 @@ export interface Property {
   nameShort: string;
   distanceFromSea: number;  // km
   distanceLabel: string;    // testo per il cliente
+  latitude: number;         // coordinate GPS
+  longitude: number;
   rooms: Room[];
 }
 
@@ -47,6 +53,8 @@ export const PROPERTIES: Property[] = [
     nameShort: 'natura',
     distanceFromSea: 1.5,
     distanceLabel: 'A 1.5 km dal mare, immerso nella natura',
+    latitude: 41.2624198,
+    longitude: 13.7012664,
     rooms: [
       {
         roomId: 107773,
@@ -216,6 +224,8 @@ export const PROPERTIES: Property[] = [
     nameShort: 'mare',
     distanceFromSea: 0.25,
     distanceLabel: 'Vicino al mare, a 250m dalla spiaggia',
+    latitude: 41.237587,
+    longitude: 13.74424,
     rooms: [
       {
         roomId: 108607,

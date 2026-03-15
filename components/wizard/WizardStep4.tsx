@@ -49,7 +49,7 @@ interface Props {
   locale?: string;
 }
 
-export default function WizardStep5({ locale = 'it' }: Props) {
+export default function WizardStep4({ locale = 'it' }: Props) {
   const t = LABELS[locale] ?? LABELS.it;
   const { numAdult, numUnder12, setNumUnder12, nextStep, prevStep } = useWizardStore();
 
