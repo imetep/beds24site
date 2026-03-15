@@ -5,7 +5,7 @@ import { useWizardStore } from '@/store/wizard-store';
 import { PROPERTIES } from '@/config/properties';
 
 // ─── Offer names ──────────────────────────────────────────────────────────────
-const OFFER_NAMES: Record<number, Record<string, string | ((...args: any[]) => string)>> = {
+const OFFER_NAMES: Record<number, Record<string, string>> = {
   1: { it:'Non Rimborsabile',          en:'Non-Refundable',        de:'Nicht erstattungsfähig',  pl:'Bezzwrotna' },
   2: { it:'Parzialmente Rimborsabile', en:'Partially Refundable',  de:'Teilw. erstattungsfähig', pl:'Częściowo zwrotna' },
   3: { it:'Flessibile 60 gg',          en:'Flexible 60 days',      de:'Flexibel 60 Tage',        pl:'Elastyczna 60 dni' },
@@ -118,7 +118,7 @@ export default function WizardSidebar({ locale = 'it', step = 1, onContinua, can
 
   const offer = cachedOffers?.find((o: any) => o.offerId === selectedOfferId)
     ?? cachedOffers?.flatMap((ro: any) => ro.offers ?? []).find((o: any) => o.offerId === selectedOfferId);
-  const offerName  = offer ? (OFFER_NAMES[offer.offerId]?.[loc] ?? offer.offerName) : null;
+  const offerName: string | null = offer ? (OFFER_NAMES[offer.offerId]?.[loc] ?? String(offer.offerName ?? '')) : null;
   const offerPrice: number = offer?.price ?? 0;
   const nights  = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
   const perNight = nights > 0 && offerPrice > 0 ? Math.round(offerPrice / nights) : 0;
