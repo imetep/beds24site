@@ -18,7 +18,7 @@ interface Props {
   roomId?: number | null; // passato da Wizard.tsx
 }
 
-const OVER_CAPACITY: Record<string, string> = {
+const OVER_CAPACITY: Record<string, (max: number) => string> = {
   it: (max: number) => `⚠️ Questo appartamento ospita massimo ${max} persone.`,
   en: (max: number) => `⚠️ This apartment accommodates a maximum of ${max} people.`,
   de: (max: number) => `⚠️ Diese Unterkunft bietet Platz für maximal ${max} Personen.`,
