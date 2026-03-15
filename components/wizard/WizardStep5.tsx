@@ -6,7 +6,7 @@ import { getAvailableRooms, getPropertyForRoom, PROPERTIES } from '@/config/prop
 import type { Room } from '@/config/properties';
 
 // ─── Offer IDs fissi LivingApple ─────────────────────────────────────────────
-const OFFER_NAMES: Record<number, Record<string, string | ((...args: any[]) => string)>> = {
+const OFFER_NAMES: Record<number, Record<string, string>> = {
   1: { it:'Non Rimborsabile',          en:'Non-Refundable',         de:'Nicht erstattungsfähig',    pl:'Bezzwrotna' },
   2: { it:'Parzialmente Rimborsabile', en:'Partially Refundable',   de:'Teilw. erstattungsfähig',   pl:'Częściowo zwrotna' },
   3: { it:'Flessibile 60 gg',          en:'Flexible 60 days',       de:'Flexibel 60 Tage',          pl:'Elastyczna 60 dni' },
@@ -14,7 +14,7 @@ const OFFER_NAMES: Record<number, Record<string, string | ((...args: any[]) => s
   5: { it:'Flessibile 30 gg',          en:'Flexible 30 days',       de:'Flexibel 30 Tage',          pl:'Elastyczna 30 dni' },
   6: { it:'Flessibile 5 gg',           en:'Flexible 5 days',        de:'Flexibel 5 Tage',           pl:'Elastyczna 5 dni' },
 };
-const OFFER_DESC: Record<number, Record<string, string | ((...args: any[]) => string)>> = {
+const OFFER_DESC: Record<number, Record<string, string>> = {
   1: { it:'Paghi tutto entro 48h dalla prenotazione.',       en:'Pay in full within 48h of booking.',                de:'Vollzahlung innerhalb 48h nach Buchung.',          pl:'Płatność w całości w ciągu 48h.' },
   2: { it:"Paghi 50% ora, il saldo all'arrivo.",             en:'Pay 50% now, balance at arrival.',                  de:'50% jetzt, Rest bei Ankunft.',                     pl:'50% teraz, reszta przy przyjeździe.' },
   3: { it:'Cancellazione gratuita entro 60 gg dall\'arrivo.',en:'Free cancellation up to 60 days before arrival.',   de:'Kostenlose Stornierung bis 60 Tage vor Ankunft.',  pl:'Bezpłatne anulowanie do 60 dni przed przyjazdem.' },
@@ -24,7 +24,7 @@ const OFFER_DESC: Record<number, Record<string, string | ((...args: any[]) => st
 };
 
 // ─── Traduzioni UI ────────────────────────────────────────────────────────────
-const UI: Record<string, Record<string, string | ((...args: any[]) => string)>> = {
+const UI: Record<string, Record<string, string>> = {
   it: {
     titleSingle:'Quale tariffa preferite?',
     titleMulti: 'Scegli appartamento e tariffa',

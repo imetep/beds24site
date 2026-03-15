@@ -37,14 +37,13 @@ const CANCEL_POLICY: Record<number, Record<string,string>> = {
   6: { it:'Cancellazione gratuita fino a 5 giorni prima dell\'arrivo.',        en:'Free cancellation up to 5 days before arrival.',          de:'Kostenlose Stornierung bis 5 Tage vor Ankunft.',          pl:'Bezpłatne anulowanie do 5 dni przed przyjazdem.' },
 };
 
-const UI: Record<string, Record<string, string | ((...args: any[]) => string)>> = {
+const UI: Record<string, Record<string, string>> = {
   it: {
     title: 'Conferma e paga',
     back: '← Indietro',
     sec1title: '1. Come vuoi pagare?',
     payFull: 'Paga tutto ora',
     payInstall: 'Paga in 3 rate con PayPal',
-    payInstallNote: (n: number) => `3 rate da €${n} · senza interessi · tramite PayPal`,
     sec2title: '2. I tuoi dati',
     firstName: 'Nome *', lastName: 'Cognome *', email: 'Email *',
     phone: 'Telefono', country: 'Paese', arrivalTime: 'Ora di arrivo prevista',
@@ -79,7 +78,6 @@ const UI: Record<string, Record<string, string | ((...args: any[]) => string)>> 
     sec1title: '1. How do you want to pay?',
     payFull: 'Pay in full now',
     payInstall: 'Pay in 3 installments with PayPal',
-    payInstallNote: (n: number) => `3 payments of €${n} · no interest · via PayPal`,
     sec2title: '2. Your details',
     firstName: 'First name *', lastName: 'Last name *', email: 'Email *',
     phone: 'Phone', country: 'Country', arrivalTime: 'Expected arrival time',
@@ -114,7 +112,6 @@ const UI: Record<string, Record<string, string | ((...args: any[]) => string)>> 
     sec1title: '1. Wie möchten Sie bezahlen?',
     payFull: 'Jetzt vollständig bezahlen',
     payInstall: 'In 3 Raten mit PayPal bezahlen',
-    payInstallNote: (n: number) => `3 Raten à €${n} · zinsfrei · über PayPal`,
     sec2title: '2. Ihre Daten',
     firstName: 'Vorname *', lastName: 'Nachname *', email: 'E-Mail *',
     phone: 'Telefon', country: 'Land', arrivalTime: 'Voraussichtliche Ankunftszeit',
@@ -149,7 +146,6 @@ const UI: Record<string, Record<string, string | ((...args: any[]) => string)>> 
     sec1title: '1. Jak chcesz zapłacić?',
     payFull: 'Zapłać teraz w całości',
     payInstall: 'Zapłać w 3 ratach przez PayPal',
-    payInstallNote: (n: number) => `3 raty po €${n} · bez odsetek · przez PayPal`,
     sec2title: '2. Twoje dane',
     firstName: 'Imię *', lastName: 'Nazwisko *', email: 'E-mail *',
     phone: 'Telefon', country: 'Kraj', arrivalTime: 'Przewidywana godzina przyjazdu',
@@ -179,6 +175,13 @@ const UI: Record<string, Record<string, string | ((...args: any[]) => string)>> 
     summaryTitle: 'Twój pobyt',
   },
 };
+const PAY_INSTALL_NOTE: Record<string, (n: number) => string> = {
+  it: (n) => `3 rate da €${n} · senza interessi · tramite PayPal`,
+  en: (n) => `3 payments of €${n} · no interest · via PayPal`,
+  de: (n) => `3 Raten à €${n} · zinsfrei · über PayPal`,
+  pl: (n) => `3 raty po €${n} · bez odsetek · przez PayPal`,
+};
+
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function getRoomData(roomId: number | null) {
@@ -468,7 +471,7 @@ export default function WizardStep6({ locale = 'it' }: Props) {
                   <span style={{ fontSize: 12, fontWeight: 700, color: '#003087', background: '#e8f0fb', padding: '2px 8px', borderRadius: 4 }}>PayPal</span>
                 </div>
                 <p style={{ margin: '2px 0 0', fontSize: 13, color: '#888' }}>
-                  {(t.payInstallNote as (n: number) => string)(installment)}
+                  {PAY_INSTALL_NOTE[loc]?.(installment) ?? ``}
                 </p>
               </div>
             </label>

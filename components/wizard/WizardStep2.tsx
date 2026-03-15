@@ -16,7 +16,7 @@ const DAYS: Record<string, string[]> = {
   de: ['Mo','Di','Mi','Do','Fr','Sa','So'],
   pl: ['Pn','Wt','Śr','Cz','Pt','So','Nd'],
 };
-const UI: Record<string, Record<string, string | ((...args: any[]) => string)>> = {
+const UI: Record<string, Record<string, string>> = {
   it: {
     title: 'Quando volete venire?',
     checkin: 'Check-in', checkout: 'Check-out',
@@ -25,7 +25,6 @@ const UI: Record<string, Record<string, string | ((...args: any[]) => string)>> 
     notte: 'notte', notti: 'notti',
     next: 'Continua', back: 'Indietro',
     loadingAvail: 'Caricamento disponibilità...',
-    minStayMsg: (n: number) => `Soggiorno minimo ${n} notti da questa data`,
     cancelDates: 'Cancella date',
   },
   en: {
@@ -36,7 +35,6 @@ const UI: Record<string, Record<string, string | ((...args: any[]) => string)>> 
     notte: 'night', notti: 'nights',
     next: 'Continue', back: 'Back',
     loadingAvail: 'Loading availability...',
-    minStayMsg: (n: number) => `Minimum stay ${n} nights from this date`,
     cancelDates: 'Clear dates',
   },
   de: {
@@ -47,7 +45,6 @@ const UI: Record<string, Record<string, string | ((...args: any[]) => string)>> 
     notte: 'Nacht', notti: 'Nächte',
     next: 'Weiter', back: 'Zurück',
     loadingAvail: 'Verfügbarkeit wird geladen...',
-    minStayMsg: (n: number) => `Mindestaufenthalt ${n} Nächte ab diesem Datum`,
     cancelDates: 'Daten löschen',
   },
   pl: {
@@ -58,10 +55,17 @@ const UI: Record<string, Record<string, string | ((...args: any[]) => string)>> 
     notte: 'noc', notti: 'nocy',
     next: 'Dalej', back: 'Wstecz',
     loadingAvail: 'Ładowanie dostępności...',
-    minStayMsg: (n: number) => `Minimalny pobyt ${n} nocy od tej daty`,
     cancelDates: 'Wyczyść daty',
   },
 };
+
+const MIN_STAY_MSG: Record<string, (n: number) => string> = {
+  it: (n) => `Soggiorno minimo ${n} notti da questa data`,
+  en: (n) => `Minimum stay ${n} nights from this date`,
+  de: (n) => `Mindestaufenthalt ${n} Nächte ab diesem Datum`,
+  pl: (n) => `Minimalny pobyt ${n} nocy od tej daty`,
+};
+
 
 // ─── Tipi ────────────────────────────────────────────────────────────────────
 // Beds24 /inventory/rooms/availability: { "YYYY-MM-DD": true/false }
