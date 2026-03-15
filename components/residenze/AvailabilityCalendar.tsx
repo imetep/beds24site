@@ -14,7 +14,7 @@ const DAYS: Record<string, string[]> = {
   de: ['Mo','Di','Mi','Do','Fr','Sa','So'],
   pl: ['Pn','Wt','Śr','Cz','Pt','So','Nd'],
 };
-const UI: Record<string, Record<string, string | ((...args: any[]) => string)>> = {
+const UI: Record<string, Record<string, string>> = {
   it: { title:'Disponibilità', loading:'Caricamento...', prenota:'Prenota ora', prev:'Precedente', next:'Successivo', legend_free:'Disponibile', legend_busy:'Occupato' },
   en: { title:'Availability',  loading:'Loading...',     prenota:'Book now',    prev:'Previous',   next:'Next',       legend_free:'Available',   legend_busy:'Booked'   },
   de: { title:'Verfügbarkeit', loading:'Laden...',       prenota:'Jetzt buchen',prev:'Vorherige',  next:'Nächste',    legend_free:'Verfügbar',   legend_busy:'Belegt'   },
