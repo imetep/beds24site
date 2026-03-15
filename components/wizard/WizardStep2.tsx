@@ -273,7 +273,7 @@ export default function WizardStep2({ translations: _t, locale = 'it', roomId }:
                 disabled={isDisabled}
                 style={{
                   position: 'relative',
-                  height: 40, width: '100%',
+                  height: 36, width: '100%',
                   border: 'none',
                   borderRadius: (isStart || isEnd) ? '50%' : '0',
                   background: (isStart || isEnd)
@@ -319,7 +319,7 @@ export default function WizardStep2({ translations: _t, locale = 'it', roomId }:
       </h2>
 
       {/* Pill date selezionate */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
         <div style={pillStyle(!!checkIn, phase === 'checkin')}>
           <span style={pillLabelStyle}>{ui.checkin}</span>
           <span style={pillValueStyle}>{checkIn ? formatFriendly(checkIn, locale) : '—'}</span>
@@ -332,7 +332,7 @@ export default function WizardStep2({ translations: _t, locale = 'it', roomId }:
       </div>
 
       {/* Istruzione fase */}
-      <p style={{ fontSize: 13, color: '#1E73BE', margin: '0 0 16px', fontWeight: 500, minHeight: 18 }}>
+      <p style={{ fontSize: 13, color: '#1E73BE', margin: '0 0 10px', fontWeight: 500 }}>
         {loadingAvail
           ? ui.loadingAvail
           : phase === 'checkin' ? ui.selectCheckin : ui.selectCheckout}
@@ -344,7 +344,7 @@ export default function WizardStep2({ translations: _t, locale = 'it', roomId }:
         {/* Controlli navigazione */}
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '14px 20px 10px',
+          padding: '10px 16px 6px',
         }}>
           <button
             onClick={goToPrev}
@@ -376,7 +376,7 @@ export default function WizardStep2({ translations: _t, locale = 'it', roomId }:
         <div style={{
           display: 'flex',
           gap: isDesktop ? 32 : 0,
-          padding: isDesktop ? '0 24px 20px' : '0 12px 16px',
+          padding: isDesktop ? '0 20px 14px' : '0 10px 12px',
         }}>
           {renderMonth(viewYear, viewMonth)}
           {isDesktop && (
@@ -389,7 +389,7 @@ export default function WizardStep2({ translations: _t, locale = 'it', roomId }:
       </div>
 
       {/* Badge notti + cancella */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 12, minHeight: 34 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8 }}>
         {nights && nights > 0 && (
           <div style={{
             background: '#EBF4FC', color: '#1E73BE',
@@ -410,7 +410,7 @@ export default function WizardStep2({ translations: _t, locale = 'it', roomId }:
       </div>
 
       {/* CTA */}
-      <div style={{ marginTop: 'auto', paddingTop: '1.25rem', display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ marginTop: '0.75rem', paddingTop: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
         <button
           onClick={nextStep}
           disabled={!canContinue}

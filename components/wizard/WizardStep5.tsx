@@ -189,12 +189,14 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
 
   // ── Selezione ────────────────────────────────────────────────────────────
   function pick(rId: number, oId: number) {
-    setPickedRoomId(rId); setPickedOfferId(oId);
+    setPickedRoomId(rId);
+    setPickedOfferId(oId);
+    // Aggiorna subito lo store → la sidebar si popola in tempo reale
+    setSelectedRoomId(rId);
+    setSelectedOfferId(oId);
   }
   function handleContinua() {
     if (!pickedRoomId || !pickedOfferId) return;
-    setSelectedRoomId(pickedRoomId);
-    setSelectedOfferId(pickedOfferId);
     nextStep();
   }
   const canContinue = !!pickedRoomId && !!pickedOfferId;
@@ -340,16 +342,19 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
         </div>
       )}
 
-      {/* CTA */}
-      <button onClick={handleContinua} disabled={!canContinue} style={{
-        width:'100%', padding:'15px', borderRadius:12, border:'none',
-        fontSize:16, fontWeight:700, marginBottom:14,
-        background: canContinue ? '#FCAF1A' : '#e0e0e0',
-        color: canContinue ? '#fff' : '#999',
-        cursor: canContinue ? 'pointer' : 'not-allowed',
-      }}>
-        {t.continua}
-      </button>
+      {/* CTA — nascosto su desktop (c'è nella sidebar) */}
+      <div className="step5-continua-mobile">
+        <button onClick={handleContinua} disabled={!canContinue} style={{
+          width:'100%', padding:'15px', borderRadius:12, border:'none',
+          fontSize:16, fontWeight:700, marginBottom:14,
+          background: canContinue ? '#FCAF1A' : '#e0e0e0',
+          color: canContinue ? '#fff' : '#999',
+          cursor: canContinue ? 'pointer' : 'not-allowed',
+        }}>
+          {t.continua}
+        </button>
+      </div>
+      <style>{'@media (min-width: 768px) { .step5-continua-mobile { display: none; } }'}</style>
 
       <button onClick={prevStep} style={{ background:'none', border:'none', color:'#1E73BE', fontSize:14, cursor:'pointer', padding:0 }}>
         {t.indietro}

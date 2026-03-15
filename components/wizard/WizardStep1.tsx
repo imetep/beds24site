@@ -41,7 +41,7 @@ export default function WizardStep1({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 0, flex: 1 }}>
-      <h2 style={{ fontSize: '1.4rem', fontWeight: 600, margin: '0 0 0.4rem' }}>
+      <h2 style={{ fontSize: '1.4rem', fontWeight: 600, margin: '0 0 0.2rem' }}>
         {t.step1.title}
       </h2>
 
@@ -102,7 +102,7 @@ export default function WizardStep1({
       )}
 
       {/* CTA */}
-      <div style={{ marginTop: 'auto', paddingTop: '1.5rem' }}>
+      <div style={{ marginTop: '1.5rem', paddingTop: 0 }}>
         <button
           onClick={nextStep}
           disabled={overCapacity}
@@ -136,7 +136,7 @@ function Counter({ value, onDecrement, onIncrement, min }: {
 
 const rowStyle: React.CSSProperties = {
   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-  padding: '1rem 0', borderBottom: '1px solid #eee',
+  padding: '0.65rem 0', borderBottom: '1px solid #eee',
 };
 const labelStyle: React.CSSProperties = { fontSize: '1rem', fontWeight: 500 };
 const subStyle: React.CSSProperties = { fontSize: '0.8rem', color: '#888', marginTop: '2px' };

@@ -17,6 +17,15 @@ interface Props {
   locale: string;
 }
 
+// Wrapper che passa onContinua alla sidebar solo sullo Step5
+function WizardSidebarWrapper({ locale, logicalStep }: { locale: string; logicalStep: number }) {
+  const { selectedOfferId, nextStep } = useWizardStore();
+  if (logicalStep === 5) {
+    return <WizardSidebar locale={locale} step={logicalStep} onContinua={nextStep} canContinua={!!selectedOfferId} />;
+  }
+  return <WizardSidebar locale={locale} step={logicalStep} />;
+}
+
 export default function Wizard({ translations: t, locale }: Props) {
   const { currentStep, selectedRoomId, setSelectedRoomId } = useWizardStore();
 
@@ -30,22 +39,33 @@ export default function Wizard({ translations: t, locale }: Props) {
   }, [roomIdFromUrl, selectedRoomId, setSelectedRoomId]);
 
   const effectiveRoomId = roomIdFromUrl ?? selectedRoomId;
-  const skipStep3   = !!effectiveRoomId;
-  const totalSteps  = skipStep3 ? 5 : 6;
+  const skipStep3  = !!effectiveRoomId;
+  const totalSteps = skipStep3 ? 5 : 6;
 
+  /**
+   * Mappa currentStep (1..6 nello store) → logicalStep (numero dello Step da renderizzare)
+   *
+   * WizardLibero (skipStep3=false):
+   *   currentStep 1→S1, 2→S2, 3→S3, 4→S4, 5→S5, 6→S6
+   *
+   * WizardDiretto (skipStep3=true, totalSteps=5):
+   *   currentStep 1→S1, 2→S2, 3→S4, 4→S5, 5→S6
+   *   (S3 piscina viene saltato, tutto shiftato di -1)
+   */
   function getLogicalStep(): number {
     if (!skipStep3) return currentStep;
-    return currentStep >= 3 ? currentStep + 1 : currentStep;
+    // Clamp: currentStep non deve superare totalSteps (5)
+    const clamped = Math.min(currentStep, totalSteps);
+    // Con skip: da step 3 in poi shifta +1 per saltare S3
+    return clamped >= 3 ? clamped + 1 : clamped;
   }
   const logicalStep = getLogicalStep();
 
-  // Su step 6 (conferma) la sidebar non serve
-  const showSidebar = currentStep < totalSteps;
+  const showSidebar = logicalStep < 6; // nascondi sidebar su Step6 (conferma)
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', padding: '2rem 1.25rem' }}>
+    <div style={{ maxWidth: 1100, margin: '0 auto', padding: '1.25rem 1.25rem 2rem' }}>
 
-      {/* Progress bar — full width sopra il layout */}
       <WizardProgressBar
         currentStep={currentStep}
         totalSteps={totalSteps}
@@ -53,11 +73,10 @@ export default function Wizard({ translations: t, locale }: Props) {
         skipStep3={skipStep3}
       />
 
-      {/* Layout: form a sinistra, sidebar a destra su desktop */}
       <div style={{ display: 'flex', gap: 0, alignItems: 'flex-start' }}>
 
-        {/* Colonna form — cresce fino a max 600px */}
-        <div style={{ flex: 1, minWidth: 0, maxWidth: 600 }}>
+        {/* Colonna form — Step6 occupa tutta la larghezza (ha il suo layout 2 colonne interno) */}
+        <div style={{ flex: 1, minWidth: 0, maxWidth: logicalStep === 6 ? 'none' : 680 }}>
           {logicalStep === 1 && <WizardStep1 translations={t.wizard} locale={locale} roomId={effectiveRoomId} />}
           {logicalStep === 2 && <WizardStep2 translations={t.wizard} locale={locale} roomId={effectiveRoomId} />}
           {logicalStep === 3 && <WizardStep3 locale={locale} />}
@@ -66,22 +85,18 @@ export default function Wizard({ translations: t, locale }: Props) {
           {logicalStep === 6 && <WizardStep6 locale={locale} />}
         </div>
 
-        {/* Sidebar destra — visibile solo su desktop */}
+        {/* Sidebar destra — solo desktop, solo step 1-5 */}
         {showSidebar && (
           <div className="wizard-sidebar-wrapper">
-            <WizardSidebar locale={locale} />
+            <WizardSidebarWrapper locale={locale} logicalStep={logicalStep} />
           </div>
         )}
       </div>
 
       <style>{`
-        .wizard-sidebar-wrapper {
-          display: none;
-        }
+        .wizard-sidebar-wrapper { display: none; }
         @media (min-width: 768px) {
-          .wizard-sidebar-wrapper {
-            display: block;
-          }
+          .wizard-sidebar-wrapper { display: block; }
         }
       `}</style>
     </div>

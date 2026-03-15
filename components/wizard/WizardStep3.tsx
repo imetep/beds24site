@@ -80,6 +80,13 @@ export default function WizardStep3({ locale = 'it' }: Props) {
   function handleSelect(value: PoolType) {
     setPoolPreference(value);
     setSelectedRoomId(null);
+    // Auto-avanza subito dopo la selezione (bottone Continua resta come fallback)
+    const rooms = getAvailableRooms(totalGuests, value);
+    if (rooms.length > 0) {
+      if (rooms.length === 1) setSelectedRoomId(rooms[0].roomId);
+      // Piccolo delay per mostrare la selezione prima di avanzare
+      setTimeout(() => nextStep(), 200);
+    }
   }
 
   function handleContinua() {
@@ -96,15 +103,15 @@ export default function WizardStep3({ locale = 'it' }: Props) {
   return (
     <div style={{ padding: '0 16px', maxWidth: 480, margin: '0 auto', fontFamily: 'sans-serif' }}>
       {/* Step indicator */}
-      <div style={{ fontSize: 13, color: '#666', marginBottom: 8 }}>{t.stepOf}</div>
+      <div style={{ fontSize: 13, color: '#666', marginBottom: 4 }}>{t.stepOf}</div>
 
       {/* Titolo */}
-      <h2 style={{ color: '#1E73BE', fontSize: 22, fontWeight: 700, marginBottom: 24 }}>
+      <h2 style={{ color: '#1E73BE', fontSize: 22, fontWeight: 700, marginBottom: 14 }}>
         {t.title}
       </h2>
 
       {/* Opzioni */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 12 }}>
         {POOL_OPTIONS.map((opt) => {
           const selected = poolPreference === opt.value;
           return (
@@ -115,7 +122,7 @@ export default function WizardStep3({ locale = 'it' }: Props) {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 14,
-                padding: '16px 18px',
+                padding: '13px 18px',
                 borderRadius: 12,
                 border: selected ? '2px solid #1E73BE' : '2px solid #e0e0e0',
                 background: selected ? '#EEF5FC' : '#fff',
