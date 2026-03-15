@@ -7,7 +7,7 @@ import HeaderClient from '@/components/HeaderClient';
 
 interface Props {
   children: React.ReactNode;
-  params: Promise<{ locale: Locale }>;
+  params: Promise<{ locale: string }>;
 }
 
 export async function generateStaticParams() {
