@@ -103,16 +103,16 @@ export default function ThingsToKnow({ locale, checkInStart, checkInEnd, checkOu
           justifyContent: 'space-between',
           alignItems: 'center',
           padding: '18px 20px',
-          background: '#4A9FD4',
+          background: '#fff',
           border: 'none',
           cursor: 'pointer',
           fontSize: 17,
           fontWeight: 700,
-          color: '#fff',
+          color: '#222',
         }}
       >
         <span>ℹ️ {t.title}</span>
-        <span style={{ fontSize: 13, color: '#fff', fontWeight: 600 }}>
+        <span style={{ fontSize: 13, color: '#1E73BE', fontWeight: 600 }}>
           {open ? t.showLess : t.showMore}
         </span>
       </button>

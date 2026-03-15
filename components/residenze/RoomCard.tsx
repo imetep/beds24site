@@ -83,7 +83,7 @@ export default function RoomCard({ room, locale, coverUrl }: Props) {
           <Link href={`/${locale}/residenze/${room.slug}`} style={btnSecondaryStyle}>
             {t.scopri}
           </Link>
-          <Link href={`/${locale}?roomId=${room.roomId}`} style={btnPrimaryStyle}>
+          <Link href={`/${locale}/prenota?roomId=${room.roomId}`} style={btnPrimaryStyle}>
             {t.prenota}
           </Link>
         </div>

@@ -78,6 +78,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
 
   } catch (err) {
-    return NextResponse.json({ error: 'Cloudinary error' }, { status: 500 });
-  }
+    console.error('Cloudinary error:', err);
+    return NextResponse.json({ error: String(err) }, { status: 500 });
+}
 }

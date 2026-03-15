@@ -23,13 +23,13 @@
   },
   "wizard": {
     "step1": {
-      "title": "Quante persone siete?",
-      "adults": "Adulti",
-      "adultsAge": "età 2+",
-      "children": "Bambini",
-      "childrenAge": "età 0–2",
-      "next": "Continua"
-    },
+  "title": "Quante persone siete?",
+  "adults": "Adulti",
+  "adultsAge": "età 2+",
+  "children": "Bambini",
+  "childrenAge": "età 0–2",
+  "next": "Continua"
+},
     "step2": {
       "title": "Quando volete venire?",
       "checkin": "Check-in",
@@ -97,9 +97,7 @@
     "rea": "REA LT193161",
     "privacy": "Privacy Policy",
     "terms": "Condizioni generali",
-    "cookies": "Cookie Policy",
-    "contact": "Contatti",
-    "data": "Trattamento dei dati"
+    "cookies": "Cookie Policy"
   },
   "meta": {
     "home_title": "LivingApple — Appartamenti vacanza a Scauri (LT)",

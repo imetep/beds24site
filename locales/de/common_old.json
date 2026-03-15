@@ -22,7 +22,7 @@
     "contact": "Kontakt"
   },
   "wizard": {
-    "step1": {
+      "step1": {
       "title": "Wie viele Personen?",
       "adults": "Erwachsene",
       "adultsAge": "Alter 2+",
@@ -97,9 +97,7 @@
     "rea": "REA LT193161",
     "privacy": "Datenschutzrichtlinie",
     "terms": "AGB",
-    "cookies": "Cookie-Richtlinie",
-    "contact": "Kontakt",
-    "data": "Datenverarbeitung"
+    "cookies": "Cookie-Richtlinie"
   },
   "meta": {
     "home_title": "LivingApple — Ferienwohnungen in Scauri, Italien",

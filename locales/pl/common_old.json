@@ -23,13 +23,13 @@
   },
   "wizard": {
     "step1": {
-      "title": "Ile osób przyjeżdża?",
-      "adults": "Dorośli",
-      "adultsAge": "wiek 2+",
-      "children": "Dzieci",
-      "childrenAge": "wiek 0-2",
-      "next": "Dalej"
-    },
+  "title": "Ile osób przyjeżdża?",
+  "adults": "Dorośli",
+  "adultsAge": "wiek 2+",
+  "children": "Dzieci",
+  "childrenAge": "wiek 0-2",
+  "next": "Dalej"
+},
     "step2": {
       "title": "Kiedy chcecie przyjechać?",
       "checkin": "Przyjazd",
@@ -97,9 +97,7 @@
     "rea": "REA LT193161",
     "privacy": "Polityka prywatności",
     "terms": "Regulamin",
-    "cookies": "Polityka cookies",
-    "contact": "Kontakt",
-    "data": "Przetwarzanie danych"
+    "cookies": "Polityka cookies"
   },
   "meta": {
     "home_title": "LivingApple — Apartamenty wakacyjne w Scauri, Włochy",
