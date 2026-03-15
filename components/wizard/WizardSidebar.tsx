@@ -14,7 +14,7 @@ const OFFER_NAMES: Record<number, Record<string, string | ((...args: any[]) => s
   6: { it:'Flessibile 5 gg',           en:'Flexible 5 days',       de:'Flexibel 5 Tage',         pl:'Elastyczna 5 dni' },
 };
 
-const UI: Record<string, Record<string, string | ((...args: any[]) => string)>> = {
+const UI: Record<string, Record<string, string>> = {
   it: { title:'Il tuo soggiorno', checkin:'Check-in', checkout:'Check-out',
         guests:'Ospiti', adults:'adulti', children:'bambini',
         nights:'notti', night:'notte', rate:'Tariffa',

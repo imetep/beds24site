@@ -10,7 +10,7 @@ const POOL_OPTIONS: { value: PoolType; labelKey: string; icon: string }[] = [
   { value: 'shared',  labelKey: 'shared',  icon: '🌊' },
 ];
 
-const LABELS: Record<string, Record<string, string | ((...args: any[]) => string)>> = {
+const LABELS: Record<string, Record<string, string>> = {
   it: {
     title: 'Vuoi la piscina?',
     none: 'Non mi interessa',

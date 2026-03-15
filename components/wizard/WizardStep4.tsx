@@ -2,7 +2,7 @@
 
 import { useWizardStore } from '@/store/wizard-store';
 
-const LABELS: Record<string, Record<string, string | ((...args: any[]) => string)>> = {
+const LABELS: Record<string, Record<string, string>> = {
   it: {
     title: 'Quanti ospiti hanno meno di 12 anni?',
     info: "Gli ospiti sotto i 12 anni sono esenti dall'Imposta di Soggiorno (€2,00 a persona al giorno per i primi 10 giorni).",
