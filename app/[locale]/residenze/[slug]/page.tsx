@@ -108,7 +108,7 @@ async function getRoomDescription(propId: number, roomId: number, lang: string):
   }
 }
 
-const LABELS: Record<string, Record<string, string | ((...args: any[]) => string)>> = {
+const LABELS: Record<string, Record<string, string>> = {
   it: {
     bedrooms: 'camere', bathrooms: 'bagni', maxPeople: 'ospiti', sqm: 'mq',
     floorGround: 'Piano terra', floor: 'Piano',
