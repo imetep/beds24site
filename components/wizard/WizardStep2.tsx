@@ -16,7 +16,7 @@ const DAYS: Record<string, string[]> = {
   de: ['Mo','Di','Mi','Do','Fr','Sa','So'],
   pl: ['Pn','Wt','Śr','Cz','Pt','So','Nd'],
 };
-const UI: Record<string, Record<string,string>> = {
+const UI: Record<string, Record<string, string | ((...args: any[]) => string)>> = {
   it: {
     title: 'Quando volete venire?',
     checkin: 'Check-in', checkout: 'Check-out',

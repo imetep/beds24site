@@ -37,7 +37,7 @@ const CANCEL_POLICY: Record<number, Record<string,string>> = {
   6: { it:'Cancellazione gratuita fino a 5 giorni prima dell\'arrivo.',        en:'Free cancellation up to 5 days before arrival.',          de:'Kostenlose Stornierung bis 5 Tage vor Ankunft.',          pl:'Bezpłatne anulowanie do 5 dni przed przyjazdem.' },
 };
 
-const UI: Record<string, Record<string,string>> = {
+const UI: Record<string, Record<string, string | ((...args: any[]) => string)>> = {
   it: {
     title: 'Conferma e paga',
     back: '← Indietro',

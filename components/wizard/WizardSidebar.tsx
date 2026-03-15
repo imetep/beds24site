@@ -5,7 +5,7 @@ import { useWizardStore } from '@/store/wizard-store';
 import { PROPERTIES } from '@/config/properties';
 
 // ─── Offer names ──────────────────────────────────────────────────────────────
-const OFFER_NAMES: Record<number, Record<string,string>> = {
+const OFFER_NAMES: Record<number, Record<string, string | ((...args: any[]) => string)>> = {
   1: { it:'Non Rimborsabile',          en:'Non-Refundable',        de:'Nicht erstattungsfähig',  pl:'Bezzwrotna' },
   2: { it:'Parzialmente Rimborsabile', en:'Partially Refundable',  de:'Teilw. erstattungsfähig', pl:'Częściowo zwrotna' },
   3: { it:'Flessibile 60 gg',          en:'Flexible 60 days',      de:'Flexibel 60 Tage',        pl:'Elastyczna 60 dni' },
@@ -14,7 +14,7 @@ const OFFER_NAMES: Record<number, Record<string,string>> = {
   6: { it:'Flessibile 5 gg',           en:'Flexible 5 days',       de:'Flexibel 5 Tage',         pl:'Elastyczna 5 dni' },
 };
 
-const UI: Record<string,Record<string,string>> = {
+const UI: Record<string, Record<string, string | ((...args: any[]) => string)>> = {
   it: { title:'Il tuo soggiorno', checkin:'Check-in', checkout:'Check-out',
         guests:'Ospiti', adults:'adulti', children:'bambini',
         nights:'notti', night:'notte', rate:'Tariffa',
