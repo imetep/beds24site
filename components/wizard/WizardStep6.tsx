@@ -249,7 +249,6 @@ export default function WizardStep6({ locale = 'it' }: Props) {
   const [payMode, setPayMode]       = useState<'full' | 'installments'>('full');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError]           = useState<string | null>(null);
-  const [bookId, setBookId]         = useState<string | null>(null);
   const [voucherInput, setVoucherInput] = useState(voucherCode);
   const [summaryOpen, setSummaryOpen]   = useState(false); // mobile accordion
 
@@ -281,7 +280,8 @@ export default function WizardStep6({ locale = 'it' }: Props) {
     if (!formValid || !selectedRoomId || !checkIn || !checkOut) return;
     setSubmitting(true); setError(null);
     try {
-      const res = await fetch('/api/bookings', {
+      // Step 1 — Crea la prenotazione su Beds24
+      const bookRes = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -299,18 +299,35 @@ export default function WizardStep6({ locale = 'it' }: Props) {
           guestComments:    guestComments.trim() || undefined,
         }),
       });
-      const data = await res.json();
-      if (!res.ok || !data.ok) throw new Error(data.error ?? `HTTP ${res.status}`);
+      const bookData = await bookRes.json();
+      if (!bookRes.ok || !bookData.ok) throw new Error(bookData.error ?? `HTTP ${bookRes.status}`);
+
+      const bookId = bookData.bookId;
+
+      // Step 2 — Crea la Stripe Checkout Session tramite Beds24
+      const stripeRes = await fetch('/api/stripe-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bookingId:   bookId,
+          amount:      total,
+          offerId:     selectedOfferId,
+          locale,
+          description: `LivingApple · ${room?.name ?? ''} · ${checkIn} → ${checkOut}`,
+        }),
+      });
+      const stripeData = await stripeRes.json();
+      if (!stripeRes.ok || !stripeData.ok) throw new Error(stripeData.error ?? `HTTP ${stripeRes.status}`);
+
+      // Step 3 — Redirect a Stripe Checkout
       reset();
-      setBookId(data.bookId);
+      window.location.href = stripeData.url;
+
     } catch (e: any) {
       setError(e.message ?? 'Errore sconosciuto');
-    } finally {
       setSubmitting(false);
     }
   }
-
-  if (bookId) return <ConfirmScreen bookId={bookId} locale={locale} onReset={reset} />;
 
   // ── Sidebar content (riusato anche nel mobile accordion) ──────────────────
   const SidebarContent = () => (

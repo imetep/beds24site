@@ -1,55 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getToken } from '@/lib/beds24-token';
 
 const BASE_URL = 'https://beds24.com/api/v2';
 
-// Cache token in-memory (questo modulo vive lato server)
-let cachedToken: { token: string; expiresAt: number } | null = null;
-
-async function getToken(): Promise<string> {
-  if (cachedToken && Date.now() < cachedToken.expiresAt - 5 * 60 * 1000) {
-    return cachedToken.token;
-  }
-  const refreshToken = process.env.BEDS24_REFRESH_TOKEN;
-  if (!refreshToken) throw new Error('BEDS24_REFRESH_TOKEN non configurato');
-
-  const res = await fetch(`${BASE_URL}/authentication/token`, {
-    headers: { refreshToken },
-  });
-  if (!res.ok) throw new Error(`Beds24 auth error: ${res.status}`);
-  const data = await res.json();
-  cachedToken = {
-    token: data.token,
-    expiresAt: Date.now() + (data.expiresIn ?? 86400) * 1000,
-  };
-  return cachedToken.token;
-}
-
-/**
- * GET /api/offers
- *
- * Query params:
- *   roomId      singolo roomId  (modalità tariffa su room preselezionata)
- *   roomIds     roomId separati da virgola  (modalità lista rooms)
- *   arrival     YYYY-MM-DD  *obbligatorio
- *   departure   YYYY-MM-DD  *obbligatorio
- *   numAdults   integer (default 1)
- *   numChildren integer (default 0)
- *
- * Risposta Beds24 V2:
- * {
- *   data: [{
- *     roomId, propertyId,
- *     offers: [{ offerId, offerName, price, unitsAvailable }]
- *   }]
- * }
- */
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
 
-  const arrival     = searchParams.get('arrival')     ?? '';
-  const departure   = searchParams.get('departure')   ?? '';
-  const numAdults   = searchParams.get('numAdults')   ?? '1';
-  const numChildren = searchParams.get('numChildren') ?? '0';
+  const arrival      = searchParams.get('arrival')     ?? '';
+  const departure    = searchParams.get('departure')   ?? '';
+  const numAdults    = searchParams.get('numAdults')   ?? '1';
+  const numChildren  = searchParams.get('numChildren') ?? '0';
   const roomIdSingle = searchParams.get('roomId');
   const roomIdsMulti = searchParams.get('roomIds');
 
@@ -60,7 +20,6 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // Lista roomId da interrogare
   const roomIds: string[] = roomIdSingle
     ? [roomIdSingle]
     : (roomIdsMulti ?? '').split(',').map((s) => s.trim()).filter(Boolean);
@@ -75,7 +34,6 @@ export async function GET(req: NextRequest) {
   try {
     const token = await getToken();
 
-    // Beds24 accetta roomId ripetuto nella query string per più rooms
     const qs = new URLSearchParams();
     roomIds.forEach((id) => qs.append('roomId', id));
     qs.set('arrival', arrival);
@@ -85,6 +43,7 @@ export async function GET(req: NextRequest) {
 
     const res = await fetch(`${BASE_URL}/inventory/rooms/offers?${qs}`, {
       headers: { token, 'Content-Type': 'application/json' },
+      cache: 'no-store',
     });
 
     if (!res.ok) {
@@ -93,7 +52,6 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await res.json();
-    // Passa la risposta Beds24 as-is al client
     return NextResponse.json(data, {
       headers: { 'Cache-Control': 'no-store' },
     });
