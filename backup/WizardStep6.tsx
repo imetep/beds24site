@@ -249,12 +249,8 @@ export default function WizardStep6({ locale = 'it' }: Props) {
   const [payMode, setPayMode]       = useState<'full' | 'installments'>('full');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError]           = useState<string | null>(null);
-  const [voucherInput, setVoucherInput]   = useState(voucherCode);
-  const [summaryOpen, setSummaryOpen]     = useState(false);
-  const [discountedPrice, setDiscountedPrice] = useState<number | null>(null); // prezzo dopo voucher
-  const [voucherLoading, setVoucherLoading]   = useState(false);
-  const [voucherError, setVoucherError]       = useState<string | null>(null);
-  const [voucherApplied, setVoucherApplied]   = useState(false);
+  const [voucherInput, setVoucherInput] = useState(voucherCode);
+  const [summaryOpen, setSummaryOpen]   = useState(false); // mobile accordion
 
   // ── Dati calcolati ─────────────────────────────────────────────────────────
   const room = getRoomData(selectedRoomId);
@@ -273,49 +269,11 @@ export default function WizardStep6({ locale = 'it' }: Props) {
   const taxableNights = Math.min(nights, 10);
   const taxableAdults = Math.max(0, numAdult - numUnder12);
   const touristTax    = taxableNights * taxableAdults * 2;
-  const basePrice     = discountedPrice !== null ? discountedPrice : offerPrice;
-  const total         = basePrice + touristTax;
+  const total         = offerPrice + touristTax;
   const installment   = Math.round(total / 3);
 
   const formValid = guestFirstName.trim() && guestLastName.trim()
     && guestEmail.trim() && guestEmail.includes('@');
-
-  // ── Applica voucher ─────────────────────────────────────────────────────
-  async function handleApplyVoucher() {
-    const code = voucherInput.trim();
-    if (!code || !checkIn || !checkOut || !selectedRoomId) return;
-    setVoucherLoading(true);
-    setVoucherError(null);
-    setVoucherApplied(false);
-    try {
-      const qs = new URLSearchParams({
-        roomId:      String(selectedRoomId),
-        arrival:     checkIn,
-        departure:   checkOut,
-        numAdults:   String(numAdult),
-        numChildren: String(numChild),
-        voucherCode: code,
-      });
-      const res = await fetch(`/api/offers?${qs}`);
-      const data = await res.json();
-      // Trova il prezzo dell'offerta selezionata con il voucher applicato
-      const offerWithVoucher = (data?.data ?? [])
-        .flatMap((ro: any) => ro.offers ?? [])
-        .find((o: any) => o.offerId === selectedOfferId);
-      if (offerWithVoucher && offerWithVoucher.price < offerPrice) {
-        setDiscountedPrice(offerWithVoucher.price);
-        setVoucherCode(code);
-        setVoucherApplied(true);
-      } else {
-        setVoucherError('Codice non valido o non applicabile a questa offerta');
-        setDiscountedPrice(null);
-      }
-    } catch (e: any) {
-      setVoucherError('Errore verifica codice');
-    } finally {
-      setVoucherLoading(false);
-    }
-  }
 
   // ── Submit ────────────────────────────────────────────────────────────────
   async function handleConfirm() {
@@ -346,19 +304,13 @@ export default function WizardStep6({ locale = 'it' }: Props) {
 
       const bookId = bookData.bookId;
 
-      // Se Beds24 ha restituito il prezzo scontato (voucher applicato),
-      // usiamo quello + imposta di soggiorno. Altrimenti il total del frontend.
-      const stripeAmount = bookData.invoiceAmount !== null && bookData.invoiceAmount !== undefined
-        ? bookData.invoiceAmount + touristTax
-        : total;
-
       // Step 2 — Crea la Stripe Checkout Session tramite Beds24
       const stripeRes = await fetch('/api/stripe-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           bookingId:   bookId,
-          amount:      stripeAmount,
+          amount:      total,
           offerId:     selectedOfferId,
           locale,
           description: `LivingApple · ${room?.name ?? ''} · ${checkIn} → ${checkOut}`,
@@ -458,19 +410,12 @@ export default function WizardStep6({ locale = 'it' }: Props) {
           style={{ flex: 1, padding: '8px 10px', fontSize: 13, border: '1.5px solid #e5e7eb', borderRadius: 8, outline: 'none' }}
         />
         <button
-          onClick={handleApplyVoucher}
-          disabled={voucherLoading || !voucherInput.trim()}
-          style={{ padding: '8px 14px', borderRadius: 8, border: '1.5px solid #1E73BE', background: voucherApplied ? '#1E73BE' : '#fff', color: voucherApplied ? '#fff' : '#1E73BE', fontSize: 13, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', opacity: voucherLoading ? 0.6 : 1 }}
+          onClick={() => setVoucherCode(voucherInput.trim())}
+          style={{ padding: '8px 14px', borderRadius: 8, border: '1.5px solid #1E73BE', background: '#fff', color: '#1E73BE', fontSize: 13, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
         >
-          {voucherLoading ? '...' : voucherApplied ? '✓ Applicato' : t.voucherApply}
+          {t.voucherApply}
         </button>
       </div>
-      {voucherError && <p style={{ fontSize: 12, color: '#e74c3c', margin: '4px 0 0' }}>{voucherError}</p>}
-      {voucherApplied && discountedPrice !== null && (
-        <p style={{ fontSize: 12, color: '#27ae60', margin: '4px 0 0', fontWeight: 600 }}>
-          ✓ Sconto applicato! Prezzo: {fmt(discountedPrice)} (era {fmt(offerPrice)})
-        </p>
-      )}
 
       {/* Box consumi */}
       <div style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 10, padding: '12px 14px', marginBottom: 10 }}>

@@ -45,7 +45,6 @@ export async function POST(req: NextRequest) {
   try {
     const token = await getToken();
 
-    // Step 1 — Crea il booking
     const res = await fetch(`${BASE_URL}/bookings`, {
       method: 'POST',
       headers: { token, 'Content-Type': 'application/json' },
@@ -63,45 +62,10 @@ export async function POST(req: NextRequest) {
     }
 
     const data = JSON.parse(rawText);
-    // Beds24 V2 risponde con array: [{ success, new: { id } }]
+    // Beds24 V2 risponde con array: [{success, new: {id}}]
     const bookId = data?.[0]?.new?.id ?? data?.data?.[0]?.id ?? data?.bookId ?? data?.id;
-    console.log('[bookings] bookId estratto:', bookId);
-
-    if (!bookId) throw new Error('bookId non ricevuto da Beds24');
-
-    // Step 2 — Leggi la fattura reale per ottenere il prezzo scontato (voucher applicato)
-    let invoiceAmount: number | null = null;
-    try {
-      const invRes = await fetch(`${BASE_URL}/bookings/invoices?bookingId=${bookId}`, {
-        headers: { token },
-        cache: 'no-store',
-      });
-      if (invRes.ok) {
-        const invData = await invRes.json();
-        console.log('[bookings] Invoice response:', JSON.stringify(invData).slice(0, 400));
-
-        // Beds24 invoice: data[0].invoiceItems o data[0].balance o simile
-        const inv = invData?.data?.[0] ?? invData?.[0];
-        const balance =
-          inv?.balance       ??
-          inv?.invoiceBalance ??
-          inv?.total         ??
-          null;
-
-        if (balance !== null && balance !== undefined) {
-          invoiceAmount = Number(balance);
-          console.log('[bookings] Invoice balance (prezzo scontato):', invoiceAmount);
-        }
-      }
-    } catch (invErr: any) {
-      console.warn('[bookings] Invoice fetch fallito (non bloccante):', invErr.message);
-    }
-
-    return NextResponse.json({
-      ok: true,
-      bookId: Number(bookId),
-      invoiceAmount, // null se voucher non usato o invoice non disponibile
-    });
+    console.log('[bookings] bookId estratto:', bookId, 'da:', JSON.stringify(data).slice(0,200));
+    return NextResponse.json({ ok: true, bookId: Number(bookId) });
 
   } catch (err: any) {
     console.error('[API /bookings] Error:', err.message);
