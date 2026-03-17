@@ -36,6 +36,11 @@ export interface WizardState {
   guestArrivalTime: string;
   guestComments: string;
 
+  // Prenotazione pendente (creata in Step7, cancellata se si torna indietro)
+  pendingBookId: number | null;
+  invoiceAmount: number | null; // prezzo reale dopo voucher
+  discountedPrice: number | null; // prezzo scontato calcolato dal voucher-check
+
   // Navigazione
   currentStep: number;
 
@@ -52,6 +57,8 @@ export interface WizardState {
   setVoucherCode: (code: string) => void;
   setOffers: (offers: any[]) => void;
   setGuestField: (field: string, value: string) => void;
+  setPendingBooking: (bookId: number | null, invoiceAmount: number | null) => void;
+  setDiscountedPrice: (price: number | null) => void;
   setCurrentStep: (step: number) => void;
   nextStep: () => void;
   prevStep: () => void;
@@ -77,6 +84,9 @@ const initialState = {
   guestCountry: '',
   guestArrivalTime: '',
   guestComments: '',
+  pendingBookId: null,
+  invoiceAmount: null,
+  discountedPrice: null,
   currentStep: 1,
 };
 
@@ -98,10 +108,13 @@ export const useWizardStore = create<WizardState>((set) => ({
   setNumUnder12: (n) => set((state) => ({ numUnder12: Math.min(Math.max(0, n), state.numAdult) })),
   setSelectedOfferId: (id) => set({ selectedOfferId: id }),
   setVoucherCode: (code) => set({ voucherCode: code }),
+  setPendingBooking: (bookId, invoiceAmount) => set({ pendingBookId: bookId, invoiceAmount }),
+  setDiscountedPrice: (price) => set({ discountedPrice: price }),
+  // reset already clears pendingBookId via initialState
   setOffers: (offers) => set({ cachedOffers: offers }),
   setGuestField: (field, value) => set({ [field]: value } as any),
   setCurrentStep: (step) => set({ currentStep: step }),
-  nextStep: () => set((state) => ({ currentStep: Math.min(6, state.currentStep + 1) })),
+  nextStep: () => set((state) => ({ currentStep: Math.min(7, state.currentStep + 1) })),
   prevStep: () => set((state) => ({ currentStep: Math.max(1, state.currentStep - 1) })),
   reset: () => set(initialState),
 }));

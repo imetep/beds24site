@@ -17,10 +17,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Campi obbligatori mancanti: ${missing.join(', ')}` }, { status: 400 });
   }
 
-  // Beds24 V2: departure = ultima notte (checkOut - 1 giorno)
-  const checkOutDate = new Date(body.checkOut + 'T00:00:00');
-  checkOutDate.setDate(checkOutDate.getDate() - 1);
-  const departure = checkOutDate.toISOString().split('T')[0];
+  // Beds24 V2: departure = checkOut diretto (Beds24 gestisce internamente)
+  const departure = body.checkOut;
 
   const beds24Payload: Record<string, any> = {
     roomId:    Number(body.roomId),
@@ -38,9 +36,10 @@ export async function POST(req: NextRequest) {
   if (body.guestComments)    beds24Payload.notes       = body.guestComments.trim();
   if (body.guestArrivalTime) beds24Payload.arrivalTime = body.guestArrivalTime.trim();
   if (body.offerId)          beds24Payload.offerId     = Number(body.offerId);
-  if (body.voucherCode)      beds24Payload.voucherCode = body.voucherCode.trim();
+  if (body.voucherCode)      beds24Payload.voucher     = body.voucherCode.trim();
 
-  console.log('[API /bookings] Payload:', JSON.stringify(beds24Payload));
+  console.log('[API /bookings] Payload completo:', JSON.stringify(beds24Payload));
+  console.log('[API /bookings] voucherCode originale:', body.voucherCode);
 
   try {
     const token = await getToken();
@@ -72,29 +71,27 @@ export async function POST(req: NextRequest) {
     // Step 2 — Leggi la fattura reale per ottenere il prezzo scontato (voucher applicato)
     let invoiceAmount: number | null = null;
     try {
-      const invRes = await fetch(`${BASE_URL}/bookings/invoices?bookingId=${bookId}`, {
+      // Attendi che Beds24 calcoli il prezzo con il voucher
+      await new Promise(r => setTimeout(r, 2000));
+      const getRes = await fetch(`${BASE_URL}/bookings?bookingId=${bookId}`, {
         headers: { token },
         cache: 'no-store',
       });
-      if (invRes.ok) {
-        const invData = await invRes.json();
-        console.log('[bookings] Invoice response:', JSON.stringify(invData).slice(0, 400));
+      if (getRes.ok) {
+        const getData = await getRes.json();
+        const bk = getData?.data?.[0];
+        console.log('[bookings] TUTTI I CAMPI BK:', JSON.stringify(Object.keys(bk ?? {})));
+        console.log('[bookings] price/voucher/discount:', bk?.price, bk?.voucher, bk?.voucherDiscount, bk?.priceOverride, bk?.totalPrice, bk?.roomPrice, bk?.offerPrice);
 
-        // Beds24 invoice: data[0].invoiceItems o data[0].balance o simile
-        const inv = invData?.data?.[0] ?? invData?.[0];
-        const balance =
-          inv?.balance       ??
-          inv?.invoiceBalance ??
-          inv?.total         ??
-          null;
-
-        if (balance !== null && balance !== undefined) {
-          invoiceAmount = Number(balance);
-          console.log('[bookings] Invoice balance (prezzo scontato):', invoiceAmount);
+        // price = prezzo totale dal booking (include sconto voucher)
+        const price = bk?.price;
+        if (price !== null && price !== undefined && Number(price) > 0) {
+          invoiceAmount = Number(price);
+          console.log('[bookings] Prezzo reale:', invoiceAmount);
         }
       }
     } catch (invErr: any) {
-      console.warn('[bookings] Invoice fetch fallito (non bloccante):', invErr.message);
+      console.warn('[bookings] GET booking fallito:', invErr.message);
     }
 
     return NextResponse.json({

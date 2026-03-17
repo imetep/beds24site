@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWizardStore } from '@/store/wizard-store';
 import { PROPERTIES } from '@/config/properties';
 
@@ -243,18 +243,18 @@ export default function WizardStep6({ locale = 'it' }: Props) {
     voucherCode, setVoucherCode,
     guestFirstName, guestLastName, guestEmail,
     guestPhone, guestCountry, guestArrivalTime, guestComments,
-    setGuestField, setCurrentStep, prevStep, reset,
+    setGuestField, setCurrentStep, prevStep, nextStep, reset,
+    discountedPrice, setDiscountedPrice,
   } = useWizardStore();
 
   const [payMode, setPayMode]       = useState<'full' | 'installments'>('full');
-  const [submitting, setSubmitting] = useState(false);
   const [error, setError]           = useState<string | null>(null);
   const [voucherInput, setVoucherInput]   = useState(voucherCode);
-  const [summaryOpen, setSummaryOpen]     = useState(false);
-  const [discountedPrice, setDiscountedPrice] = useState<number | null>(null); // prezzo dopo voucher
-  const [voucherLoading, setVoucherLoading]   = useState(false);
+  const [summaryOpen, setSummaryOpen]     = useState(true); // aperto di default su mobile
+  // discountedPrice viene gestito dallo store
   const [voucherError, setVoucherError]       = useState<string | null>(null);
   const [voucherApplied, setVoucherApplied]   = useState(false);
+  const [coverUrl, setCoverUrl]               = useState<string | null>(null);
 
   // ── Dati calcolati ─────────────────────────────────────────────────────────
   const room = getRoomData(selectedRoomId);
@@ -280,129 +280,116 @@ export default function WizardStep6({ locale = 'it' }: Props) {
   const formValid = guestFirstName.trim() && guestLastName.trim()
     && guestEmail.trim() && guestEmail.includes('@');
 
+  // ── Carica foto cover ────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!room) return;
+    fetch('/api/cloudinary?covers=true')
+      .then(r => r.json())
+      .then(data => {
+        const url = data?.covers?.[room.cloudinaryFolder];
+        if (url) setCoverUrl(url);
+      })
+      .catch(() => {});
+  }, [room?.cloudinaryFolder]);
+
   // ── Applica voucher ─────────────────────────────────────────────────────
   async function handleApplyVoucher() {
     const code = voucherInput.trim();
-    if (!code || !checkIn || !checkOut || !selectedRoomId) return;
-    setVoucherLoading(true);
+    if (!code) return;
     setVoucherError(null);
     setVoucherApplied(false);
+    setDiscountedPrice(null);
     try {
-      const qs = new URLSearchParams({
-        roomId:      String(selectedRoomId),
-        arrival:     checkIn,
-        departure:   checkOut,
-        numAdults:   String(numAdult),
-        numChildren: String(numChild),
-        voucherCode: code,
-      });
-      const res = await fetch(`/api/offers?${qs}`);
+      const res = await fetch(`/api/voucher-check?code=${encodeURIComponent(code)}&price=${offerPrice}`);
       const data = await res.json();
-      // Trova il prezzo dell'offerta selezionata con il voucher applicato
-      const offerWithVoucher = (data?.data ?? [])
-        .flatMap((ro: any) => ro.offers ?? [])
-        .find((o: any) => o.offerId === selectedOfferId);
-      if (offerWithVoucher && offerWithVoucher.price < offerPrice) {
-        setDiscountedPrice(offerWithVoucher.price);
+      if (data.valid) {
         setVoucherCode(code);
+        setDiscountedPrice(data.discountedPrice);
         setVoucherApplied(true);
       } else {
-        setVoucherError('Codice non valido o non applicabile a questa offerta');
-        setDiscountedPrice(null);
+        setVoucherError('Codice non valido');
+        setVoucherCode('');
       }
-    } catch (e: any) {
+    } catch {
       setVoucherError('Errore verifica codice');
-    } finally {
-      setVoucherLoading(false);
     }
   }
 
   // ── Submit ────────────────────────────────────────────────────────────────
-  async function handleConfirm() {
-    if (!formValid || !selectedRoomId || !checkIn || !checkOut) return;
-    setSubmitting(true); setError(null);
-    try {
-      // Step 1 — Crea la prenotazione su Beds24
-      const bookRes = await fetch('/api/bookings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          roomId:           selectedRoomId,
-          checkIn, checkOut,
-          numAdult, numChild,
-          offerId:          selectedOfferId,
-          voucherCode:      voucherCode || undefined,
-          guestFirstName:   guestFirstName.trim(),
-          guestName:        guestLastName.trim(),
-          guestEmail:       guestEmail.trim(),
-          guestPhone:       guestPhone.trim() || undefined,
-          guestCountry:     guestCountry.trim() || undefined,
-          guestArrivalTime: guestArrivalTime.trim() || undefined,
-          guestComments:    guestComments.trim() || undefined,
-        }),
-      });
-      const bookData = await bookRes.json();
-      if (!bookRes.ok || !bookData.ok) throw new Error(bookData.error ?? `HTTP ${bookRes.status}`);
-
-      const bookId = bookData.bookId;
-
-      // Se Beds24 ha restituito il prezzo scontato (voucher applicato),
-      // usiamo quello + imposta di soggiorno. Altrimenti il total del frontend.
-      const stripeAmount = bookData.invoiceAmount !== null && bookData.invoiceAmount !== undefined
-        ? bookData.invoiceAmount + touristTax
-        : total;
-
-      // Step 2 — Crea la Stripe Checkout Session tramite Beds24
-      const stripeRes = await fetch('/api/stripe-session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bookingId:   bookId,
-          amount:      stripeAmount,
-          offerId:     selectedOfferId,
-          locale,
-          description: `LivingApple · ${room?.name ?? ''} · ${checkIn} → ${checkOut}`,
-        }),
-      });
-      const stripeData = await stripeRes.json();
-      if (!stripeRes.ok || !stripeData.ok) throw new Error(stripeData.error ?? `HTTP ${stripeRes.status}`);
-
-      // Step 3 — Redirect a Stripe Checkout
-      reset();
-      window.location.href = stripeData.url;
-
-    } catch (e: any) {
-      setError(e.message ?? 'Errore sconosciuto');
-      setSubmitting(false);
+  // ── Vai a Step 7 (Riepilogo finale) ─────────────────────────────────────
+  function handleVediRiepilogo() {
+    if (!formValid) return;
+    // Salva il voucher anche se l'utente non ha premuto "Applica"
+    if (voucherInput.trim()) {
+      setVoucherCode(voucherInput.trim());
     }
+    nextStep();
   }
 
+
   // ── Sidebar content (riusato anche nel mobile accordion) ──────────────────
+  const sideBasePrice = discountedPrice !== null ? discountedPrice : offerPrice;
+  const totalDisplay  = sideBasePrice + touristTax;
+
   const SidebarContent = () => (
     <div>
       {/* Foto + nome */}
       {room && (
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 16 }}>
-          <div style={{ width: 72, height: 72, borderRadius: 10, overflow: 'hidden', background: '#e5e7eb', flexShrink: 0 }}>
-            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28 }}>🏠</div>
-          </div>
-          <div>
-            <p style={{ fontSize: 15, fontWeight: 700, color: '#111', margin: '0 0 3px' }}>{room.name}</p>
+        <div style={{ borderRadius: 12, overflow: 'hidden', marginBottom: 16, position: 'relative' }}>
+          {coverUrl ? (
+            <img
+              src={coverUrl}
+              alt={room.name}
+              style={{ width: '100%', height: 160, objectFit: 'cover', display: 'block' }}
+            />
+          ) : (
+            <div style={{ width: '100%', height: 100, background: '#f0f4f8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40 }}>🏠</div>
+          )}
+          <div style={{ padding: '10px 4px 0' }}>
+            <p style={{ fontSize: 16, fontWeight: 700, color: '#111', margin: '0 0 2px' }}>{room.name}</p>
             <p style={{ fontSize: 12, color: '#888', margin: 0 }}>{room.type}</p>
           </div>
         </div>
       )}
 
-      <div style={divider} />
-
       {/* Politica cancellazione */}
       {cancelPolicy && (
         <>
+          <div style={divider} />
           <p style={sideLabel}>{t.cancelPolicy}</p>
           <p style={{ fontSize: 13, color: '#444', margin: '0 0 14px', lineHeight: 1.5 }}>{cancelPolicy}</p>
-          <div style={divider} />
         </>
       )}
+
+      <div style={divider} />
+
+      {/* Box consumi energetici */}
+      <div style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 10, padding: '12px 14px', marginBottom: 14 }}>
+        <p style={{ fontSize: 12, fontWeight: 700, color: '#374151', margin: '0 0 5px' }}>⚡ {t.energyTitle}</p>
+        <p style={{ fontSize: 12, color: '#666', margin: 0, lineHeight: 1.5 }}>{ENERGY_BOX[locale] ?? ENERGY_BOX.it}</p>
+      </div>
+
+      {/* Voucher */}
+      <p style={sideLabel}>{t.voucher}</p>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 6 }}>
+        <input
+          type="text"
+          value={voucherInput}
+          onChange={e => { setVoucherInput(e.target.value); if (voucherApplied) { setVoucherApplied(false); setDiscountedPrice(null); setVoucherCode(''); } }}
+          placeholder="es. ESTATE2026"
+          style={{ flex: 1, padding: '8px 10px', fontSize: 13, border: `1.5px solid ${voucherApplied ? '#16a34a' : '#e5e7eb'}`, borderRadius: 8, outline: 'none' }}
+        />
+        <button
+          onClick={handleApplyVoucher}
+          disabled={!voucherInput.trim()}
+          style={{ padding: '8px 14px', borderRadius: 8, border: `1.5px solid ${voucherApplied ? '#16a34a' : '#1E73BE'}`, background: voucherApplied ? '#16a34a' : '#fff', color: voucherApplied ? '#fff' : '#1E73BE', fontSize: 13, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
+        >
+          {voucherApplied ? '✓ Applicato' : t.voucherApply}
+        </button>
+      </div>
+      {voucherError && <p style={{ fontSize: 12, color: '#e74c3c', margin: '4px 0 8px' }}>{voucherError}</p>}
+
+      <div style={divider} />
 
       {/* Date + Modifica */}
       <SideRow
@@ -428,64 +415,54 @@ export default function WizardStep6({ locale = 'it' }: Props) {
       {offerPrice > 0 && perNight > 0 && (
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: '#444', marginBottom: 6 }}>
           <span>{nights} {nights === 1 ? t.night : t.nights} × {fmt(perNight)}</span>
-          <span>{fmt(offerPrice)}</span>
+          <span style={{ textDecoration: voucherApplied ? 'line-through' : 'none', color: voucherApplied ? '#aaa' : '#444' }}>
+            {fmt(offerPrice)}
+          </span>
         </div>
       )}
+
+      {/* Riga sconto voucher */}
+      {voucherApplied && discountedPrice !== null && (
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, marginBottom: 6, background: '#f0fdf4', borderRadius: 8, padding: '6px 8px', border: '1px solid #bbf7d0' }}>
+          <span style={{ color: '#16a34a', fontWeight: 600 }}>🏷️ Sconto ({voucherCode})</span>
+          <span style={{ color: '#16a34a', fontWeight: 700 }}>− {fmt(offerPrice - discountedPrice)}</span>
+        </div>
+      )}
+
       {touristTax > 0 && (
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: '#444', marginBottom: 6 }}>
           <span>{t.touristTax}</span>
           <span>{fmt(touristTax)}</span>
         </div>
       )}
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 16, fontWeight: 700, color: '#111', marginTop: 8, paddingTop: 8, borderTop: '1px solid #e5e7eb' }}>
-        <span>{t.total}</span>
-        <span style={{ color: '#1E73BE' }}>{fmt(total)}</span>
+
+      {/* Totale */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, paddingTop: 8, borderTop: '1px solid #e5e7eb' }}>
+        <span style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>{t.total}</span>
+        <div style={{ textAlign: 'right' }}>
+          {voucherApplied && discountedPrice !== null && (
+            <span style={{ fontSize: 13, color: '#aaa', textDecoration: 'line-through', marginRight: 8 }}>
+              {fmt(offerPrice + touristTax)}
+            </span>
+          )}
+          <span style={{ fontSize: 20, fontWeight: 800, color: '#1E73BE' }}>{fmt(totalDisplay)}</span>
+        </div>
       </div>
       {touristTax > 0 && (
         <p style={{ fontSize: 11, color: '#9ca3af', margin: '4px 0 0' }}>{t.touristTaxNote}</p>
       )}
 
-      <div style={divider} />
-
-      {/* Voucher */}
-      <p style={sideLabel}>{t.voucher}</p>
-      <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
-        <input
-          type="text"
-          value={voucherInput}
-          onChange={e => setVoucherInput(e.target.value)}
-          placeholder="es. ESTATE2026"
-          style={{ flex: 1, padding: '8px 10px', fontSize: 13, border: '1.5px solid #e5e7eb', borderRadius: 8, outline: 'none' }}
-        />
-        <button
-          onClick={handleApplyVoucher}
-          disabled={voucherLoading || !voucherInput.trim()}
-          style={{ padding: '8px 14px', borderRadius: 8, border: '1.5px solid #1E73BE', background: voucherApplied ? '#1E73BE' : '#fff', color: voucherApplied ? '#fff' : '#1E73BE', fontSize: 13, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', opacity: voucherLoading ? 0.6 : 1 }}
-        >
-          {voucherLoading ? '...' : voucherApplied ? '✓ Applicato' : t.voucherApply}
-        </button>
-      </div>
-      {voucherError && <p style={{ fontSize: 12, color: '#e74c3c', margin: '4px 0 0' }}>{voucherError}</p>}
-      {voucherApplied && discountedPrice !== null && (
-        <p style={{ fontSize: 12, color: '#27ae60', margin: '4px 0 0', fontWeight: 600 }}>
-          ✓ Sconto applicato! Prezzo: {fmt(discountedPrice)} (era {fmt(offerPrice)})
-        </p>
-      )}
-
-      {/* Box consumi */}
-      <div style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 10, padding: '12px 14px', marginBottom: 10 }}>
-        <p style={{ fontSize: 12, fontWeight: 700, color: '#374151', margin: '0 0 5px' }}>⚡ {t.energyTitle}</p>
-        <p style={{ fontSize: 12, color: '#666', margin: 0, lineHeight: 1.5 }}>{ENERGY_BOX[locale] ?? ENERGY_BOX.it}</p>
-      </div>
-
       {/* Box deposito cauzionale */}
       {depositAmount && (
-        <div style={{ background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 10, padding: '12px 14px' }}>
-          <p style={{ fontSize: 12, fontWeight: 700, color: '#374151', margin: '0 0 5px' }}>🔐 {t.depositTitle}</p>
-          <p style={{ fontSize: 12, color: '#666', margin: 0, lineHeight: 1.5 }}>
-            {(DEPOSIT_BOX[locale] ?? DEPOSIT_BOX.it)(depositAmount)}
-          </p>
-        </div>
+        <>
+          <div style={divider} />
+          <div style={{ background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 10, padding: '12px 14px' }}>
+            <p style={{ fontSize: 12, fontWeight: 700, color: '#374151', margin: '0 0 5px' }}>🔐 {t.depositTitle}</p>
+            <p style={{ fontSize: 12, color: '#666', margin: 0, lineHeight: 1.5 }}>
+              {(DEPOSIT_BOX[locale] ?? DEPOSIT_BOX.it)(depositAmount)}
+            </p>
+          </div>
+        </>
       )}
     </div>
   );
@@ -508,7 +485,7 @@ export default function WizardStep6({ locale = 'it' }: Props) {
               onClick={() => setSummaryOpen(o => !o)}
               style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px', background: '#f9fafb', border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 600, color: '#111' }}
             >
-              <span>{t.summaryTitle} — {fmt(total)}</span>
+              <span>{t.summaryTitle} — {fmt(totalDisplay)}</span>
               <span style={{ fontSize: 18, transition: 'transform 0.2s', transform: summaryOpen ? 'rotate(180deg)' : 'none' }}>›</span>
             </button>
             {summaryOpen && (
@@ -528,7 +505,7 @@ export default function WizardStep6({ locale = 'it' }: Props) {
               </div>
               <div>
                 <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: '#111' }}>{t.payFull}</p>
-                <p style={{ margin: '2px 0 0', fontSize: 13, color: '#888' }}>{fmt(total)}</p>
+                <p style={{ margin: '2px 0 0', fontSize: 13, color: '#888' }}>{fmt(totalDisplay)}</p>
               </div>
             </label>
 
@@ -583,18 +560,18 @@ export default function WizardStep6({ locale = 'it' }: Props) {
 
           {/* CTA */}
           <button
-            onClick={handleConfirm}
-            disabled={!formValid || submitting}
+            onClick={handleVediRiepilogo}
+            disabled={!formValid}
             style={{
               width: '100%', padding: '16px', borderRadius: 12, border: 'none',
               fontSize: 17, fontWeight: 800, marginBottom: 10,
-              background: formValid && !submitting ? '#FCAF1A' : '#e0e0e0',
-              color: formValid && !submitting ? '#fff' : '#999',
-              cursor: formValid && !submitting ? 'pointer' : 'not-allowed',
+              background: formValid ? '#FCAF1A' : '#e0e0e0',
+              color: formValid ? '#fff' : '#999',
+              cursor: formValid ? 'pointer' : 'not-allowed',
               transition: 'background 0.15s',
             }}
           >
-            {submitting ? t.loading : `${t.confirm} · ${fmt(total)}`}
+            {`Vedi riepilogo finale →`}
           </button>
 
           <p style={{ fontSize: 12, color: '#aaa', textAlign: 'center', margin: '0 0 12px' }}>

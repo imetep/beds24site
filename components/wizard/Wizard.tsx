@@ -11,6 +11,7 @@ import WizardStep3 from './WizardStep3';
 import WizardStep4 from './WizardStep4';
 import WizardStep5 from './WizardStep5';
 import WizardStep6 from './WizardStep6';
+import WizardStep7 from './WizardStep7';
 
 interface Props {
   translations: any;
@@ -40,7 +41,7 @@ export default function Wizard({ translations: t, locale }: Props) {
 
   const effectiveRoomId = roomIdFromUrl ?? selectedRoomId;
   const skipStep3  = !!effectiveRoomId;
-  const totalSteps = skipStep3 ? 5 : 6;
+  const totalSteps = skipStep3 ? 6 : 7;
 
   /**
    * Mappa currentStep (1..6 nello store) → logicalStep (numero dello Step da renderizzare)
@@ -58,10 +59,11 @@ export default function Wizard({ translations: t, locale }: Props) {
     const clamped = Math.min(currentStep, totalSteps);
     // Con skip: da step 3 in poi shifta +1 per saltare S3
     return clamped >= 3 ? clamped + 1 : clamped;
+    // Nota: step 7 (riepilogo) è sempre l'ultimo
   }
   const logicalStep = getLogicalStep();
 
-  const showSidebar = logicalStep < 6; // nascondi sidebar su Step6 (conferma)
+  const showSidebar = logicalStep < 6; // nascondi sidebar su Step6 e Step7
 
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto', padding: '1.25rem 1.25rem 2rem' }}>
@@ -76,13 +78,14 @@ export default function Wizard({ translations: t, locale }: Props) {
       <div style={{ display: 'flex', gap: 0, alignItems: 'flex-start' }}>
 
         {/* Colonna form — Step6 occupa tutta la larghezza (ha il suo layout 2 colonne interno) */}
-        <div style={{ flex: 1, minWidth: 0, maxWidth: logicalStep === 6 ? 'none' : 680 }}>
+        <div style={{ flex: 1, minWidth: 0, maxWidth: (logicalStep === 6 || logicalStep === 7) ? 'none' : 680 }}>
           {logicalStep === 1 && <WizardStep1 translations={t.wizard} locale={locale} roomId={effectiveRoomId} />}
           {logicalStep === 2 && <WizardStep2 translations={t.wizard} locale={locale} roomId={effectiveRoomId} />}
           {logicalStep === 3 && <WizardStep3 locale={locale} />}
           {logicalStep === 4 && <WizardStep4 locale={locale} />}
           {logicalStep === 5 && <WizardStep5 locale={locale} roomId={effectiveRoomId} />}
           {logicalStep === 6 && <WizardStep6 locale={locale} />}
+          {logicalStep === 7 && <WizardStep7 locale={locale} />}
         </div>
 
         {/* Sidebar destra — solo desktop, solo step 1-5 */}

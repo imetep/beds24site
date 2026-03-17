@@ -17,7 +17,7 @@ export default function WizardBottomBar({ locale = 'it' }: Props) {
   const { selectedRoomId, checkIn, checkOut, selectedOfferId, cachedOffers, currentStep } = useWizardStore();
 
   // Non mostrare al primo step o all'ultimo (step 6 ha già il suo bottone)
-  if (currentStep === 1 || currentStep === 6) return null;
+  if (currentStep === 1 || currentStep === 6 || currentStep === 7) return null;
 
   const room = selectedRoomId
     ? PROPERTIES.flatMap(p => p.rooms).find(r => r.roomId === selectedRoomId)
