@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import type { PoolType } from '@/config/properties';
 
+export type PaymentMethod = 'stripe' | 'paypal';
+
 export interface WizardState {
   // Step 1 — Quante persone?
   numAdult: number;
@@ -27,6 +29,7 @@ export interface WizardState {
 
   // Step 6 — Riepilogo
   selectedOfferId: number | null;
+  paymentMethod: PaymentMethod;   // ← NUOVO: 'stripe' | 'paypal'
   voucherCode: string;
   guestFirstName: string;
   guestLastName: string;
@@ -54,6 +57,7 @@ export interface WizardState {
   toggleExtra: (id: string) => void;
   setNumUnder12: (n: number) => void;
   setSelectedOfferId: (id: number | null) => void;
+  setPaymentMethod: (method: PaymentMethod) => void;  // ← NUOVO
   setVoucherCode: (code: string) => void;
   setOffers: (offers: any[]) => void;
   setGuestField: (field: string, value: string) => void;
@@ -76,6 +80,7 @@ const initialState = {
   numUnder12: 0,
   cachedOffers: [],
   selectedOfferId: null,
+  paymentMethod: 'stripe' as PaymentMethod,  // ← NUOVO: default Stripe
   voucherCode: '',
   guestFirstName: '',
   guestLastName: '',
@@ -107,10 +112,10 @@ export const useWizardStore = create<WizardState>((set) => ({
     })),
   setNumUnder12: (n) => set((state) => ({ numUnder12: Math.min(Math.max(0, n), state.numAdult) })),
   setSelectedOfferId: (id) => set({ selectedOfferId: id }),
+  setPaymentMethod: (method) => set({ paymentMethod: method }),  // ← NUOVO
   setVoucherCode: (code) => set({ voucherCode: code }),
   setPendingBooking: (bookId, invoiceAmount) => set({ pendingBookId: bookId, invoiceAmount }),
   setDiscountedPrice: (price) => set({ discountedPrice: price }),
-  // reset already clears pendingBookId via initialState
   setOffers: (offers) => set({ cachedOffers: offers }),
   setGuestField: (field, value) => set({ [field]: value } as any),
   setCurrentStep: (step) => set({ currentStep: step }),

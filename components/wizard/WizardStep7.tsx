@@ -50,13 +50,16 @@ const UI: Record<string, Record<string, string>> = {
     country:       'Paese',
     arrival:       'Ora arrivo',
     notes:         'Richieste speciali',
-    payBtn:        'Conferma e paga',
+    payBtn:        'Conferma e paga con Carta',
+    payBtnPaypal:  'Paga con PayPal',
     paying:        'Reindirizzamento al pagamento...',
+    payingPaypal:  'Elaborazione PayPal...',
     back:          '← Modifica dati',
     errTitle:      'Errore',
     errBack:       'Torna indietro e riprova',
     perNight:      '/notte',
     voucher:       'Codice sconto',
+    paypalLoading: 'Caricamento PayPal...',
   },
   en: {
     loadingTitle:  'Checking availability...',
@@ -85,13 +88,16 @@ const UI: Record<string, Record<string, string>> = {
     country:       'Country',
     arrival:       'Arrival time',
     notes:         'Special requests',
-    payBtn:        'Confirm and pay',
+    payBtn:        'Confirm and pay by Card',
+    payBtnPaypal:  'Pay with PayPal',
     paying:        'Redirecting to payment...',
+    payingPaypal:  'Processing PayPal...',
     back:          '← Edit details',
     errTitle:      'Error',
     errBack:       'Go back and try again',
     perNight:      '/night',
     voucher:       'Discount code',
+    paypalLoading: 'Loading PayPal...',
   },
   de: {
     loadingTitle:  'Verfügbarkeit wird geprüft...',
@@ -120,13 +126,16 @@ const UI: Record<string, Record<string, string>> = {
     country:       'Land',
     arrival:       'Ankunftszeit',
     notes:         'Besondere Wünsche',
-    payBtn:        'Bestätigen und bezahlen',
+    payBtn:        'Bestätigen und mit Karte bezahlen',
+    payBtnPaypal:  'Mit PayPal bezahlen',
     paying:        'Weiterleitung zur Zahlung...',
+    payingPaypal:  'PayPal wird verarbeitet...',
     back:          '← Daten bearbeiten',
     errTitle:      'Fehler',
     errBack:       'Zurück und erneut versuchen',
     perNight:      '/Nacht',
     voucher:       'Rabattcode',
+    paypalLoading: 'PayPal wird geladen...',
   },
   pl: {
     loadingTitle:  'Sprawdzamy dostępność...',
@@ -155,13 +164,16 @@ const UI: Record<string, Record<string, string>> = {
     country:       'Kraj',
     arrival:       'Godzina przyjazdu',
     notes:         'Specjalne życzenia',
-    payBtn:        'Potwierdź i zapłać',
+    payBtn:        'Potwierdź i zapłać kartą',
+    payBtnPaypal:  'Zapłać przez PayPal',
     paying:        'Przekierowanie do płatności...',
+    payingPaypal:  'Przetwarzanie PayPal...',
     back:          '← Edytuj dane',
     errTitle:      'Błąd',
     errBack:       'Wróć i spróbuj ponownie',
     perNight:      '/noc',
     voucher:       'Kod rabatowy',
+    paypalLoading: 'Ładowanie PayPal...',
   },
 };
 
@@ -201,6 +213,7 @@ export default function WizardStep7({ locale = 'it' }: Props) {
     selectedRoomId, selectedOfferId,
     cachedOffers,
     voucherCode,
+    paymentMethod,       // ← leggiamo dal store
     guestFirstName, guestLastName, guestEmail,
     guestPhone, guestCountry, guestArrivalTime, guestComments,
     pendingBookId, invoiceAmount,
@@ -209,10 +222,15 @@ export default function WizardStep7({ locale = 'it' }: Props) {
     prevStep, reset,
   } = useWizardStore();
 
-  // Tre stati: 'loading' | 'ready' | 'error' | 'paying'
-  const [phase, setPhase]   = useState<'loading' | 'ready' | 'error' | 'paying'>('loading');
-  const [error, setError]   = useState<string | null>(null);
-  const createdRef          = useRef(false); // evita doppia chiamata in StrictMode
+  // Tre stati principali: 'loading' | 'ready' | 'error' | 'paying'
+  const [phase, setPhase]         = useState<'loading' | 'ready' | 'error' | 'paying'>('loading');
+  const [error, setError]         = useState<string | null>(null);
+  const createdRef                = useRef(false); // evita doppia chiamata in StrictMode
+
+  // PayPal SDK
+  const [paypalReady, setPaypalReady]   = useState(false);
+  const paypalContainerRef              = useRef<HTMLDivElement>(null);
+  const paypalButtonsRendered           = useRef(false); // evita doppio render dei bottoni
 
   const room   = getRoomData(selectedRoomId);
   const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
@@ -228,7 +246,6 @@ export default function WizardStep7({ locale = 'it' }: Props) {
   const offerName      = OFFER_NAMES[selectedOfferId ?? 0]?.[loc] ?? offer?.offerName ?? '';
   const cancelPolicy   = CANCEL_POLICY[selectedOfferId ?? 0]?.[loc] ?? '';
 
-  // Prezzo reale: usa discountedPrice (calcolato da voucher-check) o offerPrice
   const realPrice      = discountedPrice !== null ? discountedPrice : offerPrice;
   const hasDiscount    = discountedPrice !== null && discountedPrice < offerPrice;
   const discountAmount = hasDiscount ? offerPrice - discountedPrice! : 0;
@@ -237,7 +254,6 @@ export default function WizardStep7({ locale = 'it' }: Props) {
   // ── Crea booking all'entrata nello step ───────────────────────────────────
   useEffect(() => {
     if (createdRef.current) return;
-    // Se abbiamo già un booking pendente valido, mostriamo direttamente
     if (pendingBookId) { setPhase('ready'); return; }
     createdRef.current = true;
     createBooking();
@@ -272,7 +288,6 @@ export default function WizardStep7({ locale = 'it' }: Props) {
       const bookData = await bookRes.json();
       if (!bookRes.ok || !bookData.ok) throw new Error(bookData.error ?? `HTTP ${bookRes.status}`);
 
-      // Salva il booking pendente nello store
       setPendingBooking(bookData.bookId, bookData.invoiceAmount ?? null);
       setPhase('ready');
 
@@ -282,22 +297,126 @@ export default function WizardStep7({ locale = 'it' }: Props) {
     }
   }
 
+  // ── Carica PayPal SDK dinamicamente (solo se paymentMethod === 'paypal') ──
+  useEffect(() => {
+    if (paymentMethod !== 'paypal') return;
+    // Evita di caricare lo script due volte
+    if (document.getElementById('paypal-sdk-script')) {
+      setPaypalReady(true);
+      return;
+    }
+    const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
+    if (!clientId) {
+      console.error('[PayPal] NEXT_PUBLIC_PAYPAL_CLIENT_ID non configurato');
+      return;
+    }
+    const script = document.createElement('script');
+    script.id = 'paypal-sdk-script';
+    script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=EUR&intent=capture`;
+    script.onload = () => setPaypalReady(true);
+    script.onerror = () => setError('Impossibile caricare PayPal. Riprova o usa la carta.');
+    document.head.appendChild(script);
+  }, [paymentMethod]);
+
+  // ── Renderizza i bottoni PayPal quando SDK pronto + booking creato ─────────
+  useEffect(() => {
+    if (!paypalReady) return;
+    if (phase !== 'ready') return;
+    if (!pendingBookId) return;
+    if (paypalButtonsRendered.current) return;
+    if (!paypalContainerRef.current) return;
+
+    const paypal = (window as any).paypal;
+    if (!paypal) return;
+
+    paypalButtonsRendered.current = true;
+
+    paypal.Buttons({
+      style: {
+        layout: 'vertical',
+        color:  'blue',
+        shape:  'rect',
+        label:  'paypal',
+        height: 50,
+      },
+
+      // Crea ordine PayPal sul nostro server
+      createOrder: async () => {
+        const res = await fetch('/api/paypal-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount:      total,
+            bookingId:   pendingBookId,
+            description: `LivingApple · ${room?.name ?? ''} · ${checkIn} → ${checkOut}`,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.orderID) {
+          throw new Error(data.error ?? 'Errore creazione ordine PayPal');
+        }
+        return data.orderID;
+      },
+
+      // Guest ha approvato — cattura il pagamento
+      onApprove: async (data: { orderID: string }) => {
+        setPhase('paying');
+        try {
+          const res = await fetch('/api/paypal-capture', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              orderID:   data.orderID,
+              bookingId: pendingBookId,
+            }),
+          });
+          const result = await res.json();
+          if (!res.ok || !result.ok) throw new Error(result.error ?? 'Errore cattura PayPal');
+
+          // Successo: redirect alla pagina di conferma
+          reset();
+          const origin = window.location.origin;
+          window.location.href = `${origin}/${locale}/prenota/successo?bookingId=${pendingBookId}&paypal=1`;
+
+        } catch (e: any) {
+          setError(e.message ?? 'Errore PayPal');
+          setPhase('ready');
+          paypalButtonsRendered.current = false; // consente re-render dei bottoni
+        }
+      },
+
+      // Errore PayPal (es. popup chiuso, errore di rete)
+      onError: (err: any) => {
+        console.error('[PayPal] onError:', err);
+        setError('Errore PayPal. Riprova o usa la carta.');
+        setPhase('ready');
+        paypalButtonsRendered.current = false;
+      },
+
+      // Guest ha chiuso il popup senza pagare — non è un errore, non fare nulla
+      onCancel: () => {
+        paypalButtonsRendered.current = false;
+      },
+
+    }).render(paypalContainerRef.current);
+
+  }, [paypalReady, phase, pendingBookId, total]);
+
   // ── Torna indietro — cancella il booking pendente ─────────────────────────
   async function handleBack() {
     if (pendingBookId) {
-      // Cancella il booking in background (non blocchiamo l'UI)
       fetch('/api/bookings/cancel', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ bookingId: pendingBookId }),
-      }).catch(() => {}); // silenzioso
+      }).catch(() => {});
       setPendingBooking(null, null);
     }
     prevStep();
   }
 
-  // ── Paga ──────────────────────────────────────────────────────────────────
-  async function handlePaga() {
+  // ── Paga con Stripe ───────────────────────────────────────────────────────
+  async function handlePagaStripe() {
     if (!pendingBookId) return;
     setPhase('paying');
     try {
@@ -320,11 +439,11 @@ export default function WizardStep7({ locale = 'it' }: Props) {
 
     } catch (e: any) {
       setError(e.message ?? 'Errore sconosciuto');
-      setPhase('ready'); // torna a ready per mostrare l'errore
+      setPhase('ready');
     }
   }
 
-  // ── Loading ────────────────────────────────────────────────────────────────
+  // ── Loading (creazione booking) ────────────────────────────────────────────
   if (phase === 'loading') {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '40vh' }}>
@@ -340,7 +459,7 @@ export default function WizardStep7({ locale = 'it' }: Props) {
     );
   }
 
-  // ── Errore ─────────────────────────────────────────────────────────────────
+  // ── Errore (creazione booking fallita) ─────────────────────────────────────
   if (phase === 'error') {
     return (
       <div style={{ maxWidth: 480, margin: '60px auto', textAlign: 'center', fontFamily: 'sans-serif', padding: '0 16px' }}>
@@ -428,7 +547,7 @@ export default function WizardStep7({ locale = 'it' }: Props) {
         {guestComments    && <Row label={t.notes}   value={guestComments} />}
       </div>
 
-      {/* Errore pagamento */}
+      {/* Errore pagamento (mostrato in fase 'ready' dopo un tentativo fallito) */}
       {error && phase === 'ready' && (
         <div style={{ background: '#fff5f5', border: '1px solid #f5c6cb', borderRadius: 10, padding: '12px 16px', marginBottom: 16 }}>
           <p style={{ margin: 0, color: '#c0392b', fontWeight: 600, fontSize: 14 }}>{t.errTitle}</p>
@@ -436,26 +555,59 @@ export default function WizardStep7({ locale = 'it' }: Props) {
         </div>
       )}
 
-      {/* CTA */}
-      <button
-        onClick={handlePaga}
-        disabled={phase === 'paying'}
-        style={{
-          width: '100%', padding: '18px', borderRadius: 14, border: 'none',
-          fontSize: 18, fontWeight: 900, marginBottom: 12,
-          background: phase === 'paying' ? '#e0e0e0' : '#FCAF1A',
-          color: phase === 'paying' ? '#999' : '#fff',
-          cursor: phase === 'paying' ? 'not-allowed' : 'pointer',
-          transition: 'all 0.15s',
-          boxShadow: phase === 'paying' ? 'none' : '0 4px 14px rgba(252,175,26,0.4)',
-          letterSpacing: '0.02em',
-        }}
-      >
-        {phase === 'paying'
-          ? `⏳ ${t.paying}`
-          : `💳 ${t.payBtn} · ${fmt(total)}`
-        }
-      </button>
+      {/* ── CTA: Stripe o PayPal ── */}
+      {paymentMethod === 'stripe' ? (
+        // ── Bottone Stripe (comportamento invariato) ──
+        <button
+          onClick={handlePagaStripe}
+          disabled={phase === 'paying'}
+          style={{
+            width: '100%', padding: '18px', borderRadius: 14, border: 'none',
+            fontSize: 18, fontWeight: 900, marginBottom: 12,
+            background: phase === 'paying' ? '#e0e0e0' : '#FCAF1A',
+            color: phase === 'paying' ? '#999' : '#fff',
+            cursor: phase === 'paying' ? 'not-allowed' : 'pointer',
+            transition: 'all 0.15s',
+            boxShadow: phase === 'paying' ? 'none' : '0 4px 14px rgba(252,175,26,0.4)',
+            letterSpacing: '0.02em',
+          }}
+        >
+          {phase === 'paying'
+            ? `⏳ ${t.paying}`
+            : `💳 ${t.payBtn} · ${fmt(total)}`
+          }
+        </button>
+      ) : (
+        // ── Bottone PayPal (SDK dinamico) ──
+        <div style={{ marginBottom: 12 }}>
+          {/* Mostra spinner mentre SDK carica */}
+          {!paypalReady && (
+            <div style={{
+              width: '100%', padding: '18px', borderRadius: 14,
+              background: '#f0f4f8', textAlign: 'center',
+              fontSize: 14, color: '#888',
+            }}>
+              ⏳ {t.paypalLoading}
+            </div>
+          )}
+          {/* Div dove PayPal SDK monta i suoi bottoni */}
+          <div
+            ref={paypalContainerRef}
+            id="paypal-button-container"
+            style={{ display: paypalReady && phase !== 'paying' ? 'block' : 'none' }}
+          />
+          {/* Spinner durante la cattura del pagamento */}
+          {phase === 'paying' && (
+            <div style={{
+              width: '100%', padding: '18px', borderRadius: 14,
+              background: '#e0e0e0', textAlign: 'center',
+              fontSize: 14, color: '#999', fontWeight: 600,
+            }}>
+              ⏳ {t.payingPaypal}
+            </div>
+          )}
+        </div>
+      )}
 
       <button
         onClick={handleBack}

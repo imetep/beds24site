@@ -34,7 +34,7 @@ const CANCEL_POLICY: Record<number, Record<string,string>> = {
   3: { it:'Cancellazione gratuita fino a 60 giorni prima dell\'arrivo.',       en:'Free cancellation up to 60 days before arrival.',         de:'Kostenlose Stornierung bis 60 Tage vor Ankunft.',         pl:'Bezpłatne anulowanie do 60 dni przed przyjazdem.' },
   4: { it:'Cancellazione gratuita fino a 45 giorni prima dell\'arrivo.',       en:'Free cancellation up to 45 days before arrival.',         de:'Kostenlose Stornierung bis 45 Tage vor Ankunft.',         pl:'Bezpłatne anulowanie do 45 dni przed przyjazdem.' },
   5: { it:'Cancellazione gratuita fino a 30 giorni prima dell\'arrivo.',       en:'Free cancellation up to 30 days before arrival.',         de:'Kostenlose Stornierung bis 30 Tage vor Ankunft.',         pl:'Bezpłatne anulowanie do 30 dni przed przyjazdem.' },
-  6: { it:'Cancellazione gratuita fino a 5 giorni prima dell\'arrivo.',        en:'Free cancellation up to 5 days before arrival.',          de:'Kostenlose Stornierung bis 5 Tage vor Ankunft.',          pl:'Bezpłatne anulowanie do 5 dni przed przyjazdem.' },
+  6: { it:'Cancellazione gratuita fino a 5 giorni prima dell\'arrivo.',        en:'Free cancellation up to 5 days before arrival.',          de:'Kostenlose Stornierung bis 5 Tage vor Ankunft.',          pl:'Bezpłatne anulowanie do 5 dni przed prijazdem.' },
 };
 
 const UI: Record<string, Record<string, string>> = {
@@ -71,6 +71,7 @@ const UI: Record<string, Record<string, string>> = {
     successSub: 'Riceverai una email di conferma a breve. Numero prenotazione:',
     successBack: 'Torna alle Residenze',
     summaryTitle: 'Il tuo soggiorno',
+    paypalFlexNote: 'Con PayPal il pagamento viene addebitato subito.',
   },
   en: {
     title: 'Confirm and pay',
@@ -105,6 +106,7 @@ const UI: Record<string, Record<string, string>> = {
     successSub: 'You will receive a confirmation email shortly. Booking number:',
     successBack: 'Back to Residences',
     summaryTitle: 'Your stay',
+    paypalFlexNote: 'With PayPal, payment is charged immediately.',
   },
   de: {
     title: 'Bestätigen und bezahlen',
@@ -139,6 +141,7 @@ const UI: Record<string, Record<string, string>> = {
     successSub: 'Sie erhalten in Kürze eine Bestätigungs-E-Mail. Buchungsnummer:',
     successBack: 'Zurück zu Residenzen',
     summaryTitle: 'Ihr Aufenthalt',
+    paypalFlexNote: 'Bei PayPal wird der Betrag sofort belastet.',
   },
   pl: {
     title: 'Potwierdź i zapłać',
@@ -173,6 +176,7 @@ const UI: Record<string, Record<string, string>> = {
     successSub: 'Wkrótce otrzymasz e-mail z potwierdzeniem. Numer rezerwacji:',
     successBack: 'Powrót do Rezydencji',
     summaryTitle: 'Twój pobyt',
+    paypalFlexNote: 'W przypadku PayPal płatność jest naliczana natychmiast.',
   },
 };
 const PAY_INSTALL_NOTE: Record<string, (n: number) => string> = {
@@ -182,6 +186,8 @@ const PAY_INSTALL_NOTE: Record<string, (n: number) => string> = {
   pl: (n) => `3 raty po €${n} · bez odsetek · przez PayPal`,
 };
 
+// Offerte Flex (3-6): con PayPal il pagamento è immediato — avvisa l'utente
+const FLEX_OFFER_IDS = [3, 4, 5, 6];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function getRoomData(roomId: number | null) {
@@ -240,6 +246,7 @@ export default function WizardStep6({ locale = 'it' }: Props) {
     checkIn, checkOut,
     selectedRoomId, selectedOfferId,
     cachedOffers,
+    paymentMethod, setPaymentMethod,   // ← da store (non più local state)
     voucherCode, setVoucherCode,
     guestFirstName, guestLastName, guestEmail,
     guestPhone, guestCountry, guestArrivalTime, guestComments,
@@ -247,14 +254,12 @@ export default function WizardStep6({ locale = 'it' }: Props) {
     discountedPrice, setDiscountedPrice,
   } = useWizardStore();
 
-  const [payMode, setPayMode]       = useState<'full' | 'installments'>('full');
-  const [error, setError]           = useState<string | null>(null);
-  const [voucherInput, setVoucherInput]   = useState(voucherCode);
-  const [summaryOpen, setSummaryOpen]     = useState(true); // aperto di default su mobile
-  // discountedPrice viene gestito dallo store
-  const [voucherError, setVoucherError]       = useState<string | null>(null);
-  const [voucherApplied, setVoucherApplied]   = useState(false);
-  const [coverUrl, setCoverUrl]               = useState<string | null>(null);
+  const [error, setError]                     = useState<string | null>(null);
+  const [voucherInput, setVoucherInput]        = useState(voucherCode);
+  const [summaryOpen, setSummaryOpen]          = useState(true);
+  const [voucherError, setVoucherError]        = useState<string | null>(null);
+  const [voucherApplied, setVoucherApplied]    = useState(false);
+  const [coverUrl, setCoverUrl]                = useState<string | null>(null);
 
   // ── Dati calcolati ─────────────────────────────────────────────────────────
   const room = getRoomData(selectedRoomId);
@@ -265,7 +270,6 @@ export default function WizardStep6({ locale = 'it' }: Props) {
   const offerPrice: number = offer?.price ?? 0;
   const offerName = OFFER_NAMES[selectedOfferId ?? 0]?.[loc] ?? offer?.offerName ?? '';
   const cancelPolicy = CANCEL_POLICY[selectedOfferId ?? 0]?.[loc] ?? '';
-  // Deposito cauzionale: prima da Beds24 CUSTOMSTAYFEE, poi da config properties
   const depositFromOffer = parseDeposit(offer?.offerDescription ?? offer?.description ?? '');
   const depositAmount = depositFromOffer ?? room?.securityDeposit ?? null;
   const perNight = nights > 0 && offerPrice > 0 ? Math.round(offerPrice / nights) : 0;
@@ -276,6 +280,10 @@ export default function WizardStep6({ locale = 'it' }: Props) {
   const basePrice     = discountedPrice !== null ? discountedPrice : offerPrice;
   const total         = basePrice + touristTax;
   const installment   = Math.round(total / 3);
+
+  // Avviso PayPal per offerte Flex: il pagamento è immediato
+  const isFlexOffer = selectedOfferId !== null && FLEX_OFFER_IDS.includes(selectedOfferId);
+  const showPaypalFlexWarning = paymentMethod === 'paypal' && isFlexOffer;
 
   const formValid = guestFirstName.trim() && guestLastName.trim()
     && guestEmail.trim() && guestEmail.includes('@');
@@ -315,19 +323,16 @@ export default function WizardStep6({ locale = 'it' }: Props) {
     }
   }
 
-  // ── Submit ────────────────────────────────────────────────────────────────
-  // ── Vai a Step 7 (Riepilogo finale) ─────────────────────────────────────
+  // ── Vai a Step 7 ─────────────────────────────────────────────────────────
   function handleVediRiepilogo() {
     if (!formValid) return;
-    // Salva il voucher anche se l'utente non ha premuto "Applica"
     if (voucherInput.trim()) {
       setVoucherCode(voucherInput.trim());
     }
     nextStep();
   }
 
-
-  // ── Sidebar content (riusato anche nel mobile accordion) ──────────────────
+  // ── Sidebar content ──────────────────────────────────────────────────────
   const sideBasePrice = discountedPrice !== null ? discountedPrice : offerPrice;
   const totalDisplay  = sideBasePrice + touristTax;
 
@@ -495,13 +500,14 @@ export default function WizardStep6({ locale = 'it' }: Props) {
             )}
           </div>
 
-          {/* Sezione 1: Pagamento */}
+          {/* Sezione 1: Pagamento — usa paymentMethod dallo store */}
           <div style={sectionCard}>
             <p style={sectionTitle}>{t.sec1title}</p>
 
-            <label style={radioRow(payMode === 'full')} onClick={() => setPayMode('full')}>
-              <div style={radioOuter(payMode === 'full')}>
-                {payMode === 'full' && <div style={radioInner} />}
+            {/* Opzione Stripe */}
+            <label style={radioRow(paymentMethod === 'stripe')} onClick={() => setPaymentMethod('stripe')}>
+              <div style={radioOuter(paymentMethod === 'stripe')}>
+                {paymentMethod === 'stripe' && <div style={radioInner} />}
               </div>
               <div>
                 <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: '#111' }}>{t.payFull}</p>
@@ -509,21 +515,28 @@ export default function WizardStep6({ locale = 'it' }: Props) {
               </div>
             </label>
 
-            <label style={radioRow(payMode === 'installments')} onClick={() => setPayMode('installments')}>
-              <div style={radioOuter(payMode === 'installments')}>
-                {payMode === 'installments' && <div style={radioInner} />}
+            {/* Opzione PayPal */}
+            <label style={radioRow(paymentMethod === 'paypal')} onClick={() => setPaymentMethod('paypal')}>
+              <div style={radioOuter(paymentMethod === 'paypal')}>
+                {paymentMethod === 'paypal' && <div style={radioInner} />}
               </div>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: '#111' }}>{t.payInstall}</p>
-                  {/* Logo PayPal testuale */}
                   <span style={{ fontSize: 12, fontWeight: 700, color: '#003087', background: '#e8f0fb', padding: '2px 8px', borderRadius: 4 }}>PayPal</span>
                 </div>
                 <p style={{ margin: '2px 0 0', fontSize: 13, color: '#888' }}>
-                  {PAY_INSTALL_NOTE[loc]?.(installment) ?? ``}
+                  {PAY_INSTALL_NOTE[loc]?.(installment) ?? ''}
                 </p>
               </div>
             </label>
+
+            {/* Avviso per offerte Flex + PayPal: il pagamento è immediato */}
+            {showPaypalFlexWarning && (
+              <div style={{ background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginTop: 4, fontSize: 13, color: '#92400e' }}>
+                ⚠️ {t.paypalFlexNote}
+              </div>
+            )}
           </div>
 
           {/* Sezione 2: Dati ospite */}
