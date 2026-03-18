@@ -1,17 +1,17 @@
 'use client';
 
 const STEP_LABELS: Record<string, string[]> = {
-  it: ['Ospiti','Date','Piscina','Under 12','Tariffa','Dati','Riepilogo'],
-  en: ['Guests','Dates','Pool','Under 12','Rate','Details','Summary'],
-  de: ['Gäste','Daten','Pool','Unter 12','Tarif','Details','Übersicht'],
+  it: ['Ospiti','Date','Piscina','Tariffa','Dati','Riepilogo'],
+  en: ['Guests','Dates','Pool','Rate','Details','Summary'],
+  de: ['Gäste','Daten','Pool','Tarif','Details','Übersicht'],
   pl: ['Goście','Daty','Basen','Poniżej 12','Taryfa','Dane','Podsumowanie'],
 };
 
 // Con skip step3: rimuove 'Piscina'
 const STEP_LABELS_SKIP: Record<string, string[]> = {
-  it: ['Ospiti','Date','Under 12','Tariffa','Dati','Riepilogo'],
-  en: ['Guests','Dates','Under 12','Rate','Details','Summary'],
-  de: ['Gäste','Daten','Unter 12','Tarif','Details','Übersicht'],
+  it: ['Ospiti','Date','Tariffa','Dati','Riepilogo'],
+  en: ['Guests','Dates','Rate','Details','Summary'],
+  de: ['Gäste','Daten','Tarif','Details','Übersicht'],
   pl: ['Goście','Daty','Poniżej 12','Taryfa','Dane','Podsumowanie'],
 };
 

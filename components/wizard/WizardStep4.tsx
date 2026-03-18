@@ -1,3 +1,4 @@
+// @ts-nocheck — Step4 non più usato nel flusso wizard
 'use client';
 
 import { useWizardStore } from '@/store/wizard-store';

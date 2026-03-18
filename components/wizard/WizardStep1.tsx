@@ -15,29 +15,66 @@ interface Props {
       next: string;
     };
   };
-  roomId?: number | null; // passato da Wizard.tsx
+  roomId?: number | null;
+  locale?: string;
 }
 
 const OVER_CAPACITY: Record<string, (max: number) => string> = {
-  it: (max: number) => `⚠️ Questo appartamento ospita massimo ${max} persone.`,
-  en: (max: number) => `⚠️ This apartment accommodates a maximum of ${max} people.`,
-  de: (max: number) => `⚠️ Diese Unterkunft bietet Platz für maximal ${max} Personen.`,
-  pl: (max: number) => `⚠️ Ten apartament mieści maksymalnie ${max} osób.`,
-} as any;
+  it: (max) => `⚠️ Questo appartamento ospita massimo ${max} persone.`,
+  en: (max) => `⚠️ This apartment accommodates a maximum of ${max} people.`,
+  de: (max) => `⚠️ Diese Unterkunft bietet Platz für maximal ${max} Personen.`,
+  pl: (max) => `⚠️ Ten apartament mieści maksymalnie ${max} osób.`,
+};
+
+const AGE_LABEL: Record<string, (i: number) => string> = {
+  it: (i) => `Età bambino ${i + 1} (obbligatoria)`,
+  en: (i) => `Child ${i + 1} age (required)`,
+  de: (i) => `Alter Kind ${i + 1} (erforderlich)`,
+  pl: (i) => `Wiek dziecka ${i + 1} (wymagany)`,
+};
+
+const AGE_PLACEHOLDER: Record<string, string> = {
+  it: 'Età (obbligatoria)',
+  en: 'Age (required)',
+  de: 'Alter (erforderlich)',
+  pl: 'Wiek (wymagany)',
+};
+
+const AGE_NOTE: Record<string, string> = {
+  it: 'Per trovare un alloggio con spazio per tutti e mostrarti i prezzi esatti, dobbiamo conoscere l\'età dei bambini.',
+  en: 'To find an accommodation with space for everyone and show you exact prices, we need to know the children\'s ages.',
+  de: 'Um eine Unterkunft mit Platz für alle zu finden und genaue Preise zu zeigen, benötigen wir das Alter der Kinder.',
+  pl: 'Aby znaleźć nocleg z miejscem dla wszystkich i pokazać dokładne ceny, potrzebujemy znać wiek dzieci.',
+};
 
 export default function WizardStep1({
   translations: t,
   roomId,
   locale = 'it',
-}: Props & { locale?: string }) {
-  const { numAdult, numChild, setNumAdult, setNumChild, nextStep } = useWizardStore();
+}: Props) {
+  const {
+    numAdult, numChild, childrenAges,
+    setNumAdult, setNumChild, setChildAge,
+    nextStep,
+  } = useWizardStore();
 
   const room = roomId ? getRoomById(roomId) : null;
   const maxPeople = room?.maxPeople ?? null;
   const total = numAdult + numChild;
   const overCapacity = maxPeople !== null && total > maxPeople;
 
+  // Tutte le età devono essere selezionate prima di poter continuare
+  const allAgesSelected = numChild === 0 || (childrenAges.length === numChild && childrenAges.every(a => a >= 0));
+
+  const canContinue = !overCapacity && allAgesSelected;
+
   const msgFn = OVER_CAPACITY[locale] ?? OVER_CAPACITY.it;
+  const ageLabelFn = AGE_LABEL[locale] ?? AGE_LABEL.it;
+  const agePlaceholder = AGE_PLACEHOLDER[locale] ?? AGE_PLACEHOLDER.it;
+  const ageNote = AGE_NOTE[locale] ?? AGE_NOTE.it;
+
+  // Genera opzioni età 0-17
+  const ageOptions = Array.from({ length: 18 }, (_, i) => i);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 0, flex: 1 }}>
@@ -45,13 +82,11 @@ export default function WizardStep1({
         {t.step1.title}
       </h2>
 
-      {/* Nome appartamento se noto */}
       {room && (
         <p style={{ fontSize: '0.85rem', color: '#1E73BE', margin: '0 0 1rem', fontWeight: 600 }}>
           🏠 {room.name} · max {room.maxPeople} persone
         </p>
       )}
-
       {!room && t.step1.subtitle && (
         <p style={{ fontSize: '0.9rem', color: '#666', margin: '0 0 1.5rem' }}>
           {t.step1.subtitle}
@@ -86,6 +121,50 @@ export default function WizardStep1({
         />
       </div>
 
+      {/* Selettori età bambini — stile Booking.com */}
+      {numChild > 0 && (
+        <div style={{ marginTop: 16, padding: '14px 16px', background: '#f9fafb', borderRadius: 10, border: '1px solid #e5e7eb' }}>
+          <p style={{ fontSize: 13, color: '#555', margin: '0 0 12px', lineHeight: 1.5 }}>
+            {ageNote}
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: numChild === 1 ? '1fr' : '1fr 1fr', gap: 10 }}>
+            {Array.from({ length: numChild }, (_, i) => (
+              <div key={i}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>
+                  {ageLabelFn(i)}
+                </label>
+                <select
+                  value={childrenAges[i] ?? -1}
+                  onChange={e => setChildAge(i, Number(e.target.value))}
+                  style={{
+                    width: '100%',
+                    padding: '8px 10px',
+                    fontSize: 14,
+                    border: `1.5px solid ${(childrenAges[i] ?? -1) < 0 ? '#f97316' : '#e5e7eb'}`,
+                    borderRadius: 8,
+                    background: '#fff',
+                    color: (childrenAges[i] ?? -1) < 0 ? '#9ca3af' : '#111',
+                    outline: 'none',
+                  }}
+                >
+                  <option value={-1}>{agePlaceholder}</option>
+                  {ageOptions.map(age => (
+                    <option key={age} value={age}>
+                      {age === 0
+                        ? (locale === 'it' ? '0 anni' : locale === 'de' ? '0 Jahre' : locale === 'pl' ? '0 lat' : '0 years')
+                        : age === 1
+                          ? (locale === 'it' ? '1 anno' : locale === 'de' ? '1 Jahr' : locale === 'pl' ? '1 rok' : '1 year')
+                          : `${age} ${locale === 'it' ? 'anni' : locale === 'de' ? 'Jahre' : locale === 'pl' ? 'lata' : 'years'}`
+                      }
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Warning capienza */}
       {overCapacity && (
         <div style={{
@@ -102,17 +181,17 @@ export default function WizardStep1({
       )}
 
       {/* CTA */}
-      <div style={{ marginTop: '1.5rem', paddingTop: 0 }}>
+      <div style={{ marginTop: '1.5rem' }}>
         <button
           onClick={nextStep}
-          disabled={overCapacity}
+          disabled={!canContinue}
           style={{
             width: '100%', padding: '0.9rem',
-            background: overCapacity ? '#e5e7eb' : '#FCAF1A',
-            color: overCapacity ? '#aaa' : '#fff',
+            background: canContinue ? '#FCAF1A' : '#e5e7eb',
+            color: canContinue ? '#fff' : '#aaa',
             border: 'none', borderRadius: '8px',
             fontSize: '1rem', fontWeight: 600,
-            cursor: overCapacity ? 'not-allowed' : 'pointer',
+            cursor: canContinue ? 'pointer' : 'not-allowed',
           }}
         >
           {t.step1.next} →

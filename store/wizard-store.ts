@@ -7,29 +7,27 @@ export interface WizardState {
   // Step 1 — Quante persone?
   numAdult: number;
   numChild: number;
+  childrenAges: number[];   // età di ogni bambino (0-17)
 
   // Step 2 — Quando?
-  checkIn: string | null;   // formato YYYY-MM-DD
-  checkOut: string | null;  // formato YYYY-MM-DD
+  checkIn: string | null;
+  checkOut: string | null;
 
   // Step 3 — Vuoi la piscina?
-  poolPreference: PoolType; // 'none' | 'private' | 'shared'
+  poolPreference: PoolType;
 
-  // Risultato filtro (calcolato da Step 1 + Step 3)
+  // Risultato filtro
   selectedRoomId: number | null;
 
-  // Step 4 — Servizi extra
+  // Step 4 — Servizi extra (non più usato per under12)
   selectedExtras: string[];
 
-  // Step 5 — Quanti under 12?
-  numUnder12: number; // per calcolo imposta di soggiorno
-
-  // Step 5 → 6 — Offerte caricate da /api/offers (cache locale, evita doppia chiamata)
-  cachedOffers: any[];  // Beds24Offer[]
+  // Step 5 → 6 — Offerte caricate da /api/offers
+  cachedOffers: any[];
 
   // Step 6 — Riepilogo
   selectedOfferId: number | null;
-  paymentMethod: PaymentMethod;   // ← NUOVO: 'stripe' | 'paypal'
+  paymentMethod: PaymentMethod;
   voucherCode: string;
   guestFirstName: string;
   guestLastName: string;
@@ -39,10 +37,10 @@ export interface WizardState {
   guestArrivalTime: string;
   guestComments: string;
 
-  // Prenotazione pendente (creata in Step7, cancellata se si torna indietro)
+  // Prenotazione pendente
   pendingBookId: number | null;
-  invoiceAmount: number | null; // prezzo reale dopo voucher
-  discountedPrice: number | null; // prezzo scontato calcolato dal voucher-check
+  invoiceAmount: number | null;
+  discountedPrice: number | null;
 
   // Navigazione
   currentStep: number;
@@ -50,14 +48,14 @@ export interface WizardState {
   // Azioni
   setNumAdult: (n: number) => void;
   setNumChild: (n: number) => void;
+  setChildAge: (index: number, age: number) => void;
   setCheckIn: (date: string) => void;
   setCheckOut: (date: string) => void;
   setPoolPreference: (pool: PoolType) => void;
   setSelectedRoomId: (id: number | null) => void;
   toggleExtra: (id: string) => void;
-  setNumUnder12: (n: number) => void;
   setSelectedOfferId: (id: number | null) => void;
-  setPaymentMethod: (method: PaymentMethod) => void;  // ← NUOVO
+  setPaymentMethod: (method: PaymentMethod) => void;
   setVoucherCode: (code: string) => void;
   setOffers: (offers: any[]) => void;
   setGuestField: (field: string, value: string) => void;
@@ -72,15 +70,15 @@ export interface WizardState {
 const initialState = {
   numAdult: 2,
   numChild: 0,
+  childrenAges: [],
   checkIn: null,
   checkOut: null,
   poolPreference: 'none' as PoolType,
   selectedRoomId: null,
   selectedExtras: [],
-  numUnder12: 0,
   cachedOffers: [],
   selectedOfferId: null,
-  paymentMethod: 'stripe' as PaymentMethod,  // ← NUOVO: default Stripe
+  paymentMethod: 'stripe' as PaymentMethod,
   voucherCode: '',
   guestFirstName: '',
   guestLastName: '',
@@ -99,7 +97,21 @@ export const useWizardStore = create<WizardState>((set) => ({
   ...initialState,
 
   setNumAdult: (n) => set({ numAdult: Math.max(1, n) }),
-  setNumChild: (n) => set({ numChild: Math.max(0, n) }),
+
+  setNumChild: (n) => set((state) => {
+    const newN = Math.max(0, n);
+    // Adatta l'array childrenAges alla nuova lunghezza
+    const ages = [...state.childrenAges];
+    while (ages.length < newN) ages.push(-1); // -1 = non ancora selezionata
+    return { numChild: newN, childrenAges: ages.slice(0, newN) };
+  }),
+
+  setChildAge: (index, age) => set((state) => {
+    const ages = [...state.childrenAges];
+    ages[index] = age;
+    return { childrenAges: ages };
+  }),
+
   setCheckIn: (date) => set({ checkIn: date, checkOut: null }),
   setCheckOut: (date) => set({ checkOut: date }),
   setPoolPreference: (pool) => set({ poolPreference: pool, selectedRoomId: null }),
@@ -110,9 +122,8 @@ export const useWizardStore = create<WizardState>((set) => ({
         ? state.selectedExtras.filter((e) => e !== id)
         : [...state.selectedExtras, id],
     })),
-  setNumUnder12: (n) => set((state) => ({ numUnder12: Math.min(Math.max(0, n), state.numAdult) })),
   setSelectedOfferId: (id) => set({ selectedOfferId: id }),
-  setPaymentMethod: (method) => set({ paymentMethod: method }),  // ← NUOVO
+  setPaymentMethod: (method) => set({ paymentMethod: method }),
   setVoucherCode: (code) => set({ voucherCode: code }),
   setPendingBooking: (bookId, invoiceAmount) => set({ pendingBookId: bookId, invoiceAmount }),
   setDiscountedPrice: (price) => set({ discountedPrice: price }),

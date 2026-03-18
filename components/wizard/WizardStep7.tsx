@@ -208,7 +208,7 @@ export default function WizardStep7({ locale = 'it' }: Props) {
   const loc = locale in UI ? locale : 'it';
 
   const {
-    numAdult, numChild, numUnder12,
+    numAdult, numChild, childrenAges,
     checkIn, checkOut,
     selectedRoomId, selectedOfferId,
     cachedOffers,
@@ -239,6 +239,8 @@ export default function WizardStep7({ locale = 'it' }: Props) {
     ?? cachedOffers?.flatMap((ro: any) => ro.offers ?? []).find((o: any) => o.offerId === selectedOfferId);
   const offerPrice: number = offer?.price ?? 0;
 
+  // numUnder12: ragazzi 3-11 anni (esenti imposta soggiorno)
+  const numUnder12     = (childrenAges ?? []).filter((a: number) => a >= 3 && a <= 11).length;
   const taxableNights  = Math.min(nights, 10);
   const taxableAdults  = Math.max(0, numAdult - numUnder12);
   const touristTax     = taxableNights * taxableAdults * 2;

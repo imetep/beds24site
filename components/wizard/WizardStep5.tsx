@@ -110,7 +110,7 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
   const loc = locale in UI ? locale : 'it';
 
   const {
-    numAdult, numChild, checkIn, checkOut, poolPreference,
+    numAdult, numChild, childrenAges, checkIn, checkOut, poolPreference,
     selectedRoomId, setSelectedRoomId,
     selectedOfferId, setSelectedOfferId, setOffers,
     nextStep, prevStep,
@@ -151,7 +151,8 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
         arrival:     checkIn,
         departure:   checkOut,
         numAdults:   String(numAdult),
-        numChildren: String(numChild),
+        // Bambini 0-2 anni non pagano — passiamo solo quelli con età 3+
+        numChildren: String((childrenAges ?? []).filter((a: number) => a >= 3).length),
       });
 
       const res = await fetch(`/api/offers?${qs}`);

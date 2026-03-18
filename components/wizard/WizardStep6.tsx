@@ -242,7 +242,7 @@ export default function WizardStep6({ locale = 'it' }: Props) {
   const loc = locale in UI ? locale : 'it';
 
   const {
-    numAdult, numChild, numUnder12,
+    numAdult, numChild, childrenAges,
     checkIn, checkOut,
     selectedRoomId, selectedOfferId,
     cachedOffers,
@@ -275,6 +275,7 @@ export default function WizardStep6({ locale = 'it' }: Props) {
   const perNight = nights > 0 && offerPrice > 0 ? Math.round(offerPrice / nights) : 0;
 
   const taxableNights = Math.min(nights, 10);
+  const numUnder12    = (childrenAges ?? []).filter((a: number) => a >= 3 && a <= 11).length;
   const taxableAdults = Math.max(0, numAdult - numUnder12);
   const touristTax    = taxableNights * taxableAdults * 2;
   const basePrice     = discountedPrice !== null ? discountedPrice : offerPrice;

@@ -44,22 +44,24 @@ export default function Wizard({ translations: t, locale }: Props) {
   const totalSteps = skipStep3 ? 6 : 7;
 
   /**
-   * Mappa currentStep (1..6 nello store) → logicalStep (numero dello Step da renderizzare)
+   * Mappa currentStep → logicalStep (Step da renderizzare)
+   * Step4 (under12) è ELIMINATO — le età bambini sono raccolte in Step1
    *
    * WizardLibero (skipStep3=false):
-   *   currentStep 1→S1, 2→S2, 3→S3, 4→S4, 5→S5, 6→S6
+   *   currentStep 1→S1, 2→S2, 3→S3, 4→S5, 5→S6, 6→S7
    *
-   * WizardDiretto (skipStep3=true, totalSteps=5):
-   *   currentStep 1→S1, 2→S2, 3→S4, 4→S5, 5→S6
-   *   (S3 piscina viene saltato, tutto shiftato di -1)
+   * WizardDiretto (skipStep3=true):
+   *   currentStep 1→S1, 2→S2, 3→S5, 4→S6, 5→S7
    */
   function getLogicalStep(): number {
-    if (!skipStep3) return currentStep;
-    // Clamp: currentStep non deve superare totalSteps (5)
+    if (!skipStep3) {
+      // WizardLibero: salta Step4 (da currentStep 4 in poi → logicalStep+1)
+      return currentStep >= 4 ? currentStep + 1 : currentStep;
+    }
+    // WizardDiretto: salta sia Step3 che Step4
     const clamped = Math.min(currentStep, totalSteps);
-    // Con skip: da step 3 in poi shifta +1 per saltare S3
-    return clamped >= 3 ? clamped + 1 : clamped;
-    // Nota: step 7 (riepilogo) è sempre l'ultimo
+    if (clamped >= 3) return clamped + 2; // salta S3 e S4
+    return clamped;
   }
   const logicalStep = getLogicalStep();
 
