@@ -43,32 +43,40 @@ async function confirmBookingInBeds24(bookingId: number, amount: number): Promis
   const token = await getToken();
 
   // Beds24 V2: PUT /bookings — aggiorna status e aggiunge pagamento in un'unica chiamata
-  const payload = [{
-    id:     bookingId,
-    status: 'confirmed',
+  // Chiamata 1: aggiorna lo status a confirmed
+  const statusPayload = [{ id: bookingId, status: 'confirmed' }];
+  console.log('[paypal-capture] Beds24 status update:', JSON.stringify(statusPayload));
+
+  const res1 = await fetch(`${BEDS24_BASE}/bookings`, {
+    method:  'PUT',
+    headers: { token, 'Content-Type': 'application/json' },
+    body:    JSON.stringify(statusPayload),
+    cache:   'no-store',
+  });
+  const raw1 = await res1.text();
+  console.log('[paypal-capture] Beds24 status PUT:', res1.status, raw1.slice(0, 200));
+
+  // Chiamata 2: registra il pagamento in invoicePayments
+  const paymentPayload = [{
+    id: bookingId,
     invoicePayments: [{
       description: 'PayPal',
       amount:      amount,
-      type:        'paypal',
     }],
   }];
+  console.log('[paypal-capture] Beds24 payment update:', JSON.stringify(paymentPayload));
 
-  console.log('[paypal-capture] Aggiorno Beds24 booking:', JSON.stringify(payload));
-
-  const res = await fetch(`${BEDS24_BASE}/bookings`, {
+  const res2 = await fetch(`${BEDS24_BASE}/bookings`, {
     method:  'PUT',
     headers: { token, 'Content-Type': 'application/json' },
-    body:    JSON.stringify(payload),
+    body:    JSON.stringify(paymentPayload),
     cache:   'no-store',
   });
+  const raw2 = await res2.text();
+  console.log('[paypal-capture] Beds24 payment PUT:', res2.status, raw2.slice(0, 200));
 
-  const rawText = await res.text();
-  console.log('[paypal-capture] Beds24 PUT status:', res.status, rawText.slice(0, 300));
-
-  if (!res.ok) {
-    // Non blocchiamo il flusso — il pagamento PayPal è già avvenuto.
-    // Logghiamo l'errore ma non lanciamo eccezione.
-    console.error('[paypal-capture] Beds24 PUT fallita — aggiornare manualmente:', rawText.slice(0, 200));
+  if (!res1.ok || !res2.ok) {
+    console.error('[paypal-capture] Beds24 update parzialmente fallita — verificare manualmente');
   }
 }
 
