@@ -43,8 +43,12 @@ async function confirmBookingInBeds24(bookingId: number, amount: number): Promis
   const token = await getToken();
 
   // Beds24 V2: PUT /bookings — aggiorna status e aggiunge pagamento in un'unica chiamata
-  // Chiamata 1: aggiorna lo status a confirmed
-  const statusPayload = [{ id: bookingId, status: 'confirmed' }];
+  // Chiamata 1: aggiorna lo status a confirmed + ricalcola prezzi automaticamente
+  const statusPayload = [{
+    id:      bookingId,
+    status:  'confirmed',
+    actions: { autoInvoiceItemCharge: true },
+  }];
   console.log('[paypal-capture] Beds24 status update:', JSON.stringify(statusPayload));
 
   const res1 = await fetch(`${BEDS24_BASE}/bookings`, {
