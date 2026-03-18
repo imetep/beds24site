@@ -31,6 +31,8 @@ export async function POST(req: NextRequest) {
 
   const { orderID, bookingId, amount, accommodation, touristTax, discountAmount, voucherCode } = body;
 
+  console.log('[paypal-capture] Body ricevuto:', JSON.stringify({ accommodation, touristTax, discountAmount, voucherCode }));
+
   if (!orderID || !bookingId) {
     return NextResponse.json({ error: 'Campi obbligatori mancanti: orderID, bookingId' }, { status: 400 });
   }
