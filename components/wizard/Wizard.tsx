@@ -8,7 +8,6 @@ import WizardSidebar from './WizardSidebar';
 import WizardStep1 from './WizardStep1';
 import WizardStep2 from './WizardStep2';
 import WizardStep3 from './WizardStep3';
-import WizardStep4 from './WizardStep4';
 import WizardStep5 from './WizardStep5';
 import WizardStep6 from './WizardStep6';
 import WizardStep7 from './WizardStep7';
@@ -84,7 +83,6 @@ export default function Wizard({ translations: t, locale }: Props) {
           {logicalStep === 1 && <WizardStep1 translations={t.wizard} locale={locale} roomId={effectiveRoomId} />}
           {logicalStep === 2 && <WizardStep2 translations={t.wizard} locale={locale} roomId={effectiveRoomId} />}
           {logicalStep === 3 && <WizardStep3 locale={locale} />}
-          {logicalStep === 4 && <WizardStep4 locale={locale} />}
           {logicalStep === 5 && <WizardStep5 locale={locale} roomId={effectiveRoomId} />}
           {logicalStep === 6 && <WizardStep6 locale={locale} />}
           {logicalStep === 7 && <WizardStep7 locale={locale} />}
