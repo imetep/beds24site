@@ -56,24 +56,24 @@ async function confirmBookingInBeds24(bookingId: number, amount: number): Promis
   const raw1 = await res1.text();
   console.log('[paypal-capture] Beds24 status PUT:', res1.status, raw1.slice(0, 200));
 
-  // Chiamata 2: registra il pagamento in invoicePayments
-  const paymentPayload = [{
-    id: bookingId,
-    invoicePayments: [{
-      description: 'PayPal',
-      amount:      amount,
-    }],
-  }];
-  console.log('[paypal-capture] Beds24 payment update:', JSON.stringify(paymentPayload));
+  // Chiamata 2: registra il pagamento tramite POST /bookings/invoices
+  const invoicePayload = {
+    bookingId:   bookingId,
+    type:        'payment',
+    description: 'PayPal',
+    amount:      amount,
+    qty:         1,
+  };
+  console.log('[paypal-capture] Beds24 invoice payment:', JSON.stringify(invoicePayload));
 
-  const res2 = await fetch(`${BEDS24_BASE}/bookings`, {
+  const res2 = await fetch(`${BEDS24_BASE}/bookings/invoices`, {
     method:  'POST',
     headers: { token, 'Content-Type': 'application/json' },
-    body:    JSON.stringify(paymentPayload),
+    body:    JSON.stringify(invoicePayload),
     cache:   'no-store',
   });
   const raw2 = await res2.text();
-  console.log('[paypal-capture] Beds24 payment PUT:', res2.status, raw2.slice(0, 200));
+  console.log('[paypal-capture] Beds24 invoice POST:', res2.status, raw2.slice(0, 200));
 
   if (!res1.ok || !res2.ok) {
     console.error('[paypal-capture] Beds24 update parzialmente fallita — verificare manualmente');
