@@ -57,13 +57,14 @@ async function confirmBookingInBeds24(bookingId: number, amount: number): Promis
   console.log('[paypal-capture] Beds24 status PUT:', res1.status, raw1.slice(0, 200));
 
   // Chiamata 2: registra il pagamento tramite POST /bookings/invoices
-  const invoicePayload = {
+  // Beds24 V2: array come tutti gli altri endpoint
+  const invoicePayload = [{
     bookingId:   bookingId,
     type:        'payment',
     description: 'PayPal',
     amount:      amount,
     qty:         1,
-  };
+  }];
   console.log('[paypal-capture] Beds24 invoice payment:', JSON.stringify(invoicePayload));
 
   const res2 = await fetch(`${BEDS24_BASE}/bookings/invoices`, {
