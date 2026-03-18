@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getToken } from '@/lib/beds24-token';
 
 const PAYPAL_BASE =
   process.env.PAYPAL_MODE === 'sandbox'
     ? 'https://api-m.sandbox.paypal.com'
     : 'https://api-m.paypal.com';
+
+const BEDS24_BASE = 'https://beds24.com/api/v2';
 
 // ── Ottieni access token PayPal ───────────────────────────────────────────────
 async function getPaypalAccessToken(): Promise<string> {
@@ -35,8 +38,42 @@ async function getPaypalAccessToken(): Promise<string> {
   return data.access_token;
 }
 
+// ── Aggiorna booking Beds24: status confirmed + registra pagamento ─────────────
+async function confirmBookingInBeds24(bookingId: number, amount: number): Promise<void> {
+  const token = await getToken();
+
+  // Beds24 V2: PUT /bookings — aggiorna status e aggiunge pagamento in un'unica chiamata
+  const payload = [{
+    id:     bookingId,
+    status: 'confirmed',
+    invoicePayments: [{
+      description: 'PayPal',
+      amount:      amount,
+      type:        'paypal',
+    }],
+  }];
+
+  console.log('[paypal-capture] Aggiorno Beds24 booking:', JSON.stringify(payload));
+
+  const res = await fetch(`${BEDS24_BASE}/bookings`, {
+    method:  'PUT',
+    headers: { token, 'Content-Type': 'application/json' },
+    body:    JSON.stringify(payload),
+    cache:   'no-store',
+  });
+
+  const rawText = await res.text();
+  console.log('[paypal-capture] Beds24 PUT status:', res.status, rawText.slice(0, 300));
+
+  if (!res.ok) {
+    // Non blocchiamo il flusso — il pagamento PayPal è già avvenuto.
+    // Logghiamo l'errore ma non lanciamo eccezione.
+    console.error('[paypal-capture] Beds24 PUT fallita — aggiornare manualmente:', rawText.slice(0, 200));
+  }
+}
+
 // ── POST /api/paypal-capture ──────────────────────────────────────────────────
-// Body: { orderID: string, bookingId: number }
+// Body: { orderID: string, bookingId: number, amount: number }
 // Risposta: { ok: true, captureID: string, status: string }
 export async function POST(req: NextRequest) {
   let body: any;
@@ -46,7 +83,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Body JSON non valido' }, { status: 400 });
   }
 
-  const { orderID, bookingId } = body;
+  const { orderID, bookingId, amount } = body;
 
   if (!orderID || !bookingId) {
     return NextResponse.json(
@@ -55,19 +92,19 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  console.log('[paypal-capture] Cattura ordine:', { orderID, bookingId });
+  console.log('[paypal-capture] Cattura ordine:', { orderID, bookingId, amount });
 
   try {
     const accessToken = await getPaypalAccessToken();
 
-    // Cattura il pagamento
+    // ── 1. Cattura il pagamento PayPal ────────────────────────────────────────
     const res = await fetch(`${PAYPAL_BASE}/v2/checkout/orders/${orderID}/capture`, {
       method:  'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type':  'application/json',
       },
-      body:  '{}', // body vuoto richiesto da PayPal per la capture
+      body:  '{}',
       cache: 'no-store',
     });
 
@@ -80,27 +117,27 @@ export async function POST(req: NextRequest) {
 
     const data = JSON.parse(rawText);
 
-    // Verifica che la capture sia COMPLETED
     const captureUnit   = data.purchase_units?.[0]?.payments?.captures?.[0];
     const captureID     = captureUnit?.id;
-    const captureStatus = captureUnit?.status; // COMPLETED | PENDING | DECLINED
+    const captureStatus = captureUnit?.status;
+    // Usa l'importo reale catturato da PayPal (più affidabile del parametro ricevuto)
+    const capturedAmount = Number(captureUnit?.amount?.value ?? amount ?? 0);
 
-    console.log('[paypal-capture] captureID:', captureID, 'status:', captureStatus);
+    console.log('[paypal-capture] captureID:', captureID, 'status:', captureStatus, 'amount:', capturedAmount);
 
     if (captureStatus !== 'COMPLETED') {
       throw new Error(`Pagamento PayPal non completato. Status: ${captureStatus ?? 'sconosciuto'}`);
     }
 
-    // ── Nota: qui potresti aggiungere una chiamata Beds24 per registrare il pagamento
-    // Es: PUT /bookings/{bookingId} per aggiornare lo stato a "confirmed"
-    // Per ora la prenotazione è già stata creata in Beds24 — il proprietario la vedrà.
-    // TODO: aggiungere registrazione pagamento in Beds24 quando disponibile nell'API V2.
+    // ── 2. Aggiorna Beds24: confirmed + registra pagamento ────────────────────
+    await confirmBookingInBeds24(Number(bookingId), capturedAmount);
 
     return NextResponse.json({
       ok:        true,
       captureID,
       status:    captureStatus,
       bookingId: Number(bookingId),
+      amount:    capturedAmount,
     });
 
   } catch (err: any) {
