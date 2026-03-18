@@ -48,7 +48,7 @@ async function confirmBookingInBeds24(bookingId: number, amount: number): Promis
   console.log('[paypal-capture] Beds24 status update:', JSON.stringify(statusPayload));
 
   const res1 = await fetch(`${BEDS24_BASE}/bookings`, {
-    method:  'PUT',
+    method:  'POST',
     headers: { token, 'Content-Type': 'application/json' },
     body:    JSON.stringify(statusPayload),
     cache:   'no-store',
@@ -67,7 +67,7 @@ async function confirmBookingInBeds24(bookingId: number, amount: number): Promis
   console.log('[paypal-capture] Beds24 payment update:', JSON.stringify(paymentPayload));
 
   const res2 = await fetch(`${BEDS24_BASE}/bookings`, {
-    method:  'PUT',
+    method:  'POST',
     headers: { token, 'Content-Type': 'application/json' },
     body:    JSON.stringify(paymentPayload),
     cache:   'no-store',
