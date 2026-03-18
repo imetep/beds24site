@@ -370,7 +370,7 @@ export default function WizardStep7({ locale = 'it' }: Props) {
               bookingId:     pendingBookId,
               amount:        total,
               // Voci dettagliate per Beds24 Charges
-              accommodation: realPrice,
+              accommodation: offerPrice,
               touristTax:    touristTax,
               discountAmount: discountAmount,
               voucherCode:   voucherCode || undefined,
