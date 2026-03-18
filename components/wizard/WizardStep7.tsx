@@ -366,9 +366,14 @@ export default function WizardStep7({ locale = 'it' }: Props) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              orderID:   data.orderID,
-              bookingId: pendingBookId,
-              amount:    total,
+              orderID:       data.orderID,
+              bookingId:     pendingBookId,
+              amount:        total,
+              // Voci dettagliate per Beds24 Charges
+              accommodation: realPrice,
+              touristTax:    touristTax,
+              discountAmount: discountAmount,
+              voucherCode:   voucherCode || undefined,
             }),
           });
           const result = await res.json();

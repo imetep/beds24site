@@ -60,16 +60,50 @@ async function confirmBookingInBeds24(bookingId: number, amount: number): Promis
   const raw1 = await res1.text();
   console.log('[paypal-capture] Beds24 status PUT:', res1.status, raw1.slice(0, 200));
 
-  // Chiamata 2: aggiunge invoice item payment tramite POST /bookings
-  // Gli invoiceItems si passano nel payload del booking esistente (id + invoiceItems)
+  // Chiamata 2: aggiunge voci dettagliate tramite POST /bookings
+  const invoiceItems: any[] = [];
+
+  // Charge soggiorno
+  if (accommodation && Number(accommodation) > 0) {
+    invoiceItems.push({
+      type:        'charge',
+      description: voucherCode ? `Soggiorno (voucher: ${voucherCode})` : 'Soggiorno',
+      amount:      Number(accommodation),
+      qty:         1,
+    });
+  }
+
+  // Charge sconto voucher (negativo)
+  if (discountAmount && Number(discountAmount) > 0) {
+    invoiceItems.push({
+      type:        'charge',
+      description: `Sconto voucher${voucherCode ? ` (${voucherCode})` : ''}`,
+      amount:      -Number(discountAmount),
+      qty:         1,
+    });
+  }
+
+  // Charge imposta di soggiorno
+  if (touristTax && Number(touristTax) > 0) {
+    invoiceItems.push({
+      type:        'charge',
+      description: 'Imposta di soggiorno',
+      amount:      Number(touristTax),
+      qty:         1,
+    });
+  }
+
+  // Payment PayPal
+  invoiceItems.push({
+    type:        'payment',
+    description: 'PayPal',
+    amount:      capturedAmount,
+    qty:         1,
+  });
+
   const invoicePayload = [{
     id: bookingId,
-    invoiceItems: [{
-      type:        'payment',
-      description: 'PayPal',
-      amount:      amount,
-      qty:         1,
-    }],
+    invoiceItems,
   }];
   console.log('[paypal-capture] Beds24 invoice payment:', JSON.stringify(invoicePayload));
 
@@ -98,7 +132,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Body JSON non valido' }, { status: 400 });
   }
 
-  const { orderID, bookingId, amount } = body;
+  const { orderID, bookingId, amount, accommodation, touristTax, discountAmount, voucherCode } = body;
 
   if (!orderID || !bookingId) {
     return NextResponse.json(
