@@ -99,7 +99,7 @@ export default function WizardSidebar({ locale = 'it', step = 1, onContinua, can
   const t   = UI[locale] ?? UI.it;
   const loc = locale in UI ? locale : 'it';
 
-  const { numAdult, numChild, checkIn, checkOut, selectedRoomId, selectedOfferId, cachedOffers, poolPreference, nextStep } = useWizardStore();
+  const { numAdult, numChild, childrenAges, checkIn, checkOut, selectedRoomId, selectedOfferId, cachedOffers, poolPreference, nextStep } = useWizardStore();
 
   const [coverUrl, setCoverUrl] = useState<string | null>(null);
 
@@ -121,6 +121,11 @@ export default function WizardSidebar({ locale = 'it', step = 1, onContinua, can
   const offerName: string | null = offer ? (OFFER_NAMES[offer.offerId]?.[loc] ?? String(offer.offerName ?? '')) : null;
   const offerPrice: number = offer?.price ?? 0;
   const nights  = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
+  const childrenTaxable = (childrenAges ?? []).filter((a: number) => a >= 12).length;
+  const taxableAdults   = numAdult + childrenTaxable;
+  const taxableNights   = Math.min(nights, 10);
+  const touristTax      = taxableNights * taxableAdults * 2;
+  const totalWithTax    = offerPrice + touristTax;
   const perNight = nights > 0 && offerPrice > 0 ? Math.round(offerPrice / nights) : 0;
   const mapsKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ?? '';
 
@@ -247,7 +252,7 @@ export default function WizardSidebar({ locale = 'it', step = 1, onContinua, can
         <div style={{ borderTop: '1px solid #e5e7eb', marginTop: 12, paddingTop: 12 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
             <span style={{ fontSize: 12, color: '#9ca3af' }}>{t.total}</span>
-            <span style={{ fontSize: 22, fontWeight: 800, color: '#1E73BE' }}>{fmt(offerPrice)}</span>
+            <span style={{ fontSize: 22, fontWeight: 800, color: '#1E73BE' }}>{fmt(totalWithTax)}</span>
           </div>
           {perNight > 0 && (
             <p style={{ fontSize: 12, color: '#c4c4c4', margin: '2px 0 0', textAlign: 'right' }}>

@@ -25,9 +25,9 @@
     "step1": {
       "title": "Ile osób przyjeżdża?",
       "adults": "Dorośli",
-      "adultsAge": "wiek 2+",
+      "adultsAge": "18 lat lub więcej",
       "children": "Dzieci",
-      "childrenAge": "wiek 0-2",
+      "childrenAge": "0–17 lat",
       "next": "Dalej"
     },
     "step2": {

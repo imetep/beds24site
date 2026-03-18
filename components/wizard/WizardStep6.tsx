@@ -265,7 +265,9 @@ export default function WizardStep6({ locale = 'it' }: Props) {
   const room = getRoomData(selectedRoomId);
   const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
 
-  const offer = cachedOffers?.find((o: any) => o.offerId === selectedOfferId)
+  // Filtra per selectedRoomId per evitare di prendere il prezzo della room sbagliata
+  const roomOffers = cachedOffers?.find((ro: any) => ro.roomId === selectedRoomId);
+  const offer = roomOffers?.offers?.find((o: any) => o.offerId === selectedOfferId)
     ?? cachedOffers?.flatMap((ro: any) => ro.offers ?? []).find((o: any) => o.offerId === selectedOfferId);
   const offerPrice: number = offer?.price ?? 0;
   const offerName = OFFER_NAMES[selectedOfferId ?? 0]?.[loc] ?? offer?.offerName ?? '';
@@ -275,8 +277,11 @@ export default function WizardStep6({ locale = 'it' }: Props) {
   const perNight = nights > 0 && offerPrice > 0 ? Math.round(offerPrice / nights) : 0;
 
   const taxableNights = Math.min(nights, 10);
-  const numUnder12    = (childrenAges ?? []).filter((a: number) => a >= 3 && a <= 11).length;
-  const taxableAdults = Math.max(0, numAdult - numUnder12);
+  // Imposta di soggiorno: pagano adulti 18+ e bambini 12-17
+  // Esenti: bambini 0-11 anni
+  const childrenTaxable = (childrenAges ?? []).filter((a: number) => a >= 12).length;
+  const childrenExempt  = (childrenAges ?? []).filter((a: number) => a < 12).length;
+  const taxableAdults   = numAdult + childrenTaxable;
   const touristTax    = taxableNights * taxableAdults * 2;
   const basePrice     = discountedPrice !== null ? discountedPrice : offerPrice;
   const total         = basePrice + touristTax;

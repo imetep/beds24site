@@ -25,9 +25,9 @@
     "step1": {
       "title": "Quante persone siete?",
       "adults": "Adulti",
-      "adultsAge": "età 2+",
+      "adultsAge": "18 anni o più",
       "children": "Bambini",
-      "childrenAge": "età 0–2",
+      "childrenAge": "0–17 anni",
       "next": "Continua"
     },
     "step2": {

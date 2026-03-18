@@ -126,6 +126,11 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
   const [pickedRoomId, setPickedRoomId]   = useState<number|null>(roomId ?? null);
   const [pickedOfferId, setPickedOfferId] = useState<number|null>(null);
   const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
+  // Calcolo imposta di soggiorno per mostrare il totale corretto
+  const childrenTaxable = (childrenAges ?? []).filter((a: number) => a >= 12).length;
+  const taxableAdults   = numAdult + childrenTaxable;
+  const taxableNights   = Math.min(nights, 10);
+  const touristTax      = taxableNights * taxableAdults * 2;
 
   // ── Fetch offerte ────────────────────────────────────────────────────────
   const fetchOffers = useCallback(async () => {
@@ -329,7 +334,7 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
                         </div>
                         {/* Destra: prezzo */}
                         <div style={{ textAlign:'right', flexShrink:0 }}>
-                          <div style={{ fontSize:20, fontWeight:800, color:'#1E73BE', lineHeight:1 }}>{fmt(offer.price)}</div>
+                          <div style={{ fontSize:20, fontWeight:800, color:'#1E73BE', lineHeight:1 }}>{fmt(offer.price + touristTax)}</div>
                           {perNight > 0 && <div style={{ fontSize:11, color:'#999', marginTop:2 }}>{fmt(perNight)}{t.perNight}</div>}
                           <div style={{ fontSize:10, color:'#bbb', marginTop:1 }}>{t.total}</div>
                         </div>
