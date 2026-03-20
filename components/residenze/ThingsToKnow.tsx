@@ -22,7 +22,7 @@ const LABELS: Record<string, Record<string, string>> = {
     energyTitle: 'Consumi energetici',
     energyText: 'I consumi energetici vengono conteggiati in base all\'utilizzo reale, tramite contatori presenti in ogni abitazione. Non si tratta di un costo aggiuntivo per guadagno, ma di una misura per evitare sprechi.',
     taxTitle: 'Imposta di soggiorno',
-    taxText: 'Nel Comune in cui si trova la struttura è prevista un\'imposta di soggiorno di €2,00 a persona al giorno, valida solo per i primi 10 giorni di soggiorno e solo per gli ospiti con più di 12 anni di età.',
+    taxText: 'Nel Comune di Minturno, in cui si trova la struttura, è prevista un\'imposta di soggiorno di €2,00 a persona al giorno, valida solo per i primi 10 giorni di soggiorno e solo per gli ospiti con più di 12 anni di età.',
     rulesTitle: 'Regole della casa',
     noPets: '🐾 Animali non ammessi',
     noSmoking: '🚭 Vietato fumare',

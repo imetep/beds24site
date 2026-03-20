@@ -108,9 +108,12 @@ async function getRoomDescription(propId: number, roomId: number, lang: string):
   }
 }
 
+// Etichette con singolare/plurale per IT
 const LABELS: Record<string, Record<string, string>> = {
   it: {
-    bedrooms: 'camere', bathrooms: 'bagni', maxPeople: 'ospiti', sqm: 'mq',
+    bedroom: 'camera',  bedrooms: 'camere',
+    bathroom: 'bagno',  bathrooms: 'bagni',
+    guest: 'ospite',    maxPeople: 'ospiti', sqm: 'mq',
     floorGround: 'Piano terra', floor: 'Piano',
     privatePool: '🏊 Piscina privata', sharedPool: '🌊 Piscina condivisa', noPool: '🏖️ 250m dal mare',
     services: 'Servizi', description: 'La residenza',
@@ -119,7 +122,9 @@ const LABELS: Record<string, Record<string, string>> = {
     deposit: 'Deposito cauzionale', depositText: 'Richiesto al check-in con Carta di Credito (no Debit Card) · Rimborsato alla partenza',
   },
   en: {
-    bedrooms: 'bedrooms', bathrooms: 'bathrooms', maxPeople: 'guests', sqm: 'sqm',
+    bedroom: 'bedroom', bedrooms: 'bedrooms',
+    bathroom: 'bathroom', bathrooms: 'bathrooms',
+    guest: 'guest',     maxPeople: 'guests', sqm: 'sqm',
     floorGround: 'Ground floor', floor: 'Floor',
     privatePool: '🏊 Private pool', sharedPool: '🌊 Shared pool', noPool: '🏖️ 250m from sea',
     services: 'Amenities', description: 'The residence',
@@ -128,7 +133,9 @@ const LABELS: Record<string, Record<string, string>> = {
     deposit: 'Security deposit', depositText: 'Required at check-in by Credit Card (no Debit Card) · Refunded at departure',
   },
   de: {
-    bedrooms: 'Schlafzimmer', bathrooms: 'Bäder', maxPeople: 'Gäste', sqm: 'qm',
+    bedroom: 'Schlafzimmer', bedrooms: 'Schlafzimmer',
+    bathroom: 'Bad',          bathrooms: 'Bäder',
+    guest: 'Gast',            maxPeople: 'Gäste', sqm: 'qm',
     floorGround: 'Erdgeschoss', floor: 'Etage',
     privatePool: '🏊 Privater Pool', sharedPool: '🌊 Gemeinschaftspool', noPool: '🏖️ 250m vom Meer',
     services: 'Ausstattung', description: 'Die Residenz',
@@ -137,7 +144,9 @@ const LABELS: Record<string, Record<string, string>> = {
     deposit: 'Kaution', depositText: 'Beim Check-in per Kreditkarte (keine Debitkarte) · Bei Abreise zurückerstattet',
   },
   pl: {
-    bedrooms: 'sypialnie', bathrooms: 'łazienki', maxPeople: 'gości', sqm: 'mkw',
+    bedroom: 'sypialnia', bedrooms: 'sypialnie',
+    bathroom: 'łazienka', bathrooms: 'łazienki',
+    guest: 'osoba',       maxPeople: 'gości', sqm: 'mkw',
     floorGround: 'Parter', floor: 'Piętro',
     privatePool: '🏊 Prywatny basen', sharedPool: '🌊 Wspólny basen', noPool: '🏖️ 250m od morza',
     services: 'Udogodnienia', description: 'Rezydencja',
@@ -146,6 +155,11 @@ const LABELS: Record<string, Record<string, string>> = {
     deposit: 'Kaucja', depositText: 'Wymagana przy zameldowaniu kartą kredytową (bez kart debetowych) · Zwracana przy wyjeździe',
   },
 };
+
+// Helper: singolare o plurale
+function plLabel(t: Record<string, string>, singular: string, plural: string, count: number): string {
+  return count === 1 ? (t[singular] ?? '') : (t[plural] ?? '');
+}
 
 export default async function RoomPage({ params }: Props) {
   const { locale, slug } = await params;
@@ -171,36 +185,36 @@ export default async function RoomPage({ params }: Props) {
   const featureCodes = PROPERTY_FEATURES[property.propertyId] ?? [];
 
   return (
-    <main style={{ maxWidth: 900, margin: '0 auto', padding: '24px 16px 120px' }}>
+    <main style={{ maxWidth: 900, margin: '0 auto', padding: '24px 0 120px' }}>
 
       {/* Back link */}
-      <Link href={`/${locale}/residenze`} style={{ color: '#1E73BE', fontSize: 14, textDecoration: 'none' }}>
+      <Link href={`/${locale}/residenze`} style={{ color: '#1E73BE', fontSize: 14, textDecoration: 'none', padding: '0 16px', display: 'inline-block' }}>
         {t.back}
       </Link>
 
       {/* Titolo */}
-      <h1 style={{ fontSize: 28, fontWeight: 800, color: '#222', margin: '16px 0 4px' }}>
+      <h1 style={{ fontSize: 28, fontWeight: 800, color: '#222', margin: '16px 16px 4px' }}>
         {room.name}
       </h1>
-      <div style={{ fontSize: 14, color: '#888', marginBottom: 20 }}>
+      <div style={{ fontSize: 14, color: '#888', marginBottom: 20, padding: '0 16px' }}>
         {property.distanceLabel} · {floorLabel}
       </div>
 
       <PhotoLightbox photos={photos} roomName={room.name} />
 
       {/* Caratteristiche principali */}
-      <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', padding: '20px 0', borderTop: '1px solid #eee', borderBottom: '1px solid #eee', marginBottom: 28 }}>
+      <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', padding: '20px 16px', borderTop: '1px solid #eee', borderBottom: '1px solid #eee', marginBottom: 28 }}>
         <div style={statStyle}>
           <span style={statNumStyle}>{room.bedrooms}</span>
-          <span style={statLabelStyle}>{t.bedrooms}</span>
+          <span style={statLabelStyle}>{plLabel(t, 'bedroom', 'bedrooms', room.bedrooms)}</span>
         </div>
         <div style={statStyle}>
           <span style={statNumStyle}>{room.bathrooms}</span>
-          <span style={statLabelStyle}>{t.bathrooms}</span>
+          <span style={statLabelStyle}>{plLabel(t, 'bathroom', 'bathrooms', room.bathrooms)}</span>
         </div>
         <div style={statStyle}>
           <span style={statNumStyle}>{room.maxPeople}</span>
-          <span style={statLabelStyle}>{t.maxPeople}</span>
+          <span style={statLabelStyle}>{plLabel(t, 'guest', 'maxPeople', room.maxPeople)}</span>
         </div>
         <div style={statStyle}>
           <span style={statNumStyle}>{room.sqm}</span>
@@ -213,7 +227,7 @@ export default async function RoomPage({ params }: Props) {
 
       {/* Descrizione */}
       {description && (
-        <div style={{ marginBottom: 32 }}>
+        <div style={{ marginBottom: 32, padding: '0 16px' }}>
           <h2 style={sectionTitleStyle}>{t.description}</h2>
           <p style={{ fontSize: 15, lineHeight: 1.7, color: '#444', whiteSpace: 'pre-line' }}>
             {description}
@@ -222,7 +236,7 @@ export default async function RoomPage({ params }: Props) {
       )}
 
       {/* Servizi */}
-      <div style={{ marginBottom: 32 }}>
+      <div style={{ marginBottom: 32, padding: '0 16px' }}>
         <h2 style={sectionTitleStyle}>{t.services}</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '2px 16px' }}>
           {featureCodes.map((code) => {
@@ -239,16 +253,17 @@ export default async function RoomPage({ params }: Props) {
       </div>
 
       {/* Mappa */}
+      <div style={{ padding: '0 16px' }}>
       <PropertyMap
         latitude={property.latitude}
         longitude={property.longitude}
         name={room.name}
         locale={locale}
       />
-
-
+      </div>
 
       {/* Cose da sapere */}
+      <div style={{ padding: '0 16px' }}>
       <ThingsToKnow
         locale={locale}
         checkInStart={property.propertyId === 46487 ? '16:00' : '16:00'}
@@ -256,13 +271,16 @@ export default async function RoomPage({ params }: Props) {
         checkOutEnd="10:00"
         securityDeposit={room.securityDeposit}
       />
+      </div>
 
       {/* Calendario disponibilità — 12 mesi */}
+      <div style={{ padding: '0 16px' }}>
       <AvailabilityCalendar
         roomId={room.roomId}
         locale={locale}
         bookingUrl={`/${locale}/prenota?roomId=${room.roomId}`}
       />
+      </div>
 
       {/* Bottone Prenota fisso in basso su mobile */}
       <div style={{

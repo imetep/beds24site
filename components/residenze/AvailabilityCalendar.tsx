@@ -133,19 +133,19 @@ export default function AvailabilityCalendar({ roomId, locale = 'it' }: Props) {
 
             return (
               <div key={i} style={{
-                height:36, display:'flex', alignItems:'center', justifyContent:'center',
-                position:'relative', fontSize:13, userSelect:'none', cursor:'default',
-                // Passato → grigio chiaro
-                // Occupato (non passato) → nero con strikethrough stile Airbnb
-                // Disponibile → nero normale
-                color: isPast ? '#c8c8c8' : '#111',
+                height: 36,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                position: 'relative', fontSize: 13, userSelect: 'none', cursor: 'default',
+                color: isPast ? '#d0d0d0' : (!isPast && unavail) ? '#bbb' : '#111',
                 fontWeight: isToday ? 700 : 400,
                 textDecoration: (!isPast && unavail) ? 'line-through' : 'none',
-                opacity: isPast ? 0.5 : 1,
+                background: (!isPast && unavail) ? '#fdf4f4' : 'transparent',
+                borderRadius: 4,
+                opacity: isPast ? 0.4 : 1,
               }}>
                 {day}
                 {isToday && (
-                  <span style={{ position:'absolute', bottom:3, left:'50%', transform:'translateX(-50%)', width:4, height:4, borderRadius:'50%', background:'#1E73BE' }} />
+                  <span style={{ position: 'absolute', bottom: 3, left: '50%', transform: 'translateX(-50%)', width: 4, height: 4, borderRadius: '50%', background: '#1E73BE' }} />
                 )}
               </div>
             );
@@ -161,11 +161,16 @@ export default function AvailabilityCalendar({ roomId, locale = 'it' }: Props) {
         <div>
           <h2 style={{ fontSize:22, fontWeight:700, margin:'0 0 6px', color:'#111' }}>{ui.title}</h2>
           <div style={{ display:'flex', gap:16 }}>
-            <div style={{ display:'flex', alignItems:'center', gap:5, fontSize:12, color:'#555' }}>
-              <span>15</span> {ui.legend_free}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#555' }}>
+              <span style={{ fontWeight: 600, color: '#111' }}>15</span>
+              {ui.legend_free}
             </div>
-            <div style={{ display:'flex', alignItems:'center', gap:5, fontSize:12, color:'#bbb' }}>
-              <span style={{ textDecoration:'line-through' }}>15</span> {ui.legend_busy}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#999' }}>
+              <span style={{
+                textDecoration: 'line-through', color: '#bbb',
+                background: '#fdf4f4', padding: '0 3px', borderRadius: 3,
+              }}>15</span>
+              {ui.legend_busy}
             </div>
           </div>
         </div>

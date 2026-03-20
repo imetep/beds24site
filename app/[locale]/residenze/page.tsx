@@ -81,9 +81,9 @@ export default async function ResidenzePage({ params }: Props) {
   const covers = await getAllCovers();
 
   return (
-    <main style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 16px' }}>
+    <main style={{ maxWidth: 1100, margin: '0 auto', padding: 'clamp(24px,4vw,40px) clamp(0px,2vw,16px)' }}>
 
-      <div style={{ textAlign: 'center', marginBottom: 48 }}>
+      <div style={{ textAlign: 'center', marginBottom: 40, padding: '0 12px' }}>
         <h1 style={{ fontSize: 32, fontWeight: 800, color: '#1E73BE', marginBottom: 8 }}>
           {t.title}
         </h1>
@@ -124,11 +124,13 @@ export default async function ResidenzePage({ params }: Props) {
 
 const sectionTitleStyle: React.CSSProperties = {
   fontSize: 18, fontWeight: 700, color: '#444',
-  marginBottom: 20, paddingBottom: 10, borderBottom: '2px solid #f0f0f0',
+  marginBottom: 20, paddingBottom: 10,
+  paddingLeft: 12, paddingRight: 12,
+  borderBottom: '2px solid #f0f0f0',
 };
 
 const gridStyle: React.CSSProperties = {
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-  gap: 24,
+  gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))',
+  gap: 20,
 };
