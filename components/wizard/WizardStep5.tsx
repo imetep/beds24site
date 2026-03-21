@@ -340,7 +340,7 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
               }}
             >
               {filters.map(f => (
-                <option key={f.key} value={f.key}>{f.labelClean}</option>
+                <option key={f.key} value={f.key}>{f.labelLong}</option>
               ))}
             </select>
           </div>
@@ -371,7 +371,7 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
                   flexShrink: 0,
                 }}
               >
-                {f.labelClean}
+                {f.label}
               </button>
             ))}
           </div>
@@ -952,7 +952,7 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
               }}
             >
               {filters.map(f => (
-                <option key={f.key} value={f.key}>{f.labelClean}</option>
+                <option key={f.key} value={f.key}>{f.labelLong}</option>
               ))}
             </select>
           </div>
@@ -983,7 +983,7 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
                   flexShrink: 0,
                 }}
               >
-                {f.labelClean}
+                {f.label}
               </button>
             ))}
           </div>
