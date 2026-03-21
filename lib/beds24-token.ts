@@ -33,8 +33,8 @@ async function redisGet(key: string): Promise<string | null> {
       cache: 'no-store',
     });
     const data = await res.json();
-    // data.result può essere stringa diretta o JSON {"value":"..."}
     if (!data.result) return null;
+    // Upstash può restituire il valore wrappato in {"value":"..."}
     if (typeof data.result === 'string') {
       try {
         const parsed = JSON.parse(data.result);
