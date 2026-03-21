@@ -286,9 +286,14 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
       {/* ── Barra filtri (solo WizardLibero, solo quando ci sono risultati) ── */}
       {!isSingleRoom && !loading && !error && roomOffers.length > 0 && (
         <div style={{
-          display: 'flex', gap: 8, flexWrap: 'wrap',
+          display: 'flex', gap: 8, flexWrap: 'nowrap',
           marginBottom: 16, paddingBottom: 16,
           borderBottom: '1px solid #f0f0f0',
+          overflowX: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          paddingLeft: 2, paddingRight: 2,
         }}>
           {filters.map(f => (
             <button
@@ -305,6 +310,7 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
                 cursor: 'pointer',
                 transition: 'all 0.15s',
                 whiteSpace: 'nowrap',
+                flexShrink: 0,
               }}
             >
               {f.label}

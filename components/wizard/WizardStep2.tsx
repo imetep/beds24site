@@ -145,6 +145,21 @@ export default function WizardStep2({ translations: _t, locale = 'it', roomId }:
     return () => window.removeEventListener('resize', check);
   }, []);
 
+  const isPrevDisabled = toYMD(viewYear, viewMonth, 1) <= toYMD(today.getFullYear(), today.getMonth(), 1);
+
+  // Swipe touch per cambio mese su mobile
+  const touchStartX = React.useRef<number>(0);
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) goToNext();
+      else if (!isPrevDisabled) goToPrev();
+    }
+  };
+
   // Fetch disponibilità se roomId noto
   const fetchAvailability = useCallback(async () => {
     if (!roomId) return;
@@ -230,7 +245,6 @@ export default function WizardStep2({ translations: _t, locale = 'it', roomId }:
   const canContinue = !!(checkIn && checkOut);
   const nights = canContinue ? nightsBetween(checkIn!, checkOut!) : null;
   const rangeEnd = phase === 'checkout' ? (checkOut || hoverYMD) : checkOut;
-  const isPrevDisabled = toYMD(viewYear, viewMonth, 1) <= toYMD(today.getFullYear(), today.getMonth(), 1);
 
   // Secondo mese per desktop
   const secondMonth = addMonths(viewYear, viewMonth, 1);
@@ -342,8 +356,12 @@ export default function WizardStep2({ translations: _t, locale = 'it', roomId }:
           : phase === 'checkin' ? ui.selectCheckin : ui.selectCheckout}
       </p>
 
-      {/* Wrapper calendario */}
-      <div style={{ border: '1px solid #e5e7eb', borderRadius: 16, overflow: 'hidden', background: '#fff' }}>
+      {/* Wrapper calendario — swipe su mobile */}
+      <div
+        style={{ border: '1px solid #e5e7eb', borderRadius: 16, overflow: 'hidden', background: '#fff' }}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
 
         {/* Controlli navigazione */}
         <div style={{
