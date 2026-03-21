@@ -2,14 +2,8 @@
  * lib/beds24-token.ts
  *
  * Gestione token Beds24 API V2.
- *
- * Il refresh token di Beds24 ruota ad ogni utilizzo.
- * Soluzione:
- *  - In locale: salva su file .beds24-token (sopravvive ai riavvii di Next.js)
- *  - Su Vercel: salva su Upstash Redis (condiviso tra tutte le istanze serverless)
- *
- * Il REFRESH TOKEN iniziale viene letto da BEDS24_REFRESH_TOKEN in .env.local.
- * Dopo il primo utilizzo, il token ruotato viene salvato su Redis/disco.
+ * - Locale: salva su .beds24-token (sopravvive ai riavvii)
+ * - Vercel: salva su Upstash Redis (condiviso tra istanze serverless)
  */
 
 import fs from 'fs';
@@ -25,7 +19,6 @@ interface TokenState {
   expiresAt:    number;
 }
 
-// Cache in memoria per la sessione corrente
 let state: TokenState | null = null;
 
 // ─── Redis (Upstash) ─────────────────────────────────────────────────────────
@@ -40,7 +33,17 @@ async function redisGet(key: string): Promise<string | null> {
       cache: 'no-store',
     });
     const data = await res.json();
-    return data.result ?? null;
+    // data.result può essere stringa diretta o JSON {"value":"..."}
+    if (!data.result) return null;
+    if (typeof data.result === 'string') {
+      try {
+        const parsed = JSON.parse(data.result);
+        return parsed.value ?? data.result;
+      } catch {
+        return data.result;
+      }
+    }
+    return String(data.result);
   } catch {
     return null;
   }
@@ -51,10 +54,12 @@ async function redisSet(key: string, value: string): Promise<void> {
   const token = process.env.KV_REST_API_TOKEN;
   if (!url || !token) return;
   try {
-    await fetch(`${url}/set/${key}`, {
+    // Usa formato array Upstash: ["SET", "key", "value"]
+    const body = JSON.stringify(['SET', key, value]);
+    await fetch(`${url}/`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ value }),
+      body,
       cache: 'no-store',
     });
   } catch (e) {
@@ -99,14 +104,13 @@ export async function getToken(): Promise<string> {
     return state.token;
   }
 
-  // 3. Determina quale refresh token usare
-  // Priorità: Redis (Vercel) → disco → .env.local
+  // 3. Determina refresh token: Redis → disco → .env.local
   let refreshToken: string | null = null;
 
   const fromRedis = await redisGet(REDIS_KEY);
   if (fromRedis) {
     refreshToken = fromRedis;
-    console.log('[beds24-token] Usando refreshToken da Redis');
+    console.log('[beds24-token] Usando refreshToken da Redis:', refreshToken.slice(0, 6) + '...');
   } else if (disk?.refreshToken) {
     refreshToken = disk.refreshToken;
     console.log('[beds24-token] Usando refreshToken da disco');
@@ -131,7 +135,7 @@ export async function getToken(): Promise<string> {
     const body = await res.text();
     console.error('[beds24-token] Auth error:', res.status, body);
 
-    // Se il token da Redis/disco è fallito, riprova con quello da .env.local
+    // Se token da Redis/disco fallisce, riprova con .env.local
     const envToken = process.env.BEDS24_REFRESH_TOKEN;
     if (envToken && refreshToken !== envToken) {
       console.log('[beds24-token] Retry con token da .env.local...');
