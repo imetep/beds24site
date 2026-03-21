@@ -1,28 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getToken } from '@/lib/beds24-token';
 
 const BASE_URL = 'https://beds24.com/api/v2';
-
-let cachedToken: { token: string; expiresAt: number } | null = null;
-
-async function getToken(): Promise<string> {
-  if (cachedToken && Date.now() < cachedToken.expiresAt - 5 * 60 * 1000) {
-    return cachedToken.token;
-  }
-  const refreshToken = process.env.BEDS24_REFRESH_TOKEN;
-  if (!refreshToken) throw new Error('BEDS24_REFRESH_TOKEN non configurato');
-
-  const res = await fetch(`${BASE_URL}/authentication/token`, {
-    headers: { refreshToken },
-    cache: 'no-store',
-  });
-  if (!res.ok) throw new Error(`Auth ${res.status}: ${await res.text()}`);
-  const data = await res.json();
-  cachedToken = {
-    token: data.token,
-    expiresAt: Date.now() + (data.expiresIn ?? 86400) * 1000,
-  };
-  return cachedToken.token;
-}
 
 /**
  * GET /api/availability
