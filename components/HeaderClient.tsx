@@ -35,20 +35,19 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
     <>
       <header style={headerStyle}>
         <div style={innerStyle}>
+          {/* Logo → Home */}
           <a href={`/${locale}`} style={logoLinkStyle}>
             <Image src="/logo.png" alt="LivingApple" height={34} width={130} style={{ objectFit: 'contain' }} priority />
           </a>
 
-          {/* Nav desktop */}
+          {/* Nav desktop: Home · Residenze · Prenota */}
           <nav className="desktop-nav" style={{ display: 'flex', gap: '1.25rem', marginLeft: 'auto', alignItems: 'center' }}>
-            <a href={`/${locale}`}            style={navLinkStyle}>{nav.home}</a>
-            <a href={`/${locale}/residenze`}  style={navLinkStyle}>{nav.residences}</a>
-            <a href={`/${locale}/dove-siamo`} style={navLinkStyle}>{nav.location}</a>
-            <a href={`/${locale}/contatti`}   style={navLinkStyle}>{nav.contact}</a>
-            <a href={`/${locale}/prenota`}    style={ctaStyle}>{nav.book}</a>
+            <a href={`/${locale}`}           style={navLinkStyle}>{nav.home}</a>
+            <a href={`/${locale}/residenze`} style={navLinkStyle}>{nav.residences}</a>
+            <a href={`/${locale}/prenota`}   style={ctaStyle}>{nav.book}</a>
           </nav>
 
-          {/* Hamburger */}
+          {/* Hamburger mobile */}
           <button
             onClick={() => setMenuOpen(o => !o)}
             aria-label="Menu"
@@ -71,10 +70,9 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
           {/* Link principali */}
           <div style={{ padding: '0.5rem 1.5rem' }}>
             {[
-              { href: `/${locale}`,            label: nav.home },
-              { href: `/${locale}/residenze`,  label: nav.residences },
-              { href: `/${locale}/dove-siamo`, label: nav.location },
-              { href: `/${locale}/contatti`,   label: nav.contact },
+              { href: `/${locale}`,           label: nav.home },
+              { href: `/${locale}/residenze`, label: nav.residences },
+              { href: `/${locale}/dove-siamo`,label: nav.location },
             ].map(({ href, label }) => (
               <a key={href} href={href} style={{ fontSize: '1.15rem', fontWeight: 600, color: '#111', textDecoration: 'none', padding: '0.9rem 0', borderBottom: '1px solid #f0f0f0', display: 'block' }}>
                 {label}
@@ -82,7 +80,7 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
             ))}
           </div>
 
-          {/* CTA prenota */}
+          {/* CTA Prenota */}
           <div style={{ padding: '1rem 1.5rem' }}>
             <a href={`/${locale}/prenota`} style={{ display: 'block', padding: '1rem', background: '#1E73BE', color: '#fff', borderRadius: '10px', textAlign: 'center', fontWeight: 700, fontSize: '1rem', textDecoration: 'none' }}>
               {nav.book}
@@ -92,12 +90,12 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
           {/* Separatore */}
           <div style={{ height: 1, background: '#f0f0f0', margin: '0 1.5rem' }} />
 
-          {/* Link legali — nascosti nel footer su mobile, qui nel menu */}
+          {/* Link legali */}
           <div style={{ padding: '1rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '0.1rem' }}>
             {[
-              { href: `/${locale}/privacy`,          label: legal.privacy },
-              { href: `/${locale}/condizioni`,       label: legal.terms },
-              { href: `/${locale}/trattamento-dati`, label: legal.data },
+              { href: `/${locale}/privacy`,           label: legal.privacy },
+              { href: `/${locale}/condizioni`,        label: legal.terms },
+              { href: `/${locale}/trattamento-dati`,  label: legal.data },
             ].map(({ href, label }) => (
               <a key={href} href={href} style={{ fontSize: '0.9rem', color: '#9ca3af', textDecoration: 'none', padding: '0.5rem 0' }}>
                 {label}

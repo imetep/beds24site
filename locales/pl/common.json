@@ -16,7 +16,7 @@
   },
   "nav": {
     "home": "Strona główna",
-    "location": "Lokalizacja",
+    "location": "Gdzie jest Scauri",
     "residences": "Rezydencje",
     "book": "Rezerwuj",
     "contact": "Kontakt"
@@ -99,7 +99,8 @@
     "terms": "Regulamin",
     "cookies": "Polityka cookies",
     "contact": "Kontakt",
-    "data": "Przetwarzanie danych"
+    "data": "Przetwarzanie danych",
+    "location": "Gdzie jest Scauri"
   },
   "meta": {
     "home_title": "LivingApple — Apartamenty wakacyjne w Scauri, Włochy",

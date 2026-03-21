@@ -99,7 +99,7 @@ export default async function LocaleLayout({ children, params }: Props) {
                 Link utili
               </p>
               {[
-                { href: `/${locale}/contatti`,        label: t.footer.contact },
+                { href: `/${locale}/dove-siamo`,      label: t.footer.location },
                 { href: `/${locale}/condizioni`,      label: t.footer.terms },
                 { href: `/${locale}/privacy`,         label: t.footer.privacy },
                 { href: `/${locale}/trattamento-dati`,label: t.footer.data },

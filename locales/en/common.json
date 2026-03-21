@@ -16,7 +16,7 @@
   },
   "nav": {
     "home": "Home",
-    "location": "Location",
+    "location": "Where is Scauri",
     "residences": "Residences",
     "book": "Book",
     "contact": "Contact"
@@ -99,7 +99,8 @@
     "terms": "Terms & Conditions",
     "cookies": "Cookie Policy",
     "contact": "Contacts",
-    "data": "Data Processing"
+    "data": "Data Processing",
+    "location": "Where is Scauri"
   },
   "meta": {
     "home_title": "LivingApple — Holiday Apartments in Scauri, Italy",

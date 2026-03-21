@@ -16,7 +16,7 @@
   },
   "nav": {
     "home": "Home",
-    "location": "Dove siamo",
+    "location": "Dov'è Scauri",
     "residences": "Residenze",
     "book": "Prenota",
     "contact": "Contatti"
@@ -99,7 +99,8 @@
     "terms": "Condizioni generali",
     "cookies": "Cookie Policy",
     "contact": "Contatti",
-    "data": "Trattamento dei dati"
+    "data": "Trattamento dei dati",
+    "location": "Dov'è Scauri"
   },
   "meta": {
     "home_title": "LivingApple — Appartamenti vacanza a Scauri (LT)",
