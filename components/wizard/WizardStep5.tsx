@@ -42,8 +42,8 @@ const UI: Record<string, Record<string, string>> = {
     filterAll:   'Tutti',
     filterPrice: '💰 Prezzo',
     filterSize:  '📐 Più grande',
-    filterSea:   '🏖️ 250m dal mare',
-    filterNature:'🌿 2km dal mare',
+    filterSea:   '🌊 250m dal mare',
+    filterNature:'🏡 2km dal mare',
   },
   en: {
     titleSingle:'Which rate do you prefer?',
@@ -61,8 +61,8 @@ const UI: Record<string, Record<string, string>> = {
     filterAll:   'All',
     filterPrice: '💰 Price',
     filterSize:  '📐 Largest',
-    filterSea:   '🏖️ 250m from sea',
-    filterNature:'🌿 2km from sea',
+    filterSea:   '🌊 250m from sea',
+    filterNature:'🏡 2km from sea',
   },
   de: {
     titleSingle:'Welchen Tarif bevorzugen Sie?',
@@ -80,8 +80,8 @@ const UI: Record<string, Record<string, string>> = {
     filterAll:   'Alle',
     filterPrice: '💰 Preis',
     filterSize:  '📐 Größte',
-    filterSea:   '🏖️ 250m vom Meer',
-    filterNature:'🌿 2km vom Meer',
+    filterSea:   '🌊 250m vom Meer',
+    filterNature:'🏡 2km vom Meer',
   },
   pl: {
     titleSingle:'Którą taryfę preferujecie?',
@@ -99,8 +99,8 @@ const UI: Record<string, Record<string, string>> = {
     filterAll:   'Wszystkie',
     filterPrice: '💰 Cena',
     filterSize:  '📐 Największy',
-    filterSea:   '🏖️ 250m od morza',
-    filterNature:'🌿 2km od morza',
+    filterSea:   '🌊 250m od morza',
+    filterNature:'🏡 2km od morza',
   },
 };
 
