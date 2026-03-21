@@ -13,10 +13,10 @@ const BASE_URL = 'https://beds24.com/api/v2';
 
 interface AccessToken {
   token: string;
-  expiresAt: number; // timestamp ms
+  expiresAt: number;
 }
 
-// Cache in memoria — dura finché il processo Node è vivo
+// Cache in memoria
 let cached: AccessToken | null = null;
 
 export async function getToken(): Promise<string> {
@@ -27,13 +27,15 @@ export async function getToken(): Promise<string> {
     return cached.token;
   }
 
-  // Legge il Refresh Token dall'env — sempre lo stesso, non cambia mai
+  // Legge il Refresh Token dall'env
   const refreshToken = process.env.BEDS24_REFRESH_TOKEN;
   if (!refreshToken) {
-    throw new Error('[beds24-token] BEDS24_REFRESH_TOKEN non configurato in .env.local');
+    throw new Error('[beds24-token] BEDS24_REFRESH_TOKEN non configurato');
   }
 
-  console.log('[beds24-token] Rinnovo token di accesso...');
+  // DEBUG — prime 6 lettere del token usato (rimuovere dopo il fix)
+  console.log('[beds24-token] Usando refreshToken che inizia con:', refreshToken.slice(0, 6));
+  console.log('[beds24-token] Lunghezza refreshToken:', refreshToken.length);
 
   const res = await fetch(`${BASE_URL}/authentication/token`, {
     method: 'GET',
@@ -43,12 +45,12 @@ export async function getToken(): Promise<string> {
 
   if (!res.ok) {
     const body = await res.text();
+    console.error('[beds24-token] Auth error:', res.status, body);
     throw new Error(`[beds24-token] Auth error ${res.status}: ${body}`);
   }
 
   const data = await res.json();
 
-  // Salva in memoria
   cached = {
     token: data.token,
     expiresAt: now + (data.expiresIn ?? 3600) * 1000,
