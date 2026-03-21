@@ -562,10 +562,7 @@ const retryBtn: React.CSSProperties = {
                 fontSize: 14,
                 color: '#333',
                 cursor: 'pointer',
-                appearance: 'none',
-                backgroundImage: "url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none'/%3E%3C/svg%3E")",
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'right 10px center',
+                appearance: 'auto',
                 minWidth: 200,
               }}
             >
