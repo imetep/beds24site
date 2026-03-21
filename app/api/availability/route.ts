@@ -16,9 +16,6 @@ const BASE_URL = 'https://beds24.com/api/v2';
  *   roomIds   roomId separati da virgola
  *   startDate YYYY-MM-DD (default: oggi)
  *   endDate   YYYY-MM-DD (default: oggi + 365)
- *
- * Risposta normalizzata verso i componenti:
- * { data: [{ roomId, availability: { "YYYY-MM-DD": true/false } }] }
  */
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -35,13 +32,12 @@ export async function GET(req: NextRequest) {
 
   const today = new Date();
   const startDate = searchParams.get('startDate') ?? today.toISOString().split('T')[0];
-  const endDate   = searchParams.get('endDate')
+  const endDate = searchParams.get('endDate')
     ?? new Date(today.getTime() + 365 * 86400000).toISOString().split('T')[0];
 
   try {
     const token = await getToken();
 
-    // Beds24 accetta roomId ripetuto per più rooms
     const qs = new URLSearchParams();
     roomIds.forEach(id => qs.append('roomId', id));
     qs.set('startDate', startDate);
@@ -52,12 +48,12 @@ export async function GET(req: NextRequest) {
 
     const res = await fetch(url, {
       headers: { token },
-      next: { revalidate: 6 * 60 * 60 }, // cache 6h, invalidata dal webhook
+      cache: 'no-store',
     });
 
     const rawText = await res.text();
     console.log('[availability] status:', res.status);
-    console.log('[availability] response:', rawText.slice(0, 600));
+    console.log('[availability] response:', rawText.slice(0, 300));
 
     if (!res.ok) throw new Error(`Beds24 HTTP ${res.status}: ${rawText.slice(0, 200)}`);
 
