@@ -199,30 +199,7 @@ export default function AvailabilityCalendar({ roomId, locale = 'it' }: Props) {
           <h2 style={{ fontSize: 22, fontWeight: 700, margin: '0 0 8px', color: '#111' }}>
             {ui.title}
           </h2>
-          <div style={{ display: 'flex', gap: 20 }}>
-            {/* Disponibile */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#555' }}>
-              <span style={{
-                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                width: 24, height: 24, borderRadius: 6,
-                background: 'transparent', border: '1px solid #e0e0e0',
-                fontWeight: 600, fontSize: 12, color: '#222',
-              }}>15</span>
-              {ui.legend_free}
-            </div>
-            {/* Occupato */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#999' }}>
-              <span style={{
-                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                width: 24, height: 24, borderRadius: 6,
-                background: '#fdf0f0',
-                fontWeight: 600, fontSize: 12, color: '#c0a0a0',
-                textDecoration: 'line-through',
-              }}>15</span>
-              {ui.legend_busy}
-            </div>
-          </div>
-        </div>
+                </div>
       </div>
 
       {/* Spinner caricamento */}
