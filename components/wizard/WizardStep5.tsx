@@ -17,10 +17,10 @@ const OFFER_NAMES: Record<number, Record<string, string>> = {
 const OFFER_DESC: Record<number, Record<string, string>> = {
   1: { it:'Paghi tutto entro 48h dalla prenotazione.',       en:'Pay in full within 48h of booking.',                de:'Vollzahlung innerhalb 48h nach Buchung.',          pl:'Płatność w całości w ciągu 48h.' },
   2: { it:"Paghi 50% ora, il saldo all'arrivo.",             en:'Pay 50% now, balance at arrival.',                  de:'50% jetzt, Rest bei Ankunft.',                     pl:'50% teraz, reszta przy przyjeździe.' },
-  3: { it:'Cancellazione gratuita entro 60 gg dall\'arrivo.',en:'Free cancellation up to 60 days before arrival.',   de:'Kostenlose Stornierung bis 60 Tage vor Ankunft.',  pl:'Bezpłatne anulowanie do 60 dni przed przyjazdem.' },
-  4: { it:'Cancellazione gratuita entro 45 gg dall\'arrivo.',en:'Free cancellation up to 45 days before arrival.',   de:'Kostenlose Stornierung bis 45 Tage vor Ankunft.',  pl:'Bezpłatne anulowanie do 45 dni przed przyjazdem.' },
-  5: { it:'Cancellazione gratuita entro 30 gg dall\'arrivo.',en:'Free cancellation up to 30 days before arrival.',   de:'Kostenlose Stornierung bis 30 Tage vor Ankunft.',  pl:'Bezpłatne anulowanie do 30 dni przed przyjazdem.' },
-  6: { it:'Cancellazione gratuita entro 5 gg dall\'arrivo.', en:'Free cancellation up to 5 days before arrival.',    de:'Kostenlose Stornierung bis 5 Tage vor Ankunft.',   pl:'Bezpłatne anulowanie do 5 dni przed przyjazdem.' },
+  3: { it:"Cancellazione gratuita entro 60 gg dall'arrivo.", en:'Free cancellation up to 60 days before arrival.',   de:'Kostenlose Stornierung bis 60 Tage vor Ankunft.',  pl:'Bezpłatne anulowanie do 60 dni przed przyjazdem.' },
+  4: { it:"Cancellazione gratuita entro 45 gg dall'arrivo.", en:'Free cancellation up to 45 days before arrival.',   de:'Kostenlose Stornierung bis 45 Tage vor Ankunft.',  pl:'Bezpłatne anulowanie do 45 dni przed przyjazdem.' },
+  5: { it:"Cancellazione gratuita entro 30 gg dall'arrivo.", en:'Free cancellation up to 30 days before arrival.',   de:'Kostenlose Stornierung bis 30 Tage vor Ankunft.',  pl:'Bezpłatne anulowanie do 30 dni przed przyjazdem.' },
+  6: { it:"Cancellazione gratuita entro 5 gg dall'arrivo.",  en:'Free cancellation up to 5 days before arrival.',    de:'Kostenlose Stornierung bis 5 Tage vor Ankunft.',   pl:'Bezpłatne anulowanie do 5 dni przed przyjazdem.' },
 };
 
 // ─── Traduzioni UI ────────────────────────────────────────────────────────────
@@ -38,6 +38,12 @@ const UI: Record<string, Record<string, string>> = {
     privPool: '🏊 Piscina privata', sharedPool: '🌊 Piscina condivisa', noPool: '🏖️ 250m dal mare',
     nearSea: 'Vicino al mare', nature: 'Immerso nella natura',
     nonDisp: 'Non disponibile', selezionata: '✓',
+    // Filtri
+    filterAll:   'Tutti',
+    filterPrice: '💰 Prezzo',
+    filterSize:  '📐 Più grande',
+    filterSea:   '🏖️ 250m dal mare',
+    filterNature:'🌿 2km dal mare',
   },
   en: {
     titleSingle:'Which rate do you prefer?',
@@ -52,6 +58,11 @@ const UI: Record<string, Record<string, string>> = {
     privPool: '🏊 Private pool', sharedPool: '🌊 Shared pool', noPool: '🏖️ 250m from sea',
     nearSea: 'Near the sea', nature: 'In nature',
     nonDisp: 'Unavailable', selezionata: '✓',
+    filterAll:   'All',
+    filterPrice: '💰 Price',
+    filterSize:  '📐 Largest',
+    filterSea:   '🏖️ 250m from sea',
+    filterNature:'🌿 2km from sea',
   },
   de: {
     titleSingle:'Welchen Tarif bevorzugen Sie?',
@@ -66,6 +77,11 @@ const UI: Record<string, Record<string, string>> = {
     privPool: '🏊 Privater Pool', sharedPool: '🌊 Gemeinsch.pool', noPool: '🏖️ 250m vom Meer',
     nearSea: 'Meeresnähe', nature: 'In der Natur',
     nonDisp: 'Nicht verfügbar', selezionata: '✓',
+    filterAll:   'Alle',
+    filterPrice: '💰 Preis',
+    filterSize:  '📐 Größte',
+    filterSea:   '🏖️ 250m vom Meer',
+    filterNature:'🌿 2km vom Meer',
   },
   pl: {
     titleSingle:'Którą taryfę preferujecie?',
@@ -80,8 +96,16 @@ const UI: Record<string, Record<string, string>> = {
     privPool: '🏊 Prywatny basen', sharedPool: '🌊 Wspólny basen', noPool: '🏖️ 250m od morza',
     nearSea: 'Blisko morza', nature: 'Wśród natury',
     nonDisp: 'Niedostępne', selezionata: '✓',
+    filterAll:   'Wszystkie',
+    filterPrice: '💰 Cena',
+    filterSize:  '📐 Największy',
+    filterSea:   '🏖️ 250m od morza',
+    filterNature:'🌿 2km od morza',
   },
 };
+
+// ─── Tipi filtro ─────────────────────────────────────────────────────────────
+type FilterType = 'all' | 'price' | 'size' | 'sea' | 'nature';
 
 // ─── Tipi API ────────────────────────────────────────────────────────────────
 interface OfferItem { offerId: number; offerName: string; price: number; unitsAvailable: number; }
@@ -92,14 +116,19 @@ function calcNights(ci: string, co: string) {
   return Math.round((new Date(co).getTime() - new Date(ci).getTime()) / 86_400_000);
 }
 function fmt(price: number) {
-  return new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(price);
+  return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(price);
 }
-function getPoolLabel(room: Room, ui: Record<string,string>) {
+function getPoolLabel(room: Room, ui: Record<string, string>) {
   return room.privatePool ? ui.privPool : room.sharedPool ? ui.sharedPool : ui.noPool;
 }
-function getLocationLabel(room: Room, ui: Record<string,string>) {
+function getLocationLabel(room: Room, ui: Record<string, string>) {
   const prop = getPropertyForRoom(room.roomId);
   return prop?.propertyId === 46871 ? ui.nearSea : ui.nature;
+}
+function getMinPrice(ro: RoomOffers): number {
+  const avail = ro.offers.filter(o => o.unitsAvailable > 0);
+  if (avail.length === 0) return Infinity;
+  return Math.min(...avail.map(o => o.price));
 }
 
 // ─── Componente principale ───────────────────────────────────────────────────
@@ -119,14 +148,15 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
   const roomId = roomIdProp ?? selectedRoomId;
   const isSingleRoom = !!roomId;
 
-  const [roomOffers, setRoomOffers]   = useState<RoomOffers[]>([]);
-  const [coverUrls, setCoverUrls]     = useState<Record<number,string>>({});
-  const [loading, setLoading]         = useState(true);
-  const [error, setError]             = useState<string|null>(null);
-  const [pickedRoomId, setPickedRoomId]   = useState<number|null>(roomId ?? null);
-  const [pickedOfferId, setPickedOfferId] = useState<number|null>(null);
+  const [roomOffers, setRoomOffers]       = useState<RoomOffers[]>([]);
+  const [coverUrls, setCoverUrls]         = useState<Record<number, string>>({});
+  const [loading, setLoading]             = useState(true);
+  const [error, setError]                 = useState<string | null>(null);
+  const [pickedRoomId, setPickedRoomId]   = useState<number | null>(roomId ?? null);
+  const [pickedOfferId, setPickedOfferId] = useState<number | null>(null);
+  const [activeFilter, setActiveFilter]   = useState<FilterType>('all');
+
   const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
-  // Calcolo imposta di soggiorno per mostrare il totale corretto
   const childrenTaxable = (childrenAges ?? []).filter((a: number) => a >= 12).length;
   const taxableAdults   = numAdult + childrenTaxable;
   const taxableNights   = Math.min(nights, 10);
@@ -138,9 +168,7 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
       setError('Torna indietro e seleziona le date.');
       setLoading(false); return;
     }
-
     setLoading(true); setError(null); setRoomOffers([]);
-
     try {
       let targetRoomIds: number[];
       if (isSingleRoom) {
@@ -156,12 +184,11 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
         arrival:     checkIn,
         departure:   checkOut,
         numAdults:   String(numAdult),
-        // Bambini 0-2 anni non pagano — passiamo solo quelli con età 3+
         numChildren: String((childrenAges ?? []).filter((a: number) => a >= 3).length),
       });
 
       const res = await fetch(`/api/offers?${qs}`);
-      if (!res.ok) { const b = await res.json().catch(()=>({})); throw new Error(b.error ?? `HTTP ${res.status}`); }
+      if (!res.ok) { const b = await res.json().catch(() => ({})); throw new Error(b.error ?? `HTTP ${res.status}`); }
       const data = await res.json();
       const list: RoomOffers[] = (data.data ?? []).filter((x: RoomOffers) => x.offers?.length > 0);
       setRoomOffers(list);
@@ -175,14 +202,14 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
 
   useEffect(() => { fetchOffers(); }, [fetchOffers]);
 
-  // ── Fetch cover foto (solo WizardLibero) ─────────────────────────────────
+  // ── Fetch cover foto ─────────────────────────────────────────────────────
   useEffect(() => {
     if (isSingleRoom || roomOffers.length === 0) return;
     (async () => {
       const res = await fetch('/api/cloudinary?covers=true').catch(() => null);
       if (!res?.ok) return;
       const data = await res.json();
-      const covers: Record<number,string> = {};
+      const covers: Record<number, string> = {};
       for (const ro of roomOffers) {
         const room = PROPERTIES.flatMap(p => p.rooms).find(r => r.roomId === ro.roomId);
         if (room && data.covers?.[room.cloudinaryFolder]) {
@@ -193,11 +220,35 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
     })();
   }, [roomOffers, isSingleRoom]);
 
+  // ── Filtra e ordina ───────────────────────────────────────────────────────
+  const filteredRoomOffers = (() => {
+    let list = [...roomOffers];
+
+    // Filtro posizione
+    if (activeFilter === 'sea') {
+      list = list.filter(ro => ro.propertyId === 46871);
+    } else if (activeFilter === 'nature') {
+      list = list.filter(ro => ro.propertyId === 46487);
+    }
+
+    // Ordina
+    if (activeFilter === 'price') {
+      list.sort((a, b) => getMinPrice(a) - getMinPrice(b));
+    } else if (activeFilter === 'size') {
+      list.sort((a, b) => {
+        const roomA = PROPERTIES.flatMap(p => p.rooms).find(r => r.roomId === a.roomId);
+        const roomB = PROPERTIES.flatMap(p => p.rooms).find(r => r.roomId === b.roomId);
+        return (roomB?.sqm ?? 0) - (roomA?.sqm ?? 0);
+      });
+    }
+
+    return list;
+  })();
+
   // ── Selezione ────────────────────────────────────────────────────────────
   function pick(rId: number, oId: number) {
     setPickedRoomId(rId);
     setPickedOfferId(oId);
-    // Aggiorna subito lo store → la sidebar si popola in tempo reale
     setSelectedRoomId(rId);
     setSelectedOfferId(oId);
   }
@@ -206,6 +257,18 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
     nextStep();
   }
   const canContinue = !!pickedRoomId && !!pickedOfferId;
+
+  // ── Filtri disponibili (solo in WizardLibero) ────────────────────────────
+  const hasSea    = roomOffers.some(ro => ro.propertyId === 46871);
+  const hasNature = roomOffers.some(ro => ro.propertyId === 46487);
+
+  const filters: { key: FilterType; label: string }[] = [
+    { key: 'all',    label: t.filterAll },
+    { key: 'price',  label: t.filterPrice },
+    { key: 'size',   label: t.filterSize },
+    ...(hasSea    ? [{ key: 'sea'    as FilterType, label: t.filterSea }]    : []),
+    ...(hasNature ? [{ key: 'nature' as FilterType, label: t.filterNature }] : []),
+  ];
 
   // ─────────────────────────────────────────────────────────────────────────
   return (
@@ -220,34 +283,64 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
         </p>
       )}
 
+      {/* ── Barra filtri (solo WizardLibero, solo quando ci sono risultati) ── */}
+      {!isSingleRoom && !loading && !error && roomOffers.length > 0 && (
+        <div style={{
+          display: 'flex', gap: 8, flexWrap: 'wrap',
+          marginBottom: 16, paddingBottom: 16,
+          borderBottom: '1px solid #f0f0f0',
+        }}>
+          {filters.map(f => (
+            <button
+              key={f.key}
+              onClick={() => setActiveFilter(f.key)}
+              style={{
+                padding: '6px 14px',
+                borderRadius: 20,
+                border: activeFilter === f.key ? '2px solid #1E73BE' : '1.5px solid #e0e0e0',
+                background: activeFilter === f.key ? '#EEF5FC' : '#fff',
+                color: activeFilter === f.key ? '#1E73BE' : '#555',
+                fontSize: 13,
+                fontWeight: activeFilter === f.key ? 700 : 400,
+                cursor: 'pointer',
+                transition: 'all 0.15s',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Spinner */}
       {loading && (
-        <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:12, padding:'40px 0' }}>
-          <div style={{ width:38, height:38, border:'3px solid #eee', borderTop:'3px solid #1E73BE', borderRadius:'50%', animation:'spin 0.8s linear infinite' }} />
-          <span style={{ color:'#888', fontSize:13 }}>{t.loading}</span>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, padding: '40px 0' }}>
+          <div style={{ width: 38, height: 38, border: '3px solid #eee', borderTop: '3px solid #1E73BE', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+          <span style={{ color: '#888', fontSize: 13 }}>{t.loading}</span>
         </div>
       )}
 
       {/* Errore */}
       {!loading && error && (
-        <div style={{ background:'#fff5f5', border:'1px solid #f5c6cb', borderRadius:12, padding:'20px', textAlign:'center', marginBottom:16 }}>
-          <p style={{ margin:'0 0 8px', fontWeight:700, color:'#c0392b' }}>{t.errTitle}</p>
-          <p style={{ margin:'0 0 14px', fontSize:13, color:'#888' }}>{error}</p>
+        <div style={{ background: '#fff5f5', border: '1px solid #f5c6cb', borderRadius: 12, padding: '20px', textAlign: 'center', marginBottom: 16 }}>
+          <p style={{ margin: '0 0 8px', fontWeight: 700, color: '#c0392b' }}>{t.errTitle}</p>
+          <p style={{ margin: '0 0 14px', fontSize: 13, color: '#888' }}>{error}</p>
           <button onClick={fetchOffers} style={retryBtn}>{t.retry}</button>
         </div>
       )}
 
       {/* Nessun risultato */}
-      {!loading && !error && roomOffers.length === 0 && (
-        <div style={{ background:'#f5f5f5', borderRadius:12, padding:'24px', textAlign:'center', marginBottom:16 }}>
-          <p style={{ margin:0, color:'#888', fontSize:14 }}>{t.noResults}</p>
+      {!loading && !error && filteredRoomOffers.length === 0 && (
+        <div style={{ background: '#f5f5f5', borderRadius: 12, padding: '24px', textAlign: 'center', marginBottom: 16 }}>
+          <p style={{ margin: 0, color: '#888', fontSize: 14 }}>{t.noResults}</p>
         </div>
       )}
 
       {/* Lista card rooms */}
-      {!loading && !error && roomOffers.length > 0 && (
-        <div style={{ display:'flex', flexDirection:'column', gap:16, marginBottom:20 }}>
-          {roomOffers.map(ro => {
+      {!loading && !error && filteredRoomOffers.length > 0 && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 20 }}>
+          {filteredRoomOffers.map(ro => {
             const room = PROPERTIES.flatMap(p => p.rooms).find(r => r.roomId === ro.roomId);
             if (!room) return null;
             const isRoomPicked = pickedRoomId === room.roomId;
@@ -256,49 +349,42 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
             return (
               <div key={room.roomId} style={{
                 border: `2px solid ${isRoomPicked ? '#1E73BE' : '#e5e7eb'}`,
-                borderRadius: 16, overflow:'hidden', background:'#fff',
+                borderRadius: 16, overflow: 'hidden', background: '#fff',
                 boxShadow: isRoomPicked ? '0 0 0 3px rgba(30,115,190,0.12)' : '0 1px 4px rgba(0,0,0,0.06)',
                 transition: 'all 0.15s',
               }}>
 
                 {/* Foto (solo WizardLibero) */}
                 {!isSingleRoom && (
-                  <div style={{ height: 180, background:'#f0f4f8', position:'relative', overflow:'hidden' }}>
+                  <div style={{ height: 180, background: '#f0f4f8', position: 'relative', overflow: 'hidden' }}>
                     {coverUrl ? (
-                      <img
-                        src={coverUrl}
-                        alt={room.name}
-                        style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}
-                        loading="lazy"
-                      />
+                      <img src={coverUrl} alt={room.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} loading="lazy" />
                     ) : (
-                      <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100%', color:'#ccc', fontSize:13 }}>
-                        🏠
-                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#ccc', fontSize: 13 }}>🏠</div>
                     )}
-                    {/* Badge tipo */}
-                    <span style={{ position:'absolute', top:10, left:10, background:'rgba(0,0,0,0.55)', color:'#fff', fontSize:11, fontWeight:600, padding:'3px 10px', borderRadius:20 }}>
+                    <span style={{ position: 'absolute', top: 10, left: 10, background: 'rgba(0,0,0,0.55)', color: '#fff', fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 20 }}>
                       {room.type}
                     </span>
                   </div>
                 )}
 
                 {/* Header room */}
-                <div style={{ padding: isSingleRoom ? '12px 16px 6px' : '10px 16px 6px', background: isRoomPicked ? '#EEF5FC' : '#fafafa', borderBottom:'1px solid #f0f0f0' }}>
-                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                    <span style={{ fontSize:17, fontWeight:700, color:'#1E73BE' }}>{room.name}</span>
-                    {isSingleRoom && <span style={{ fontSize:11, color:'#888', background:'#f0f0f0', borderRadius:6, padding:'2px 8px' }}>{room.type}</span>}
+                <div style={{ padding: isSingleRoom ? '12px 16px 6px' : '10px 16px 6px', background: isRoomPicked ? '#EEF5FC' : '#fafafa', borderBottom: '1px solid #f0f0f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: 17, fontWeight: 700, color: '#1E73BE' }}>{room.name}</span>
+                    {isSingleRoom && <span style={{ fontSize: 11, color: '#888', background: '#f0f0f0', borderRadius: 6, padding: '2px 8px' }}>{room.type}</span>}
                   </div>
-                  <div style={{ display:'flex', flexWrap:'wrap', gap:6, marginTop:6 }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 6 }}>
                     <span style={chip}>🛏️ {room.bedrooms} {t.camere}</span>
                     <span style={chip}>👥 {t.maxPers} {room.maxPeople} {t.persone}</span>
+                    <span style={chip}>📐 {room.sqm} mq</span>
                     <span style={chip}>{getPoolLabel(room, t)}</span>
                     <span style={chip}>📍 {getLocationLabel(room, t)}</span>
                   </div>
                 </div>
 
                 {/* Tariffe */}
-                <div style={{ padding:'8px 12px 14px' }}>
+                <div style={{ padding: '8px 12px 14px' }}>
                   {ro.offers.map(offer => {
                     const isPicked = isRoomPicked && pickedOfferId === offer.offerId;
                     const perNight = nights > 0 ? Math.round(offer.price / nights) : 0;
@@ -312,10 +398,10 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
                         onClick={() => avail && pick(room.roomId, offer.offerId)}
                         disabled={!avail}
                         style={{
-                          width:'100%', textAlign:'left',
-                          display:'flex', alignItems:'center', justifyContent:'space-between',
-                          padding:'10px 12px', marginTop:6,
-                          borderRadius:10,
+                          width: '100%', textAlign: 'left',
+                          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                          padding: '10px 12px', marginTop: 6,
+                          borderRadius: 10,
                           border: isPicked ? '2px solid #1E73BE' : '1.5px solid #e5e7eb',
                           background: isPicked ? '#EEF5FC' : '#fff',
                           cursor: avail ? 'pointer' : 'default',
@@ -323,20 +409,18 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
                           transition: 'all 0.12s',
                         }}
                       >
-                        {/* Sinistra */}
-                        <div style={{ flex:1, marginRight:12, minWidth:0 }}>
-                          <div style={{ display:'flex', alignItems:'center', gap:6 }}>
-                            <span style={{ fontSize:14, fontWeight:700, color:'#111' }}>{name}</span>
-                            {isPicked && <span style={{ fontSize:13, color:'#1E73BE', fontWeight:700 }}>{t.selezionata}</span>}
+                        <div style={{ flex: 1, marginRight: 12, minWidth: 0 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <span style={{ fontSize: 14, fontWeight: 700, color: '#111' }}>{name}</span>
+                            {isPicked && <span style={{ fontSize: 13, color: '#1E73BE', fontWeight: 700 }}>{t.selezionata}</span>}
                           </div>
-                          {desc && <p style={{ margin:'3px 0 0', fontSize:12, color:'#666', lineHeight:1.4 }}>{desc}</p>}
-                          {!avail && <span style={{ fontSize:11, color:'#e74c3c', display:'block', marginTop:2 }}>{t.nonDisp}</span>}
+                          {desc && <p style={{ margin: '3px 0 0', fontSize: 12, color: '#666', lineHeight: 1.4 }}>{desc}</p>}
+                          {!avail && <span style={{ fontSize: 11, color: '#e74c3c', display: 'block', marginTop: 2 }}>{t.nonDisp}</span>}
                         </div>
-                        {/* Destra: prezzo */}
-                        <div style={{ textAlign:'right', flexShrink:0 }}>
-                          <div style={{ fontSize:20, fontWeight:800, color:'#1E73BE', lineHeight:1 }}>{fmt(offer.price + touristTax)}</div>
-                          {perNight > 0 && <div style={{ fontSize:11, color:'#999', marginTop:2 }}>{fmt(perNight)}{t.perNight}</div>}
-                          <div style={{ fontSize:10, color:'#bbb', marginTop:1 }}>{t.total}</div>
+                        <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                          <div style={{ fontSize: 20, fontWeight: 800, color: '#1E73BE', lineHeight: 1 }}>{fmt(offer.price + touristTax)}</div>
+                          {perNight > 0 && <div style={{ fontSize: 11, color: '#999', marginTop: 2 }}>{fmt(perNight)}{t.perNight}</div>}
+                          <div style={{ fontSize: 10, color: '#bbb', marginTop: 1 }}>{t.total}</div>
                         </div>
                       </button>
                     );
@@ -348,11 +432,11 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
         </div>
       )}
 
-      {/* CTA — nascosto su desktop (c'è nella sidebar) */}
+      {/* CTA mobile */}
       <div className="step5-continua-mobile">
         <button onClick={handleContinua} disabled={!canContinue} style={{
-          width:'100%', padding:'15px', borderRadius:12, border:'none',
-          fontSize:16, fontWeight:700, marginBottom:14,
+          width: '100%', padding: '15px', borderRadius: 12, border: 'none',
+          fontSize: 16, fontWeight: 700, marginBottom: 14,
           background: canContinue ? '#FCAF1A' : '#e0e0e0',
           color: canContinue ? '#fff' : '#999',
           cursor: canContinue ? 'pointer' : 'not-allowed',
@@ -362,7 +446,7 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
       </div>
       <style>{'@media (min-width: 768px) { .step5-continua-mobile { display: none; } }'}</style>
 
-      <button onClick={prevStep} style={{ background:'none', border:'none', color:'#1E73BE', fontSize:14, cursor:'pointer', padding:0 }}>
+      <button onClick={prevStep} style={{ background: 'none', border: 'none', color: '#1E73BE', fontSize: 14, cursor: 'pointer', padding: 0 }}>
         {t.indietro}
       </button>
 
@@ -372,9 +456,9 @@ export default function WizardStep5({ locale = 'it', roomId: roomIdProp }: Props
 }
 
 const chip: React.CSSProperties = {
-  fontSize:11, color:'#555', background:'#f5f5f5', borderRadius:6, padding:'3px 8px',
+  fontSize: 11, color: '#555', background: '#f5f5f5', borderRadius: 6, padding: '3px 8px',
 };
 const retryBtn: React.CSSProperties = {
-  padding:'8px 20px', borderRadius:8, border:'1px solid #1E73BE',
-  background:'#fff', color:'#1E73BE', fontSize:14, cursor:'pointer',
+  padding: '8px 20px', borderRadius: 8, border: '1px solid #1E73BE',
+  background: '#fff', color: '#1E73BE', fontSize: 14, cursor: 'pointer',
 };
