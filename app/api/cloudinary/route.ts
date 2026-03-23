@@ -7,6 +7,14 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// ─── Cache in-memory a livello modulo ────────────────────────────────────────
+// Persiste per tutta la vita del processo Node.js (dev: fino al prossimo save,
+// prod: fino al prossimo cold start). Evita 13 chiamate API ad ogni page load.
+const TTL_MS = 60 * 60 * 1000; // 1 ora
+
+let coversCache: { data: Record<string, string | null>; ts: number } | null = null;
+const folderCache = new Map<string, { data: any[]; ts: number }>();
+
 // Genera URL ottimizzato per una foto
 function makeUrl(publicId: string, width: number, height?: number): string {
   const transforms: any = { width, crop: 'fill', quality: 'auto', fetch_format: 'auto' };
@@ -23,7 +31,15 @@ export async function GET(req: NextRequest) {
 
   try {
     if (covers) {
-      // Una sola chiamata — prima foto di ogni cartella
+      // Restituisce dalla cache in-memory se ancora valida
+      const now = Date.now();
+      if (coversCache && (now - coversCache.ts) < TTL_MS) {
+        return NextResponse.json({ covers: coversCache.data, cached: true }, {
+          headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate' },
+        });
+      }
+
+      // Cache scaduta o assente: fetch da Cloudinary
       const folders = [
         'livingapple/annurca', 'livingapple/delicious', 'livingapple/fuji',
         'livingapple/idared', 'livingapple/kissabel', 'livingapple/pink-lady',
@@ -40,16 +56,15 @@ export async function GET(req: NextRequest) {
             .max_results(1)
             .execute();
           const photo = res.resources[0];
-          return {
-            folder: f,
-            url: photo ? makeUrl(photo.public_id, 600, 400) : null,
-          };
+          return { folder: f, url: photo ? makeUrl(photo.public_id, 600, 400) : null };
         })
       );
 
-      // Restituisce oggetto { 'livingapple/fuji': 'https://...', ... }
       const coverMap: Record<string, string | null> = {};
       results.forEach(({ folder, url }) => { coverMap[folder] = url; });
+
+      // Salva in cache
+      coversCache = { data: coverMap, ts: Date.now() };
 
       return NextResponse.json({ covers: coverMap }, {
         headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate' },
@@ -57,7 +72,14 @@ export async function GET(req: NextRequest) {
     }
 
     if (folder) {
-      // Tutte le foto di una cartella (per scheda appartamento)
+      const now = Date.now();
+      const cached = folderCache.get(folder);
+      if (cached && (now - cached.ts) < TTL_MS) {
+        return NextResponse.json({ photos: cached.data, cached: true }, {
+          headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate' },
+        });
+      }
+
       const result = await cloudinary.search
         .expression(`folder:${folder}`)
         .sort_by('public_id', 'asc')
@@ -69,6 +91,8 @@ export async function GET(req: NextRequest) {
         thumbUrl: makeUrl(r.public_id, 400, 300),
         publicId: r.public_id,
       }));
+
+      folderCache.set(folder, { data: photos, ts: Date.now() });
 
       return NextResponse.json({ photos }, {
         headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate' },

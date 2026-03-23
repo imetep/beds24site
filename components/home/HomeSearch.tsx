@@ -1,0 +1,613 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useWizardStore } from '@/store/wizard-store';
+import { PROPERTIES } from '@/config/properties';
+
+// ─── Traduzioni ───────────────────────────────────────────────────────────────
+const UI: Record<string, Record<string, string>> = {
+  it: { dates:'Date', guests:'Persone', search:'Cerca',
+        checkin:'Check-in', checkout:'Check-out', done:'Fatto',
+        adults:'Adulti', adultsAge:'18+', children:'Bambini', childrenAge:'0–17',
+        nights:'notte', nightsP:'notti', hintCI:'Seleziona check-in',
+        hintCO:'Seleziona check-out', cancel:'Cancella', inspire:'Le nostre residenze' },
+  en: { dates:'Dates', guests:'Guests', search:'Search',
+        checkin:'Check-in', checkout:'Check-out', done:'Done',
+        adults:'Adults', adultsAge:'18+', children:'Children', childrenAge:'0–17',
+        nights:'night', nightsP:'nights', hintCI:'Select check-in',
+        hintCO:'Select check-out', cancel:'Clear', inspire:'Our residences' },
+  de: { dates:'Datum', guests:'Personen', search:'Suchen',
+        checkin:'Check-in', checkout:'Check-out', done:'Fertig',
+        adults:'Erwachsene', adultsAge:'18+', children:'Kinder', childrenAge:'0–17',
+        nights:'Nacht', nightsP:'Nächte', hintCI:'Check-in wählen',
+        hintCO:'Check-out wählen', cancel:'Löschen', inspire:'Unsere Residenzen' },
+  pl: { dates:'Daty', guests:'Osoby', search:'Szukaj',
+        checkin:'Zameldowanie', checkout:'Wymeldowanie', done:'Gotowe',
+        adults:'Dorośli', adultsAge:'18+', children:'Dzieci', childrenAge:'0–17',
+        nights:'noc', nightsP:'nocy', hintCI:'Wybierz zameldowanie',
+        hintCO:'Wybierz wymeldowanie', cancel:'Wyczyść', inspire:'Nasze rezydencje' },
+};
+
+const MONTHS: Record<string, string[]> = {
+  it: ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
+  en: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+  de: ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'],
+  pl: ['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'],
+};
+const DAYS: Record<string, string[]> = {
+  it: ['Lu','Ma','Me','Gi','Ve','Sa','Do'],
+  en: ['Mo','Tu','We','Th','Fr','Sa','Su'],
+  de: ['Mo','Di','Mi','Do','Fr','Sa','So'],
+  pl: ['Pn','Wt','Śr','Cz','Pt','So','Nd'],
+};
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function toYMD(y: number, m: number, d: number) {
+  return `${y}-${String(m + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+}
+function parseYMD(s: string) {
+  const [y, m, d] = s.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+function diffNights(a: string, b: string) {
+  return Math.round((parseYMD(b).getTime() - parseYMD(a).getTime()) / 86400000);
+}
+function addM(y: number, m: number, delta: number) {
+  let nm = m + delta;
+  const ny = y + Math.floor(nm / 12);
+  nm = ((nm % 12) + 12) % 12;
+  return { y: ny, m: nm };
+}
+function cells(year: number, month: number): (number | null)[] {
+  const dow = new Date(year, month, 1).getDay();
+  const off = dow === 0 ? 6 : dow - 1;
+  const tot = new Date(year, month + 1, 0).getDate();
+  const arr: (number | null)[] = Array(off).fill(null);
+  for (let d = 1; d <= tot; d++) arr.push(d);
+  return arr;
+}
+// Formato data stile Expedia: "mer 8 apr" — giorno settimana + numero + mese abbreviato
+const WEEKDAYS: Record<string, string[]> = {
+  it: ['dom','lun','mar','mer','gio','ven','sab'],
+  en: ['sun','mon','tue','wed','thu','fri','sat'],
+  de: ['so','mo','di','mi','do','fr','sa'],
+  pl: ['nd','pn','wt','śr','cz','pt','so'],
+};
+const MONTHS_SHORT: Record<string, string[]> = {
+  it: ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'],
+  en: ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'],
+  de: ['jan','feb','mär','apr','mai','jun','jul','aug','sep','okt','nov','dez'],
+  pl: ['sty','lut','mar','kwi','maj','cze','lip','sie','wrz','paź','lis','gru'],
+};
+function fmtDate(ymd: string, locale: string): string {
+  const d = parseYMD(ymd);
+  const wd  = (WEEKDAYS[locale]    ?? WEEKDAYS.it)[d.getDay()];
+  const mon = (MONTHS_SHORT[locale] ?? MONTHS_SHORT.it)[d.getMonth()];
+  return `${wd} ${d.getDate()} ${mon}`;
+}
+function shortDate(ymd: string) {
+  const d = parseYMD(ymd);
+  return `${d.getDate()}/${d.getMonth() + 1}`;
+}
+
+// ─── Componente ───────────────────────────────────────────────────────────────
+export default function HomeSearch({ locale }: { locale: string }) {
+  const ui   = UI[locale] ?? UI.it;
+  const mons = MONTHS[locale] ?? MONTHS.it;
+  const dys  = DAYS[locale]   ?? DAYS.it;
+  const router = useRouter();
+
+  const { checkIn, checkOut, numAdult, numChild, childrenAges,
+          setCheckIn, setCheckOut, setNumAdult, setNumChild, setChildAge } = useWizardStore();
+
+  const [panel, setPanel]   = useState<'none' | 'dates' | 'guests'>('none');
+  const [hover,  setHover]  = useState<string | null>(null);
+  const [isDesk, setDesk]   = useState(false);
+  const [covers, setCovers] = useState<Record<string, string>>({});
+
+  // Calendario
+  const now = new Date(); now.setHours(0, 0, 0, 0);
+  const todayYMD = toYMD(now.getFullYear(), now.getMonth(), now.getDate());
+  const [vy, setVY] = useState(now.getFullYear());
+  const [vm, setVM] = useState(now.getMonth());
+  const sec = addM(vy, vm, 1);
+
+  useEffect(() => {
+    const check = () => setDesk(window.innerWidth >= 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  // Blocca scroll body su mobile quando panel è aperto
+  useEffect(() => {
+    document.body.style.overflow = (!isDesk && panel !== 'none') ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [panel, isDesk]);
+
+  // Carica cover da Cloudinary
+  useEffect(() => {
+    fetch('/api/cloudinary?covers=true')
+      .then(r => r.json())
+      .then(d => { if (d.covers) setCovers(d.covers); })
+      .catch(() => {});
+  }, []);
+
+  // ── Calendario ─────────────────────────────────────────────────────────────
+  // selectingCheckout: rimane true dopo aver cliccato check-in (anche con checkout pre-selezionato)
+  // Permette all'utente di cambiare il checkout anche se +3 è già stato suggerito
+  const [selectingCheckout, setSelectingCheckout] = useState(false);
+  const phase: 'ci' | 'co' = selectingCheckout ? 'co' : (checkIn && !checkOut ? 'co' : 'ci');
+  const isPrevDis = toYMD(vy, vm, 1) <= toYMD(now.getFullYear(), now.getMonth(), 1);
+
+  function handleDay(ymd: string) {
+    if (ymd < todayYMD) return;
+    if (phase === 'ci') {
+      // Clicco check-in: pre-seleziono +3 come suggerimento, ma resto in modalità checkout
+      setCheckIn(ymd);
+      const d = parseYMD(ymd);
+      const pre = new Date(d.getTime() + 3 * 86400000);
+      setCheckOut(toYMD(pre.getFullYear(), pre.getMonth(), pre.getDate()));
+      setSelectingCheckout(true); // rimango in modalità checkout → utente può cambiare
+    } else {
+      if (diffNights(checkIn!, ymd) < 1) return;
+      setCheckOut(ymd);
+      setSelectingCheckout(false); // checkout confermato
+    }
+  }
+
+  function renderMonth(year: number, month: number, showTitle = true) {
+    const rangeEnd = checkOut || hover;
+    return (
+      <div style={{ flex: 1 }}>
+        {showTitle && (
+          <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 14, marginBottom: 8, color: '#111' }}>
+            {mons[month]} {year}
+          </div>
+        )}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', marginBottom: 2 }}>
+          {dys.map(d => (
+            <div key={d} style={{ textAlign: 'center', fontSize: 10, fontWeight: 600, color: '#bbb', paddingBottom: 4 }}>{d}</div>
+          ))}
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)' }}>
+          {cells(year, month).map((day, i) => {
+            if (!day) return <div key={i} />;
+            const ymd = toYMD(year, month, day);
+            const isPast  = ymd < todayYMD;
+            const isStart = ymd === checkIn;
+            const isEnd   = ymd === checkOut;
+            const inRange = !!(checkIn && rangeEnd && ymd > checkIn && ymd < rangeEnd);
+            return (
+              <button key={i} onClick={() => handleDay(ymd)}
+                onMouseEnter={() => { if (!isPast) setHover(ymd); }}
+                onMouseLeave={() => setHover(null)}
+                disabled={isPast}
+                style={{
+                  height: 34, width: '100%', border: 'none', outline: 'none',
+                  borderRadius: (isStart || isEnd) ? '50%' : 0,
+                  background: (isStart || isEnd) ? '#1E73BE' : inRange ? '#EBF4FC' : 'transparent',
+                  color: (isStart || isEnd) ? '#fff' : isPast ? '#ccc' : '#111',
+                  fontSize: 13, fontWeight: (isStart || isEnd) ? 700 : 400,
+                  cursor: isPast ? 'default' : 'pointer',
+                  textDecoration: isPast ? 'line-through' : 'none',
+                }}
+              >{day}</button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Labels ─────────────────────────────────────────────────────────────────
+  const nights = checkIn && checkOut ? diffNights(checkIn, checkOut) : 0;
+  const datesLabel = checkIn && checkOut
+    ? `${fmtDate(checkIn, locale)} – ${fmtDate(checkOut, locale)}  ·  ${nights} ${nights === 1 ? ui.nights : ui.nightsP}`
+    : checkIn ? fmtDate(checkIn, locale) : null;
+
+  const guestsLabel = (numAdult + numChild) > 0
+    ? `${numAdult + numChild} ${locale === 'it' ? (numAdult + numChild === 1 ? 'persona' : 'persone') : 'guests'}`
+    : null;
+
+  function handleCerca() {
+    if (!checkIn || !checkOut) { setPanel('dates'); return; }
+    setPanel('none');
+    router.push(`/${locale}/prenota?from=home`);
+  }
+
+  // ── Panel contenuto calendario ────────────────────────────────────────────
+  function CalContent() {
+    // Mobile: 12 mesi verticali (scroll). Desktop: 2 mesi affiancati con frecce.
+    const mobileMonths = Array.from({ length: 12 }, (_, i) => addM(now.getFullYear(), now.getMonth(), i));
+
+    return (
+      <div>
+        {/* Header fisso con pills e hint */}
+        <div style={{ padding: isDesk ? '24px 24px 0' : '0 20px', position: 'sticky', top: 0, background: '#fff', zIndex: 10, paddingTop: isDesk ? 24 : 0 }}>
+          {!isDesk && (
+            <div style={{ width: 40, height: 4, borderRadius: 2, background: '#ddd', margin: '8px auto 16px' }} />
+          )}
+          {/* Pills */}
+          <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
+            {[{l: ui.checkin, v: checkIn}, {l: ui.checkout, v: checkOut}].map(({l, v}, i) => (
+              <div key={i} style={{
+                flex: 1, padding: '8px 10px', borderRadius: 10,
+                border: `2px solid ${v ? '#1E73BE' : '#e5e7eb'}`,
+                background: v ? '#EBF4FC' : '#f9fafb',
+              }}>
+                <div style={{ fontSize: 9, fontWeight: 700, color: '#888', textTransform: 'uppercase' }}>{l}</div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: v ? '#1E73BE' : '#aaa' }}>{v ? fmtDate(v, locale) : '—'}</div>
+              </div>
+            ))}
+          </div>
+          <p style={{ fontSize: 12, color: '#1E73BE', fontWeight: 500, margin: '0 0 8px' }}>
+            {phase === 'ci' ? ui.hintCI : ui.hintCO}
+          </p>
+
+          {/* Banner soggiorno minimo — appare solo dopo la selezione check-in */}
+          {phase === 'co' && (
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 10,
+              background: 'linear-gradient(135deg, #FFF8EC 0%, #FFF3DC 100%)',
+              border: '1px solid #FCAF1A',
+              borderLeft: '4px solid #FCAF1A',
+              borderRadius: 10,
+              padding: '10px 14px',
+              marginBottom: 12,
+            }}>
+              <span style={{ fontSize: 18, flexShrink: 0 }}>🌙</span>
+              <div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#92610A', letterSpacing: '0.02em' }}>
+                  {locale === 'it' ? 'Soggiorno minimo consigliato: 3 notti'
+                   : locale === 'de' ? 'Empfohlener Mindestaufenthalt: 3 Nächte'
+                   : locale === 'pl' ? 'Zalecany minimalny pobyt: 3 noce'
+                   : 'Recommended minimum stay: 3 nights'}
+                </div>
+                <div style={{ fontSize: 11, color: '#B07820', marginTop: 2 }}>
+                  {locale === 'it' ? 'Puoi selezionare qualsiasi durata, ma potremmo avere poca disponibilità'
+                   : locale === 'de' ? 'Kürzere Aufenthalte sind möglich, aber selten verfügbar'
+                   : locale === 'pl' ? 'Krótsze pobyty są możliwe, ale rzadko dostępne'
+                   : 'Shorter stays are possible but rarely available'}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {isDesk ? (
+          // DESKTOP: 2 mesi affiancati con frecce
+          <div style={{ padding: '0 24px 20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+              <button onClick={() => { if (!isPrevDis) { const p = addM(vy, vm, -1); setVY(p.y); setVM(p.m); }}}
+                disabled={isPrevDis}
+                style={{ background: 'none', border: 'none', fontSize: 22, cursor: isPrevDis ? 'default' : 'pointer', color: isPrevDis ? '#ddd' : '#333', padding: '0 8px' }}>
+                ‹
+              </button>
+              <div style={{ display: 'flex', flex: 1, justifyContent: 'space-around' }}>
+                <span style={{ fontWeight: 700, fontSize: 14 }}>{mons[vm]} {vy}</span>
+                <span style={{ fontWeight: 700, fontSize: 14 }}>{mons[sec.m]} {sec.y}</span>
+              </div>
+              <button onClick={() => { const n = addM(vy, vm, 1); setVY(n.y); setVM(n.m); }}
+                style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#333', padding: '0 8px' }}>
+                ›
+              </button>
+            </div>
+            <div style={{ display: 'flex', gap: 24 }}>
+              {renderMonth(vy, vm)}
+              <div style={{ width: 1, background: '#f0f0f0', flexShrink: 0 }} />
+              {renderMonth(sec.y, sec.m)}
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 14 }}>
+              <button onClick={() => { setCheckIn(''); setCheckOut(''); setSelectingCheckout(false); }}
+                style={{ background: 'none', border: 'none', color: '#888', fontSize: 12, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>
+                {ui.cancel}
+              </button>
+              <button onClick={() => setPanel('none')}
+                style={{ padding: '10px 24px', background: '#FCAF1A', color: '#fff', border: 'none', borderRadius: 50, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
+                {ui.done}
+              </button>
+            </div>
+          </div>
+        ) : (
+          // MOBILE: scroll verticale — tutti i mesi impilati (stile Expedia)
+          // Struttura: area scrollabile + footer FISSO fuori dal scroll (funziona su iOS)
+          <>
+            <div style={{ padding: '0 20px', overflowY: 'auto', paddingBottom: 80 }}>
+              {mobileMonths.map(({ y, m }, idx) => (
+                <div key={idx} style={{ marginBottom: 28 }}>
+                  <div style={{ fontWeight: 700, fontSize: 15, textAlign: 'center', marginBottom: 10, color: '#111' }}>
+                    {mons[m]} {y}
+                  </div>
+                  {renderMonth(y, m, false)}
+                </div>
+              ))}
+            </div>
+            {/* Footer FISSO in basso — fuori dal div scrollabile, funziona su iOS */}
+            <div style={{
+              position: 'sticky', bottom: 0,
+              background: '#fff', padding: '10px 20px 24px',
+              borderTop: '1px solid #f0f0f0',
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              zIndex: 10,
+            }}>
+              <button onClick={() => { setCheckIn(''); setCheckOut(''); setSelectingCheckout(false); }}
+                style={{ background: 'none', border: 'none', color: '#888', fontSize: 12, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>
+                {ui.cancel}
+              </button>
+              <button onClick={() => setPanel('none')}
+                style={{ padding: '10px 28px', background: '#FCAF1A', color: '#fff', border: 'none', borderRadius: 50, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
+                {ui.done}
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  // ── Panel contenuto ospiti ────────────────────────────────────────────────
+  function GuestsContent() {
+    const ageLabel = locale === 'it' ? 'Età bambino' : locale === 'de' ? 'Alter Kind' : locale === 'pl' ? 'Wiek dziecka' : 'Child age';
+    const agePlaceholder = locale === 'it' ? 'Seleziona età' : locale === 'de' ? 'Alter wählen' : locale === 'pl' ? 'Wybierz wiek' : 'Select age';
+    const yearStr = locale === 'it' ? 'anni' : locale === 'de' ? 'Jahre' : locale === 'pl' ? 'lat' : 'years';
+
+    return (
+      <div style={{ padding: 20 }}>
+        {!isDesk && (
+          <div style={{ width: 40, height: 4, borderRadius: 2, background: '#ddd', margin: '0 auto 16px' }} />
+        )}
+        {[
+          { label: ui.adults, sub: ui.adultsAge, val: numAdult, set: setNumAdult, min: 1 },
+          { label: ui.children, sub: ui.childrenAge, val: numChild, set: setNumChild, min: 0 },
+        ].map(({ label, sub, val, set, min }) => (
+          <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0', borderBottom: '1px solid #f0f0f0' }}>
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 500 }}>{label}</div>
+              <div style={{ fontSize: 12, color: '#999' }}>{sub}</div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <button onClick={() => set(val - 1)} disabled={val <= min}
+                style={{ width: 34, height: 34, borderRadius: '50%', border: `1.5px solid ${val <= min ? '#e5e7eb' : '#1E73BE'}`,
+                  background: '#fff', color: val <= min ? '#ccc' : '#1E73BE', fontSize: 18, cursor: val <= min ? 'not-allowed' : 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                −
+              </button>
+              <span style={{ fontSize: 16, fontWeight: 700, minWidth: 24, textAlign: 'center' }}>{val}</span>
+              <button onClick={() => set(val + 1)}
+                style={{ width: 34, height: 34, borderRadius: '50%', border: '1.5px solid #1E73BE',
+                  background: '#fff', color: '#1E73BE', fontSize: 18, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                +
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {/* Età bambini — necessarie per imposta di soggiorno e calcolo totale */}
+        {numChild > 0 && (
+          <div style={{ marginTop: 14, padding: 14, background: '#f9fafb', borderRadius: 12, border: '1px solid #e5e7eb' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: numChild === 1 ? '1fr' : '1fr 1fr', gap: 10 }}>
+              {Array.from({ length: numChild }, (_, i) => (
+                <div key={i}>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: '#6b7280', marginBottom: 4, textTransform: 'uppercase' }}>
+                    {ageLabel} {i + 1}
+                  </label>
+                  <select
+                    value={childrenAges[i] ?? -1}
+                    onChange={e => setChildAge(i, Number(e.target.value))}
+                    style={{
+                      width: '100%', padding: '8px 10px', fontSize: 14, borderRadius: 8,
+                      border: `1.5px solid ${(childrenAges[i] ?? -1) < 0 ? '#f97316' : '#e5e7eb'}`,
+                      background: '#fff', appearance: 'auto',
+                    }}
+                  >
+                    <option value={-1}>{agePlaceholder}</option>
+                    {Array.from({ length: 18 }, (_, age) => (
+                      <option key={age} value={age}>{age} {yearStr}</option>
+                    ))}
+                  </select>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <button onClick={() => setPanel('none')}
+          style={{ width: '100%', marginTop: 20, padding: '12px', background: '#FCAF1A', color: '#fff', border: 'none', borderRadius: 50, fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>
+          {ui.done}
+        </button>
+      </div>
+    );
+  }
+
+  // ── Render ─────────────────────────────────────────────────────────────────
+  return (
+    <div style={{ background: '#fff', minHeight: '100vh', boxSizing: 'border-box', width: '100%', overflowX: 'hidden' }}>
+
+      {/* ── Barra ricerca ─────────────────────────────────────────────────── */}
+      <div style={{ maxWidth: 680, margin: '0 auto', padding: '1.5rem 16px 0', boxSizing: 'border-box', position: 'relative' }}>
+
+        {isDesk ? (
+          // DESKTOP: una riga
+          <div style={{ display: 'flex', alignItems: 'stretch', border: '1.5px solid #e5e7eb', borderRadius: 50,
+            background: '#fff', boxShadow: '0 2px 16px rgba(0,0,0,0.08)', overflow: 'hidden' }}>
+
+            <button onClick={() => setPanel(p => p === 'dates' ? 'none' : 'dates')}
+              style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 12, padding: '14px 24px',
+                background: panel === 'dates' ? '#f0f7ff' : 'transparent',
+                border: 'none', borderRight: '1px solid #e5e7eb', cursor: 'pointer', textAlign: 'left' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="2" style={{ flexShrink: 0 }}>
+                <rect x="3" y="4" width="18" height="18" rx="3"/>
+                <path d="M16 2v4M8 2v4M3 10h18"/>
+                <circle cx="8" cy="15" r="1" fill="#1E73BE"/>
+                <circle cx="12" cy="15" r="1" fill="#1E73BE"/>
+                <circle cx="16" cy="15" r="1" fill="#1E73BE"/>
+              </svg>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{ui.dates}</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: datesLabel ? '#111' : '#aaa', marginTop: 1 }}>
+                  {datesLabel ?? `${ui.checkin} – ${ui.checkout}`}
+                </div>
+              </div>
+            </button>
+
+            <button onClick={() => setPanel(p => p === 'guests' ? 'none' : 'guests')}
+              style={{ flex: '0 0 180px', display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px',
+                background: panel === 'guests' ? '#f0f7ff' : 'transparent',
+                border: 'none', borderRight: '1px solid #e5e7eb', cursor: 'pointer', textAlign: 'left' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="2" style={{ flexShrink: 0 }}>
+                <circle cx="12" cy="7" r="4"/>
+                <path d="M5.5 21c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" strokeLinecap="round"/>
+              </svg>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{ui.guests}</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: '#111', marginTop: 1 }}>
+                  {guestsLabel ?? `${numAdult} ${locale === 'it' ? 'adulti' : 'adults'}`}
+                </div>
+              </div>
+            </button>
+
+            <button onClick={handleCerca}
+              style={{ padding: '0 28px', background: '#FCAF1A', color: '#fff', border: 'none',
+                cursor: 'pointer', fontWeight: 700, fontSize: 15, display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap' }}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+              </svg>
+              {ui.search}
+            </button>
+          </div>
+        ) : (
+          // MOBILE: colonna
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <button onClick={() => setPanel(p => p === 'dates' ? 'none' : 'dates')}
+              style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px',
+                border: `1.5px solid ${panel === 'dates' ? '#1E73BE' : '#e5e7eb'}`, borderRadius: 14,
+                background: panel === 'dates' ? '#f0f7ff' : '#fff', cursor: 'pointer',
+                textAlign: 'left', width: '100%', boxSizing: 'border-box' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="1.8" style={{ flexShrink: 0 }}>
+                <rect x="3" y="4" width="18" height="18" rx="3"/>
+                <path d="M16 2v4M8 2v4M3 10h18"/>
+                <circle cx="8" cy="15" r="1" fill="#1E73BE"/>
+                <circle cx="12" cy="15" r="1" fill="#1E73BE"/>
+                <circle cx="16" cy="15" r="1" fill="#1E73BE"/>
+              </svg>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{ui.dates}</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: datesLabel ? '#111' : '#aaa', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {datesLabel ?? `${ui.checkin} – ${ui.checkout}`}
+                </div>
+              </div>
+            </button>
+
+            <button onClick={() => setPanel(p => p === 'guests' ? 'none' : 'guests')}
+              style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px',
+                border: `1.5px solid ${panel === 'guests' ? '#1E73BE' : '#e5e7eb'}`, borderRadius: 14,
+                background: panel === 'guests' ? '#f0f7ff' : '#fff', cursor: 'pointer',
+                textAlign: 'left', width: '100%', boxSizing: 'border-box' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="1.8" style={{ flexShrink: 0 }}>
+                <circle cx="12" cy="7" r="4"/>
+                <path d="M5.5 21c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" strokeLinecap="round"/>
+              </svg>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{ui.guests}</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: '#111', marginTop: 1 }}>
+                  {guestsLabel ?? `${numAdult} ${locale === 'it' ? 'adulti' : 'adults'}`}
+                </div>
+              </div>
+            </button>
+
+            <button onClick={handleCerca}
+              style={{ width: '100%', boxSizing: 'border-box', padding: '15px', borderRadius: 50,
+                background: '#FCAF1A', color: '#fff', border: 'none',
+                fontWeight: 700, fontSize: 16, cursor: 'pointer' }}>
+              {ui.search}
+            </button>
+          </div>
+        )}
+
+        {/* Dropdown desktop */}
+        {isDesk && panel === 'dates' && (
+          <div style={{ position: 'absolute', top: 'calc(100% + 8px)', left: 0, width: 540,
+            background: '#fff', borderRadius: 16, boxShadow: '0 8px 32px rgba(0,0,0,0.15)', zIndex: 200, overflow: 'hidden' }}>
+            <CalContent />
+          </div>
+        )}
+        {isDesk && panel === 'guests' && (
+          <div style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, width: 300,
+            background: '#fff', borderRadius: 16, boxShadow: '0 8px 32px rgba(0,0,0,0.15)', zIndex: 200, overflow: 'hidden' }}>
+            <GuestsContent />
+          </div>
+        )}
+      </div>
+
+      {/* Bottom sheets mobile — FUORI dal container relativo */}
+      {!isDesk && panel !== 'none' && (
+        <>
+          {/* Overlay — zIndex 200 */}
+          <div
+            onClick={() => setPanel('none')}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 200 }}
+          />
+          {/* Sheet — zIndex 201, sopra l'overlay */}
+          <div style={{
+            position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 201,
+            background: '#fff', borderRadius: '20px 20px 0 0',
+            boxShadow: '0 -4px 24px rgba(0,0,0,0.15)',
+            maxHeight: '88vh', overflowY: 'auto',
+          }}>
+            {panel === 'dates'  && <CalContent />}
+            {panel === 'guests' && <GuestsContent />}
+          </div>
+        </>
+      )}
+
+      {/* ── Slider residenze ───────────────────────────────────────────────── */}
+      <div style={{ marginTop: '2rem' }}>
+        <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 0.75rem 16px', color: '#111' }}>
+          {ui.inspire}
+        </h2>
+        <div style={{
+          display: 'flex', gap: 10, overflowX: 'auto', padding: '4px 16px 20px',
+          scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch',
+          msOverflowStyle: 'none', scrollbarWidth: 'none',
+        }}>
+          {PROPERTIES.flatMap(p => p.rooms).map(room => {
+            const src = covers[room.cloudinaryFolder];
+            return (
+              <button
+                key={room.roomId}
+                onClick={() => router.push(`/${locale}/residenze/${room.slug}`)}
+                style={{
+                  flexShrink: 0, width: 120, scrollSnapAlign: 'start',
+                  border: 'none', padding: 0, background: '#e5e7eb',
+                  cursor: 'pointer', borderRadius: 12, overflow: 'hidden',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
+                  position: 'relative', aspectRatio: '2/3', display: 'block',
+                }}
+              >
+                {src ? (
+                  <img src={src} alt={room.name} loading="lazy"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                ) : (
+                  <div style={{ width: '100%', height: '100%', background: '#e5e7eb' }} />
+                )}
+                <div style={{
+                  position: 'absolute', bottom: 0, left: 0, right: 0, height: '50%',
+                  background: 'linear-gradient(to top, rgba(0,0,0,0.70) 0%, transparent 100%)',
+                }} />
+                <div style={{ position: 'absolute', bottom: 8, left: 8, right: 8, textAlign: 'left' }}>
+                  <div style={{ color: '#fff', fontSize: 12, fontWeight: 700, lineHeight: 1.2 }}>{room.name}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.82)', fontSize: 10, marginTop: 2 }}>
+                    max {room.maxPeople} · {room.sqm} m²
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}

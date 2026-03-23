@@ -114,10 +114,11 @@ interface Props {
   };
   locale?: string;
   roomId?: number | null;
+  onDone?: () => void; // callback per modalità overlay (home page)
 }
 
 // ─── Componente ──────────────────────────────────────────────────────────────
-export default function WizardStep2({ translations: _t, locale = 'it', roomId }: Props) {
+export default function WizardStep2({ translations: _t, locale = 'it', roomId, onDone }: Props) {
   const ui = UI[locale] ?? UI.it;
   const months = MONTHS[locale] ?? MONTHS.it;
   const days   = DAYS[locale]   ?? DAYS.it;
@@ -137,8 +138,9 @@ export default function WizardStep2({ translations: _t, locale = 'it', roomId }:
   const [calendarData, setCalendarData] = useState<AvailabilityMap>({});
   const [loadingAvail, setLoadingAvail] = useState(false);
 
-  // Fase selezione
-  const phase: 'checkin'|'checkout' = checkIn && !checkOut ? 'checkout' : 'checkin';
+  // Fase selezione — selectingCheckout mantiene la modalità checkout anche dopo pre-selezione +3
+  const [selectingCheckout, setSelectingCheckout] = useState(false);
+  const phase: 'checkin'|'checkout' = selectingCheckout ? 'checkout' : (checkIn && !checkOut ? 'checkout' : 'checkin');
 
   // Desktop: mostra 2 mesi se viewport >= 640px
   const [isDesktop, setIsDesktop] = useState(false);
@@ -213,20 +215,20 @@ export default function WizardStep2({ translations: _t, locale = 'it', roomId }:
 
     if (phase === 'checkin') {
       setCheckIn(ymd);
-      setHoverYMD(null);
-      // Pre-seleziona checkout a check-in +3 giorni (stile Expedia)
-      // L'utente può poi modificare il checkout liberamente
-      const checkinDate = parseYMD(ymd);
-      const preselDate = new Date(checkinDate.getTime() + 3 * 86400000);
-      const preselYMD = toYMD(preselDate.getFullYear(), preselDate.getMonth(), preselDate.getDate());
-      if (!isDayUnavailable(preselYMD)) {
-        setCheckOut(preselYMD);
+      const d = parseYMD(ymd);
+      const pre = new Date(d.getTime() + 3 * 86400000);
+      const preYMD = toYMD(pre.getFullYear(), pre.getMonth(), pre.getDate());
+      if (!isDayUnavailable(preYMD)) {
+        setCheckOut(preYMD);
       } else {
         setCheckOut('');
       }
+      setSelectingCheckout(true);
+      setHoverYMD(null);
     } else {
       if (!isCheckoutAllowed(ymd)) return;
       setCheckOut(ymd);
+      setSelectingCheckout(false);
       setHoverYMD(null);
     }
   }
@@ -431,7 +433,7 @@ export default function WizardStep2({ translations: _t, locale = 'it', roomId }:
         )}
         {(checkIn || checkOut) && (
           <button
-            onClick={() => { setCheckIn(''); setCheckOut(''); }}
+            onClick={() => { setCheckIn(''); setCheckOut(''); setSelectingCheckout(false); }}
             style={{ background: 'none', border: 'none', color: '#888', fontSize: 13, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}
           >
             {ui.cancelDates}
@@ -442,11 +444,11 @@ export default function WizardStep2({ translations: _t, locale = 'it', roomId }:
       {/* CTA */}
       <div style={{ marginTop: '0.75rem', paddingTop: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
         <button
-          onClick={nextStep}
+          onClick={onDone ?? nextStep}
           disabled={!canContinue}
           style={{
-            width: '100%', padding: '0.9rem', borderRadius: 10, border: 'none',
-            background: canContinue ? '#FCAF1A' : '#e5e7eb',
+            width: '100%', padding: '0.9rem', borderRadius: onDone ? 50 : 10, border: 'none',
+            background: canContinue ? (onDone ? '#1E73BE' : '#FCAF1A') : '#e5e7eb',
             color: canContinue ? '#fff' : '#aaa',
             fontSize: '1rem', fontWeight: 700,
             cursor: canContinue ? 'pointer' : 'not-allowed',
