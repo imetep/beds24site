@@ -2,7 +2,73 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from '@/lib/beds24-token';
 
 const BASE_URL = 'https://beds24.com/api/v2';
+const OFFERS_TTL = 60 * 60 * 2; // 2 ore in secondi
 
+// ─── Redis helpers (stesso pattern di beds24-token.ts) ────────────────────────
+
+async function redisGet(key: string): Promise<string | null> {
+  const url   = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
+  if (!url || !token) return null;
+  try {
+    const res = await fetch(`${url}/get/${encodeURIComponent(key)}`, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: 'no-store',
+    });
+    const data = await res.json();
+    return data.result ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function redisSet(key: string, value: string, ttlSeconds: number): Promise<void> {
+  const url   = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
+  if (!url || !token) return;
+  try {
+    await fetch(`${url}/set/${encodeURIComponent(key)}`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify([value, 'EX', ttlSeconds]),
+      cache: 'no-store',
+    });
+  } catch {
+    // Silente: se Redis non risponde, procede senza cache
+  }
+}
+
+export async function redisDel(pattern: string): Promise<void> {
+  const url   = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
+  if (!url || !token) return;
+  try {
+    // Upstash REST: scansiona le chiavi con il pattern e le elimina
+    const scanRes = await fetch(`${url}/scan/0/match/${encodeURIComponent(pattern)}/count/100`, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: 'no-store',
+    });
+    const scanData = await scanRes.json();
+    const keys: string[] = scanData.result?.[1] ?? [];
+    for (const k of keys) {
+      await fetch(`${url}/del/${encodeURIComponent(k)}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        cache: 'no-store',
+      });
+    }
+  } catch {
+    // Silente
+  }
+}
+
+/**
+ * GET /api/offers
+ *
+ * Proxy Beds24 /inventory/rooms/offers con cache Redis 2 ore.
+ * Chiave: offers:{roomIds}:{arrival}:{departure}:{numAdults}:{numChildren}
+ * Invalidazione: webhook Beds24 → redisDel('offers:{roomId}:*')
+ */
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
 
@@ -22,7 +88,7 @@ export async function GET(req: NextRequest) {
 
   const roomIds: string[] = roomIdSingle
     ? [roomIdSingle]
-    : (roomIdsMulti ?? '').split(',').map((s) => s.trim()).filter(Boolean);
+    : (roomIdsMulti ?? '').split(',').map(s => s.trim()).filter(Boolean);
 
   if (roomIds.length === 0) {
     return NextResponse.json(
@@ -31,11 +97,28 @@ export async function GET(req: NextRequest) {
     );
   }
 
+  // Chiave Redis — unica per ogni combinazione di parametri
+  const cacheKey = `offers:${roomIds.join(',')}:${arrival}:${departure}:${numAdults}:${numChildren}`;
+
+  // In sviluppo saltiamo la cache Redis per vedere sempre dati freschi
+  const isDev = process.env.NODE_ENV === 'development';
+
+  if (!isDev) {
+    const cached = await redisGet(cacheKey);
+    if (cached) {
+      console.log('[offers] cache HIT →', cacheKey);
+      return NextResponse.json(JSON.parse(cached), {
+        headers: { 'X-Cache': 'HIT' },
+      });
+    }
+    console.log('[offers] cache MISS →', cacheKey);
+  }
+
   try {
     const token = await getToken();
 
     const qs = new URLSearchParams();
-    roomIds.forEach((id) => qs.append('roomId', id));
+    roomIds.forEach(id => qs.append('roomId', id));
     qs.set('arrival', arrival);
     qs.set('departure', departure);
     qs.set('numAdults', numAdults);
@@ -52,8 +135,14 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await res.json();
+
+    // Salva in Redis solo in produzione
+    if (!isDev) {
+      await redisSet(cacheKey, JSON.stringify(data), OFFERS_TTL);
+    }
+
     return NextResponse.json(data, {
-      headers: { 'Cache-Control': 'no-store' },
+      headers: { 'X-Cache': 'MISS' },
     });
 
   } catch (err: any) {

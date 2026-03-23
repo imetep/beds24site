@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { invalidateRoomCache, invalidateAllCache } from '@/lib/beds24-client';
+import { revalidateTag } from 'next/cache';
+import { redisDel } from '@/app/api/offers/route';
 
-// Beds24 sends this payload when inventory changes:
+// Beds24 invia questo payload quando cambia inventario:
 // { roomId: "123456", propId: "12345", ownerId: "1234", action: "SYNC_ROOM" }
 
 export async function POST(request: NextRequest) {
@@ -16,21 +17,24 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'SYNC_ROOM') {
-      // Invalidate cache only for this specific room
-      invalidateRoomCache(roomId);
+      // 1. Invalida cache ISR disponibilità per questa room
+      revalidateTag(`availability:${roomId}`, 'pages');
+      // 2. Elimina offerte in cache Redis per questa room
+      await redisDel(`offers:*${roomId}*`);
       console.log(`[Beds24 Webhook] Cache invalidated for roomId: ${roomId}`);
+
     } else if (action === 'SYNC_ALL') {
-      // Full invalidation
-      invalidateAllCache();
+      // Invalida tutto
+      revalidateTag('availability', 'pages');
+      await redisDel('offers:*');
       console.log('[Beds24 Webhook] Full cache invalidated');
     }
 
-    // Beds24 expects HTTP 200-299, otherwise retries for 30 minutes
+    // Beds24 si aspetta HTTP 200-299, altrimenti riprova per 30 minuti
     return NextResponse.json({ ok: true, roomId, action });
 
   } catch (err: any) {
     console.error('[Beds24 Webhook] Error:', err.message);
-    // Still return 200 to avoid Beds24 retry storm
     return NextResponse.json({ ok: false, error: err.message }, { status: 200 });
   }
 }

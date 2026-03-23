@@ -26,6 +26,7 @@ const UI: Record<string, Record<string, string>> = {
     next: 'Continua', back: 'Indietro',
     loadingAvail: 'Caricamento disponibilità...',
     cancelDates: 'Cancella date',
+    minStayHint: 'Le nostre strutture sono disponibili raramente per soggiorni inferiori a 3 notti',
   },
   en: {
     title: 'When do you want to come?',
@@ -36,6 +37,7 @@ const UI: Record<string, Record<string, string>> = {
     next: 'Continue', back: 'Back',
     loadingAvail: 'Loading availability...',
     cancelDates: 'Clear dates',
+    minStayHint: 'Our properties are rarely available for stays shorter than 3 nights',
   },
   de: {
     title: 'Wann möchten Sie kommen?',
@@ -46,6 +48,7 @@ const UI: Record<string, Record<string, string>> = {
     next: 'Weiter', back: 'Zurück',
     loadingAvail: 'Verfügbarkeit wird geladen...',
     cancelDates: 'Daten löschen',
+    minStayHint: 'Unsere Unterkünfte sind selten für Aufenthalte unter 3 Nächten verfügbar',
   },
   pl: {
     title: 'Kiedy chcecie przyjechać?',
@@ -56,6 +59,7 @@ const UI: Record<string, Record<string, string>> = {
     next: 'Dalej', back: 'Wstecz',
     loadingAvail: 'Ładowanie dostępności...',
     cancelDates: 'Wyczyść daty',
+    minStayHint: 'Nasze obiekty są rzadko dostępne na pobyty krótsze niż 3 noce',
   },
 };
 
@@ -168,14 +172,10 @@ export default function WizardStep2({ translations: _t, locale = 'it', roomId }:
       const res = await fetch(`/api/availability?roomId=${roomId}`);
       if (!res.ok) return;
       const data = await res.json();
-      // Beds24 risponde: { data: [{ roomId, calendar: [...] }] }
-      // Beds24 risponde: { data: [{ roomId, availability: { "YYYY-MM-DD": true/false } }] }
-      const roomData = data?.data?.[0];
-      const avail: AvailabilityMap = roomData?.availability ?? {};
-      console.log('[WizardStep2] availability keys:', Object.keys(avail).length);
+      const avail: AvailabilityMap = data?.data?.[0]?.availability ?? {};
       setCalendarData(avail);
     } catch {
-      // Silente: se fallisce, mostriamo il calendario senza disponibilità
+      // Silente: se fallisce mostriamo il calendario senza disponibilità
     } finally {
       setLoadingAvail(false);
     }
@@ -191,19 +191,11 @@ export default function WizardStep2({ translations: _t, locale = 'it', roomId }:
     return false; // nessun dato = disponibile
   }
 
-  function getMinStay(_ymd: string): number {
-    // minStay non disponibile da /availability — usiamo 1 come default
-    return 1;
-  }
-
-  // In fase checkout: il giorno è selezionabile solo se la distanza dal checkin
-  // rispetta il minStay del checkin
+  // In fase checkout: verifica che non ci siano giorni occupati nel range
   function isCheckoutAllowed(ymd: string): boolean {
     if (!checkIn) return false;
-    const minStay = getMinStay(checkIn);
     const diff = nightsBetween(checkIn, ymd);
-    if (diff < minStay) return false;
-    // Verifica che non ci siano giorni occupati nel range
+    if (diff < 1) return false;
     const start = parseYMD(checkIn);
     const end = parseYMD(ymd);
     for (let t = start.getTime() + 86400000; t < end.getTime(); t += 86400000) {
@@ -221,8 +213,17 @@ export default function WizardStep2({ translations: _t, locale = 'it', roomId }:
 
     if (phase === 'checkin') {
       setCheckIn(ymd);
-      setCheckOut('');
       setHoverYMD(null);
+      // Pre-seleziona checkout a check-in +3 giorni (stile Expedia)
+      // L'utente può poi modificare il checkout liberamente
+      const checkinDate = parseYMD(ymd);
+      const preselDate = new Date(checkinDate.getTime() + 3 * 86400000);
+      const preselYMD = toYMD(preselDate.getFullYear(), preselDate.getMonth(), preselDate.getDate());
+      if (!isDayUnavailable(preselYMD)) {
+        setCheckOut(preselYMD);
+      } else {
+        setCheckOut('');
+      }
     } else {
       if (!isCheckoutAllowed(ymd)) return;
       setCheckOut(ymd);
@@ -355,6 +356,13 @@ export default function WizardStep2({ translations: _t, locale = 'it', roomId }:
           ? ui.loadingAvail
           : phase === 'checkin' ? ui.selectCheckin : ui.selectCheckout}
       </p>
+
+      {/* Messaggio friendly soggiorno minimo — appare dopo selezione check-in */}
+      {checkIn && (
+        <p style={{ fontSize: 12, color: '#888', margin: '-4px 0 10px', fontStyle: 'italic' }}>
+          {ui.minStayHint}
+        </p>
+      )}
 
       {/* Wrapper calendario — swipe su mobile */}
       <div

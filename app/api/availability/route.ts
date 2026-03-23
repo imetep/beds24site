@@ -7,15 +7,8 @@ const BASE_URL = 'https://beds24.com/api/v2';
  * GET /api/availability
  *
  * Usa /inventory/rooms/availability di Beds24 V2.
- * Risposta Beds24: { data: [{ roomId, availability: { "YYYY-MM-DD": true/false } }] }
- *   true  = disponibile per check-in
- *   false = non disponibile (occupato o bloccato)
- *
- * Params:
- *   roomId    singolo roomId
- *   roomIds   roomId separati da virgola
- *   startDate YYYY-MM-DD (default: oggi)
- *   endDate   YYYY-MM-DD (default: oggi + 365)
+ * Cache: ISR Next.js 30 minuti in produzione, no-store in sviluppo.
+ * Invalidazione: webhook Beds24 → revalidateTag('availability:{roomId}')
  */
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -46,14 +39,19 @@ export async function GET(req: NextRequest) {
     const url = `${BASE_URL}/inventory/rooms/availability?${qs}`;
     console.log('[availability] →', url);
 
+    const isDev = process.env.NODE_ENV === 'development';
+    const cacheTags = ['availability', ...roomIds.map(id => `availability:${id}`)];
+
     const res = await fetch(url, {
       headers: { token },
-      cache: 'no-store',
+      ...(isDev
+        ? { cache: 'no-store' as RequestCache }
+        : { next: { revalidate: 1800, tags: cacheTags } }
+      ),
     });
 
     const rawText = await res.text();
     console.log('[availability] status:', res.status);
-    console.log('[availability] response:', rawText.slice(0, 300));
 
     if (!res.ok) throw new Error(`Beds24 HTTP ${res.status}: ${rawText.slice(0, 200)}`);
 
