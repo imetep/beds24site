@@ -16,7 +16,7 @@ export default async function LocalePage({ params }: Props) {
   return (
     <main>
       <Suspense fallback={<div style={{ minHeight: '100vh' }} />}>
-        <HomeSearch locale={locale} translations={t} />
+        <HomeSearch locale={locale} />
       </Suspense>
     </main>
   );
