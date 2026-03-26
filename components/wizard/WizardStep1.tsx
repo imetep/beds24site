@@ -230,12 +230,15 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
       }
       if (targetRoomIds.length === 0) { setLoading(false); return; }
 
+      // ⚠️ numChildren NON va passato a Beds24 — i bambini 0-2 non influenzano il prezzo.
+      // I bambini 3-17 vengono contati come adulti (passano come numAdults).
+      // Passare numChildren causa l'applicazione di una tariffa bambini non prevista.
+      const numAdultsForBeds24 = numAdult + (childrenAges ?? []).filter((a: number) => a >= 3).length;
       const qs = new URLSearchParams({
-        roomIds:     targetRoomIds.join(','),
-        arrival:     checkIn,
-        departure:   checkOut,
-        numAdults:   String(numAdult + (childrenAges ?? []).filter((a: number) => a >= 3).length),
-        numChildren: String((childrenAges ?? []).filter((a: number) => a < 3).length),
+        roomIds:   targetRoomIds.join(','),
+        arrival:   checkIn,
+        departure: checkOut,
+        numAdults: String(numAdultsForBeds24),
       });
 
       const res = await fetch(`/api/offers?${qs}`);
@@ -249,7 +252,7 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
     } finally {
       setLoading(false);
     }
-  }, [checkIn, checkOut, numAdult, numChild, poolPreference]);
+  }, [checkIn, checkOut, numAdult, numChild, childrenAges, poolPreference]);
 
   useEffect(() => { fetchOffers(); }, [fetchOffers]);
 
@@ -352,9 +355,18 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                 {fmtShort(checkIn, loc)} – {fmtShort(checkOut, loc)}
               </div>
               <div style={{ fontSize: 13, color: '#666', marginTop: 2 }}>
-                {nights} {nights === 1 ? t.nightsSing : t.nightsPlur} · {numAdult + numChild}{' '}
-                {locale === 'it' ? (numAdult + numChild === 1 ? 'persona' : 'persone')
-                 : locale === 'de' ? 'Personen' : locale === 'pl' ? 'osób' : 'guests'}
+                {nights} {nights === 1 ? t.nightsSing : t.nightsPlur}
+                {' · '}
+                {numAdult} {locale === 'it' ? (numAdult === 1 ? 'adulto' : 'adulti') : locale === 'de' ? 'Erw.' : locale === 'pl' ? 'dorosłych' : (numAdult === 1 ? 'adult' : 'adults')}
+                {numChild > 0 && (
+                  <>, {numChild} {locale === 'it' ? (numChild === 1 ? 'bambino' : 'bambini') : locale === 'de' ? (numChild === 1 ? 'Kind' : 'Kinder') : locale === 'pl' ? 'dzieci' : (numChild === 1 ? 'child' : 'children')}
+                  {(() => {
+                    const ages = (childrenAges ?? []).slice(0, numChild).filter((a: number) => a >= 0);
+                    if (ages.length !== numChild) return null;
+                    const suffix = locale === 'it' || locale === 'de' ? 'a' : locale === 'pl' ? 'l' : 'y';
+                    return ` (${ages.map((a: number) => `${a}${suffix}`).join(', ')})`;
+                  })()}</>
+                )}
               </div>
             </div>
             <button

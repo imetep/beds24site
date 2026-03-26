@@ -221,8 +221,22 @@ export default function HomeSearch({ locale }: { locale: string }) {
     ? `${fmtDate(checkIn, locale)} – ${fmtDate(checkOut, locale)}  ·  ${nights} ${nights === 1 ? ui.nights : ui.nightsP}`
     : checkIn ? fmtDate(checkIn, locale) : null;
 
+  const adultPart = locale === 'it' ? (numAdult === 1 ? '1 adulto' : `${numAdult} adulti`)
+    : locale === 'de' ? `${numAdult} Erw.`
+    : locale === 'pl' ? (numAdult === 1 ? '1 dorosły' : `${numAdult} dorosłych`)
+    : (numAdult === 1 ? '1 adult' : `${numAdult} adults`);
+  const childPart = numChild > 0
+    ? (locale === 'it' ? (numChild === 1 ? '1 bambino' : `${numChild} bambini`)
+      : locale === 'de' ? (numChild === 1 ? '1 Kind' : `${numChild} Kinder`)
+      : locale === 'pl' ? (numChild === 1 ? '1 dziecko' : `${numChild} dzieci`)
+      : (numChild === 1 ? '1 child' : `${numChild} children`))
+    : '';
+  const agesSet = (childrenAges ?? []).slice(0, numChild).filter((a: number) => a >= 0);
+  const agesLabel = agesSet.length === numChild && numChild > 0
+    ? agesSet.map((a: number) => `${a}a`).join(', ')
+    : '';
   const guestsLabel = (numAdult + numChild) > 0
-    ? `${numAdult + numChild} ${locale === 'it' ? (numAdult + numChild === 1 ? 'persona' : 'persone') : 'guests'}`
+    ? [adultPart, childPart].filter(Boolean).join(', ')
     : null;
 
   function handleCerca() {
@@ -469,18 +483,19 @@ export default function HomeSearch({ locale }: { locale: string }) {
             </button>
 
             <button onClick={() => setPanel(p => p === 'guests' ? 'none' : 'guests')}
-              style={{ flex: '0 0 180px', display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px',
+              style={{ flex: '0 0 260px', display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px',
                 background: panel === 'guests' ? '#f0f7ff' : 'transparent',
                 border: 'none', borderRight: '1px solid #e5e7eb', cursor: 'pointer', textAlign: 'left' }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="2" style={{ flexShrink: 0 }}>
                 <circle cx="12" cy="7" r="4"/>
                 <path d="M5.5 21c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" strokeLinecap="round"/>
               </svg>
-              <div>
+              <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{ui.guests}</div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: '#111', marginTop: 1 }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: '#111', marginTop: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {guestsLabel ?? `${numAdult} ${locale === 'it' ? 'adulti' : 'adults'}`}
                 </div>
+                {agesLabel ? <div style={{ fontSize: 11, color: '#9ca3af', marginTop: 1 }}>età: {agesLabel}</div> : null}
               </div>
             </button>
 
@@ -525,11 +540,12 @@ export default function HomeSearch({ locale }: { locale: string }) {
                 <circle cx="12" cy="7" r="4"/>
                 <path d="M5.5 21c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" strokeLinecap="round"/>
               </svg>
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{ui.guests}</div>
                 <div style={{ fontSize: 14, fontWeight: 600, color: '#111', marginTop: 1 }}>
                   {guestsLabel ?? `${numAdult} ${locale === 'it' ? 'adulti' : 'adults'}`}
                 </div>
+                {agesLabel ? <div style={{ fontSize: 11, color: '#9ca3af', marginTop: 1 }}>età: {agesLabel}</div> : null}
               </div>
             </button>
 
