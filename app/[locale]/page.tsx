@@ -1,7 +1,6 @@
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { isValidLocale, type Locale } from '@/config/i18n';
-import { getTranslations } from '@/lib/i18n';
 import HomeSearch from '@/components/home/HomeSearch';
 
 interface Props {
@@ -11,7 +10,6 @@ interface Props {
 export default async function LocalePage({ params }: Props) {
   const { locale } = await params;
   if (!isValidLocale(locale)) notFound();
-  const t = await getTranslations(locale);
 
   return (
     <main>
