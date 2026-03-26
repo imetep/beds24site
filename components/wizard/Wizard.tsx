@@ -27,21 +27,26 @@ export default function Wizard({ translations: t, locale }: Props) {
     setCheckIn, setCheckOut,
     setNumAdult,
     setSelectedRoomId, setSelectedOfferId, setOffers,
+    setPendingBooking,
   } = useWizardStore();
 
   const [isDesk, setIsDesk]     = useState(false);
-  const [ready,  setReady]      = useState(false); // attende fetch offerte se link diretto
+  const [ready,  setReady]      = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const fromHome   = searchParams.get('from') === 'home';
-  const fromRoom   = searchParams.get('from') === 'room';
-  const roomIdUrl  = Number(searchParams.get('roomId') ?? '0') || null;
-  const checkInUrl = searchParams.get('checkIn') ?? '';
-  const checkOutUrl= searchParams.get('checkOut') ?? '';
-  const adultsUrl  = Number(searchParams.get('adults') ?? '0') || null;
+  const fromHome    = searchParams.get('from') === 'home';
+  const fromRoom    = searchParams.get('from') === 'room';
+  const roomIdUrl   = Number(searchParams.get('roomId') ?? '0') || null;
+  const checkInUrl  = searchParams.get('checkIn') ?? '';
+  const checkOutUrl = searchParams.get('checkOut') ?? '';
+  const adultsUrl   = Number(searchParams.get('adults') ?? '0') || null;
 
-  // Link ospite diretto: tutti i parametri presenti → precompila store e vai a Step2
+  // ✅ FIX: gestione ritorno da Stripe con pagamento annullato
+  // Stripe redirige a: /prenota?cancelled=1&bookingId=X
+  const cancelled        = searchParams.get('cancelled');
+  const cancelledBookId  = searchParams.get('bookingId');
+
   const isGuestLink = !!(fromRoom && roomIdUrl && checkInUrl && checkOutUrl);
 
   useEffect(() => {
@@ -51,15 +56,39 @@ export default function Wizard({ translations: t, locale }: Props) {
     return () => window.removeEventListener('resize', check);
   }, []);
 
+  // ── Gestione abbandono Stripe ──────────────────────────────────────────────
+  useEffect(() => {
+    if (cancelled !== '1' || !cancelledBookId) return;
+
+    console.log('[Wizard] Stripe cancelled → cancello booking:', cancelledBookId);
+
+    // Cancella la prenotazione pendente su Beds24
+    fetch('/api/bookings/cancel', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bookingId: Number(cancelledBookId) }),
+    }).catch(e => console.warn('[Wizard] cancel fallita (ignoro):', e));
+
+    // Pulisci il pendingBookId dallo store (per sicurezza)
+    setPendingBooking(null, null);
+
+    // Pulisci anche sessionStorage se presente
+    try { sessionStorage.removeItem('stripe_pending'); } catch {}
+
+    // Rimuovi i parametri dall'URL senza ricaricare la pagina
+    // così l'utente vede /prenota pulita e può ricominciare
+    window.history.replaceState({}, '', `/${locale}/prenota`);
+
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Inizializzazione store da URL params ──────────────────────────────────
   useEffect(() => {
     if (isGuestLink) {
-      // Precompila store con i parametri del link
       setSelectedRoomId(roomIdUrl!);
       setCheckIn(checkInUrl);
       setCheckOut(checkOutUrl);
       if (adultsUrl) setNumAdult(adultsUrl);
 
-      // Fetch offerte per questo roomId+date
       const adults = adultsUrl ?? 2;
       const qs = new URLSearchParams({
         roomIds:   String(roomIdUrl),
@@ -73,8 +102,7 @@ export default function Wizard({ translations: t, locale }: Props) {
         .then(data => {
           const roomData = (data.data ?? []).find((x: any) => x.roomId === roomIdUrl);
           const offers = roomData?.offers ?? [];
-          setOffers([{ roomId: roomIdUrl, offers }]); // struttura attesa da WizardStep2
-          // Pre-seleziona automaticamente l'offerta più economica
+          setOffers([{ roomId: roomIdUrl, offers }]);
           if (offers.length > 0) {
             const best = offers.reduce((a: any, b: any) => a.price <= b.price ? a : b);
             setSelectedOfferId(best.offerId);
@@ -106,7 +134,6 @@ export default function Wizard({ translations: t, locale }: Props) {
   const showSidebar = logicalStep === 1;
   const fullWidth   = logicalStep >= 2;
 
-  // Mostra spinner mentre fetcha le offerte per il link ospite
   if (isGuestLink && !ready) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '40vh', gap: 12, color: '#9ca3af', fontSize: 15 }}>

@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
     const token = await getToken();
 
     // 2. Aggiorna status a confirmed
-    const statusPayload = [{ id: Number(bookingId), status: 'confirmed' }];
+    const statusPayload = [{ id: Number(bookingId), status: 'new' }];
     console.log('[paypal-capture] Beds24 status update:', JSON.stringify(statusPayload));
     const res1 = await fetch(`${BEDS24_BASE}/bookings`, {
       method: 'POST',

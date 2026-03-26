@@ -27,13 +27,12 @@ const OFFER_NAMES: Record<number, Record<string,string>> = {
   6: { it:'Flessibile 5 gg',           en:'Flexible 5 days',       de:'Flexibel 5 Tage',         pl:'Elastyczna 5 dni' },
 };
 
-// Descrizione politica cancellazione dall'offerId
 const CANCEL_POLICY: Record<number, Record<string,string>> = {
   1: { it:'Pagamento non rimborsabile entro 48h dalla prenotazione.',          en:'Non-refundable payment within 48h of booking.',           de:'Nicht erstattungsfähige Zahlung innerhalb 48h.',          pl:'Bezzwrotna płatność w ciągu 48h od rezerwacji.' },
   2: { it:'50% subito, saldo all\'arrivo. Cancellazione parzialmente rimborsabile.', en:'50% now, balance at arrival. Partially refundable.',  de:'50% jetzt, Rest bei Ankunft. Teilweise erstattungsfähig.', pl:'50% teraz, reszta przy przyjeździe. Częściowo zwrotna.' },
   3: { it:'Cancellazione gratuita fino a 60 giorni prima dell\'arrivo.',       en:'Free cancellation up to 60 days before arrival.',         de:'Kostenlose Stornierung bis 60 Tage vor Ankunft.',         pl:'Bezpłatne anulowanie do 60 dni przed przyjazdem.' },
   4: { it:'Cancellazione gratuita fino a 45 giorni prima dell\'arrivo.',       en:'Free cancellation up to 45 days before arrival.',         de:'Kostenlose Stornierung bis 45 Tage vor Ankunft.',         pl:'Bezpłatne anulowanie do 45 dni przed przyjazdem.' },
-  5: { it:'Cancellazione gratuita fino a 30 giorni prima dell\'arrivo.',       en:'Free cancellation up to 30 days before arrival.',         de:'Kostenlose Stornierung bis 30 Tage vor Ankunft.',         pl:'Bezpłatne anulowanie do 30 dni przed przyjazdem.' },
+  5: { it:'Cancellazione gratuita fino a 30 giorni prima dell\'arrivo.',       en:'Free cancellation up to 30 days before arrival.',         de:'Kostenlose Stornierung bis 30 Tage vor Ankunft.',         pl:'Bezpłatne anulowanie do 30 dni przed prijazdem.' },
   6: { it:'Cancellazione gratuita fino a 5 giorni prima dell\'arrivo.',        en:'Free cancellation up to 5 days before arrival.',          de:'Kostenlose Stornierung bis 5 Tage vor Ankunft.',          pl:'Bezpłatne anulowanie do 5 dni przed prijazdem.' },
 };
 
@@ -67,9 +66,6 @@ const UI: Record<string, Record<string, string>> = {
     energyTitle: 'Consumi energetici',
     depositTitle: 'Deposito cauzionale',
     adults: 'adulti', children: 'bambini',
-    successTitle: 'Prenotazione confermata!',
-    successSub: 'Riceverai una email di conferma a breve. Numero prenotazione:',
-    successBack: 'Torna alle Residenze',
     summaryTitle: 'Il tuo soggiorno',
     paypalFlexNote: 'Con PayPal il pagamento viene addebitato subito.',
   },
@@ -102,9 +98,6 @@ const UI: Record<string, Record<string, string>> = {
     energyTitle: 'Energy consumption',
     depositTitle: 'Security deposit',
     adults: 'adults', children: 'children',
-    successTitle: 'Booking confirmed!',
-    successSub: 'You will receive a confirmation email shortly. Booking number:',
-    successBack: 'Back to Residences',
     summaryTitle: 'Your stay',
     paypalFlexNote: 'With PayPal, payment is charged immediately.',
   },
@@ -137,9 +130,6 @@ const UI: Record<string, Record<string, string>> = {
     energyTitle: 'Energieverbrauch',
     depositTitle: 'Kaution',
     adults: 'Erwachsene', children: 'Kinder',
-    successTitle: 'Buchung bestätigt!',
-    successSub: 'Sie erhalten in Kürze eine Bestätigungs-E-Mail. Buchungsnummer:',
-    successBack: 'Zurück zu Residenzen',
     summaryTitle: 'Ihr Aufenthalt',
     paypalFlexNote: 'Bei PayPal wird der Betrag sofort belastet.',
   },
@@ -172,9 +162,6 @@ const UI: Record<string, Record<string, string>> = {
     energyTitle: 'Zużycie energii',
     depositTitle: 'Kaucja',
     adults: 'dorośli', children: 'dzieci',
-    successTitle: 'Rezerwacja potwierdzona!',
-    successSub: 'Wkrótce otrzymasz e-mail z potwierdzeniem. Numer rezerwacji:',
-    successBack: 'Powrót do Rezydencji',
     summaryTitle: 'Twój pobyt',
     paypalFlexNote: 'W przypadku PayPal płatność jest naliczana natychmiast.',
   },
@@ -215,25 +202,6 @@ function parseDeposit(str?: string): number | null {
   return m ? Number(m[1]) : null;
 }
 
-// ─── Schermata conferma ───────────────────────────────────────────────────────
-function ConfirmScreen({ bookId, locale, onReset }: { bookId: string; locale: string; onReset: () => void }) {
-  const t = UI[locale] ?? UI.it;
-  return (
-    <div style={{ textAlign: 'center', padding: '3rem 1rem', maxWidth: 480, margin: '0 auto' }}>
-      <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
-      <h2 style={{ fontSize: 24, fontWeight: 700, color: '#1E73BE', margin: '0 0 12px' }}>{t.successTitle}</h2>
-      <p style={{ fontSize: 15, color: '#666', margin: '0 0 24px' }}>{t.successSub}</p>
-      <div style={{ background: '#EEF5FC', border: '2px solid #1E73BE', borderRadius: 12, padding: '14px 24px', display: 'inline-block', marginBottom: 32 }}>
-        <span style={{ fontSize: 24, fontWeight: 800, color: '#1E73BE', letterSpacing: 2 }}>{bookId}</span>
-      </div>
-      <br />
-      <a href={`/${locale}/residenze`} style={{ display: 'inline-block', padding: '12px 32px', background: '#1E73BE', color: '#fff', borderRadius: 10, fontWeight: 700, fontSize: 15, textDecoration: 'none' }}>
-        {t.successBack}
-      </a>
-    </div>
-  );
-}
-
 // ─── Componente principale ────────────────────────────────────────────────────
 interface Props { locale?: string; }
 
@@ -246,11 +214,11 @@ export default function WizardStep2({ locale = 'it' }: Props) {
     checkIn, checkOut,
     selectedRoomId, selectedOfferId,
     cachedOffers,
-    paymentMethod, setPaymentMethod,   // ← da store (non più local state)
+    paymentMethod, setPaymentMethod,
     voucherCode, setVoucherCode,
     guestFirstName, guestLastName, guestEmail,
     guestPhone, guestCountry, guestArrivalTime, guestComments,
-    setGuestField, setCurrentStep, prevStep, nextStep, reset,
+    setGuestField, setCurrentStep, prevStep, nextStep,
     discountedPrice, setDiscountedPrice,
   } = useWizardStore();
 
@@ -265,7 +233,6 @@ export default function WizardStep2({ locale = 'it' }: Props) {
   const room = getRoomData(selectedRoomId);
   const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
 
-  // Filtra per selectedRoomId per evitare di prendere il prezzo della room sbagliata
   const roomOffers = cachedOffers?.find((ro: any) => ro.roomId === selectedRoomId);
   const offer = roomOffers?.offers?.find((o: any) => o.offerId === selectedOfferId)
     ?? cachedOffers?.flatMap((ro: any) => ro.offers ?? []).find((o: any) => o.offerId === selectedOfferId);
@@ -277,22 +244,33 @@ export default function WizardStep2({ locale = 'it' }: Props) {
   const perNight = nights > 0 && offerPrice > 0 ? Math.round(offerPrice / nights) : 0;
 
   const taxableNights = Math.min(nights, 10);
-  // Imposta di soggiorno: pagano adulti 18+ e bambini 12-17
-  // Esenti: bambini 0-11 anni
   const childrenTaxable = (childrenAges ?? []).filter((a: number) => a >= 12).length;
-  const childrenExempt  = (childrenAges ?? []).filter((a: number) => a < 12).length;
   const taxableAdults   = numAdult + childrenTaxable;
   const touristTax    = taxableNights * taxableAdults * 2;
   const basePrice     = discountedPrice !== null ? discountedPrice : offerPrice;
   const total         = basePrice + touristTax;
   const installment   = Math.round(total / 3);
 
-  // Avviso PayPal per offerte Flex: il pagamento è immediato
   const isFlexOffer = selectedOfferId !== null && FLEX_OFFER_IDS.includes(selectedOfferId);
   const showPaypalFlexWarning = paymentMethod === 'paypal' && isFlexOffer;
 
   const formValid = guestFirstName.trim() && guestLastName.trim()
     && guestEmail.trim() && guestEmail.includes('@');
+
+  // ── Pre-carica script PayPal SDK quando utente seleziona PayPal ──────────
+  // Così quando arriva a Step3 lo script è già pronto e i bottoni si
+  // renderizzano immediatamente senza problemi di timing
+  useEffect(() => {
+    if (paymentMethod !== 'paypal') return;
+    if (document.getElementById('paypal-sdk-script')) return; // già caricato
+    const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
+    if (!clientId) return;
+    const script = document.createElement('script');
+    script.id = 'paypal-sdk-script';
+    script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=EUR&intent=capture`;
+    script.async = true;
+    document.head.appendChild(script);
+  }, [paymentMethod]);
 
   // ── Carica foto cover ────────────────────────────────────────────────────
   useEffect(() => {
@@ -329,7 +307,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
     }
   }
 
-  // ── Vai a Step 7 ─────────────────────────────────────────────────────────
+  // ── Vai a Step3 ─────────────────────────────────────────────────────────
   function handleVediRiepilogo() {
     if (!formValid) return;
     if (voucherInput.trim()) {
@@ -506,7 +484,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
             )}
           </div>
 
-          {/* Sezione 1: Pagamento — usa paymentMethod dallo store */}
+          {/* Sezione 1: Pagamento */}
           <div style={sectionCard}>
             <p style={sectionTitle}>{t.sec1title}</p>
 
@@ -537,7 +515,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
               </div>
             </label>
 
-            {/* Avviso per offerte Flex + PayPal: il pagamento è immediato */}
+            {/* Avviso per offerte Flex + PayPal */}
             {showPaypalFlexWarning && (
               <div style={{ background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginTop: 4, fontSize: 13, color: '#92400e' }}>
                 ⚠️ {t.paypalFlexNote}

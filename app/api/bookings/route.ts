@@ -17,7 +17,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Campi obbligatori mancanti: ${missing.join(', ')}` }, { status: 400 });
   }
 
-  // Beds24 V2: departure = checkOut diretto (Beds24 gestisce internamente)
   const departure = body.checkOut;
 
   const beds24Payload: Record<string, any> = {
@@ -29,6 +28,10 @@ export async function POST(req: NextRequest) {
     firstName: body.guestFirstName?.trim(),
     lastName:  body.guestName?.trim(),
     email:     body.guestEmail?.trim(),
+    // ✅ FIX: impostiamo esplicitamente "new" — Beds24 di default crea le
+    // prenotazioni Direct via API come "confirmed", ma noi vogliamo "new"
+    // così che l'Auto Action possa cancellare i booking non pagati dopo 1 ora.
+    status:    'request',
   };
 
   if (body.guestPhone)       beds24Payload.phone       = body.guestPhone.trim();
@@ -62,7 +65,6 @@ export async function POST(req: NextRequest) {
     }
 
     const data = JSON.parse(rawText);
-    // Beds24 V2 risponde con array: [{ success, new: { id } }]
     const bookId = data?.[0]?.new?.id ?? data?.data?.[0]?.id ?? data?.bookId ?? data?.id;
     console.log('[bookings] bookId estratto:', bookId);
 
@@ -71,7 +73,6 @@ export async function POST(req: NextRequest) {
     // Step 2 — Leggi la fattura reale per ottenere il prezzo scontato (voucher applicato)
     let invoiceAmount: number | null = null;
     try {
-      // Attendi che Beds24 calcoli il prezzo con il voucher
       await new Promise(r => setTimeout(r, 2000));
       const getRes = await fetch(`${BASE_URL}/bookings?bookingId=${bookId}`, {
         headers: { token },
@@ -83,7 +84,6 @@ export async function POST(req: NextRequest) {
         console.log('[bookings] TUTTI I CAMPI BK:', JSON.stringify(Object.keys(bk ?? {})));
         console.log('[bookings] price/voucher/discount:', bk?.price, bk?.voucher, bk?.voucherDiscount, bk?.priceOverride, bk?.totalPrice, bk?.roomPrice, bk?.offerPrice);
 
-        // price = prezzo totale dal booking (include sconto voucher)
         const price = bk?.price;
         if (price !== null && price !== undefined && Number(price) > 0) {
           invoiceAmount = Number(price);
@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       ok: true,
       bookId: Number(bookId),
-      invoiceAmount, // null se voucher non usato o invoice non disponibile
+      invoiceAmount,
     });
 
   } catch (err: any) {

@@ -24,8 +24,6 @@ const CANCEL_POLICY: Record<number, Record<string, string>> = {
 
 const UI: Record<string, Record<string, string>> = {
   it: {
-    loadingTitle:  'Stiamo verificando la disponibilità...',
-    loadingSub:    'Un momento, stiamo calcolando il prezzo finale con il tuo codice sconto.',
     title:         'Riepilogo prenotazione',
     subtitle:      'Controlla i dettagli e procedi al pagamento',
     apartment:     'Appartamento',
@@ -38,7 +36,6 @@ const UI: Record<string, Record<string, string>> = {
     rate:          'Tariffa',
     cancelPolicy:  'Politica di cancellazione',
     priceDetail:   'Dettaglio prezzo',
-    basePrice:     'Soggiorno',
     discount:      'Sconto voucher',
     touristTax:    'Imposta di soggiorno',
     touristNote:   '€2/pers/notte · max 10 notti · esenti under 12',
@@ -52,7 +49,7 @@ const UI: Record<string, Record<string, string>> = {
     notes:         'Richieste speciali',
     payBtn:        'Conferma e paga con Carta',
     payBtnPaypal:  'Paga con PayPal',
-    paying:        'Reindirizzamento al pagamento...',
+    paying:        'Creazione prenotazione...',
     payingPaypal:  'Elaborazione PayPal...',
     back:          '← Modifica dati',
     errTitle:      'Errore',
@@ -62,8 +59,6 @@ const UI: Record<string, Record<string, string>> = {
     paypalLoading: 'Caricamento PayPal...',
   },
   en: {
-    loadingTitle:  'Checking availability...',
-    loadingSub:    'One moment, we\'re calculating your final price with the discount code.',
     title:         'Booking summary',
     subtitle:      'Check the details and proceed to payment',
     apartment:     'Apartment',
@@ -76,7 +71,6 @@ const UI: Record<string, Record<string, string>> = {
     rate:          'Rate',
     cancelPolicy:  'Cancellation policy',
     priceDetail:   'Price breakdown',
-    basePrice:     'Accommodation',
     discount:      'Voucher discount',
     touristTax:    'Tourist tax',
     touristNote:   '€2/pers/night · max 10 nights · under 12 exempt',
@@ -90,7 +84,7 @@ const UI: Record<string, Record<string, string>> = {
     notes:         'Special requests',
     payBtn:        'Confirm and pay by Card',
     payBtnPaypal:  'Pay with PayPal',
-    paying:        'Redirecting to payment...',
+    paying:        'Creating booking...',
     payingPaypal:  'Processing PayPal...',
     back:          '← Edit details',
     errTitle:      'Error',
@@ -100,8 +94,6 @@ const UI: Record<string, Record<string, string>> = {
     paypalLoading: 'Loading PayPal...',
   },
   de: {
-    loadingTitle:  'Verfügbarkeit wird geprüft...',
-    loadingSub:    'Einen Moment, wir berechnen Ihren Endpreis mit dem Rabattcode.',
     title:         'Buchungsübersicht',
     subtitle:      'Details prüfen und zur Zahlung fortfahren',
     apartment:     'Unterkunft',
@@ -114,7 +106,6 @@ const UI: Record<string, Record<string, string>> = {
     rate:          'Tarif',
     cancelPolicy:  'Stornierungsbedingungen',
     priceDetail:   'Preisdetails',
-    basePrice:     'Unterkunft',
     discount:      'Gutscheinrabatt',
     touristTax:    'Kurtaxe',
     touristNote:   '€2/Pers/Nacht · max. 10 Nächte · Kinder unter 12 befreit',
@@ -128,7 +119,7 @@ const UI: Record<string, Record<string, string>> = {
     notes:         'Besondere Wünsche',
     payBtn:        'Bestätigen und mit Karte bezahlen',
     payBtnPaypal:  'Mit PayPal bezahlen',
-    paying:        'Weiterleitung zur Zahlung...',
+    paying:        'Buchung wird erstellt...',
     payingPaypal:  'PayPal wird verarbeitet...',
     back:          '← Daten bearbeiten',
     errTitle:      'Fehler',
@@ -138,8 +129,6 @@ const UI: Record<string, Record<string, string>> = {
     paypalLoading: 'PayPal wird geladen...',
   },
   pl: {
-    loadingTitle:  'Sprawdzamy dostępność...',
-    loadingSub:    'Chwilę, obliczamy ostateczną cenę z kodem rabatowym.',
     title:         'Podsumowanie rezerwacji',
     subtitle:      'Sprawdź szczegóły i przejdź do płatności',
     apartment:     'Apartament',
@@ -152,7 +141,6 @@ const UI: Record<string, Record<string, string>> = {
     rate:          'Taryfa',
     cancelPolicy:  'Polityka anulowania',
     priceDetail:   'Szczegóły ceny',
-    basePrice:     'Zakwaterowanie',
     discount:      'Zniżka voucher',
     touristTax:    'Opłata turystyczna',
     touristNote:   '€2/os./noc · maks. 10 nocy · dzieci poniżej 12 lat zwolnione',
@@ -166,7 +154,7 @@ const UI: Record<string, Record<string, string>> = {
     notes:         'Specjalne życzenia',
     payBtn:        'Potwierdź i zapłać kartą',
     payBtnPaypal:  'Zapłać przez PayPal',
-    paying:        'Przekierowanie do płatności...',
+    paying:        'Tworzenie rezerwacji...',
     payingPaypal:  'Przetwarzanie PayPal...',
     back:          '← Edytuj dane',
     errTitle:      'Błąd',
@@ -213,7 +201,7 @@ export default function WizardStep7({ locale = 'it' }: Props) {
     selectedRoomId, selectedOfferId,
     cachedOffers,
     voucherCode,
-    paymentMethod,       // ← leggiamo dal store
+    paymentMethod,
     guestFirstName, guestLastName, guestEmail,
     guestPhone, guestCountry, guestArrivalTime, guestComments,
     pendingBookId, invoiceAmount,
@@ -222,15 +210,16 @@ export default function WizardStep7({ locale = 'it' }: Props) {
     prevStep, reset,
   } = useWizardStore();
 
-  // Tre stati principali: 'loading' | 'ready' | 'error' | 'paying'
-  const [phase, setPhase]         = useState<'loading' | 'ready' | 'error' | 'paying'>('loading');
-  const [error, setError]         = useState<string | null>(null);
-  const createdRef                = useRef(false); // evita doppia chiamata in StrictMode
+  // ✅ Fase iniziale 'ready': Step3 è solo riepilogo, nessuna API al mount
+  const [phase, setPhase]   = useState<'ready' | 'error' | 'paying'>('ready');
+  const [error, setError]   = useState<string | null>(null);
 
   // PayPal SDK
-  const [paypalReady, setPaypalReady]   = useState(false);
-  const paypalContainerRef              = useRef<HTMLDivElement>(null);
-  const paypalButtonsRendered           = useRef(false); // evita doppio render dei bottoni
+  const [paypalReady, setPaypalReady]         = useState(false);
+  const paypalContainerRef                    = useRef<HTMLDivElement>(null);
+  const paypalButtonsRendered                 = useRef(false);
+  // ✅ Ref per bookId creato durante il flusso PayPal
+  const createdBookIdRef                      = useRef<number | null>(null);
 
   const room   = getRoomData(selectedRoomId);
   const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
@@ -240,36 +229,27 @@ export default function WizardStep7({ locale = 'it' }: Props) {
     ?? cachedOffers?.flatMap((ro: any) => ro.offers ?? []).find((o: any) => o.offerId === selectedOfferId);
   const offerPrice: number = offer?.price ?? 0;
 
-  // Imposta di soggiorno: pagano adulti 18+ e bambini 12-17
-  // Esenti: bambini 0-11 anni
   const childrenTaxable = (childrenAges ?? []).filter((a: number) => a >= 12).length;
   const taxableNights   = Math.min(nights, 10);
   const taxableAdults   = numAdult + childrenTaxable;
-  const touristTax     = taxableNights * taxableAdults * 2;
-  const perNight       = nights > 0 && offerPrice > 0 ? Math.round(offerPrice / nights) : 0;
-  const offerName      = OFFER_NAMES[selectedOfferId ?? 0]?.[loc] ?? offer?.offerName ?? '';
-  const cancelPolicy   = CANCEL_POLICY[selectedOfferId ?? 0]?.[loc] ?? '';
+  const touristTax      = taxableNights * taxableAdults * 2;
+  const perNight        = nights > 0 && offerPrice > 0 ? Math.round(offerPrice / nights) : 0;
+  const offerName       = OFFER_NAMES[selectedOfferId ?? 0]?.[loc] ?? offer?.offerName ?? '';
+  const cancelPolicy    = CANCEL_POLICY[selectedOfferId ?? 0]?.[loc] ?? '';
 
   const realPrice      = discountedPrice !== null ? discountedPrice : offerPrice;
   const hasDiscount    = discountedPrice !== null && discountedPrice < offerPrice;
   const discountAmount = hasDiscount ? offerPrice - discountedPrice! : 0;
   const total          = realPrice + touristTax;
 
-  // ── Crea booking all'entrata nello step ───────────────────────────────────
-  useEffect(() => {
-    if (createdRef.current) return;
-    if (pendingBookId) { setPhase('ready'); return; }
-    createdRef.current = true;
-    createBooking();
-  }, []);
-
-  async function createBooking() {
+  // ── Crea booking su Beds24 — chiamata solo al click del bottone Paga ──────
+  // Restituisce il bookId oppure null se errore (setPhase('error') già chiamato)
+  async function createBooking(): Promise<number | null> {
     if (!selectedRoomId || !checkIn || !checkOut) {
       setError('Dati mancanti. Torna indietro e riprova.');
       setPhase('error');
-      return;
+      return null;
     }
-    setPhase('loading');
     try {
       const bookRes = await fetch('/api/bookings', {
         method: 'POST',
@@ -278,7 +258,7 @@ export default function WizardStep7({ locale = 'it' }: Props) {
           roomId:           selectedRoomId,
           checkIn, checkOut,
           numAdult:  numAdult + (childrenAges ?? []).filter((a: number) => a >= 3).length,
-          numChild:  (childrenAges ?? []).filter((a: number) => a < 3).length, // bambini 0-2: solo registro
+          numChild:  (childrenAges ?? []).filter((a: number) => a < 3).length,
           offerId:          selectedOfferId,
           voucherCode:      voucherCode || undefined,
           guestFirstName:   guestFirstName.trim(),
@@ -299,40 +279,64 @@ export default function WizardStep7({ locale = 'it' }: Props) {
       if (!bookRes.ok || !bookData.ok) throw new Error(bookData.error ?? `HTTP ${bookRes.status}`);
 
       setPendingBooking(bookData.bookId, bookData.invoiceAmount ?? null);
-      setPhase('ready');
+      return bookData.bookId as number;
 
     } catch (e: any) {
       setError(e.message ?? 'Errore sconosciuto');
       setPhase('error');
+      return null;
     }
   }
 
-  // ── Carica PayPal SDK dinamicamente (solo se paymentMethod === 'paypal') ──
+  // ── Helper: cancella un booking su Beds24 (fire and forget) ──────────────
+  function cancelBooking(bookId: number) {
+    fetch('/api/bookings/cancel', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bookingId: bookId }),
+    }).catch(() => {});
+    setPendingBooking(null, null);
+  }
+
+  // ── Inizializza PayPal SDK ────────────────────────────────────────────────
+  // Lo script è già stato pre-caricato da WizardStep2 quando l'utente ha
+  // selezionato PayPal — qui aspettiamo solo che sia pronto
   useEffect(() => {
     if (paymentMethod !== 'paypal') return;
-    // Evita di caricare lo script due volte
-    if (document.getElementById('paypal-sdk-script')) {
-      setPaypalReady(true);
-      return;
-    }
+
     const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
     if (!clientId) {
       console.error('[PayPal] NEXT_PUBLIC_PAYPAL_CLIENT_ID non configurato');
       return;
     }
+
+    // Se lo script è già caricato e window.paypal è disponibile → subito ready
+    if (document.getElementById('paypal-sdk-script') && (window as any).paypal) {
+      setPaypalReady(true);
+      return;
+    }
+
+    // Script già nel DOM ma non ancora eseguito → aspetta onload
+    const existing = document.getElementById('paypal-sdk-script');
+    if (existing) {
+      existing.addEventListener('load', () => setPaypalReady(true));
+      return;
+    }
+
+    // Fallback: carica lo script ora (caso in cui Step2 non l'ha caricato)
     const script = document.createElement('script');
     script.id = 'paypal-sdk-script';
     script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=EUR&intent=capture`;
+    script.async = true;
     script.onload = () => setPaypalReady(true);
     script.onerror = () => setError('Impossibile caricare PayPal. Riprova o usa la carta.');
     document.head.appendChild(script);
   }, [paymentMethod]);
 
-  // ── Renderizza i bottoni PayPal quando SDK pronto + booking creato ─────────
+  // ── Renderizza i bottoni PayPal quando SDK è pronto ───────────────────────
   useEffect(() => {
     if (!paypalReady) return;
     if (phase !== 'ready') return;
-    if (!pendingBookId) return;
     if (paypalButtonsRendered.current) return;
     if (!paypalContainerRef.current) return;
 
@@ -350,97 +354,125 @@ export default function WizardStep7({ locale = 'it' }: Props) {
         height: 50,
       },
 
-      // Crea ordine PayPal sul nostro server
+      // ✅ Crea booking PRIMA di creare l'ordine PayPal
       createOrder: async () => {
+        // Crea il booking su Beds24
+        const bookId = await createBooking();
+        if (!bookId) throw new Error('Errore creazione prenotazione');
+
+        // Salva il bookId nel ref per onApprove/onError/onCancel
+        createdBookIdRef.current = bookId;
+
+        // Poi crea l'ordine PayPal
         const res = await fetch('/api/paypal-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             amount:      total,
-            bookingId:   pendingBookId,
+            bookingId:   bookId,
             description: `LivingApple · ${room?.name ?? ''} · ${checkIn} → ${checkOut}`,
           }),
         });
         const data = await res.json();
         if (!res.ok || !data.orderID) {
+          // Booking creato ma ordine PayPal fallito: cancella il booking
+          cancelBooking(bookId);
+          createdBookIdRef.current = null;
           throw new Error(data.error ?? 'Errore creazione ordine PayPal');
         }
         return data.orderID;
       },
 
-      // Guest ha approvato — cattura il pagamento
+      // Utente ha approvato il pagamento su PayPal
       onApprove: async (data: { orderID: string }) => {
         setPhase('paying');
+        const bookId = createdBookIdRef.current;
+        if (!bookId) {
+          setError('Errore: prenotazione non trovata');
+          setPhase('ready');
+          paypalButtonsRendered.current = false;
+          return;
+        }
         try {
           const res = await fetch('/api/paypal-capture', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              orderID:       data.orderID,
-              bookingId:     pendingBookId,
-              amount:        total,
-              // Voci dettagliate per Beds24 Charges
-              accommodation: offerPrice,
-              touristTax:    touristTax,
+              orderID:        data.orderID,
+              bookingId:      bookId,
+              amount:         total,
+              accommodation:  offerPrice,
+              touristTax:     touristTax,
               discountAmount: discountAmount,
-              voucherCode:   voucherCode || undefined,
+              voucherCode:    voucherCode || undefined,
             }),
           });
           const result = await res.json();
           if (!res.ok || !result.ok) throw new Error(result.error ?? 'Errore cattura PayPal');
 
-          // Successo: redirect alla pagina di conferma
           reset();
           const origin = window.location.origin;
-          window.location.href = `${origin}/${locale}/prenota/successo?bookingId=${pendingBookId}&paypal=1`;
+          window.location.href = `${origin}/${locale}/prenota/successo?bookingId=${bookId}&paypal=1`;
 
         } catch (e: any) {
           setError(e.message ?? 'Errore PayPal');
           setPhase('ready');
-          paypalButtonsRendered.current = false; // consente re-render dei bottoni
+          paypalButtonsRendered.current = false;
         }
       },
 
-      // Errore PayPal (es. popup chiuso, errore di rete)
+      // Errore PayPal (rete, timeout, ecc.)
       onError: (err: any) => {
         console.error('[PayPal] onError:', err);
+        // Se il booking era stato creato, cancellalo
+        if (createdBookIdRef.current) {
+          cancelBooking(createdBookIdRef.current);
+          createdBookIdRef.current = null;
+        }
         setError('Errore PayPal. Riprova o usa la carta.');
         setPhase('ready');
         paypalButtonsRendered.current = false;
       },
 
-      // Guest ha chiuso il popup senza pagare — non è un errore, non fare nulla
+      // Utente ha chiuso il popup PayPal senza pagare
       onCancel: () => {
+        // Se il booking era stato creato, cancellalo
+        if (createdBookIdRef.current) {
+          cancelBooking(createdBookIdRef.current);
+          createdBookIdRef.current = null;
+        }
         paypalButtonsRendered.current = false;
       },
 
     }).render(paypalContainerRef.current);
 
-  }, [paypalReady, phase, pendingBookId, total]);
+  }, [paypalReady, phase, total]);
 
-  // ── Torna indietro — cancella il booking pendente ─────────────────────────
-  async function handleBack() {
+  // ── Torna indietro ────────────────────────────────────────────────────────
+  // ✅ Cancella il booking solo se era già stato creato (es. Stripe fallito)
+  function handleBack() {
     if (pendingBookId) {
-      fetch('/api/bookings/cancel', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bookingId: pendingBookId }),
-      }).catch(() => {});
-      setPendingBooking(null, null);
+      cancelBooking(pendingBookId);
     }
     prevStep();
   }
 
   // ── Paga con Stripe ───────────────────────────────────────────────────────
+  // ✅ Crea booking PRIMA di creare la sessione Stripe
   async function handlePagaStripe() {
-    if (!pendingBookId) return;
     setPhase('paying');
+    let bookId: number | null = null;
     try {
+      // Step 1: crea booking su Beds24
+      bookId = await createBooking();
+      if (!bookId) return; // createBooking ha già gestito l'errore
+
+      // Step 2: crea sessione Stripe
       const stripeRes = await fetch('/api/stripe-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          bookingId:   pendingBookId,
+          bookingId:   bookId,
           amount:      total,
           offerId:     selectedOfferId,
           locale,
@@ -450,32 +482,35 @@ export default function WizardStep7({ locale = 'it' }: Props) {
       const stripeData = await stripeRes.json();
       if (!stripeRes.ok || !stripeData.ok) throw new Error(stripeData.error ?? `HTTP ${stripeRes.status}`);
 
-      reset();
+      // Salva in sessionStorage prima del redirect (per stripe-confirm al ritorno)
+      try {
+        sessionStorage.setItem('stripe_pending', JSON.stringify({
+          bookingId:      bookId,
+          capture:        stripeData.capture,
+          accommodation:  offerPrice,
+          touristTax:     touristTax,
+          discountAmount: discountAmount,
+          voucherCode:    voucherCode || null,
+        }));
+      } catch {
+        // sessionStorage non disponibile (Safari privato) — continua comunque
+      }
+
+      // Redirect a Stripe — NON chiamare reset() qui
+      // Se l'utente abbandona, Wizard.tsx intercetta ?cancelled=1 e cancella il booking
       window.location.href = stripeData.url;
 
     } catch (e: any) {
+      // Se il booking era stato creato ma Stripe è fallito, cancellalo
+      if (bookId) {
+        cancelBooking(bookId);
+      }
       setError(e.message ?? 'Errore sconosciuto');
       setPhase('ready');
     }
   }
 
-  // ── Loading (creazione booking) ────────────────────────────────────────────
-  if (phase === 'loading') {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '40vh' }}>
-        <div style={{
-          width: 44, height: 44,
-          border: '3px solid #e5e7eb',
-          borderTop: '3px solid #1E73BE',
-          borderRadius: '50%',
-          animation: 'spin 0.75s linear infinite',
-        }} />
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-      </div>
-    );
-  }
-
-  // ── Errore (creazione booking fallita) ─────────────────────────────────────
+  // ── Errore (dati mancanti) ─────────────────────────────────────────────────
   if (phase === 'error') {
     return (
       <div style={{ maxWidth: 480, margin: '60px auto', textAlign: 'center', fontFamily: 'sans-serif', padding: '0 16px' }}>
@@ -563,7 +598,7 @@ export default function WizardStep7({ locale = 'it' }: Props) {
         {guestComments    && <Row label={t.notes}   value={guestComments} />}
       </div>
 
-      {/* Errore pagamento (mostrato in fase 'ready' dopo un tentativo fallito) */}
+      {/* Errore inline (dopo tentativo di pagamento fallito) */}
       {error && phase === 'ready' && (
         <div style={{ background: '#fff5f5', border: '1px solid #f5c6cb', borderRadius: 10, padding: '12px 16px', marginBottom: 16 }}>
           <p style={{ margin: 0, color: '#c0392b', fontWeight: 600, fontSize: 14 }}>{t.errTitle}</p>
@@ -573,7 +608,6 @@ export default function WizardStep7({ locale = 'it' }: Props) {
 
       {/* ── CTA: Stripe o PayPal ── */}
       {paymentMethod === 'stripe' ? (
-        // ── Bottone Stripe (comportamento invariato) ──
         <button
           onClick={handlePagaStripe}
           disabled={phase === 'paying'}
@@ -594,9 +628,7 @@ export default function WizardStep7({ locale = 'it' }: Props) {
           }
         </button>
       ) : (
-        // ── Bottone PayPal (SDK dinamico) ──
         <div style={{ marginBottom: 12 }}>
-          {/* Mostra spinner mentre SDK carica */}
           {!paypalReady && (
             <div style={{
               width: '100%', padding: '18px', borderRadius: 14,
@@ -606,13 +638,11 @@ export default function WizardStep7({ locale = 'it' }: Props) {
               ⏳ {t.paypalLoading}
             </div>
           )}
-          {/* Div dove PayPal SDK monta i suoi bottoni */}
           <div
             ref={paypalContainerRef}
             id="paypal-button-container"
             style={{ display: paypalReady && phase !== 'paying' ? 'block' : 'none' }}
           />
-          {/* Spinner durante la cattura del pagamento */}
           {phase === 'paying' && (
             <div style={{
               width: '100%', padding: '18px', borderRadius: 14,

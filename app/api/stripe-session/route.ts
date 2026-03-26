@@ -27,8 +27,10 @@ export async function POST(req: NextRequest) {
   const capture    = IMMEDIATE_CHARGE_OFFERS.includes(Number(offerId));
   const unitAmount = Math.round(Number(amount) * 100);
   const origin     = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ?? `https://${req.headers.get('host')}`;
+
   const successUrl = `${origin}/${locale}/prenota/successo?bookingId=${bookingId}&session_id={CHECKOUT_SESSION_ID}`;
-  const cancelUrl  = `${origin}/${locale}/prenota?cancelled=1`;
+  // bookingId incluso nella cancelUrl → Wizard.tsx lo legge e cancella il booking
+  const cancelUrl  = `${origin}/${locale}/prenota?cancelled=1&bookingId=${bookingId}`;
 
   const stripePayload = [{
     action:     'createStripeSession',
@@ -51,6 +53,7 @@ export async function POST(req: NextRequest) {
   try {
     const token = await getToken();
 
+    // ── Step 1: Crea sessione Stripe tramite Beds24 ──────────────────────────
     const res = await fetch(`${BASE_URL}/channels/stripe`, {
       method:  'POST',
       headers: { token, 'Content-Type': 'application/json' },
@@ -79,6 +82,28 @@ export async function POST(req: NextRequest) {
 
     if (!sessionUrl) {
       throw new Error('Stripe session URL non ricevuta. Risposta: ' + rawText.slice(0, 200));
+    }
+
+    // ── Step 2: Reset status → "request" ────────────────────────────────────────
+    // ⚠️  Beds24 /channels/stripe setta automaticamente il booking a "confirmed"
+    //     nel momento in cui crea la sessione Stripe, ancora prima che l'utente paghi.
+    //     Lo riportiamo subito a "new" così che:
+    //     - se l'utente paga → /api/stripe-confirm lo porta a "confirmed"
+    //     - se l'utente abbandona → Wizard.tsx intercetta ?cancelled=1 e lo cancella
+    //     Questo reset è sicuro: avviene prima che l'utente veda la pagina Stripe,
+    //     quindi il webhook Stripe non può ancora essere arrivato a Beds24.
+    try {
+      const resetRes = await fetch(`${BASE_URL}/bookings`, {
+        method:  'POST',
+        headers: { token, 'Content-Type': 'application/json' },
+        body:    JSON.stringify([{ id: Number(bookingId), status: 'request' }]),
+        cache:   'no-store',
+      });
+      const resetRaw = await resetRes.text();
+      console.log('[stripe-session] Reset status → new:', resetRes.status, resetRaw.slice(0, 100));
+    } catch (resetErr: any) {
+      // Non blocchiamo il flusso — l'utente ha già la session URL
+      console.warn('[stripe-session] Reset status fallito (non bloccante):', resetErr.message);
     }
 
     return NextResponse.json({ ok: true, url: sessionUrl, capture });
