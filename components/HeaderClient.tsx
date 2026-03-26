@@ -44,7 +44,7 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
           <nav className="desktop-nav" style={{ display: 'flex', gap: '1.25rem', marginLeft: 'auto', alignItems: 'center' }}>
             <a href={`/${locale}`}           style={navLinkStyle}>{nav.home}</a>
             <a href={`/${locale}/residenze`} style={navLinkStyle}>{nav.residences}</a>
-            <a href={`/${locale}/prenota`}   style={ctaStyle}>{nav.book}</a>
+            <a href={`/${locale}`}   style={ctaStyle}>{nav.book}</a>
           </nav>
 
           {/* Hamburger mobile */}
@@ -82,7 +82,7 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
 
           {/* CTA Prenota */}
           <div style={{ padding: '1rem 1.5rem' }}>
-            <a href={`/${locale}/prenota`} style={{ display: 'block', padding: '1rem', background: '#1E73BE', color: '#fff', borderRadius: '10px', textAlign: 'center', fontWeight: 700, fontSize: '1rem', textDecoration: 'none' }}>
+            <a href={`/${locale}`} style={{ display: 'block', padding: '1rem', background: '#1E73BE', color: '#fff', borderRadius: '10px', textAlign: 'center', fontWeight: 700, fontSize: '1rem', textDecoration: 'none' }}>
               {nav.book}
             </a>
           </div>

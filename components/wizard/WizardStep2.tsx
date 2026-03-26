@@ -1,495 +1,696 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useWizardStore } from '@/store/wizard-store';
+import { PROPERTIES } from '@/config/properties';
 
-// ─── Costanti multilingua ────────────────────────────────────────────────────
-const MONTHS: Record<string, string[]> = {
-  it: ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
-  en: ['January','February','March','April','May','June','July','August','September','October','November','December'],
-  de: ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'],
-  pl: ['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'],
+// ─── Testi fissi 4 lingue ─────────────────────────────────────────────────────
+const ENERGY_BOX: Record<string, string> = {
+  it: "I consumi energetici vengono conteggiati in base all'utilizzo reale, tramite contatori presenti in ogni abitazione. Non si tratta di un costo aggiuntivo per guadagno, ma di una misura per evitare sprechi.",
+  en: 'Energy consumption is calculated based on actual usage, measured through meters installed in each accommodation. This is not an additional charge for profit, but a measure to prevent energy waste.',
+  de: 'Der Energieverbrauch wird auf Grundlage des tatsächlichen Verbrauchs berechnet und über in jeder Unterkunft installierte Zähler erfasst. Dabei handelt es sich nicht um eine zusätzliche Gebühr zur Gewinnerzielung, sondern um eine Maßnahme zur Vermeidung von Energieverschwendung.',
+  pl: 'Zużycie energii jest rozliczane na podstawie rzeczywistego wykorzystania, mierzonego przez liczniki zainstalowane w każdym obiekcie. Nie jest to dodatkowa opłata w celu osiągnięcia zysku, lecz środek mający na celu zapobieganie marnotrawstwu energii.',
 };
-const DAYS: Record<string, string[]> = {
-  it: ['Lu','Ma','Me','Gi','Ve','Sa','Do'],
-  en: ['Mo','Tu','We','Th','Fr','Sa','Su'],
-  de: ['Mo','Di','Mi','Do','Fr','Sa','So'],
-  pl: ['Pn','Wt','Śr','Cz','Pt','So','Nd'],
+const DEPOSIT_BOX: Record<string, (n: number) => string> = {
+  it: (n) => `Questo alloggio richiede un deposito cauzionale di €${n}. Il pagamento verrà riscosso separatamente dal proprietario prima dell'arrivo o al momento del check-in.`,
+  en: (n) => `This accommodation requires a security deposit of €${n}. Payment will be collected separately by the host before arrival or at check-in.`,
+  de: (n) => `Diese Unterkunft erfordert eine Kaution von €${n}. Die Zahlung wird separat vom Gastgeber vor der Ankunft oder beim Check-in erhoben.`,
+  pl: (n) => `To zakwaterowanie wymaga kaucji w wysokości €${n}. Płatność zostanie pobrana oddzielnie przez gospodarza przed przyjazdem lub przy zameldowaniu.`,
 };
+
+const OFFER_NAMES: Record<number, Record<string,string>> = {
+  1: { it:'Non Rimborsabile',          en:'Non-Refundable',        de:'Nicht erstattungsfähig',  pl:'Bezzwrotna' },
+  2: { it:'Parzialmente Rimborsabile', en:'Partially Refundable',  de:'Teilw. erstattungsfähig', pl:'Częściowo zwrotna' },
+  3: { it:'Flessibile 60 gg',          en:'Flexible 60 days',      de:'Flexibel 60 Tage',        pl:'Elastyczna 60 dni' },
+  4: { it:'Flessibile 45 gg',          en:'Flexible 45 days',      de:'Flexibel 45 Tage',        pl:'Elastyczna 45 dni' },
+  5: { it:'Flessibile 30 gg',          en:'Flexible 30 days',      de:'Flexibel 30 Tage',        pl:'Elastyczna 30 dni' },
+  6: { it:'Flessibile 5 gg',           en:'Flexible 5 days',       de:'Flexibel 5 Tage',         pl:'Elastyczna 5 dni' },
+};
+
+// Descrizione politica cancellazione dall'offerId
+const CANCEL_POLICY: Record<number, Record<string,string>> = {
+  1: { it:'Pagamento non rimborsabile entro 48h dalla prenotazione.',          en:'Non-refundable payment within 48h of booking.',           de:'Nicht erstattungsfähige Zahlung innerhalb 48h.',          pl:'Bezzwrotna płatność w ciągu 48h od rezerwacji.' },
+  2: { it:'50% subito, saldo all\'arrivo. Cancellazione parzialmente rimborsabile.', en:'50% now, balance at arrival. Partially refundable.',  de:'50% jetzt, Rest bei Ankunft. Teilweise erstattungsfähig.', pl:'50% teraz, reszta przy przyjeździe. Częściowo zwrotna.' },
+  3: { it:'Cancellazione gratuita fino a 60 giorni prima dell\'arrivo.',       en:'Free cancellation up to 60 days before arrival.',         de:'Kostenlose Stornierung bis 60 Tage vor Ankunft.',         pl:'Bezpłatne anulowanie do 60 dni przed przyjazdem.' },
+  4: { it:'Cancellazione gratuita fino a 45 giorni prima dell\'arrivo.',       en:'Free cancellation up to 45 days before arrival.',         de:'Kostenlose Stornierung bis 45 Tage vor Ankunft.',         pl:'Bezpłatne anulowanie do 45 dni przed przyjazdem.' },
+  5: { it:'Cancellazione gratuita fino a 30 giorni prima dell\'arrivo.',       en:'Free cancellation up to 30 days before arrival.',         de:'Kostenlose Stornierung bis 30 Tage vor Ankunft.',         pl:'Bezpłatne anulowanie do 30 dni przed przyjazdem.' },
+  6: { it:'Cancellazione gratuita fino a 5 giorni prima dell\'arrivo.',        en:'Free cancellation up to 5 days before arrival.',          de:'Kostenlose Stornierung bis 5 Tage vor Ankunft.',          pl:'Bezpłatne anulowanie do 5 dni przed prijazdem.' },
+};
+
 const UI: Record<string, Record<string, string>> = {
   it: {
-    title: 'Quando volete venire?',
-    checkin: 'Check-in', checkout: 'Check-out',
-    selectCheckin: 'Seleziona la data di check-in',
-    selectCheckout: 'Ora seleziona la data di check-out',
-    notte: 'notte', notti: 'notti',
-    next: 'Continua', back: 'Indietro',
-    loadingAvail: 'Caricamento disponibilità...',
-    cancelDates: 'Cancella date',
-    minStayHint: 'Le nostre strutture sono disponibili raramente per soggiorni inferiori a 3 notti',
+    title: 'Conferma e paga',
+    back: '← Indietro',
+    sec1title: '1. Come vuoi pagare?',
+    payFull: 'Paga tutto ora',
+    payInstall: 'Paga in 3 rate con PayPal',
+    sec2title: '2. I tuoi dati',
+    firstName: 'Nome *', lastName: 'Cognome *', email: 'Email *',
+    phone: 'Telefono', country: 'Paese', arrivalTime: 'Ora di arrivo prevista',
+    comments: 'Richieste speciali',
+    confirm: 'Conferma prenotazione',
+    loading: 'Invio in corso...',
+    errTitle: 'Errore nella prenotazione',
+    terms: 'Confermando accetti le',
+    termsLink: 'condizioni generali',
+    cancelPolicy: 'Politica di cancellazione',
+    dates: 'Date', guests: 'Ospiti',
+    edit: 'Modifica',
+    priceDetail: 'Dettagli del prezzo',
+    perNight: 'a notte',
+    nights: 'notti', night: 'notte',
+    total: 'Totale',
+    touristTax: 'Imposta di soggiorno',
+    touristTaxNote: '€2/pers/notte · max 10 notti · esenti under 12',
+    voucher: 'Codice promozionale',
+    voucherApply: 'Applica',
+    energyTitle: 'Consumi energetici',
+    depositTitle: 'Deposito cauzionale',
+    adults: 'adulti', children: 'bambini',
+    successTitle: 'Prenotazione confermata!',
+    successSub: 'Riceverai una email di conferma a breve. Numero prenotazione:',
+    successBack: 'Torna alle Residenze',
+    summaryTitle: 'Il tuo soggiorno',
+    paypalFlexNote: 'Con PayPal il pagamento viene addebitato subito.',
   },
   en: {
-    title: 'When do you want to come?',
-    checkin: 'Check-in', checkout: 'Check-out',
-    selectCheckin: 'Select check-in date',
-    selectCheckout: 'Now select check-out date',
-    notte: 'night', notti: 'nights',
-    next: 'Continue', back: 'Back',
-    loadingAvail: 'Loading availability...',
-    cancelDates: 'Clear dates',
-    minStayHint: 'Our properties are rarely available for stays shorter than 3 nights',
+    title: 'Confirm and pay',
+    back: '← Back',
+    sec1title: '1. How do you want to pay?',
+    payFull: 'Pay in full now',
+    payInstall: 'Pay in 3 installments with PayPal',
+    sec2title: '2. Your details',
+    firstName: 'First name *', lastName: 'Last name *', email: 'Email *',
+    phone: 'Phone', country: 'Country', arrivalTime: 'Expected arrival time',
+    comments: 'Special requests',
+    confirm: 'Confirm booking',
+    loading: 'Sending...',
+    errTitle: 'Booking error',
+    terms: 'By confirming you accept the',
+    termsLink: 'terms and conditions',
+    cancelPolicy: 'Cancellation policy',
+    dates: 'Dates', guests: 'Guests',
+    edit: 'Edit',
+    priceDetail: 'Price details',
+    perNight: 'per night',
+    nights: 'nights', night: 'night',
+    total: 'Total',
+    touristTax: 'Tourist tax',
+    touristTaxNote: '€2/pers/night · max 10 nights · under 12 exempt',
+    voucher: 'Promotional code',
+    voucherApply: 'Apply',
+    energyTitle: 'Energy consumption',
+    depositTitle: 'Security deposit',
+    adults: 'adults', children: 'children',
+    successTitle: 'Booking confirmed!',
+    successSub: 'You will receive a confirmation email shortly. Booking number:',
+    successBack: 'Back to Residences',
+    summaryTitle: 'Your stay',
+    paypalFlexNote: 'With PayPal, payment is charged immediately.',
   },
   de: {
-    title: 'Wann möchten Sie kommen?',
-    checkin: 'Check-in', checkout: 'Check-out',
-    selectCheckin: 'Check-in-Datum auswählen',
-    selectCheckout: 'Jetzt Check-out-Datum auswählen',
-    notte: 'Nacht', notti: 'Nächte',
-    next: 'Weiter', back: 'Zurück',
-    loadingAvail: 'Verfügbarkeit wird geladen...',
-    cancelDates: 'Daten löschen',
-    minStayHint: 'Unsere Unterkünfte sind selten für Aufenthalte unter 3 Nächten verfügbar',
+    title: 'Bestätigen und bezahlen',
+    back: '← Zurück',
+    sec1title: '1. Wie möchten Sie bezahlen?',
+    payFull: 'Jetzt vollständig bezahlen',
+    payInstall: 'In 3 Raten mit PayPal bezahlen',
+    sec2title: '2. Ihre Daten',
+    firstName: 'Vorname *', lastName: 'Nachname *', email: 'E-Mail *',
+    phone: 'Telefon', country: 'Land', arrivalTime: 'Voraussichtliche Ankunftszeit',
+    comments: 'Besondere Wünsche',
+    confirm: 'Buchung bestätigen',
+    loading: 'Wird gesendet...',
+    errTitle: 'Buchungsfehler',
+    terms: 'Mit der Bestätigung akzeptieren Sie die',
+    termsLink: 'Allgemeinen Geschäftsbedingungen',
+    cancelPolicy: 'Stornierungsbedingungen',
+    dates: 'Daten', guests: 'Gäste',
+    edit: 'Ändern',
+    priceDetail: 'Preisdetails',
+    perNight: 'pro Nacht',
+    nights: 'Nächte', night: 'Nacht',
+    total: 'Gesamt',
+    touristTax: 'Kurtaxe',
+    touristTaxNote: '€2/Pers/Nacht · max. 10 Nächte · Kinder unter 12 befreit',
+    voucher: 'Aktionscode',
+    voucherApply: 'Anwenden',
+    energyTitle: 'Energieverbrauch',
+    depositTitle: 'Kaution',
+    adults: 'Erwachsene', children: 'Kinder',
+    successTitle: 'Buchung bestätigt!',
+    successSub: 'Sie erhalten in Kürze eine Bestätigungs-E-Mail. Buchungsnummer:',
+    successBack: 'Zurück zu Residenzen',
+    summaryTitle: 'Ihr Aufenthalt',
+    paypalFlexNote: 'Bei PayPal wird der Betrag sofort belastet.',
   },
   pl: {
-    title: 'Kiedy chcecie przyjechać?',
-    checkin: 'Zameldowanie', checkout: 'Wymeldowanie',
-    selectCheckin: 'Wybierz datę zameldowania',
-    selectCheckout: 'Teraz wybierz datę wymeldowania',
-    notte: 'noc', notti: 'nocy',
-    next: 'Dalej', back: 'Wstecz',
-    loadingAvail: 'Ładowanie dostępności...',
-    cancelDates: 'Wyczyść daty',
-    minStayHint: 'Nasze obiekty są rzadko dostępne na pobyty krótsze niż 3 noce',
+    title: 'Potwierdź i zapłać',
+    back: '← Wstecz',
+    sec1title: '1. Jak chcesz zapłacić?',
+    payFull: 'Zapłać teraz w całości',
+    payInstall: 'Zapłać w 3 ratach przez PayPal',
+    sec2title: '2. Twoje dane',
+    firstName: 'Imię *', lastName: 'Nazwisko *', email: 'E-mail *',
+    phone: 'Telefon', country: 'Kraj', arrivalTime: 'Przewidywana godzina przyjazdu',
+    comments: 'Specjalne życzenia',
+    confirm: 'Potwierdź rezerwację',
+    loading: 'Wysyłanie...',
+    errTitle: 'Błąd rezerwacji',
+    terms: 'Potwierdzając akceptujesz',
+    termsLink: 'ogólne warunki',
+    cancelPolicy: 'Polityka anulowania',
+    dates: 'Daty', guests: 'Goście',
+    edit: 'Zmień',
+    priceDetail: 'Szczegóły ceny',
+    perNight: 'za noc',
+    nights: 'nocy', night: 'noc',
+    total: 'Łącznie',
+    touristTax: 'Opłata turystyczna',
+    touristTaxNote: '€2/os./noc · maks. 10 nocy · dzieci poniżej 12 lat zwolnione',
+    voucher: 'Kod promocyjny',
+    voucherApply: 'Zastosuj',
+    energyTitle: 'Zużycie energii',
+    depositTitle: 'Kaucja',
+    adults: 'dorośli', children: 'dzieci',
+    successTitle: 'Rezerwacja potwierdzona!',
+    successSub: 'Wkrótce otrzymasz e-mail z potwierdzeniem. Numer rezerwacji:',
+    successBack: 'Powrót do Rezydencji',
+    summaryTitle: 'Twój pobyt',
+    paypalFlexNote: 'W przypadku PayPal płatność jest naliczana natychmiast.',
   },
 };
-
-const MIN_STAY_MSG: Record<string, (n: number) => string> = {
-  it: (n) => `Soggiorno minimo ${n} notti da questa data`,
-  en: (n) => `Minimum stay ${n} nights from this date`,
-  de: (n) => `Mindestaufenthalt ${n} Nächte ab diesem Datum`,
-  pl: (n) => `Minimalny pobyt ${n} nocy od tej daty`,
+const PAY_INSTALL_NOTE: Record<string, (n: number) => string> = {
+  it: (n) => `3 rate da €${n} · senza interessi · tramite PayPal`,
+  en: (n) => `3 payments of €${n} · no interest · via PayPal`,
+  de: (n) => `3 Raten à €${n} · zinsfrei · über PayPal`,
+  pl: (n) => `3 raty po €${n} · bez odsetek · przez PayPal`,
 };
 
+// Offerte Flex (3-6): con PayPal il pagamento è immediato — avvisa l'utente
+const FLEX_OFFER_IDS = [3, 4, 5, 6];
 
-// ─── Tipi ────────────────────────────────────────────────────────────────────
-// Beds24 /inventory/rooms/availability: { "YYYY-MM-DD": true/false }
-// true = disponibile per check-in, false = occupato/bloccato
-type AvailabilityMap = Record<string, boolean>;
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-function toYMD(y: number, m: number, d: number) {
-  return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-}
-function parseYMD(s: string): Date {
-  const [y,m,d] = s.split('-').map(Number);
-  return new Date(y, m-1, d);
-}
-function nightsBetween(a: string, b: string) {
-  return Math.round((parseYMD(b).getTime() - parseYMD(a).getTime()) / 86400000);
-}
-function formatFriendly(ymd: string, locale: string) {
-  const d = parseYMD(ymd);
-  const months = MONTHS[locale] ?? MONTHS.it;
-  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
-}
-function buildCells(year: number, month: number): (number|null)[] {
-  const firstDow = new Date(year, month, 1).getDay();
-  const offset = firstDow === 0 ? 6 : firstDow - 1;
-  const daysCount = new Date(year, month+1, 0).getDate();
-  const cells: (number|null)[] = Array(offset).fill(null);
-  for (let d = 1; d <= daysCount; d++) cells.push(d);
-  return cells;
-}
-function addMonths(year: number, month: number, delta: number) {
-  let m = month + delta;
-  let y = year + Math.floor(m / 12);
-  m = ((m % 12) + 12) % 12;
-  return { year: y, month: m };
-}
-
-// ─── Props ───────────────────────────────────────────────────────────────────
-interface Props {
-  translations: {
-    step2: { title?: string; checkin: string; checkout: string; next: string; back?: string };
-  };
-  locale?: string;
-  roomId?: number | null;
-  onDone?: () => void; // callback per modalità overlay (home page)
-}
-
-// ─── Componente ──────────────────────────────────────────────────────────────
-export default function WizardStep2({ translations: _t, locale = 'it', roomId, onDone }: Props) {
-  const ui = UI[locale] ?? UI.it;
-  const months = MONTHS[locale] ?? MONTHS.it;
-  const days   = DAYS[locale]   ?? DAYS.it;
-
-  const { checkIn, checkOut, setCheckIn, setCheckOut, nextStep, prevStep } = useWizardStore();
-
-  // Stato navigazione calendario
-  const today = new Date(); today.setHours(0,0,0,0);
-  const todayYMD = toYMD(today.getFullYear(), today.getMonth(), today.getDate());
-  const [viewYear,  setViewYear]  = useState(today.getFullYear());
-  const [viewMonth, setViewMonth] = useState(today.getMonth());
-
-  // Hover per preview range
-  const [hoverYMD, setHoverYMD] = useState<string|null>(null);
-
-  // Disponibilità da Beds24
-  const [calendarData, setCalendarData] = useState<AvailabilityMap>({});
-  const [loadingAvail, setLoadingAvail] = useState(false);
-
-  // Fase selezione — selectingCheckout mantiene la modalità checkout anche dopo pre-selezione +3
-  const [selectingCheckout, setSelectingCheckout] = useState(false);
-  const phase: 'checkin'|'checkout' = selectingCheckout ? 'checkout' : (checkIn && !checkOut ? 'checkout' : 'checkin');
-
-  // Desktop: mostra 2 mesi se viewport >= 640px
-  const [isDesktop, setIsDesktop] = useState(false);
-  useEffect(() => {
-    const check = () => setIsDesktop(window.innerWidth >= 640);
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, []);
-
-  const isPrevDisabled = toYMD(viewYear, viewMonth, 1) <= toYMD(today.getFullYear(), today.getMonth(), 1);
-
-  // Swipe touch per cambio mese su mobile
-  const touchStartX = React.useRef<number>(0);
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    const diff = touchStartX.current - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) goToNext();
-      else if (!isPrevDisabled) goToPrev();
-    }
-  };
-
-  // Fetch disponibilità se roomId noto
-  const fetchAvailability = useCallback(async () => {
-    if (!roomId) return;
-    setLoadingAvail(true);
-    try {
-      const res = await fetch(`/api/availability?roomId=${roomId}`);
-      if (!res.ok) return;
-      const data = await res.json();
-      const avail: AvailabilityMap = data?.data?.[0]?.availability ?? {};
-      setCalendarData(avail);
-    } catch {
-      // Silente: se fallisce mostriamo il calendario senza disponibilità
-    } finally {
-      setLoadingAvail(false);
-    }
-  }, [roomId]);
-
-  useEffect(() => { fetchAvailability(); }, [fetchAvailability]);
-
-  // ── Logica giorno ─────────────────────────────────────────────────────────
-  function isDayUnavailable(ymd: string): boolean {
-    if (ymd < todayYMD) return true;
-    // Se abbiamo dati Beds24 → false significa occupato
-    if (ymd in calendarData) return calendarData[ymd] === false;
-    return false; // nessun dato = disponibile
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function getRoomData(roomId: number | null) {
+  if (!roomId) return null;
+  for (const p of PROPERTIES) {
+    const r = p.rooms.find(x => x.roomId === roomId);
+    if (r) return r;
   }
+  return null;
+}
+function calcNights(ci: string, co: string) {
+  return Math.round((new Date(co).getTime() - new Date(ci).getTime()) / 86_400_000);
+}
+function fmt(n: number) {
+  return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
+}
+function formatDate(ymd: string, locale: string) {
+  return new Date(ymd + 'T00:00:00').toLocaleDateString(
+    locale === 'it' ? 'it-IT' : locale === 'de' ? 'de-DE' : locale === 'pl' ? 'pl-PL' : 'en-GB',
+    { day: 'numeric', month: 'short', year: 'numeric' }
+  );
+}
+function parseDeposit(str?: string): number | null {
+  const m = str?.match(/CUSTOMSTAYFEE\s+(\d+)\s+SECURITYDEPOSIT/);
+  return m ? Number(m[1]) : null;
+}
 
-  // In fase checkout: verifica che non ci siano giorni occupati nel range
-  function isCheckoutAllowed(ymd: string): boolean {
-    if (!checkIn) return false;
-    const diff = nightsBetween(checkIn, ymd);
-    if (diff < 1) return false;
-    const start = parseYMD(checkIn);
-    const end = parseYMD(ymd);
-    for (let t = start.getTime() + 86400000; t < end.getTime(); t += 86400000) {
-      const d = new Date(t);
-      const dYMD = toYMD(d.getFullYear(), d.getMonth(), d.getDate());
-      if (isDayUnavailable(dYMD)) return false;
-    }
-    return true;
-  }
-
-  // ── Click giorno ─────────────────────────────────────────────────────────
-  function handleDayClick(ymd: string) {
-    if (ymd < todayYMD) return;
-    if (isDayUnavailable(ymd)) return;
-
-    if (phase === 'checkin') {
-      setCheckIn(ymd);
-      const d = parseYMD(ymd);
-      const pre = new Date(d.getTime() + 3 * 86400000);
-      const preYMD = toYMD(pre.getFullYear(), pre.getMonth(), pre.getDate());
-      if (!isDayUnavailable(preYMD)) {
-        setCheckOut(preYMD);
-      } else {
-        setCheckOut('');
-      }
-      setSelectingCheckout(true);
-      setHoverYMD(null);
-    } else {
-      if (!isCheckoutAllowed(ymd)) return;
-      setCheckOut(ymd);
-      setSelectingCheckout(false);
-      setHoverYMD(null);
-    }
-  }
-
-  // ── Navigazione mesi ──────────────────────────────────────────────────────
-  function goToPrev() {
-    const prev = addMonths(viewYear, viewMonth, -1);
-    if (toYMD(prev.year, prev.month, 1) >= toYMD(today.getFullYear(), today.getMonth(), 1)) {
-      setViewYear(prev.year); setViewMonth(prev.month);
-    }
-  }
-  function goToNext() {
-    const next = addMonths(viewYear, viewMonth, 1);
-    setViewYear(next.year); setViewMonth(next.month);
-  }
-
-  const canContinue = !!(checkIn && checkOut);
-  const nights = canContinue ? nightsBetween(checkIn!, checkOut!) : null;
-  const rangeEnd = phase === 'checkout' ? (checkOut || hoverYMD) : checkOut;
-
-  // Secondo mese per desktop
-  const secondMonth = addMonths(viewYear, viewMonth, 1);
-
-  // ── Render singolo mese ───────────────────────────────────────────────────
-  function renderMonth(year: number, month: number) {
-    const cells = buildCells(year, month);
-    return (
-      <div style={{ flex: 1 }}>
-        {/* Nomi giorni */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', marginBottom: 4 }}>
-          {days.map(d => (
-            <div key={d} style={{ textAlign: 'center', fontSize: 12, fontWeight: 600, color: '#888', paddingBottom: 6 }}>
-              {d}
-            </div>
-          ))}
-        </div>
-        {/* Celle giorni */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: '2px 0' }}>
-          {cells.map((day, i) => {
-            if (!day) return <div key={i} />;
-            const ymd = toYMD(year, month, day);
-            const isPast = ymd < todayYMD;
-            const unavail = isDayUnavailable(ymd);
-            const isStart = ymd === checkIn;
-            const isEnd   = ymd === checkOut;
-            const inRange = !!(checkIn && rangeEnd && ymd > checkIn && ymd < rangeEnd);
-            const isHover = ymd === hoverYMD && phase === 'checkout';
-            const isToday = ymd === todayYMD;
-
-            // Checkout non permesso per minStay
-            const checkoutBlocked = phase === 'checkout' && !isStart && !isPast && !unavail && !isCheckoutAllowed(ymd);
-
-            const isDisabled = isPast || unavail || (phase === 'checkout' && checkoutBlocked);
-
-            return (
-              <button
-                key={i}
-                onClick={() => handleDayClick(ymd)}
-                onMouseEnter={() => {
-                  if (phase === 'checkout' && !isDisabled) setHoverYMD(ymd);
-                }}
-                onMouseLeave={() => setHoverYMD(null)}
-                disabled={isDisabled}
-                style={{
-                  position: 'relative',
-                  height: 36, width: '100%',
-                  border: 'none',
-                  borderRadius: (isStart || isEnd) ? '50%' : '0',
-                  background: (isStart || isEnd)
-                    ? '#1E73BE'
-                    : inRange || isHover
-                    ? '#EBF4FC'
-                    : 'transparent',
-                  color: (isStart || isEnd) ? '#fff'
-                    : isPast || unavail ? '#ccc'
-                    : checkoutBlocked ? '#ccc'
-                    : '#111',
-                  fontSize: 14,
-                  fontWeight: (isStart || isEnd) ? 700 : isToday ? 700 : 400,
-                  cursor: isDisabled ? 'default' : 'pointer',
-                  textDecoration: (isPast || unavail) ? 'line-through' : 'none',
-                  outline: 'none',
-                  transition: 'background 0.1s',
-                }}
-              >
-                {day}
-                {/* Punto "oggi" */}
-                {isToday && !isStart && !isEnd && (
-                  <span style={{
-                    position: 'absolute', bottom: 4, left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: 4, height: 4, borderRadius: '50%',
-                    background: '#1E73BE', display: 'block',
-                  }} />
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    );
-  }
-
+// ─── Schermata conferma ───────────────────────────────────────────────────────
+function ConfirmScreen({ bookId, locale, onReset }: { bookId: string; locale: string; onReset: () => void }) {
+  const t = UI[locale] ?? UI.it;
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-
-      <h2 style={{ fontSize: '1.4rem', fontWeight: 700, margin: '0 0 1rem', color: '#111' }}>
-        {ui.title}
-      </h2>
-
-      {/* Pill date selezionate */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-        <div style={pillStyle(!!checkIn, phase === 'checkin')}>
-          <span style={pillLabelStyle}>{ui.checkin}</span>
-          <span style={pillValueStyle}>{checkIn ? formatFriendly(checkIn, locale) : '—'}</span>
-        </div>
-        <div style={{ alignSelf: 'center', color: '#ccc', fontSize: 20, flexShrink: 0 }}>→</div>
-        <div style={pillStyle(!!checkOut, phase === 'checkout')}>
-          <span style={pillLabelStyle}>{ui.checkout}</span>
-          <span style={pillValueStyle}>{checkOut ? formatFriendly(checkOut, locale) : '—'}</span>
-        </div>
+    <div style={{ textAlign: 'center', padding: '3rem 1rem', maxWidth: 480, margin: '0 auto' }}>
+      <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
+      <h2 style={{ fontSize: 24, fontWeight: 700, color: '#1E73BE', margin: '0 0 12px' }}>{t.successTitle}</h2>
+      <p style={{ fontSize: 15, color: '#666', margin: '0 0 24px' }}>{t.successSub}</p>
+      <div style={{ background: '#EEF5FC', border: '2px solid #1E73BE', borderRadius: 12, padding: '14px 24px', display: 'inline-block', marginBottom: 32 }}>
+        <span style={{ fontSize: 24, fontWeight: 800, color: '#1E73BE', letterSpacing: 2 }}>{bookId}</span>
       </div>
-
-      {/* Istruzione fase */}
-      <p style={{ fontSize: 13, color: '#1E73BE', margin: '0 0 10px', fontWeight: 500 }}>
-        {loadingAvail
-          ? ui.loadingAvail
-          : phase === 'checkin' ? ui.selectCheckin : ui.selectCheckout}
-      </p>
-
-      {/* Messaggio friendly soggiorno minimo — appare dopo selezione check-in */}
-      {checkIn && (
-        <p style={{ fontSize: 12, color: '#888', margin: '-4px 0 10px', fontStyle: 'italic' }}>
-          {ui.minStayHint}
-        </p>
-      )}
-
-      {/* Wrapper calendario — swipe su mobile */}
-      <div
-        style={{ border: '1px solid #e5e7eb', borderRadius: 16, overflow: 'hidden', background: '#fff' }}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-      >
-
-        {/* Controlli navigazione */}
-        <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '10px 16px 6px',
-        }}>
-          <button
-            onClick={goToPrev}
-            disabled={isPrevDisabled}
-            style={navBtnStyle(isPrevDisabled)}
-            aria-label="Mese precedente"
-          >
-            ‹
-          </button>
-
-          {/* Titoli mesi */}
-          <div style={{ display: 'flex', flex: 1, justifyContent: isDesktop ? 'space-around' : 'center' }}>
-            <span style={{ fontWeight: 700, fontSize: 15, color: '#111' }}>
-              {months[viewMonth]} {viewYear}
-            </span>
-            {isDesktop && (
-              <span style={{ fontWeight: 700, fontSize: 15, color: '#111' }}>
-                {months[secondMonth.month]} {secondMonth.year}
-              </span>
-            )}
-          </div>
-
-          <button onClick={goToNext} style={navBtnStyle(false)} aria-label="Mese successivo">
-            ›
-          </button>
-        </div>
-
-        {/* Griglia giorni */}
-        <div style={{
-          display: 'flex',
-          gap: isDesktop ? 32 : 0,
-          padding: isDesktop ? '0 20px 14px' : '0 10px 12px',
-        }}>
-          {renderMonth(viewYear, viewMonth)}
-          {isDesktop && (
-            <>
-              <div style={{ width: 1, background: '#f0f0f0', flexShrink: 0 }} />
-              {renderMonth(secondMonth.year, secondMonth.month)}
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Badge notti + cancella */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8 }}>
-        {nights && nights > 0 && (
-          <div style={{
-            background: '#EBF4FC', color: '#1E73BE',
-            border: '1px solid #1E73BE', borderRadius: 20,
-            padding: '4px 14px', fontSize: 14, fontWeight: 600,
-          }}>
-            {nights} {nights === 1 ? ui.notte : ui.notti}
-          </div>
-        )}
-        {(checkIn || checkOut) && (
-          <button
-            onClick={() => { setCheckIn(''); setCheckOut(''); setSelectingCheckout(false); }}
-            style={{ background: 'none', border: 'none', color: '#888', fontSize: 13, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}
-          >
-            {ui.cancelDates}
-          </button>
-        )}
-      </div>
-
-      {/* CTA */}
-      <div style={{ marginTop: '0.75rem', paddingTop: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <button
-          onClick={onDone ?? nextStep}
-          disabled={!canContinue}
-          style={{
-            width: '100%', padding: '0.9rem', borderRadius: onDone ? 50 : 10, border: 'none',
-            background: canContinue ? (onDone ? '#1E73BE' : '#FCAF1A') : '#e5e7eb',
-            color: canContinue ? '#fff' : '#aaa',
-            fontSize: '1rem', fontWeight: 700,
-            cursor: canContinue ? 'pointer' : 'not-allowed',
-          }}
-        >
-          {ui.next} →
-        </button>
-        <button
-          onClick={prevStep}
-          style={{ background: 'none', border: 'none', color: '#1E73BE', fontSize: '0.9rem', cursor: 'pointer', padding: 0, textAlign: 'center' }}
-        >
-          ← {ui.back}
-        </button>
-      </div>
-
+      <br />
+      <a href={`/${locale}/residenze`} style={{ display: 'inline-block', padding: '12px 32px', background: '#1E73BE', color: '#fff', borderRadius: 10, fontWeight: 700, fontSize: 15, textDecoration: 'none' }}>
+        {t.successBack}
+      </a>
     </div>
   );
 }
 
-// ─── Stili componenti ────────────────────────────────────────────────────────
-const pillStyle = (active: boolean, current: boolean): React.CSSProperties => ({
-  flex: 1, padding: '8px 12px', borderRadius: 10,
-  border: `2px solid ${current ? '#1E73BE' : active ? '#1E73BE' : '#e5e7eb'}`,
-  background: active ? '#EBF4FC' : '#f9fafb',
-  color: active ? '#1E73BE' : '#aaa',
-  boxShadow: current ? '0 0 0 3px rgba(30,115,190,0.12)' : 'none',
+// ─── Componente principale ────────────────────────────────────────────────────
+interface Props { locale?: string; }
+
+export default function WizardStep2({ locale = 'it' }: Props) {
+  const t   = UI[locale] ?? UI.it;
+  const loc = locale in UI ? locale : 'it';
+
+  const {
+    numAdult, numChild, childrenAges,
+    checkIn, checkOut,
+    selectedRoomId, selectedOfferId,
+    cachedOffers,
+    paymentMethod, setPaymentMethod,   // ← da store (non più local state)
+    voucherCode, setVoucherCode,
+    guestFirstName, guestLastName, guestEmail,
+    guestPhone, guestCountry, guestArrivalTime, guestComments,
+    setGuestField, setCurrentStep, prevStep, nextStep, reset,
+    discountedPrice, setDiscountedPrice,
+  } = useWizardStore();
+
+  const [error, setError]                     = useState<string | null>(null);
+  const [voucherInput, setVoucherInput]        = useState(voucherCode);
+  const [summaryOpen, setSummaryOpen]          = useState(true);
+  const [voucherError, setVoucherError]        = useState<string | null>(null);
+  const [voucherApplied, setVoucherApplied]    = useState(false);
+  const [coverUrl, setCoverUrl]                = useState<string | null>(null);
+
+  // ── Dati calcolati ─────────────────────────────────────────────────────────
+  const room = getRoomData(selectedRoomId);
+  const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
+
+  // Filtra per selectedRoomId per evitare di prendere il prezzo della room sbagliata
+  const roomOffers = cachedOffers?.find((ro: any) => ro.roomId === selectedRoomId);
+  const offer = roomOffers?.offers?.find((o: any) => o.offerId === selectedOfferId)
+    ?? cachedOffers?.flatMap((ro: any) => ro.offers ?? []).find((o: any) => o.offerId === selectedOfferId);
+  const offerPrice: number = offer?.price ?? 0;
+  const offerName = OFFER_NAMES[selectedOfferId ?? 0]?.[loc] ?? offer?.offerName ?? '';
+  const cancelPolicy = CANCEL_POLICY[selectedOfferId ?? 0]?.[loc] ?? '';
+  const depositFromOffer = parseDeposit(offer?.offerDescription ?? offer?.description ?? '');
+  const depositAmount = depositFromOffer ?? room?.securityDeposit ?? null;
+  const perNight = nights > 0 && offerPrice > 0 ? Math.round(offerPrice / nights) : 0;
+
+  const taxableNights = Math.min(nights, 10);
+  // Imposta di soggiorno: pagano adulti 18+ e bambini 12-17
+  // Esenti: bambini 0-11 anni
+  const childrenTaxable = (childrenAges ?? []).filter((a: number) => a >= 12).length;
+  const childrenExempt  = (childrenAges ?? []).filter((a: number) => a < 12).length;
+  const taxableAdults   = numAdult + childrenTaxable;
+  const touristTax    = taxableNights * taxableAdults * 2;
+  const basePrice     = discountedPrice !== null ? discountedPrice : offerPrice;
+  const total         = basePrice + touristTax;
+  const installment   = Math.round(total / 3);
+
+  // Avviso PayPal per offerte Flex: il pagamento è immediato
+  const isFlexOffer = selectedOfferId !== null && FLEX_OFFER_IDS.includes(selectedOfferId);
+  const showPaypalFlexWarning = paymentMethod === 'paypal' && isFlexOffer;
+
+  const formValid = guestFirstName.trim() && guestLastName.trim()
+    && guestEmail.trim() && guestEmail.includes('@');
+
+  // ── Carica foto cover ────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!room) return;
+    fetch('/api/cloudinary?covers=true')
+      .then(r => r.json())
+      .then(data => {
+        const url = data?.covers?.[room.cloudinaryFolder];
+        if (url) setCoverUrl(url);
+      })
+      .catch(() => {});
+  }, [room?.cloudinaryFolder]);
+
+  // ── Applica voucher ─────────────────────────────────────────────────────
+  async function handleApplyVoucher() {
+    const code = voucherInput.trim();
+    if (!code) return;
+    setVoucherError(null);
+    setVoucherApplied(false);
+    setDiscountedPrice(null);
+    try {
+      const res = await fetch(`/api/voucher-check?code=${encodeURIComponent(code)}&price=${offerPrice}`);
+      const data = await res.json();
+      if (data.valid) {
+        setVoucherCode(code);
+        setDiscountedPrice(data.discountedPrice);
+        setVoucherApplied(true);
+      } else {
+        setVoucherError('Codice non valido');
+        setVoucherCode('');
+      }
+    } catch {
+      setVoucherError('Errore verifica codice');
+    }
+  }
+
+  // ── Vai a Step 7 ─────────────────────────────────────────────────────────
+  function handleVediRiepilogo() {
+    if (!formValid) return;
+    if (voucherInput.trim()) {
+      setVoucherCode(voucherInput.trim());
+    }
+    nextStep();
+  }
+
+  // ── Sidebar content ──────────────────────────────────────────────────────
+  const sideBasePrice = discountedPrice !== null ? discountedPrice : offerPrice;
+  const totalDisplay  = sideBasePrice + touristTax;
+
+  const SidebarContent = () => (
+    <div>
+      {/* Foto + nome */}
+      {room && (
+        <div style={{ borderRadius: 12, overflow: 'hidden', marginBottom: 16, position: 'relative' }}>
+          {coverUrl ? (
+            <img
+              src={coverUrl}
+              alt={room.name}
+              style={{ width: '100%', height: 160, objectFit: 'cover', display: 'block' }}
+            />
+          ) : (
+            <div style={{ width: '100%', height: 100, background: '#f0f4f8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40 }}>🏠</div>
+          )}
+          <div style={{ padding: '10px 4px 0' }}>
+            <p style={{ fontSize: 16, fontWeight: 700, color: '#111', margin: '0 0 2px' }}>{room.name}</p>
+            <p style={{ fontSize: 12, color: '#888', margin: 0 }}>{room.type}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Politica cancellazione */}
+      {cancelPolicy && (
+        <>
+          <div style={divider} />
+          <p style={sideLabel}>{t.cancelPolicy}</p>
+          <p style={{ fontSize: 13, color: '#444', margin: '0 0 14px', lineHeight: 1.5 }}>{cancelPolicy}</p>
+        </>
+      )}
+
+      <div style={divider} />
+
+      {/* Box consumi energetici */}
+      <div style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 10, padding: '12px 14px', marginBottom: 14 }}>
+        <p style={{ fontSize: 12, fontWeight: 700, color: '#374151', margin: '0 0 5px' }}>⚡ {t.energyTitle}</p>
+        <p style={{ fontSize: 12, color: '#666', margin: 0, lineHeight: 1.5 }}>{ENERGY_BOX[locale] ?? ENERGY_BOX.it}</p>
+      </div>
+
+      {/* Voucher */}
+      <p style={sideLabel}>{t.voucher}</p>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 6 }}>
+        <input
+          type="text"
+          value={voucherInput}
+          onChange={e => { setVoucherInput(e.target.value); if (voucherApplied) { setVoucherApplied(false); setDiscountedPrice(null); setVoucherCode(''); } }}
+          placeholder="es. ESTATE2026"
+          style={{ flex: 1, padding: '8px 10px', fontSize: 13, border: `1.5px solid ${voucherApplied ? '#16a34a' : '#e5e7eb'}`, borderRadius: 8, outline: 'none' }}
+        />
+        <button
+          onClick={handleApplyVoucher}
+          disabled={!voucherInput.trim()}
+          style={{ padding: '8px 14px', borderRadius: 8, border: `1.5px solid ${voucherApplied ? '#16a34a' : '#1E73BE'}`, background: voucherApplied ? '#16a34a' : '#fff', color: voucherApplied ? '#fff' : '#1E73BE', fontSize: 13, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
+        >
+          {voucherApplied ? '✓ Applicato' : t.voucherApply}
+        </button>
+      </div>
+      {voucherError && <p style={{ fontSize: 12, color: '#e74c3c', margin: '4px 0 8px' }}>{voucherError}</p>}
+
+      <div style={divider} />
+
+      {/* Date + Modifica */}
+      <SideRow
+        label={t.dates}
+        value={checkIn && checkOut ? `${formatDate(checkIn, locale)} – ${formatDate(checkOut, locale)}` : '—'}
+        onEdit={() => setCurrentStep(2)}
+        editLabel={t.edit}
+      />
+      {nights > 0 && <p style={{ fontSize: 12, color: '#9ca3af', margin: '-8px 0 12px' }}>{nights} {nights === 1 ? t.night : t.nights}</p>}
+
+      {/* Ospiti + Modifica */}
+      <SideRow
+        label={t.guests}
+        value={`${numAdult} ${t.adults}${numChild > 0 ? `, ${numChild} ${t.children}` : ''}`}
+        onEdit={() => setCurrentStep(1)}
+        editLabel={t.edit}
+      />
+
+      <div style={divider} />
+
+      {/* Dettagli prezzo */}
+      <p style={sideLabel}>{t.priceDetail}</p>
+      {offerPrice > 0 && perNight > 0 && (
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: '#444', marginBottom: 6 }}>
+          <span>{nights} {nights === 1 ? t.night : t.nights} × {fmt(perNight)}</span>
+          <span style={{ textDecoration: voucherApplied ? 'line-through' : 'none', color: voucherApplied ? '#aaa' : '#444' }}>
+            {fmt(offerPrice)}
+          </span>
+        </div>
+      )}
+
+      {/* Riga sconto voucher */}
+      {voucherApplied && discountedPrice !== null && (
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, marginBottom: 6, background: '#f0fdf4', borderRadius: 8, padding: '6px 8px', border: '1px solid #bbf7d0' }}>
+          <span style={{ color: '#16a34a', fontWeight: 600 }}>🏷️ Sconto ({voucherCode})</span>
+          <span style={{ color: '#16a34a', fontWeight: 700 }}>− {fmt(offerPrice - discountedPrice)}</span>
+        </div>
+      )}
+
+      {touristTax > 0 && (
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: '#444', marginBottom: 6 }}>
+          <span>{t.touristTax}</span>
+          <span>{fmt(touristTax)}</span>
+        </div>
+      )}
+
+      {/* Totale */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, paddingTop: 8, borderTop: '1px solid #e5e7eb' }}>
+        <span style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>{t.total}</span>
+        <div style={{ textAlign: 'right' }}>
+          {voucherApplied && discountedPrice !== null && (
+            <span style={{ fontSize: 13, color: '#aaa', textDecoration: 'line-through', marginRight: 8 }}>
+              {fmt(offerPrice + touristTax)}
+            </span>
+          )}
+          <span style={{ fontSize: 20, fontWeight: 800, color: '#1E73BE' }}>{fmt(totalDisplay)}</span>
+        </div>
+      </div>
+      {touristTax > 0 && (
+        <p style={{ fontSize: 11, color: '#9ca3af', margin: '4px 0 0' }}>{t.touristTaxNote}</p>
+      )}
+
+      {/* Box deposito cauzionale */}
+      {depositAmount && (
+        <>
+          <div style={divider} />
+          <div style={{ background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 10, padding: '12px 14px' }}>
+            <p style={{ fontSize: 12, fontWeight: 700, color: '#374151', margin: '0 0 5px' }}>🔐 {t.depositTitle}</p>
+            <p style={{ fontSize: 12, color: '#666', margin: 0, lineHeight: 1.5 }}>
+              {(DEPOSIT_BOX[locale] ?? DEPOSIT_BOX.it)(depositAmount)}
+            </p>
+          </div>
+        </>
+      )}
+    </div>
+  );
+
+  // ── Render ────────────────────────────────────────────────────────────────
+  return (
+    <div style={{ fontFamily: 'sans-serif' }}>
+      {/* Titolo */}
+      <h2 style={{ fontSize: 22, fontWeight: 700, color: '#111', margin: '0 0 16px' }}>{t.title}</h2>
+
+      {/* Layout 2 colonne */}
+      <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start' }}>
+
+        {/* ── Colonna sinistra: form ── */}
+        <div style={{ flex: 1, minWidth: 0, maxWidth: 560 }}>
+
+          {/* Mobile: accordion riepilogo */}
+          <div className="step6-mobile-summary" style={{ display: 'none', border: '1px solid #e5e7eb', borderRadius: 14, marginBottom: 20, overflow: 'hidden' }}>
+            <button
+              onClick={() => setSummaryOpen(o => !o)}
+              style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px', background: '#f9fafb', border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 600, color: '#111' }}
+            >
+              <span>{t.summaryTitle} — {fmt(totalDisplay)}</span>
+              <span style={{ fontSize: 18, transition: 'transform 0.2s', transform: summaryOpen ? 'rotate(180deg)' : 'none' }}>›</span>
+            </button>
+            {summaryOpen && (
+              <div style={{ padding: '0 16px 16px' }}>
+                <SidebarContent />
+              </div>
+            )}
+          </div>
+
+          {/* Sezione 1: Pagamento — usa paymentMethod dallo store */}
+          <div style={sectionCard}>
+            <p style={sectionTitle}>{t.sec1title}</p>
+
+            {/* Opzione Stripe */}
+            <label style={radioRow(paymentMethod === 'stripe')} onClick={() => setPaymentMethod('stripe')}>
+              <div style={radioOuter(paymentMethod === 'stripe')}>
+                {paymentMethod === 'stripe' && <div style={radioInner} />}
+              </div>
+              <div>
+                <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: '#111' }}>{t.payFull}</p>
+                <p style={{ margin: '2px 0 0', fontSize: 13, color: '#888' }}>{fmt(totalDisplay)}</p>
+              </div>
+            </label>
+
+            {/* Opzione PayPal */}
+            <label style={radioRow(paymentMethod === 'paypal')} onClick={() => setPaymentMethod('paypal')}>
+              <div style={radioOuter(paymentMethod === 'paypal')}>
+                {paymentMethod === 'paypal' && <div style={radioInner} />}
+              </div>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: '#111' }}>{t.payInstall}</p>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#003087', background: '#e8f0fb', padding: '2px 8px', borderRadius: 4 }}>PayPal</span>
+                </div>
+                <p style={{ margin: '2px 0 0', fontSize: 13, color: '#888' }}>
+                  {PAY_INSTALL_NOTE[loc]?.(installment) ?? ''}
+                </p>
+              </div>
+            </label>
+
+            {/* Avviso per offerte Flex + PayPal: il pagamento è immediato */}
+            {showPaypalFlexWarning && (
+              <div style={{ background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginTop: 4, fontSize: 13, color: '#92400e' }}>
+                ⚠️ {t.paypalFlexNote}
+              </div>
+            )}
+          </div>
+
+          {/* Sezione 2: Dati ospite */}
+          <div style={sectionCard}>
+            <p style={sectionTitle}>{t.sec2title}</p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+              <Field label={t.firstName} value={guestFirstName} onChange={v => setGuestField('guestFirstName', v)} autoComplete="given-name" />
+              <Field label={t.lastName}  value={guestLastName}  onChange={v => setGuestField('guestLastName', v)}  autoComplete="family-name" />
+            </div>
+            <Field label={t.email}   value={guestEmail}   onChange={v => setGuestField('guestEmail', v)}   type="email"   autoComplete="email" style={{ marginBottom: 10 }} />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+              <Field label={t.phone}   value={guestPhone}   onChange={v => setGuestField('guestPhone', v)}   type="tel" autoComplete="tel" />
+              <Field label={t.country} value={guestCountry} onChange={v => setGuestField('guestCountry', v)} autoComplete="country-name" />
+            </div>
+            <Field label={t.arrivalTime} value={guestArrivalTime} onChange={v => setGuestField('guestArrivalTime', v)} type="time" style={{ marginBottom: 10 }} />
+            <div style={{ marginBottom: 0 }}>
+              <label style={labelStyle}>{t.comments}</label>
+              <textarea
+                value={guestComments}
+                onChange={e => setGuestField('guestComments', e.target.value)}
+                style={{ ...inputStyle, minHeight: 80, resize: 'vertical' }}
+              />
+            </div>
+          </div>
+
+          {/* Errore */}
+          {error && (
+            <div style={{ background: '#fff5f5', border: '1px solid #f5c6cb', borderRadius: 10, padding: '12px 16px', marginBottom: 14 }}>
+              <p style={{ margin: 0, color: '#c0392b', fontWeight: 600, fontSize: 14 }}>{t.errTitle}</p>
+              <p style={{ margin: '4px 0 0', fontSize: 13, color: '#888' }}>{error}</p>
+            </div>
+          )}
+
+          {/* CTA */}
+          <button
+            onClick={handleVediRiepilogo}
+            disabled={!formValid}
+            style={{
+              width: '100%', padding: '16px', borderRadius: 12, border: 'none',
+              fontSize: 17, fontWeight: 800, marginBottom: 10,
+              background: formValid ? '#FCAF1A' : '#e0e0e0',
+              color: formValid ? '#fff' : '#999',
+              cursor: formValid ? 'pointer' : 'not-allowed',
+              transition: 'background 0.15s',
+            }}
+          >
+            {`Vedi riepilogo finale →`}
+          </button>
+
+          <p style={{ fontSize: 12, color: '#aaa', textAlign: 'center', margin: '0 0 12px' }}>
+            {t.terms}{' '}
+            <a href={`/${locale}/condizioni`} style={{ color: '#1E73BE' }} target="_blank" rel="noopener noreferrer">{t.termsLink}</a>
+          </p>
+          <button onClick={prevStep} style={{ background: 'none', border: 'none', color: '#1E73BE', fontSize: 14, cursor: 'pointer', padding: 0, display: 'block' }}>
+            {t.back}
+          </button>
+        </div>
+
+        {/* ── Sidebar destra (desktop) ── */}
+        <div className="step6-sidebar" style={{ width: 380, flexShrink: 0, border: '1px solid #e5e7eb', borderRadius: 16, padding: '22px 24px', position: 'sticky', top: 90, alignSelf: 'flex-start' }}>
+          <SidebarContent />
+        </div>
+      </div>
+
+      <style>{`
+        @media (max-width: 767px) {
+          .step6-sidebar { display: none !important; }
+          .step6-mobile-summary { display: block !important; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+function SideRow({ label, value, onEdit, editLabel }: { label: string; value: string; onEdit: () => void; editLabel: string }) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+      <div>
+        <p style={{ fontSize: 13, fontWeight: 700, color: '#111', margin: '0 0 2px' }}>{label}</p>
+        <p style={{ fontSize: 13, color: '#555', margin: 0 }}>{value}</p>
+      </div>
+      <button
+        onClick={onEdit}
+        style={{ fontSize: 12, fontWeight: 600, color: '#111', background: 'none', border: '1px solid #ccc', borderRadius: 8, padding: '4px 10px', cursor: 'pointer', flexShrink: 0, marginLeft: 8, textDecoration: 'underline' }}
+      >
+        {editLabel}
+      </button>
+    </div>
+  );
+}
+
+function Field({ label, value, onChange, type = 'text', autoComplete, style: extraStyle }: {
+  label: string; value: string; onChange: (v: string) => void;
+  type?: string; autoComplete?: string; style?: React.CSSProperties;
+}) {
+  return (
+    <div style={extraStyle}>
+      <label style={labelStyle}>{label}</label>
+      <input
+        type={type}
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        autoComplete={autoComplete}
+        style={inputStyle}
+      />
+    </div>
+  );
+}
+
+// ─── Stili ────────────────────────────────────────────────────────────────────
+const sectionCard: React.CSSProperties = {
+  border: '1px solid #e5e7eb', borderRadius: 14,
+  padding: '20px', marginBottom: 16,
+};
+const sectionTitle: React.CSSProperties = {
+  fontSize: 17, fontWeight: 700, color: '#111', margin: '0 0 16px',
+};
+const divider: React.CSSProperties = {
+  height: 1, background: '#e5e7eb', margin: '14px 0',
+};
+const sideLabel: React.CSSProperties = {
+  fontSize: 12, fontWeight: 700, color: '#374151',
+  textTransform: 'uppercase', letterSpacing: '0.06em',
+  margin: '0 0 8px',
+};
+const labelStyle: React.CSSProperties = {
+  display: 'block', fontSize: 12, fontWeight: 600, color: '#6b7280', marginBottom: 4,
+};
+const inputStyle: React.CSSProperties = {
+  width: '100%', padding: '9px 12px', fontSize: 14,
+  border: '1.5px solid #e5e7eb', borderRadius: 8,
+  outline: 'none', boxSizing: 'border-box', color: '#111',
+};
+const radioRow = (active: boolean): React.CSSProperties => ({
+  display: 'flex', alignItems: 'flex-start', gap: 14,
+  padding: '14px', marginBottom: 8, cursor: 'pointer',
+  border: `2px solid ${active ? '#1E73BE' : '#e5e7eb'}`,
+  borderRadius: 12, background: active ? '#EEF5FC' : '#fff',
   transition: 'all 0.15s',
-  minWidth: 0,
 });
-const pillLabelStyle: React.CSSProperties = {
-  fontSize: 10, fontWeight: 700, textTransform: 'uppercase',
-  letterSpacing: '0.06em', opacity: 0.7, display: 'block',
-};
-const pillValueStyle: React.CSSProperties = {
-  fontSize: 13, fontWeight: 600, display: 'block',
-  overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-};
-const navBtnStyle = (disabled: boolean): React.CSSProperties => ({
-  background: 'none', border: 'none',
-  fontSize: 24, lineHeight: 1, cursor: disabled ? 'default' : 'pointer',
-  color: disabled ? '#ddd' : '#333',
-  padding: '0 4px', flexShrink: 0,
-  fontWeight: 300,
+const radioOuter = (active: boolean): React.CSSProperties => ({
+  width: 20, height: 20, borderRadius: '50%', flexShrink: 0, marginTop: 2,
+  border: `2px solid ${active ? '#1E73BE' : '#ccc'}`,
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  background: '#fff',
 });
+const radioInner: React.CSSProperties = {
+  width: 10, height: 10, borderRadius: '50%', background: '#1E73BE',
+};

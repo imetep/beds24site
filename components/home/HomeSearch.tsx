@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
 import { PROPERTIES } from '@/config/properties';
@@ -11,22 +11,22 @@ const UI: Record<string, Record<string, string>> = {
         checkin:'Check-in', checkout:'Check-out', done:'Fatto',
         adults:'Adulti', adultsAge:'18+', children:'Bambini', childrenAge:'0–17',
         nights:'notte', nightsP:'notti', hintCI:'Seleziona check-in',
-        hintCO:'Seleziona check-out', cancel:'Cancella', inspire:'Le nostre residenze' },
+        hintCO:'Seleziona check-out', cancel:'Cancella', inspire:'Le nostre residenze', dintorni:'Dintorni' },
   en: { dates:'Dates', guests:'Guests', search:'Search',
         checkin:'Check-in', checkout:'Check-out', done:'Done',
         adults:'Adults', adultsAge:'18+', children:'Children', childrenAge:'0–17',
         nights:'night', nightsP:'nights', hintCI:'Select check-in',
-        hintCO:'Select check-out', cancel:'Clear', inspire:'Our residences' },
+        hintCO:'Select check-out', cancel:'Clear', inspire:'Our residences', dintorni:'Surroundings' },
   de: { dates:'Datum', guests:'Personen', search:'Suchen',
         checkin:'Check-in', checkout:'Check-out', done:'Fertig',
         adults:'Erwachsene', adultsAge:'18+', children:'Kinder', childrenAge:'0–17',
         nights:'Nacht', nightsP:'Nächte', hintCI:'Check-in wählen',
-        hintCO:'Check-out wählen', cancel:'Löschen', inspire:'Unsere Residenzen' },
+        hintCO:'Check-out wählen', cancel:'Löschen', inspire:'Unsere Residenzen', dintorni:'Umgebung' },
   pl: { dates:'Daty', guests:'Osoby', search:'Szukaj',
         checkin:'Zameldowanie', checkout:'Wymeldowanie', done:'Gotowe',
         adults:'Dorośli', adultsAge:'18+', children:'Dzieci', childrenAge:'0–17',
         nights:'noc', nightsP:'nocy', hintCI:'Wybierz zameldowanie',
-        hintCO:'Wybierz wymeldowanie', cancel:'Wyczyść', inspire:'Nasze rezydencje' },
+        hintCO:'Wybierz wymeldowanie', cancel:'Wyczyść', inspire:'Nasze rezydencje', dintorni:'Okolice' },
 };
 
 const MONTHS: Record<string, string[]> = {
@@ -104,7 +104,13 @@ export default function HomeSearch({ locale }: { locale: string }) {
   const [panel, setPanel]   = useState<'none' | 'dates' | 'guests'>('none');
   const [hover,  setHover]  = useState<string | null>(null);
   const [isDesk, setDesk]   = useState(false);
-  const [covers, setCovers] = useState<Record<string, string>>({});
+  const [covers,       setCovers]   = useState<Record<string, string>>({});
+  const [dintorniPhotos, setDintorni] = useState<string[]>([]);
+  const [showResArr,   setShowResArr] = useState(false);
+  const [showDintArr,  setShowDintArr]= useState(false);
+  const [lightbox,     setLightbox]   = useState<string | null>(null);
+  const residenzeRef = useRef<HTMLDivElement>(null);
+  const dintorniRef  = useRef<HTMLDivElement>(null);
 
   // Calendario
   const now = new Date(); now.setHours(0, 0, 0, 0);
@@ -131,6 +137,14 @@ export default function HomeSearch({ locale }: { locale: string }) {
     fetch('/api/cloudinary?covers=true')
       .then(r => r.json())
       .then(d => { if (d.covers) setCovers(d.covers); })
+      .catch(() => {});
+    fetch('/api/cloudinary?folder=generiche')
+      .then(r => r.json())
+      .then(d => {
+        const raw: any[] = d.photos ?? [];
+        const urls = raw.map((p: any) => p.url ?? p).filter(Boolean);
+        if (urls.length > 0) setDintorni(urls);
+      })
       .catch(() => {});
   }, []);
 
@@ -295,9 +309,9 @@ export default function HomeSearch({ locale }: { locale: string }) {
               </button>
             </div>
             <div style={{ display: 'flex', gap: 24 }}>
-              {renderMonth(vy, vm)}
+              {renderMonth(vy, vm, false)}
               <div style={{ width: 1, background: '#f0f0f0', flexShrink: 0 }} />
-              {renderMonth(sec.y, sec.m)}
+              {renderMonth(sec.y, sec.m, false)}
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 14 }}>
               <button onClick={() => { setCheckIn(''); setCheckOut(''); setSelectingCheckout(false); }}
@@ -425,6 +439,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div style={{ background: '#fff', minHeight: '100vh', boxSizing: 'border-box', width: '100%', overflowX: 'hidden' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', width: '100%' }}>
 
       {/* ── Barra ricerca ─────────────────────────────────────────────────── */}
       <div style={{ maxWidth: 680, margin: '0 auto', padding: '1.5rem 16px 0', boxSizing: 'border-box', position: 'relative' }}>
@@ -565,48 +580,106 @@ export default function HomeSearch({ locale }: { locale: string }) {
 
       {/* ── Slider residenze ───────────────────────────────────────────────── */}
       <div style={{ marginTop: '2rem' }}>
-        <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 0.75rem 16px', color: '#111' }}>
+        <h2 style={{ fontSize: isDesk ? '1.4rem' : '1.15rem', fontWeight: 700, margin: '0 0 0.75rem 16px', color: '#111' }}>
           {ui.inspire}
         </h2>
-        <div style={{
-          display: 'flex', gap: 10, overflowX: 'auto', padding: '4px 16px 20px',
-          scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch',
-          msOverflowStyle: 'none', scrollbarWidth: 'none',
-        }}>
-          {PROPERTIES.flatMap(p => p.rooms).map(room => {
-            const src = covers[room.cloudinaryFolder];
-            return (
-              <button
-                key={room.roomId}
-                onClick={() => router.push(`/${locale}/residenze/${room.slug}`)}
-                style={{
-                  flexShrink: 0, width: 120, scrollSnapAlign: 'start',
-                  border: 'none', padding: 0, background: '#e5e7eb',
-                  cursor: 'pointer', borderRadius: 12, overflow: 'hidden',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
-                  position: 'relative', aspectRatio: '2/3', display: 'block',
-                }}
-              >
-                {src ? (
-                  <img src={src} alt={room.name} loading="lazy"
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                ) : (
-                  <div style={{ width: '100%', height: '100%', background: '#e5e7eb' }} />
-                )}
-                <div style={{
-                  position: 'absolute', bottom: 0, left: 0, right: 0, height: '50%',
-                  background: 'linear-gradient(to top, rgba(0,0,0,0.70) 0%, transparent 100%)',
-                }} />
-                <div style={{ position: 'absolute', bottom: 8, left: 8, right: 8, textAlign: 'left' }}>
-                  <div style={{ color: '#fff', fontSize: 12, fontWeight: 700, lineHeight: 1.2 }}>{room.name}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.82)', fontSize: 10, marginTop: 2 }}>
-                    max {room.maxPeople} · {room.sqm} m²
+        <div style={{ position: 'relative' }}
+          onMouseEnter={() => isDesk && setShowResArr(true)}
+          onMouseLeave={() => isDesk && setShowResArr(false)}>
+          {/* Freccia sinistra — solo desktop */}
+          {isDesk && showResArr && (
+            <button onClick={() => { residenzeRef.current?.scrollBy({ left: -220, behavior: 'smooth' }); }}
+              style={{ position: 'absolute', left: 2, top: '40%', transform: 'translateY(-50%)', zIndex: 10, width: 36, height: 36, borderRadius: '50%', border: '1px solid #ddd', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
+          )}
+          <div ref={residenzeRef} style={{
+            display: 'flex', gap: 10, overflowX: 'auto',
+            padding: isDesk ? '4px 16px 20px' : '4px 16px 20px',
+            scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch',
+            msOverflowStyle: 'none', scrollbarWidth: 'none',
+          }}>
+            {PROPERTIES.flatMap(p => p.rooms).map(room => {
+              const src = covers[room.cloudinaryFolder];
+              const cardW = isDesk ? 240 : 120;
+              return (
+                <button
+                  key={room.roomId}
+                  onClick={() => router.push(`/${locale}/residenze/${room.slug}`)}
+                  style={{
+                    flexShrink: 0, width: cardW, scrollSnapAlign: 'start',
+                    border: 'none', padding: 0, background: '#e5e7eb',
+                    cursor: 'pointer', borderRadius: 12, overflow: 'hidden',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
+                    position: 'relative', aspectRatio: '2/3', display: 'block',
+                  }}
+                >
+                  {src ? (
+                    <img src={src} alt={room.name} loading="lazy"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', background: '#e5e7eb' }} />
+                  )}
+                  <div style={{
+                    position: 'absolute', bottom: 0, left: 0, right: 0, height: '50%',
+                    background: 'linear-gradient(to top, rgba(0,0,0,0.70) 0%, transparent 100%)',
+                  }} />
+                  <div style={{ position: 'absolute', bottom: 8, left: 8, right: 8, textAlign: 'left' }}>
+                    <div style={{ color: '#fff', fontSize: isDesk ? 14 : 12, fontWeight: 700, lineHeight: 1.2 }}>{room.name}</div>
+                    <div style={{ color: 'rgba(255,255,255,0.82)', fontSize: 10, marginTop: 2 }}>
+                      max {room.maxPeople} · {room.sqm} m²
+                    </div>
                   </div>
-                </div>
-              </button>
-            );
-          })}
+                </button>
+              );
+            })}
+          </div>
+          {/* Freccia destra — solo desktop */}
+          {isDesk && showResArr && (
+            <button onClick={() => { residenzeRef.current?.scrollBy({ left: 220, behavior: 'smooth' }); }}
+              style={{ position: 'absolute', right: 2, top: '40%', transform: 'translateY(-50%)', zIndex: 10, width: 36, height: 36, borderRadius: '50%', border: '1px solid #ddd', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
+          )}
         </div>
+      </div>
+
+      {/* ── Slider dintorni — solo desktop ─────────────────────────────────── */}
+      {isDesk && dintorniPhotos.length > 0 && (
+        <div style={{ marginTop: '1.5rem', paddingBottom: 32 }}>
+          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, margin: '0 0 0.75rem 16px', color: '#111' }}>
+            {ui.dintorni}
+          </h2>
+          <div style={{ position: 'relative' }}
+            onMouseEnter={() => setShowDintArr(true)}
+            onMouseLeave={() => setShowDintArr(false)}>
+            {showDintArr && (
+              <button onClick={() => { dintorniRef.current?.scrollBy({ left: -200, behavior: 'smooth' }); }}
+                style={{ position: 'absolute', left: 2, top: '40%', transform: 'translateY(-50%)', zIndex: 10, width: 36, height: 36, borderRadius: '50%', border: '1px solid #ddd', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
+            )}
+            <div ref={dintorniRef} style={{
+              display: 'flex', gap: 10, overflowX: 'auto', padding: '4px 16px 20px',
+              scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch',
+              msOverflowStyle: 'none', scrollbarWidth: 'none',
+            }}>
+              {dintorniPhotos.map((src, idx) => (
+                <button key={idx} onClick={() => setLightbox(src)}
+                  style={{ flexShrink: 0, width: 240, aspectRatio: '2/3', scrollSnapAlign: 'start', border: 'none', padding: 0, background: '#e5e7eb', cursor: 'pointer', borderRadius: 14, overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+                  <img src={src} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                </button>
+              ))}
+            </div>
+            {showDintArr && (
+              <button onClick={() => { dintorniRef.current?.scrollBy({ left: 200, behavior: 'smooth' }); }}
+                style={{ position: 'absolute', right: 2, top: '40%', transform: 'translateY(-50%)', zIndex: 10, width: 36, height: 36, borderRadius: '50%', border: '1px solid #ddd', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
+            )}
+          </div>
+          {/* Lightbox dintorni */}
+          {lightbox && (
+            <>
+              <div onClick={() => setLightbox(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 300, cursor: 'pointer' }} />
+              <img src={lightbox} alt="" onClick={() => setLightbox(null)}
+                style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain', zIndex: 301, borderRadius: 8, cursor: 'pointer' }} />
+            </>
+          )}
+        </div>
+      )}
       </div>
     </div>
   );

@@ -1,110 +1,136 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
 import WizardSidebar from './WizardSidebar';
 import WizardStep1 from './WizardStep1';
 import WizardStep2 from './WizardStep2';
 import WizardStep3 from './WizardStep3';
-import WizardStep5 from './WizardStep5';
-import WizardStep6 from './WizardStep6';
-import WizardStep7 from './WizardStep7';
 
 interface Props {
   translations: any;
   locale: string;
 }
 
-// Wrapper che passa onContinua alla sidebar solo sullo Step5
 function WizardSidebarWrapper({ locale, logicalStep }: { locale: string; logicalStep: number }) {
   const { selectedOfferId, nextStep } = useWizardStore();
-  if (logicalStep === 5) {
-    return <WizardSidebar locale={locale} step={logicalStep} onContinua={nextStep} canContinua={!!selectedOfferId} />;
+  if (logicalStep === 1) {
+    return <WizardSidebar locale={locale} step={5} onContinua={nextStep} canContinua={!!selectedOfferId} />;
   }
-  return <WizardSidebar locale={locale} step={logicalStep} />;
+  return <WizardSidebar locale={locale} step={5} />;
 }
 
 export default function Wizard({ translations: t, locale }: Props) {
-  const { currentStep, setCurrentStep, selectedRoomId, setSelectedRoomId } = useWizardStore();
+  const {
+    currentStep, setCurrentStep,
+    setCheckIn, setCheckOut,
+    setNumAdult,
+    setSelectedRoomId, setSelectedOfferId, setOffers,
+  } = useWizardStore();
+
+  const [isDesk, setIsDesk]     = useState(false);
+  const [ready,  setReady]      = useState(false); // attende fetch offerte se link diretto
   const router = useRouter();
-
   const searchParams = useSearchParams();
-  const roomIdFromUrl = Number(searchParams.get('roomId') ?? '0') || null;
-  // fromHome: true se l'utente è arrivato cliccando "Cerca" nella home
-  // Usare query param è più affidabile dello store (che potrebbe essere già valorizzato)
-  const fromHome = searchParams.get('from') === 'home';
 
-  // Callback per tornare alla home da Step5 — resetta lo step
+  const fromHome   = searchParams.get('from') === 'home';
+  const fromRoom   = searchParams.get('from') === 'room';
+  const roomIdUrl  = Number(searchParams.get('roomId') ?? '0') || null;
+  const checkInUrl = searchParams.get('checkIn') ?? '';
+  const checkOutUrl= searchParams.get('checkOut') ?? '';
+  const adultsUrl  = Number(searchParams.get('adults') ?? '0') || null;
+
+  // Link ospite diretto: tutti i parametri presenti → precompila store e vai a Step2
+  const isGuestLink = !!(fromRoom && roomIdUrl && checkInUrl && checkOutUrl);
+
+  useEffect(() => {
+    const check = () => setIsDesk(window.innerWidth >= 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  useEffect(() => {
+    if (isGuestLink) {
+      // Precompila store con i parametri del link
+      setSelectedRoomId(roomIdUrl!);
+      setCheckIn(checkInUrl);
+      setCheckOut(checkOutUrl);
+      if (adultsUrl) setNumAdult(adultsUrl);
+
+      // Fetch offerte per questo roomId+date
+      const adults = adultsUrl ?? 2;
+      const qs = new URLSearchParams({
+        roomIds:   String(roomIdUrl),
+        arrival:   checkInUrl,
+        departure: checkOutUrl,
+        numAdults: String(adults),
+      });
+
+      fetch(`/api/offers?${qs}`)
+        .then(r => r.ok ? r.json() : Promise.reject(r.status))
+        .then(data => {
+          const roomData = (data.data ?? []).find((x: any) => x.roomId === roomIdUrl);
+          const offers = roomData?.offers ?? [];
+          setOffers([{ roomId: roomIdUrl, offers }]); // struttura attesa da WizardStep2
+          // Pre-seleziona automaticamente l'offerta più economica
+          if (offers.length > 0) {
+            const best = offers.reduce((a: any, b: any) => a.price <= b.price ? a : b);
+            setSelectedOfferId(best.offerId);
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          setCurrentStep(2);
+          setReady(true);
+        });
+    } else if (fromRoom) {
+      setCurrentStep(2);
+      setReady(true);
+    } else {
+      setCurrentStep(1);
+      setReady(true);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   function goBackHome() {
     setCurrentStep(1);
     router.push(`/${locale}`);
   }
 
-  useEffect(() => {
-    if (roomIdFromUrl && roomIdFromUrl !== selectedRoomId) {
-      setSelectedRoomId(roomIdFromUrl);
-    }
-  }, [roomIdFromUrl, selectedRoomId, setSelectedRoomId]);
+  const logicalStep = fromRoom || isGuestLink
+    ? Math.max(2, Math.min(currentStep, 3))
+    : Math.min(currentStep, 3);
 
-  // Se arriviamo dalla home, resettiamo currentStep a 1 (→ logicalStep S5)
-  useEffect(() => {
-    if (fromHome) setCurrentStep(1);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const showSidebar = logicalStep === 1;
+  const fullWidth   = logicalStep >= 2;
 
-  const effectiveRoomId = roomIdFromUrl ?? selectedRoomId;
-  const skipStep3 = !!effectiveRoomId;
-
-  // totalSteps: fromHome → S5+S6+S7 = 3 step
-  //             skipStep3 → S1+S2+S5+S6+S7 = 5 step
-  //             altrimenti → S1+S2+S3+S5+S6+S7 = 6 step
-  const totalSteps = fromHome ? 3 : (skipStep3 ? 5 : 6);
-
-  /**
-   * Mappa currentStep → logicalStep (Step da renderizzare)
-   *
-   * fromHome (arriva dalla home con date+ospiti):
-   *   currentStep 1→S5, 2→S6, 3→S7
-   *
-   * WizardDiretto (skipStep3=true, senza home):
-   *   currentStep 1→S1, 2→S2, 3→S5, 4→S6, 5→S7
-   *
-   * WizardLibero (senza home, senza roomId):
-   *   currentStep 1→S1, 2→S2, 3→S3, 4→S5, 5→S6, 6→S7
-   */
-  function getLogicalStep(): number {
-    if (fromHome) {
-      // 1→S5, 2→S6, 3→S7
-      const map: Record<number, number> = { 1: 5, 2: 6, 3: 7 };
-      return map[Math.min(currentStep, 3)] ?? 5;
-    }
-    if (!skipStep3) {
-      return currentStep >= 4 ? currentStep + 1 : currentStep;
-    }
-    const clamped = Math.min(currentStep, totalSteps);
-    if (clamped >= 3) return clamped + 2;
-    return clamped;
+  // Mostra spinner mentre fetcha le offerte per il link ospite
+  if (isGuestLink && !ready) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '40vh', gap: 12, color: '#9ca3af', fontSize: 15 }}>
+        <div style={{ width: 22, height: 22, border: '2px solid #eee', borderTop: '2px solid #1E73BE', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+        Caricamento...
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
   }
-  const logicalStep = getLogicalStep();
-
-  const showSidebar = logicalStep < 6; // nascondi sidebar su Step6 e Step7
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', padding: '1.25rem 1.25rem 2rem' }}>
+    <div style={{
+      maxWidth: 1100,
+      margin: '0 auto',
+      padding: isDesk ? '1.5rem 24px 3rem' : '1.25rem 16px 2rem',
+    }}>
+      <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start' }}>
 
-<div style={{ display: 'flex', gap: 0, alignItems: 'flex-start' }}>
-
-        {/* Colonna form — Step6 occupa tutta la larghezza (ha il suo layout 2 colonne interno) */}
-        <div style={{ flex: 1, minWidth: 0, maxWidth: (logicalStep === 6 || logicalStep === 7) ? 'none' : 680 }}>
-          {logicalStep === 1 && <WizardStep1 translations={t.wizard} locale={locale} roomId={effectiveRoomId} />}
-          {logicalStep === 2 && <WizardStep2 translations={t.wizard} locale={locale} roomId={effectiveRoomId} />}
+        <div style={{ flex: 1, minWidth: 0, maxWidth: fullWidth ? 'none' : 680 }}>
+          {logicalStep === 1 && <WizardStep1 locale={locale} onBack={goBackHome} />}
+          {logicalStep === 2 && <WizardStep2 locale={locale} />}
           {logicalStep === 3 && <WizardStep3 locale={locale} />}
-          {logicalStep === 5 && <WizardStep5 locale={locale} roomId={effectiveRoomId} onBack={fromHome ? goBackHome : undefined} />}
-          {logicalStep === 6 && <WizardStep6 locale={locale} />}
-          {logicalStep === 7 && <WizardStep7 locale={locale} />}
         </div>
 
-        {/* Sidebar destra — solo desktop, solo step 1-5 */}
         {showSidebar && (
           <div className="wizard-sidebar-wrapper">
             <WizardSidebarWrapper locale={locale} logicalStep={logicalStep} />

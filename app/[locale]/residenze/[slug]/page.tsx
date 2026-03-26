@@ -7,6 +7,7 @@ import ThingsToKnow from '@/components/residenze/ThingsToKnow';
 import PhotoLightbox from '@/components/residenze/PhotoLightbox';
 import PropertyMap from '@/components/residenze/PropertyMap';
 import AvailabilityCalendar from '@/components/residenze/AvailabilityCalendar';
+import BookingPanel from '@/components/residenze/BookingPanel';
 
 
 cloudinary.config({
@@ -185,7 +186,7 @@ export default async function RoomPage({ params }: Props) {
   const featureCodes = PROPERTY_FEATURES[property.propertyId] ?? [];
 
   return (
-    <main style={{ maxWidth: 900, margin: '0 auto', padding: '24px 0 120px' }}>
+    <main style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 16px 120px' }}>
 
       {/* Back link */}
       <Link href={`/${locale}/residenze`} style={{ color: '#1E73BE', fontSize: 14, textDecoration: 'none', padding: '0 16px', display: 'inline-block' }}>
@@ -278,31 +279,16 @@ export default async function RoomPage({ params }: Props) {
       <AvailabilityCalendar
         roomId={room.roomId}
         locale={locale}
-        bookingUrl={`/${locale}/prenota?roomId=${room.roomId}`}
+        interactive={true}
+      />
+      <BookingPanel
+        roomId={room.roomId}
+        locale={locale}
+        maxPeople={room.maxPeople}
       />
       </div>
 
-      {/* Bottone Prenota fisso in basso su mobile */}
-      <div style={{
-        position: 'fixed', bottom: 0, left: 0, right: 0,
-        background: '#fff', borderTop: '1px solid #eee',
-        padding: '16px 20px',
-        display: 'flex', justifyContent: 'center',
-        zIndex: 100,
-      }}>
-        <Link
-          href={`/${locale}/prenota?roomId=${room.roomId}`}
-          style={{
-            display: 'block', width: '100%', maxWidth: 480,
-            padding: '16px', borderRadius: 12,
-            background: '#FCAF1A', color: '#fff',
-            fontWeight: 700, fontSize: 18,
-            textAlign: 'center', textDecoration: 'none',
-          }}
-        >
-          {t.prenota}
-        </Link>
-      </div>
+
 
     </main>
   );
