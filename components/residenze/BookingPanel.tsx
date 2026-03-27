@@ -128,9 +128,11 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
       })
       .catch(() => setLocalOffers([]))
       .finally(() => setLoading(false));
-  // numChild non è dep — i bambini 0-2 non influenzano il prezzo Beds24
+  // ✅ numChild è dep: quando cambia il numero di bambini va ri-fetchato
+  // (anche se i bambini 0-2 non influenzano il prezzo, childrenAges potrebbe
+  // non essere ancora aggiornato al momento del primo render)
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checkIn, checkOut, numAdult, JSON.stringify(childrenAges), roomId]);
+  }, [checkIn, checkOut, numAdult, numChild, JSON.stringify(childrenAges), roomId]);
 
   function handlePrenota() {
     if (!pickedOffer || !checkIn || !checkOut) return;
