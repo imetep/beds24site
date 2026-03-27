@@ -49,7 +49,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         }}
       />
 
-      <main style={{ paddingBottom: '80px', overflowX: 'hidden' }}>{children}</main>
+      <main style={{ paddingBottom: '80px', overflowX: 'clip' }}>{children}</main>
 
       {/* ── Footer ─────────────────────────────────────────────────────── */}
       <footer style={{

@@ -217,7 +217,6 @@ export default function WizardSidebar({ locale = 'it', step = 1, onContinua, can
       borderRadius: 16,
       padding: '20px 18px',
       position: 'sticky', top: 90,
-      alignSelf: 'flex-start',
     }}>
       <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#9ca3af', margin: '0 0 14px' }}>
         {t.title}

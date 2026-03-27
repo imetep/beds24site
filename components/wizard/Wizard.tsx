@@ -150,7 +150,7 @@ export default function Wizard({ translations: t, locale }: Props) {
       margin: '0 auto',
       padding: isDesk ? '1.5rem 24px 3rem' : '1.25rem 16px 2rem',
     }}>
-      <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start' }}>
+      <div style={{ display: 'flex', gap: 32 }}>
 
         <div style={{ flex: 1, minWidth: 0, maxWidth: fullWidth ? 'none' : 680 }}>
           {logicalStep === 1 && <WizardStep1 locale={locale} onBack={goBackHome} />}

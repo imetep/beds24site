@@ -67,7 +67,6 @@ function cells(year: number, month: number): (number | null)[] {
   for (let d = 1; d <= tot; d++) arr.push(d);
   return arr;
 }
-// Formato data stile Expedia: "mer 8 apr" — giorno settimana + numero + mese abbreviato
 const WEEKDAYS: Record<string, string[]> = {
   it: ['dom','lun','mar','mer','gio','ven','sab'],
   en: ['sun','mon','tue','wed','thu','fri','sat'],
@@ -85,10 +84,6 @@ function fmtDate(ymd: string, locale: string): string {
   const wd  = (WEEKDAYS[locale]    ?? WEEKDAYS.it)[d.getDay()];
   const mon = (MONTHS_SHORT[locale] ?? MONTHS_SHORT.it)[d.getMonth()];
   return `${wd} ${d.getDate()} ${mon}`;
-}
-function shortDate(ymd: string) {
-  const d = parseYMD(ymd);
-  return `${d.getDate()}/${d.getMonth() + 1}`;
 }
 
 // ─── Componente ───────────────────────────────────────────────────────────────
@@ -112,7 +107,6 @@ export default function HomeSearch({ locale }: { locale: string }) {
   const residenzeRef = useRef<HTMLDivElement>(null);
   const dintorniRef  = useRef<HTMLDivElement>(null);
 
-  // Calendario
   const now = new Date(); now.setHours(0, 0, 0, 0);
   const todayYMD = toYMD(now.getFullYear(), now.getMonth(), now.getDate());
   const [vy, setVY] = useState(now.getFullYear());
@@ -126,13 +120,11 @@ export default function HomeSearch({ locale }: { locale: string }) {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Blocca scroll body su mobile quando panel è aperto
   useEffect(() => {
     document.body.style.overflow = (!isDesk && panel !== 'none') ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [panel, isDesk]);
 
-  // Carica cover da Cloudinary
   useEffect(() => {
     fetch('/api/cloudinary?covers=true')
       .then(r => r.json())
@@ -148,9 +140,6 @@ export default function HomeSearch({ locale }: { locale: string }) {
       .catch(() => {});
   }, []);
 
-  // ── Calendario ─────────────────────────────────────────────────────────────
-  // selectingCheckout: rimane true dopo aver cliccato check-in (anche con checkout pre-selezionato)
-  // Permette all'utente di cambiare il checkout anche se +3 è già stato suggerito
   const [selectingCheckout, setSelectingCheckout] = useState(false);
   const phase: 'ci' | 'co' = selectingCheckout ? 'co' : (checkIn && !checkOut ? 'co' : 'ci');
   const isPrevDis = toYMD(vy, vm, 1) <= toYMD(now.getFullYear(), now.getMonth(), 1);
@@ -158,29 +147,23 @@ export default function HomeSearch({ locale }: { locale: string }) {
   function handleDay(ymd: string) {
     if (ymd < todayYMD) return;
     if (phase === 'ci') {
-      // Clicco check-in: pre-seleziono +3 come suggerimento, ma resto in modalità checkout
       setCheckIn(ymd);
       const d = parseYMD(ymd);
       const pre = new Date(d.getTime() + 3 * 86400000);
       setCheckOut(toYMD(pre.getFullYear(), pre.getMonth(), pre.getDate()));
-      setSelectingCheckout(true); // rimango in modalità checkout → utente può cambiare
+      setSelectingCheckout(true);
     } else {
       if (diffNights(checkIn!, ymd) < 1) return;
       setCheckOut(ymd);
-      setSelectingCheckout(false); // checkout confermato
+      setSelectingCheckout(false);
     }
   }
 
-  function renderMonth(year: number, month: number, showTitle = true) {
+  function renderMonth(year: number, month: number) {
     const rangeEnd = checkOut || hover;
     return (
       <div style={{ flex: 1 }}>
-        {showTitle && (
-          <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 14, marginBottom: 8, color: '#111' }}>
-            {mons[month]} {year}
-          </div>
-        )}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', marginBottom: 2 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', marginBottom: 4 }}>
           {dys.map(d => (
             <div key={d} style={{ textAlign: 'center', fontSize: 10, fontWeight: 600, color: '#bbb', paddingBottom: 4 }}>{d}</div>
           ))}
@@ -199,7 +182,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
                 onMouseLeave={() => setHover(null)}
                 disabled={isPast}
                 style={{
-                  height: 34, width: '100%', border: 'none', outline: 'none',
+                  height: 36, width: '100%', border: 'none', outline: 'none',
                   borderRadius: (isStart || isEnd) ? '50%' : 0,
                   background: (isStart || isEnd) ? '#1E73BE' : inRange ? '#EBF4FC' : 'transparent',
                   color: (isStart || isEnd) ? '#fff' : isPast ? '#ccc' : '#111',
@@ -218,8 +201,9 @@ export default function HomeSearch({ locale }: { locale: string }) {
   // ── Labels ─────────────────────────────────────────────────────────────────
   const nights = checkIn && checkOut ? diffNights(checkIn, checkOut) : 0;
   const datesLabel = checkIn && checkOut
-    ? `${fmtDate(checkIn, locale)} – ${fmtDate(checkOut, locale)}  ·  ${nights} ${nights === 1 ? ui.nights : ui.nightsP}`
+    ? `${fmtDate(checkIn, locale)} – ${fmtDate(checkOut, locale)}`
     : checkIn ? fmtDate(checkIn, locale) : null;
+  const nightsLabel = nights > 0 ? `${nights} ${nights === 1 ? ui.nights : ui.nightsP}` : null;
 
   const adultPart = locale === 'it' ? (numAdult === 1 ? '1 adulto' : `${numAdult} adulti`)
     : locale === 'de' ? `${numAdult} Erw.`
@@ -245,19 +229,17 @@ export default function HomeSearch({ locale }: { locale: string }) {
     router.push(`/${locale}/prenota?from=home`);
   }
 
-  // ── Panel contenuto calendario ────────────────────────────────────────────
+  // ── Panel calendario ──────────────────────────────────────────────────────
   function CalContent() {
-    // Mobile: 12 mesi verticali (scroll). Desktop: 2 mesi affiancati con frecce.
     const mobileMonths = Array.from({ length: 12 }, (_, i) => addM(now.getFullYear(), now.getMonth(), i));
 
     return (
       <div>
-        {/* Header fisso con pills e hint */}
         <div style={{ padding: isDesk ? '24px 24px 0' : '0 20px', position: 'sticky', top: 0, background: '#fff', zIndex: 10, paddingTop: isDesk ? 24 : 0 }}>
           {!isDesk && (
             <div style={{ width: 40, height: 4, borderRadius: 2, background: '#ddd', margin: '8px auto 16px' }} />
           )}
-          {/* Pills */}
+          {/* Pills check-in / check-out */}
           <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
             {[{l: ui.checkin, v: checkIn}, {l: ui.checkout, v: checkOut}].map(({l, v}, i) => (
               <div key={i} style={{
@@ -273,17 +255,12 @@ export default function HomeSearch({ locale }: { locale: string }) {
           <p style={{ fontSize: 12, color: '#1E73BE', fontWeight: 500, margin: '0 0 8px' }}>
             {phase === 'ci' ? ui.hintCI : ui.hintCO}
           </p>
-
-          {/* Banner soggiorno minimo — appare solo dopo la selezione check-in */}
           {phase === 'co' && (
             <div style={{
               display: 'flex', alignItems: 'center', gap: 10,
               background: 'linear-gradient(135deg, #FFF8EC 0%, #FFF3DC 100%)',
-              border: '1px solid #FCAF1A',
-              borderLeft: '4px solid #FCAF1A',
-              borderRadius: 10,
-              padding: '10px 14px',
-              marginBottom: 12,
+              border: '1px solid #FCAF1A', borderLeft: '4px solid #FCAF1A',
+              borderRadius: 10, padding: '10px 14px', marginBottom: 12,
             }}>
               <span style={{ fontSize: 18, flexShrink: 0 }}>🌙</span>
               <div>
@@ -305,27 +282,35 @@ export default function HomeSearch({ locale }: { locale: string }) {
         </div>
 
         {isDesk ? (
-          // DESKTOP: 2 mesi affiancati con frecce
+          // DESKTOP: 2 mesi affiancati — frecce agli estremi, titoli centrati sopra i mesi
           <div style={{ padding: '0 24px 20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-              <button onClick={() => { if (!isPrevDis) { const p = addM(vy, vm, -1); setVY(p.y); setVM(p.m); }}}
+            {/* Navigazione desktop: freccia sx | titolo mese1 | titolo mese2 | freccia dx */}
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+              <button
+                onClick={() => { if (!isPrevDis) { const p = addM(vy, vm, -1); setVY(p.y); setVM(p.m); }}}
                 disabled={isPrevDis}
-                style={{ background: 'none', border: 'none', fontSize: 22, cursor: isPrevDis ? 'default' : 'pointer', color: isPrevDis ? '#ddd' : '#333', padding: '0 8px' }}>
+                style={{ background: 'none', border: 'none', fontSize: 24, cursor: isPrevDis ? 'default' : 'pointer', color: isPrevDis ? '#ddd' : '#333', padding: '0 12px 0 0', flexShrink: 0 }}>
                 ‹
               </button>
-              <div style={{ display: 'flex', flex: 1, justifyContent: 'space-around' }}>
-                <span style={{ fontWeight: 700, fontSize: 14 }}>{mons[vm]} {vy}</span>
-                <span style={{ fontWeight: 700, fontSize: 14 }}>{mons[sec.m]} {sec.y}</span>
+              <div style={{ flex: 1, display: 'flex' }}>
+                <span style={{ flex: 1, textAlign: 'center', fontWeight: 700, fontSize: 14, color: '#111' }}>
+                  {mons[vm]} {vy}
+                </span>
+                <span style={{ flex: 1, textAlign: 'center', fontWeight: 700, fontSize: 14, color: '#111' }}>
+                  {mons[sec.m]} {sec.y}
+                </span>
               </div>
-              <button onClick={() => { const n = addM(vy, vm, 1); setVY(n.y); setVM(n.m); }}
-                style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#333', padding: '0 8px' }}>
+              <button
+                onClick={() => { const n = addM(vy, vm, 1); setVY(n.y); setVM(n.m); }}
+                style={{ background: 'none', border: 'none', fontSize: 24, cursor: 'pointer', color: '#333', padding: '0 0 0 12px', flexShrink: 0 }}>
                 ›
               </button>
             </div>
+            {/* 2 mesi affiancati */}
             <div style={{ display: 'flex', gap: 24 }}>
-              {renderMonth(vy, vm, false)}
+              {renderMonth(vy, vm)}
               <div style={{ width: 1, background: '#f0f0f0', flexShrink: 0 }} />
-              {renderMonth(sec.y, sec.m, false)}
+              {renderMonth(sec.y, sec.m)}
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 14 }}>
               <button onClick={() => { setCheckIn(''); setCheckOut(''); setSelectingCheckout(false); }}
@@ -339,8 +324,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
             </div>
           </div>
         ) : (
-          // MOBILE: scroll verticale — tutti i mesi impilati (stile Expedia)
-          // Struttura: area scrollabile + footer FISSO fuori dal scroll (funziona su iOS)
+          // MOBILE: scroll verticale
           <>
             <div style={{ padding: '0 20px', overflowY: 'auto', paddingBottom: 80 }}>
               {mobileMonths.map(({ y, m }, idx) => (
@@ -348,11 +332,10 @@ export default function HomeSearch({ locale }: { locale: string }) {
                   <div style={{ fontWeight: 700, fontSize: 15, textAlign: 'center', marginBottom: 10, color: '#111' }}>
                     {mons[m]} {y}
                   </div>
-                  {renderMonth(y, m, false)}
+                  {renderMonth(y, m)}
                 </div>
               ))}
             </div>
-            {/* Footer FISSO in basso — fuori dal div scrollabile, funziona su iOS */}
             <div style={{
               position: 'sticky', bottom: 0,
               background: '#fff', padding: '10px 20px 24px',
@@ -375,7 +358,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
     );
   }
 
-  // ── Panel contenuto ospiti ────────────────────────────────────────────────
+  // ── Panel ospiti ──────────────────────────────────────────────────────────
   function GuestsContent() {
     const ageLabel = locale === 'it' ? 'Età bambino' : locale === 'de' ? 'Alter Kind' : locale === 'pl' ? 'Wiek dziecka' : 'Child age';
     const agePlaceholder = locale === 'it' ? 'Seleziona età' : locale === 'de' ? 'Alter wählen' : locale === 'pl' ? 'Wybierz wiek' : 'Select age';
@@ -413,7 +396,6 @@ export default function HomeSearch({ locale }: { locale: string }) {
           </div>
         ))}
 
-        {/* Età bambini — necessarie per imposta di soggiorno e calcolo totale */}
         {numChild > 0 && (
           <div style={{ marginTop: 14, padding: 14, background: '#f9fafb', borderRadius: 12, border: '1px solid #e5e7eb' }}>
             <div style={{ display: 'grid', gridTemplateColumns: numChild === 1 ? '1fr' : '1fr 1fr', gap: 10 }}>
@@ -456,36 +438,47 @@ export default function HomeSearch({ locale }: { locale: string }) {
       <div style={{ maxWidth: 1100, margin: '0 auto', width: '100%' }}>
 
       {/* ── Barra ricerca ─────────────────────────────────────────────────── */}
-      <div style={{ maxWidth: 680, margin: '0 auto', padding: '1.5rem 16px 0', boxSizing: 'border-box', position: 'relative' }}>
+      <div style={{ maxWidth: isDesk ? 900 : 600, margin: '0 auto', padding: '1.5rem 16px 0', boxSizing: 'border-box', position: 'relative' }}>
 
         {isDesk ? (
-          // DESKTOP: una riga
-          <div style={{ display: 'flex', alignItems: 'stretch', border: '1.5px solid #e5e7eb', borderRadius: 50,
-            background: '#fff', boxShadow: '0 2px 16px rgba(0,0,0,0.08)', overflow: 'hidden' }}>
-
-            <button onClick={() => setPanel(p => p === 'dates' ? 'none' : 'dates')}
-              style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 12, padding: '14px 24px',
+          // ── DESKTOP: una riga orizzontale ─────────────────────────────────
+          <div style={{
+            display: 'flex', alignItems: 'stretch',
+            border: '1.5px solid #e5e7eb', borderRadius: 50,
+            background: '#fff', boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
+            overflow: 'hidden',
+          }}>
+            {/* Date */}
+            <button
+              onClick={() => setPanel(p => p === 'dates' ? 'none' : 'dates')}
+              style={{
+                flex: 1, display: 'flex', alignItems: 'center', gap: 12, padding: '14px 28px',
                 background: panel === 'dates' ? '#f0f7ff' : 'transparent',
-                border: 'none', borderRight: '1px solid #e5e7eb', cursor: 'pointer', textAlign: 'left' }}>
+                border: 'none', borderRight: '1px solid #e5e7eb', cursor: 'pointer', textAlign: 'left',
+              }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="2" style={{ flexShrink: 0 }}>
                 <rect x="3" y="4" width="18" height="18" rx="3"/>
                 <path d="M16 2v4M8 2v4M3 10h18"/>
-                <circle cx="8" cy="15" r="1" fill="#1E73BE"/>
-                <circle cx="12" cy="15" r="1" fill="#1E73BE"/>
-                <circle cx="16" cy="15" r="1" fill="#1E73BE"/>
               </svg>
-              <div>
+              <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{ui.dates}</div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: datesLabel ? '#111' : '#aaa', marginTop: 1 }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: datesLabel ? '#111' : '#aaa', marginTop: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {datesLabel ?? `${ui.checkin} – ${ui.checkout}`}
                 </div>
+                {nightsLabel && (
+                  <div style={{ fontSize: 11, color: '#9ca3af', marginTop: 1 }}>{nightsLabel}</div>
+                )}
               </div>
             </button>
 
-            <button onClick={() => setPanel(p => p === 'guests' ? 'none' : 'guests')}
-              style={{ flex: '0 0 260px', display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px',
+            {/* Ospiti */}
+            <button
+              onClick={() => setPanel(p => p === 'guests' ? 'none' : 'guests')}
+              style={{
+                flex: '0 0 260px', display: 'flex', alignItems: 'center', gap: 12, padding: '14px 24px',
                 background: panel === 'guests' ? '#f0f7ff' : 'transparent',
-                border: 'none', borderRight: '1px solid #e5e7eb', cursor: 'pointer', textAlign: 'left' }}>
+                border: 'none', borderRight: '1px solid #e5e7eb', cursor: 'pointer', textAlign: 'left',
+              }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="2" style={{ flexShrink: 0 }}>
                 <circle cx="12" cy="7" r="4"/>
                 <path d="M5.5 21c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" strokeLinecap="round"/>
@@ -499,60 +492,106 @@ export default function HomeSearch({ locale }: { locale: string }) {
               </div>
             </button>
 
-            <button onClick={handleCerca}
-              style={{ padding: '0 28px', background: '#FCAF1A', color: '#fff', border: 'none',
-                cursor: 'pointer', fontWeight: 700, fontSize: 15, display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap' }}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            {/* Cerca */}
+            <button
+              onClick={handleCerca}
+              style={{
+                padding: '0 32px', background: '#FCAF1A', color: '#fff', border: 'none',
+                cursor: 'pointer', fontWeight: 700, fontSize: 15,
+                display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap',
+              }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
               </svg>
               {ui.search}
             </button>
           </div>
+
         ) : (
-          // MOBILE: colonna
+          // ── MOBILE: 2 card staccate stile Expedia + bottone Cerca ─────────
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <button onClick={() => setPanel(p => p === 'dates' ? 'none' : 'dates')}
-              style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px',
-                border: `1.5px solid ${panel === 'dates' ? '#1E73BE' : '#e5e7eb'}`, borderRadius: 14,
-                background: panel === 'dates' ? '#f0f7ff' : '#fff', cursor: 'pointer',
-                textAlign: 'left', width: '100%', boxSizing: 'border-box' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="1.8" style={{ flexShrink: 0 }}>
+
+            {/* Card Date */}
+            <button
+              onClick={() => setPanel(p => p === 'dates' ? 'none' : 'dates')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 14,
+                padding: '16px 18px',
+                border: `1.5px solid ${panel === 'dates' ? '#1E73BE' : '#e5e7eb'}`,
+                borderRadius: 16,
+                background: panel === 'dates' ? '#f0f7ff' : '#fff',
+                cursor: 'pointer', textAlign: 'left', width: '100%',
+                boxSizing: 'border-box',
+                boxShadow: '0 1px 6px rgba(0,0,0,0.06)',
+              }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="1.8" style={{ flexShrink: 0 }}>
                 <rect x="3" y="4" width="18" height="18" rx="3"/>
                 <path d="M16 2v4M8 2v4M3 10h18"/>
-                <circle cx="8" cy="15" r="1" fill="#1E73BE"/>
-                <circle cx="12" cy="15" r="1" fill="#1E73BE"/>
-                <circle cx="16" cy="15" r="1" fill="#1E73BE"/>
               </svg>
               <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{ui.dates}</div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: datesLabel ? '#111' : '#aaa', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>
+                  {ui.dates}
+                </div>
+                <div style={{ fontSize: 15, fontWeight: 600, color: datesLabel ? '#111' : '#bbb', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {datesLabel ?? `${ui.checkin} – ${ui.checkout}`}
                 </div>
+                {nightsLabel && (
+                  <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 2 }}>{nightsLabel}</div>
+                )}
               </div>
+              {/* Chevron */}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bbb" strokeWidth="2" style={{ flexShrink: 0 }}>
+                <path d="M9 18l6-6-6-6"/>
+              </svg>
             </button>
 
-            <button onClick={() => setPanel(p => p === 'guests' ? 'none' : 'guests')}
-              style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px',
-                border: `1.5px solid ${panel === 'guests' ? '#1E73BE' : '#e5e7eb'}`, borderRadius: 14,
-                background: panel === 'guests' ? '#f0f7ff' : '#fff', cursor: 'pointer',
-                textAlign: 'left', width: '100%', boxSizing: 'border-box' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="1.8" style={{ flexShrink: 0 }}>
+            {/* Card Ospiti */}
+            <button
+              onClick={() => setPanel(p => p === 'guests' ? 'none' : 'guests')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 14,
+                padding: '16px 18px',
+                border: `1.5px solid ${panel === 'guests' ? '#1E73BE' : '#e5e7eb'}`,
+                borderRadius: 16,
+                background: panel === 'guests' ? '#f0f7ff' : '#fff',
+                cursor: 'pointer', textAlign: 'left', width: '100%',
+                boxSizing: 'border-box',
+                boxShadow: '0 1px 6px rgba(0,0,0,0.06)',
+              }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="1.8" style={{ flexShrink: 0 }}>
                 <circle cx="12" cy="7" r="4"/>
                 <path d="M5.5 21c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" strokeLinecap="round"/>
               </svg>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{ui.guests}</div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: '#111', marginTop: 1 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>
+                  {ui.guests}
+                </div>
+                <div style={{ fontSize: 15, fontWeight: 600, color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {guestsLabel ?? `${numAdult} ${locale === 'it' ? 'adulti' : 'adults'}`}
                 </div>
-                {agesLabel ? <div style={{ fontSize: 11, color: '#9ca3af', marginTop: 1 }}>età: {agesLabel}</div> : null}
+                {agesLabel ? <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 2 }}>età: {agesLabel}</div> : null}
               </div>
+              {/* Chevron */}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bbb" strokeWidth="2" style={{ flexShrink: 0 }}>
+                <path d="M9 18l6-6-6-6"/>
+              </svg>
             </button>
 
-            <button onClick={handleCerca}
-              style={{ width: '100%', boxSizing: 'border-box', padding: '15px', borderRadius: 50,
+            {/* Bottone Cerca */}
+            <button
+              onClick={handleCerca}
+              style={{
+                width: '100%', boxSizing: 'border-box',
+                padding: '16px',
+                borderRadius: 50,
                 background: '#FCAF1A', color: '#fff', border: 'none',
-                fontWeight: 700, fontSize: 16, cursor: 'pointer' }}>
+                fontWeight: 700, fontSize: 16, cursor: 'pointer',
+                boxShadow: '0 4px 14px rgba(252,175,26,0.35)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+              </svg>
               {ui.search}
             </button>
           </div>
@@ -560,28 +599,32 @@ export default function HomeSearch({ locale }: { locale: string }) {
 
         {/* Dropdown desktop */}
         {isDesk && panel === 'dates' && (
-          <div style={{ position: 'absolute', top: 'calc(100% + 8px)', left: 0, width: 540,
-            background: '#fff', borderRadius: 16, boxShadow: '0 8px 32px rgba(0,0,0,0.15)', zIndex: 200, overflow: 'hidden' }}>
+          <div style={{
+            position: 'absolute', top: 'calc(100% + 8px)', left: 0, width: 580,
+            background: '#fff', borderRadius: 16,
+            boxShadow: '0 8px 32px rgba(0,0,0,0.15)', zIndex: 200, overflow: 'hidden',
+          }}>
             <CalContent />
           </div>
         )}
         {isDesk && panel === 'guests' && (
-          <div style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, width: 300,
-            background: '#fff', borderRadius: 16, boxShadow: '0 8px 32px rgba(0,0,0,0.15)', zIndex: 200, overflow: 'hidden' }}>
+          <div style={{
+            position: 'absolute', top: 'calc(100% + 8px)', right: 0, width: 300,
+            background: '#fff', borderRadius: 16,
+            boxShadow: '0 8px 32px rgba(0,0,0,0.15)', zIndex: 200, overflow: 'hidden',
+          }}>
             <GuestsContent />
           </div>
         )}
       </div>
 
-      {/* Bottom sheets mobile — FUORI dal container relativo */}
+      {/* Bottom sheets mobile */}
       {!isDesk && panel !== 'none' && (
         <>
-          {/* Overlay — zIndex 200 */}
           <div
             onClick={() => setPanel('none')}
             style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 200 }}
           />
-          {/* Sheet — zIndex 201, sopra l'overlay */}
           <div style={{
             position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 201,
             background: '#fff', borderRadius: '20px 20px 0 0',
@@ -602,14 +645,13 @@ export default function HomeSearch({ locale }: { locale: string }) {
         <div style={{ position: 'relative' }}
           onMouseEnter={() => isDesk && setShowResArr(true)}
           onMouseLeave={() => isDesk && setShowResArr(false)}>
-          {/* Freccia sinistra — solo desktop */}
           {isDesk && showResArr && (
             <button onClick={() => { residenzeRef.current?.scrollBy({ left: -220, behavior: 'smooth' }); }}
               style={{ position: 'absolute', left: 2, top: '40%', transform: 'translateY(-50%)', zIndex: 10, width: 36, height: 36, borderRadius: '50%', border: '1px solid #ddd', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
           )}
           <div ref={residenzeRef} style={{
             display: 'flex', gap: 10, overflowX: 'auto',
-            padding: isDesk ? '4px 16px 20px' : '4px 16px 20px',
+            padding: '4px 16px 20px',
             scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch',
             msOverflowStyle: 'none', scrollbarWidth: 'none',
           }}>
@@ -648,7 +690,6 @@ export default function HomeSearch({ locale }: { locale: string }) {
               );
             })}
           </div>
-          {/* Freccia destra — solo desktop */}
           {isDesk && showResArr && (
             <button onClick={() => { residenzeRef.current?.scrollBy({ left: 220, behavior: 'smooth' }); }}
               style={{ position: 'absolute', right: 2, top: '40%', transform: 'translateY(-50%)', zIndex: 10, width: 36, height: 36, borderRadius: '50%', border: '1px solid #ddd', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
@@ -686,7 +727,6 @@ export default function HomeSearch({ locale }: { locale: string }) {
                 style={{ position: 'absolute', right: 2, top: '40%', transform: 'translateY(-50%)', zIndex: 10, width: 36, height: 36, borderRadius: '50%', border: '1px solid #ddd', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
             )}
           </div>
-          {/* Lightbox dintorni */}
           {lightbox && (
             <>
               <div onClick={() => setLightbox(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 300, cursor: 'pointer' }} />

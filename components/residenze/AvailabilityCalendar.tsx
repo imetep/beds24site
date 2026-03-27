@@ -93,7 +93,7 @@ function fmtDate(ymd: string, locale: string): string {
 interface Props {
   roomId: number;
   locale?: string;
-  interactive?: boolean; // true nella scheda appartamento
+  interactive?: boolean;
 }
 
 // ─── Componente ──────────────────────────────────────────────────────────────
@@ -116,10 +116,8 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
   const [isDesktop, setIsDesktop] = useState(false);
   const [hoverDate, setHoverDate] = useState<string | null>(null);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
-  // fase selezione: 'checkin' → aspetta check-in, 'checkout' → aspetta check-out
   const [selectingCheckout, setSelectingCheckout] = useState(false);
 
-  // Responsive
   useEffect(() => {
     const check = () => setIsDesktop(window.innerWidth >= 640);
     check();
@@ -127,7 +125,6 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
     return () => { window.removeEventListener('resize', check); };
   }, []);
 
-  // Carica disponibilità
   useEffect(() => {
     setLoading(true);
     fetch(`/api/availability?roomId=${roomId}`)
@@ -156,12 +153,10 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
     if (!interactive) return;
     if (ymd < todayYMD) return;
     if (phase === 'ci') {
-      // Clicco check-in: pre-seleziono +3 come suggerimento, resto in modalità checkout
       setCheckIn(ymd);
       setCheckOut(addDays(ymd, 3));
       setSelectingCheckout(true);
     } else {
-      // Checkout: minimo 1 notte
       if (!checkIn || diffNights(checkIn, ymd) < 1) return;
       setCheckOut(ymd);
       setSelectingCheckout(false);
@@ -174,7 +169,6 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
     setSelectingCheckout(false);
   }
 
-  // Navigazione
   const isPrevDisabled = toYMD(viewYear, viewMonth, 1) <= toYMD(today.getFullYear(), today.getMonth(), 1);
   const goToPrev = () => {
     if (isPrevDisabled) return;
@@ -199,8 +193,6 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
             {months[month]} {year}
           </div>
         )}
-
-        {/* Intestazione giorni */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', marginBottom: 4 }}>
           {days.map(d => (
             <div key={d} style={{ textAlign: 'center', fontSize: 11, fontWeight: 600, color: '#bbb', paddingBottom: 4 }}>
@@ -208,8 +200,6 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
             </div>
           ))}
         </div>
-
-        {/* Celle giorni */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
           {cells.map((day, i) => {
             if (!day) return <div key={i} style={{ height: 36 }} />;
@@ -304,31 +294,78 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
         </div>
       </div>
 
-      {/* Box date selezionate — solo in modalità interattiva */}
+      {/* Pill CHECK-IN / CHECK-OUT — cliccabili, stile card HomeSearch */}
       {interactive && (
-        <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-          <div style={{
-            flex: 1, border: `1.5px solid ${phase === 'ci' ? '#1E73BE' : '#e5e7eb'}`,
-            borderRadius: 10, padding: '10px 14px',
-            background: phase === 'ci' ? '#EEF5FC' : '#fff',
-          }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{ui.checkin}</div>
-            <div style={{ fontSize: 15, fontWeight: 600, color: checkIn ? '#111' : '#bbb', marginTop: 2 }}>
-              {checkIn ? fmtDate(checkIn, locale) : '—'}
+        <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
+
+          {/* Card CHECK-IN */}
+          <button
+            onClick={() => {
+              // Click check-in: azzera ENTRAMBE le date → riparte da zero
+              clearDates();
+            }}
+            style={{
+              flex: 1, display: 'flex', alignItems: 'center', gap: 12,
+              padding: '14px 16px', textAlign: 'left',
+              border: `1.5px solid ${(checkIn) ? '#1E73BE' : '#e5e7eb'}`,
+              borderRadius: 14,
+              background: (checkIn) ? '#f0f7ff' : '#fff',
+              boxShadow: '0 1px 6px rgba(0,0,0,0.06)',
+              cursor: 'pointer',
+            }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="1.8" style={{ flexShrink: 0 }}>
+              <rect x="3" y="4" width="18" height="18" rx="3"/>
+              <path d="M16 2v4M8 2v4M3 10h18"/>
+            </svg>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 3 }}>
+                {ui.checkin}
+              </div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: checkIn ? '#111' : '#bbb', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {checkIn ? fmtDate(checkIn, locale) : '—'}
+              </div>
             </div>
-          </div>
-          <div style={{
-            flex: 1, border: `1.5px solid ${phase === 'co' ? '#1E73BE' : '#e5e7eb'}`,
-            borderRadius: 10, padding: '10px 14px',
-            background: phase === 'co' ? '#EEF5FC' : '#fff',
-          }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{ui.checkout}</div>
-            <div style={{ fontSize: 15, fontWeight: 600, color: checkOut ? '#111' : '#bbb', marginTop: 2 }}>
-              {checkOut ? fmtDate(checkOut, locale) : '—'}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bbb" strokeWidth="2" style={{ flexShrink: 0 }}>
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
+
+          {/* Card CHECK-OUT */}
+          <button
+            onClick={() => {
+              // Click check-out: azzera SOLO il checkout, mantiene check-in → fase co
+              setCheckOut('');
+              setSelectingCheckout(true);
+            }}
+            style={{
+              flex: 1, display: 'flex', alignItems: 'center', gap: 12,
+              padding: '14px 16px', textAlign: 'left',
+              border: `1.5px solid ${(checkOut || phase === 'co') ? '#1E73BE' : '#e5e7eb'}`,
+              borderRadius: 14,
+              background: (checkOut || phase === 'co') ? '#f0f7ff' : '#fff',
+              boxShadow: '0 1px 6px rgba(0,0,0,0.06)',
+              cursor: 'pointer',
+            }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="1.8" style={{ flexShrink: 0 }}>
+              <rect x="3" y="4" width="18" height="18" rx="3"/>
+              <path d="M16 2v4M8 2v4M3 10h18"/>
+            </svg>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 3 }}>
+                {ui.checkout}
+              </div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: checkOut ? '#111' : '#bbb', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {checkOut ? fmtDate(checkOut, locale) : '—'}
+              </div>
             </div>
-          </div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bbb" strokeWidth="2" style={{ flexShrink: 0 }}>
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
+
+          {/* Bottone cancella date */}
           {(checkIn || checkOut) && (
-            <button onClick={clearDates} style={{ background: 'none', border: 'none', color: '#9ca3af', fontSize: 12, cursor: 'pointer', padding: '0 8px', alignSelf: 'center' }}>
+            <button onClick={clearDates} style={{ background: 'none', border: 'none', color: '#9ca3af', fontSize: 16, cursor: 'pointer', padding: '0 4px', alignSelf: 'center' }}>
               ✕
             </button>
           )}
@@ -385,19 +422,36 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
             setTouchStartX(null);
           }}
         >
-          {/* Navigazione */}
+          {/* ✅ FIX: navigazione corretta — mobile: 1 titolo centrato; desktop: frecce agli estremi + 2 titoli centrati */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-            {isDesktop && <button onClick={goToPrev} disabled={isPrevDisabled} style={navBtnStyle(isPrevDisabled)}>‹</button>}
-            <span style={{ fontWeight: 700, fontSize: 15, color: '#111', flex: 1, textAlign: isDesktop ? 'left' : 'center' }}>
-              {months[viewMonth]} {viewYear}
-            </span>
-            {isDesktop && (
-              <div style={{ display: 'flex', flex: 1, justifyContent: 'space-around' }}>
-                <span style={{ fontWeight: 700, fontSize: 15 }}>{months[viewMonth]} {viewYear}</span>
-                <span style={{ fontWeight: 700, fontSize: 15 }}>{months[secondMonth.month]} {secondMonth.year}</span>
-              </div>
+            {isDesktop ? (
+              <>
+                {/* Freccia sinistra */}
+                <button onClick={goToPrev} disabled={isPrevDisabled} style={navBtnStyle(isPrevDisabled)}>‹</button>
+
+                {/* 2 titoli mese — ognuno sopra al proprio mese */}
+                <div style={{ flex: 1, display: 'flex', justifyContent: 'space-around' }}>
+                  <span style={{ fontWeight: 700, fontSize: 15, color: '#111' }}>
+                    {months[viewMonth]} {viewYear}
+                  </span>
+                  <span style={{ fontWeight: 700, fontSize: 15, color: '#111' }}>
+                    {months[secondMonth.month]} {secondMonth.year}
+                  </span>
+                </div>
+
+                {/* Freccia destra */}
+                <button onClick={goToNext} style={navBtnStyle(false)}>›</button>
+              </>
+            ) : (
+              <>
+                {/* Mobile: frecce ai lati + 1 titolo centrato */}
+                <button onClick={goToPrev} disabled={isPrevDisabled} style={navBtnStyle(isPrevDisabled)}>‹</button>
+                <span style={{ fontWeight: 700, fontSize: 15, color: '#111', flex: 1, textAlign: 'center' }}>
+                  {months[viewMonth]} {viewYear}
+                </span>
+                <button onClick={goToNext} style={navBtnStyle(false)}>›</button>
+              </>
             )}
-            {isDesktop && <button onClick={goToNext} style={navBtnStyle(false)}>›</button>}
           </div>
 
           {/* Mesi */}
