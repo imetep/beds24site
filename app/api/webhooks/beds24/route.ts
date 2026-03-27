@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     // ── 1. Invalida cache ISR disponibilità per questa room ───────────────────
     try {
-      revalidateTag(`availability:${roomIdStr}`);
+      revalidateTag(`availability:${roomIdStr}`, 'pages');
       console.log(`[Beds24 Webhook] revalidateTag availability:${roomIdStr}`);
     } catch (e) {
       // revalidateTag può lanciare fuori dal contesto Next.js — ignora silente
