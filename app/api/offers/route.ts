@@ -4,7 +4,7 @@ import { getToken } from '@/lib/beds24-token';
 const BASE_URL = 'https://beds24.com/api/v2';
 const OFFERS_TTL = 60 * 60 * 2; // 2 ore in secondi
 
-// ─── Redis helpers ────────────────────────────────────────────────────────────
+// ─── Redis helpers (stesso pattern di beds24-token.ts) ────────────────────────
 
 async function redisGet(key: string): Promise<string | null> {
   const url   = process.env.KV_REST_API_URL;
@@ -27,14 +27,23 @@ async function redisSet(key: string, value: string, ttlSeconds: number): Promise
   const token = process.env.KV_REST_API_TOKEN;
   if (!url || !token) return;
   try {
-    await fetch(`${url}/set/${encodeURIComponent(key)}`, {
+    // ✅ FIX: Upstash pipeline — unico formato corretto per SET con TTL.
+    // Il vecchio POST /set/{key} con body [value,'EX',ttl] salvava l'array
+    // come valore grezzo: ogni cache HIT restituiva dati corrotti (array
+    // invece dell'oggetto offers) → zero tariffe mostrate all'utente.
+    const body = JSON.stringify([['SET', key, value, 'EX', ttlSeconds]]);
+    const res  = await fetch(`${url}/pipeline`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify([value, 'EX', ttlSeconds]),
+      body,
       cache: 'no-store',
     });
-  } catch {
-    // Silente: se Redis non risponde, procede senza cache
+    if (!res.ok) {
+      const text = await res.text();
+      console.warn('[offers] Redis SET error:', res.status, text.slice(0, 100));
+    }
+  } catch (e) {
+    console.warn('[offers] Redis SET exception:', e);
   }
 }
 
@@ -43,6 +52,7 @@ export async function redisDel(pattern: string): Promise<void> {
   const token = process.env.KV_REST_API_TOKEN;
   if (!url || !token) return;
   try {
+    // Upstash REST: scansiona le chiavi con il pattern e le elimina
     const scanRes = await fetch(`${url}/scan/0/match/${encodeURIComponent(pattern)}/count/100`, {
       headers: { Authorization: `Bearer ${token}` },
       cache: 'no-store',
@@ -62,26 +72,11 @@ export async function redisDel(pattern: string): Promise<void> {
 }
 
 /**
- * Conta le offerte reali nella risposta Beds24.
- * ✅ Usato per decidere se cachare o meno — non si cachano mai risposte vuote.
- */
-function countOffers(data: any): number {
-  if (!data?.data || !Array.isArray(data.data)) return 0;
-  return data.data.reduce((total: number, room: any) => {
-    return total + (Array.isArray(room.offers) ? room.offers.length : 0);
-  }, 0);
-}
-
-/**
  * GET /api/offers
  *
  * Proxy Beds24 /inventory/rooms/offers con cache Redis 2 ore.
  * Chiave: offers:{roomIds}:{arrival}:{departure}:{numAdults}:{numChildren}
  * Invalidazione: webhook Beds24 → redisDel('offers:{roomId}:*')
- *
- * ✅ FIX: non casha mai risposte vuote (0 offerte).
- *    In passato una risposta vuota poteva essere scritta in cache e servita
- *    per 2 ore anche quando Beds24 aveva disponibilità reale.
  */
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -150,18 +145,9 @@ export async function GET(req: NextRequest) {
 
     const data = await res.json();
 
-    // ✅ FIX: casha su Redis SOLO se la risposta contiene offerte reali.
-    // Se Beds24 restituisce 0 offerte (date non disponibili, errore momentaneo,
-    // token appena rinnovato), non scriviamo nulla su Redis così la prossima
-    // richiesta riprova sempre da Beds24.
+    // Salva in Redis solo in produzione
     if (!isDev) {
-      const numOffers = countOffers(data);
-      if (numOffers > 0) {
-        await redisSet(cacheKey, JSON.stringify(data), OFFERS_TTL);
-        console.log('[offers] cache WRITE →', cacheKey, `(${numOffers} offerte)`);
-      } else {
-        console.log('[offers] cache SKIP (0 offerte) →', cacheKey);
-      }
+      await redisSet(cacheKey, JSON.stringify(data), OFFERS_TTL);
     }
 
     return NextResponse.json(data, {
