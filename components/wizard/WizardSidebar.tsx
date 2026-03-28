@@ -116,7 +116,10 @@ export default function WizardSidebar({ locale = 'it', step = 1, onContinua, can
       .catch(() => {});
   }, [room?.cloudinaryFolder]);
 
-  const offer = cachedOffers?.find((o: any) => o.offerId === selectedOfferId)
+  // ✅ FIX: cerca prima nella room selezionata, poi fallback globale
+  // (stesso pattern di WizardStep2/3 — evita di mostrare prezzo di unaltra room)
+  const roomOffers = cachedOffers?.find((ro: any) => ro.roomId === selectedRoomId);
+  const offer = roomOffers?.offers?.find((o: any) => o.offerId === selectedOfferId)
     ?? cachedOffers?.flatMap((ro: any) => ro.offers ?? []).find((o: any) => o.offerId === selectedOfferId);
   const offerName: string | null = offer ? (OFFER_NAMES[offer.offerId]?.[loc] ?? String(offer.offerName ?? '')) : null;
   const offerPrice: number = offer?.price ?? 0;
@@ -217,6 +220,7 @@ export default function WizardSidebar({ locale = 'it', step = 1, onContinua, can
       borderRadius: 16,
       padding: '20px 18px',
       position: 'sticky', top: 90,
+      alignSelf: 'flex-start',
     }}>
       <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#9ca3af', margin: '0 0 14px' }}>
         {t.title}

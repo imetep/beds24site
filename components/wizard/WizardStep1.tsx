@@ -556,7 +556,9 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
         <div style={{ background: '#fff5f5', border: '1px solid #f5c6cb', borderRadius: 12, padding: '20px', textAlign: 'center', marginBottom: 16 }}>
           <p style={{ margin: '0 0 8px', fontWeight: 700, color: '#c0392b' }}>{t.errTitle}</p>
           <p style={{ margin: '0 0 14px', fontSize: 13, color: '#888' }}>{error}</p>
-          <button onClick={fetchOffers} style={retryBtn}>{t.retry}</button>
+          {checkIn && checkOut && (
+            <button onClick={fetchOffers} style={retryBtn}>{t.retry}</button>
+          )}
         </div>
       )}
 

@@ -138,7 +138,7 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
     if (!pickedOffer || !checkIn || !checkOut) return;
     setSelectedRoomId(roomId);
     setSelectedOfferId(pickedOffer);
-    setOffers(offers.map(o => ({ ...o, roomId })));
+    setOffers([{ roomId, offers }]);
     setCurrentStep(1); // Wizard partirà da Step2 grazie a from=room
     router.push(`/${locale}/prenota?roomId=${roomId}&from=room`);
   }

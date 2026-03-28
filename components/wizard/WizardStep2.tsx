@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
 import { PROPERTIES } from '@/config/properties';
 
@@ -12,7 +13,7 @@ const ENERGY_BOX: Record<string, string> = {
   pl: 'Zużycie energii jest rozliczane na podstawie rzeczywistego wykorzystania, mierzonego przez liczniki zainstalowane w każdym obiekcie. Nie jest to dodatkowa opłata w celu osiągnięcia zysku, lecz środek mający na celu zapobieganie marnotrawstwu energii.',
 };
 const DEPOSIT_BOX: Record<string, (n: number) => string> = {
-  it: (n) => `Questo alloggio richiede un deposito cauzionale di €${n}. Il pagamento verrà riscosso separatamente dal proprietario prima dell'arrivo o al momento del check-in.`,
+  it: (n) => `Questo alloggio richiede un deposito cauzionale di €${n}. Sarà necessaria una Carta di Credito (no Debit Card) al momento del check-in.`,
   en: (n) => `This accommodation requires a security deposit of €${n}. Payment will be collected separately by the host before arrival or at check-in.`,
   de: (n) => `Diese Unterkunft erfordert eine Kaution von €${n}. Die Zahlung wird separat vom Gastgeber vor der Ankunft oder beim Check-in erhoben.`,
   pl: (n) => `To zakwaterowanie wymaga kaucji w wysokości €${n}. Płatność zostanie pobrana oddzielnie przez gospodarza przed przyjazdem lub przy zameldowaniu.`,
@@ -208,6 +209,9 @@ interface Props { locale?: string; }
 export default function WizardStep2({ locale = 'it' }: Props) {
   const t   = UI[locale] ?? UI.it;
   const loc = locale in UI ? locale : 'it';
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const fromRoom = searchParams.get('from') === 'room';
 
   const {
     numAdult, numChild, childrenAges,
@@ -231,6 +235,15 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
   // ── Dati calcolati ─────────────────────────────────────────────────────────
   const room = getRoomData(selectedRoomId);
+
+  // ✅ Indietro: se from=room torna alla pagina residenza, altrimenti prevStep
+  function handleBack() {
+    if (fromRoom && room?.slug) {
+      router.push(`/${locale}/residenze/${room.slug}`);
+    } else {
+      prevStep();
+    }
+  }
   const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
 
   const roomOffers = cachedOffers?.find((ro: any) => ro.roomId === selectedRoomId);
@@ -341,22 +354,13 @@ export default function WizardStep2({ locale = 'it' }: Props) {
         </div>
       )}
 
-      {/* Politica cancellazione */}
-      {cancelPolicy && (
-        <>
-          <div style={divider} />
-          <p style={sideLabel}>{t.cancelPolicy}</p>
-          <p style={{ fontSize: 13, color: '#444', margin: '0 0 14px', lineHeight: 1.5 }}>{cancelPolicy}</p>
-        </>
-      )}
+      {/* ⚡ Consumi energetici — subito dopo il nome, ben visibile */}
+      <div style={{ background: '#f0f7ff', border: '1px solid #bfdbfe', borderRadius: 10, padding: '12px 14px', marginBottom: 14 }}>
+        <p style={{ fontSize: 13, fontWeight: 700, color: '#1e40af', margin: '0 0 5px' }}>⚡ {t.energyTitle}</p>
+        <p style={{ fontSize: 12, color: '#374151', margin: 0, lineHeight: 1.5 }}>{ENERGY_BOX[locale] ?? ENERGY_BOX.it}</p>
+      </div>
 
       <div style={divider} />
-
-      {/* Box consumi energetici */}
-      <div style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 10, padding: '12px 14px', marginBottom: 14 }}>
-        <p style={{ fontSize: 12, fontWeight: 700, color: '#374151', margin: '0 0 5px' }}>⚡ {t.energyTitle}</p>
-        <p style={{ fontSize: 12, color: '#666', margin: 0, lineHeight: 1.5 }}>{ENERGY_BOX[locale] ?? ENERGY_BOX.it}</p>
-      </div>
 
       {/* Voucher */}
       <p style={sideLabel}>{t.voucher}</p>
@@ -441,16 +445,22 @@ export default function WizardStep2({ locale = 'it' }: Props) {
         <p style={{ fontSize: 11, color: '#9ca3af', margin: '4px 0 0' }}>{t.touristTaxNote}</p>
       )}
 
-      {/* Box deposito cauzionale */}
+      {/* Deposito cauzionale — integrato subito dopo il totale */}
       {depositAmount && (
+        <div style={{ background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 10, padding: '12px 14px', marginTop: 12 }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: '#92610a', margin: '0 0 5px' }}>🔐 {t.depositTitle}</p>
+          <p style={{ fontSize: 12, color: '#78350f', margin: 0, lineHeight: 1.5 }}>
+            {(DEPOSIT_BOX[locale] ?? DEPOSIT_BOX.it)(depositAmount)}
+          </p>
+        </div>
+      )}
+
+      {/* Politica cancellazione — in fondo */}
+      {cancelPolicy && (
         <>
           <div style={divider} />
-          <div style={{ background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 10, padding: '12px 14px' }}>
-            <p style={{ fontSize: 12, fontWeight: 700, color: '#374151', margin: '0 0 5px' }}>🔐 {t.depositTitle}</p>
-            <p style={{ fontSize: 12, color: '#666', margin: 0, lineHeight: 1.5 }}>
-              {(DEPOSIT_BOX[locale] ?? DEPOSIT_BOX.it)(depositAmount)}
-            </p>
-          </div>
+          <p style={sideLabel}>{t.cancelPolicy}</p>
+          <p style={{ fontSize: 13, color: '#444', margin: '0 0 4px', lineHeight: 1.5 }}>{cancelPolicy}</p>
         </>
       )}
     </div>
@@ -575,7 +585,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
             {t.terms}{' '}
             <a href={`/${locale}/condizioni`} style={{ color: '#1E73BE' }} target="_blank" rel="noopener noreferrer">{t.termsLink}</a>
           </p>
-          <button onClick={prevStep} style={{ background: 'none', border: 'none', color: '#1E73BE', fontSize: 14, cursor: 'pointer', padding: 0, display: 'block' }}>
+          <button onClick={handleBack} style={{ background: 'none', border: 'none', color: '#1E73BE', fontSize: 14, cursor: 'pointer', padding: 0, display: 'block' }}>
             {t.back}
           </button>
         </div>
