@@ -4,7 +4,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import { getRoomBySlug, getPropertyForRoom, PROPERTIES } from '@/config/properties';
 import { locales, isValidLocale, type Locale } from '@/config/i18n';
 import ThingsToKnow from '@/components/residenze/ThingsToKnow';
-import PhotoLightbox from '@/components/residenze/PhotoLightbox';
+import PhotoCarousel from '@/components/residenze/PhotoCarousel';
 import PropertyMap from '@/components/residenze/PropertyMap';
 import AvailabilityCalendar from '@/components/residenze/AvailabilityCalendar';
 import BookingPanel from '@/components/residenze/BookingPanel';
@@ -201,7 +201,7 @@ export default async function RoomPage({ params }: Props) {
         {property.distanceLabel} · {floorLabel}
       </div>
 
-      <PhotoLightbox photos={photos} roomName={room.name} />
+      <PhotoCarousel photos={photos} roomName={room.name} slug={room.slug} locale={locale} />
 
       {/* Caratteristiche principali */}
       <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', padding: '20px 16px', borderTop: '1px solid #eee', borderBottom: '1px solid #eee', marginBottom: 28 }}>
