@@ -53,6 +53,12 @@ const UI: Record<string, Record<string, string>> = {
     filterNatureLong:     '2km dal mare',
     filterAllClean: 'Tutti', filterPriceClean: 'Prezzo', filterSizeClean: 'Più grande', filterSeaClean: '250m dal mare', filterNatureClean: '2km dal mare',
     poolAll: 'Piscina: tutte', poolPrivate: '🏊 Privata', poolShared: '🌊 Condivisa',
+    typeAll: 'Tipo: tutti', typeMono: 'Monolocale', typeAppart: 'Appartamento', typeVilla: 'Villa',
+    filtriBtn: 'Filtri', filtriTitle: 'Ordina e filtra', filtriApply: 'Applica', filtriClear: 'Cancella tutto',
+    sortSection: 'Ordina per', seaSection: 'Distanza dal mare', poolSection: 'Piscina', typeSection: 'Tipo di casa', bedsSection: 'Camere da letto',
+    sortDefault: 'Predefinito', sortPriceLow: 'Prezzo crescente', sortPriceHigh: 'Prezzo decrescente', sortBiggest: 'Più grande', sortSmallest: 'Più piccolo',
+    seaAll: 'Tutte le strutture', sea250: '250m dal mare', sea2km: 'Immerso nella natura',
+    bedsAny: 'Qualsiasi',
   },
   en: {
     titleSingle:'Which rate do you prefer?',
@@ -81,6 +87,12 @@ const UI: Record<string, Record<string, string>> = {
     filterNatureLong:     '2km from sea',
     filterAllClean: 'All', filterPriceClean: 'Price', filterSizeClean: 'Largest', filterSeaClean: '250m from sea', filterNatureClean: '2km from sea',
     poolAll: 'Pool: all', poolPrivate: '🏊 Private', poolShared: '🌊 Shared',
+    typeAll: 'Type: all', typeMono: 'Studio', typeAppart: 'Apartment', typeVilla: 'Villa',
+    filtriBtn: 'Filters', filtriTitle: 'Sort and filter', filtriApply: 'Apply', filtriClear: 'Clear all',
+    sortSection: 'Sort by', seaSection: 'Distance from sea', poolSection: 'Pool', typeSection: 'Property type', bedsSection: 'Bedrooms',
+    sortDefault: 'Default', sortPriceLow: 'Price: low to high', sortPriceHigh: 'Price: high to low', sortBiggest: 'Largest', sortSmallest: 'Smallest',
+    seaAll: 'All properties', sea250: '250m from sea', sea2km: 'In nature',
+    bedsAny: 'Any',
   },
   de: {
     titleSingle:'Welchen Tarif bevorzugen Sie?',
@@ -109,6 +121,12 @@ const UI: Record<string, Record<string, string>> = {
     filterNatureLong:     '2km vom Meer',
     filterAllClean: 'Alle', filterPriceClean: 'Preis', filterSizeClean: 'Größte', filterSeaClean: '250m vom Meer', filterNatureClean: '2km vom Meer',
     poolAll: 'Pool: alle', poolPrivate: '🏊 Privat', poolShared: '🌊 Geteilt',
+    typeAll: 'Typ: alle', typeMono: 'Studio', typeAppart: 'Appartement', typeVilla: 'Villa',
+    filtriBtn: 'Filter', filtriTitle: 'Sortieren & filtern', filtriApply: 'Anwenden', filtriClear: 'Alles löschen',
+    sortSection: 'Sortieren nach', seaSection: 'Meeresentfernung', poolSection: 'Pool', typeSection: 'Unterkunftstyp', bedsSection: 'Schlafzimmer',
+    sortDefault: 'Standard', sortPriceLow: 'Preis aufsteigend', sortPriceHigh: 'Preis absteigend', sortBiggest: 'Größte', sortSmallest: 'Kleinste',
+    seaAll: 'Alle Unterkünfte', sea250: '250m vom Meer', sea2km: 'In der Natur',
+    bedsAny: 'Beliebig',
   },
   pl: {
     titleSingle:'Którą taryfę preferujecie?',
@@ -137,11 +155,17 @@ const UI: Record<string, Record<string, string>> = {
     filterNatureLong:     '2km od morza',
     filterAllClean: 'Wszystkie', filterPriceClean: 'Cena', filterSizeClean: 'Największy', filterSeaClean: '250m od morza', filterNatureClean: '2km od morza',
     poolAll: 'Basen: wszystkie', poolPrivate: '🏊 Prywatny', poolShared: '🌊 Wspólny',
+    typeAll: 'Typ: wszystkie', typeMono: 'Kawalerka', typeAppart: 'Apartament', typeVilla: 'Willa',
+    filtriBtn: 'Filtry', filtriTitle: 'Sortuj i filtruj', filtriApply: 'Zastosuj', filtriClear: 'Wyczyść wszystko',
+    sortSection: 'Sortuj według', seaSection: 'Odległość od morza', poolSection: 'Basen', typeSection: 'Typ nieruchomości', bedsSection: 'Sypialnie',
+    sortDefault: 'Domyślne', sortPriceLow: 'Cena rosnąco', sortPriceHigh: 'Cena malejąco', sortBiggest: 'Największy', sortSmallest: 'Najmniejszy',
+    seaAll: 'Wszystkie', sea250: '250m od morza', sea2km: 'Wśród natury',
+    bedsAny: 'Dowolna',
   },
 };
 
 // ─── Tipi filtro ─────────────────────────────────────────────────────────────
-type FilterType = 'all' | 'priceLow' | 'priceHigh' | 'size' | 'sea' | 'nature';
+type FilterType = 'all' | 'priceLow' | 'priceHigh' | 'size' | 'sizeSmall';
 
 // ─── Tipi API ────────────────────────────────────────────────────────────────
 interface OfferItem { offerId: number; offerName: string; price: number; unitsAvailable: number; }
@@ -174,6 +198,20 @@ function fmtShort(ymd: string, loc: string): string {
   return `${dt.getDate()} ${(MSHORT[loc] ?? MSHORT.it)[dt.getMonth()]}`;
 }
 
+// ─── Floor label multilingue ─────────────────────────────────────────────────
+const FLOOR_LABELS: Record<string, { ground: string; floor: string; basement: string }> = {
+  it: { ground: 'Piano terra', floor: 'Piano',       basement: 'Seminterrato' },
+  en: { ground: 'Ground floor', floor: 'Floor',      basement: 'Basement' },
+  de: { ground: 'Erdgeschoss',  floor: 'Etage',      basement: 'Untergeschoss' },
+  pl: { ground: 'Parter',       floor: 'Piętro',     basement: 'Piwnica' },
+};
+function getFloorLabel(room: Room, loc: string): string {
+  const fl = FLOOR_LABELS[loc] ?? FLOOR_LABELS.it;
+  if (room.floor < 0) return fl.basement;
+  if (room.floor === 0) return fl.ground;
+  return `${fl.floor} ${room.floor}`;
+}
+
 function getMinPrice(ro: RoomOffers): number {
   const avail = ro.offers.filter(o => o.unitsAvailable > 0);
   if (avail.length === 0) return Infinity;
@@ -204,7 +242,10 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
   const [pickedOfferId, setPickedOfferId] = useState<number | null>(null);
   const [expandedRoomId, setExpandedRoomId] = useState<number | null>(null);
   const [activeFilter, setActiveFilter]   = useState<FilterType>('all');
+  const [activeTypeFilter, setActiveTypeFilter] = useState<'all'|'monolocale'|'appartamento'|'villa'>('all');
   const [showFilterPanel, setShowFilterPanel] = useState(false);
+  const [activeSeaFilter, setActiveSeaFilter] = useState<'all'|'sea'|'nature'>('all');
+  const [activeBedsFilter, setActiveBedsFilter] = useState<0|1|2|3|4>(0);
   const [isDesk, setIsDesk]               = useState(false);
 
   const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
@@ -285,11 +326,27 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
   const filteredRoomOffers = (() => {
     let list = [...roomOffers];
 
-    // Filtro posizione
-    if (activeFilter === 'sea') {
+    // Filtro distanza mare
+    if (activeSeaFilter === 'sea') {
       list = list.filter(ro => ro.propertyId === 46871);
-    } else if (activeFilter === 'nature') {
+    } else if (activeSeaFilter === 'nature') {
       list = list.filter(ro => ro.propertyId === 46487);
+    }
+
+    // Filtro tipo
+    if (activeTypeFilter !== 'all') {
+      list = list.filter(ro => {
+        const room = PROPERTIES.flatMap(p => p.rooms).find(r => r.roomId === ro.roomId);
+        return room?.type === activeTypeFilter;
+      });
+    }
+
+    // Filtro camere da letto
+    if (activeBedsFilter > 0) {
+      list = list.filter(ro => {
+        const room = PROPERTIES.flatMap(p => p.rooms).find(r => r.roomId === ro.roomId);
+        return (room?.bedrooms ?? 0) >= activeBedsFilter;
+      });
     }
 
     // Ordina
@@ -302,6 +359,12 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
         const roomA = PROPERTIES.flatMap(p => p.rooms).find(r => r.roomId === a.roomId);
         const roomB = PROPERTIES.flatMap(p => p.rooms).find(r => r.roomId === b.roomId);
         return (roomB?.sqm ?? 0) - (roomA?.sqm ?? 0);
+      });
+    } else if (activeFilter === 'sizeSmall') {
+      list.sort((a, b) => {
+        const roomA = PROPERTIES.flatMap(p => p.rooms).find(r => r.roomId === a.roomId);
+        const roomB = PROPERTIES.flatMap(p => p.rooms).find(r => r.roomId === b.roomId);
+        return (roomA?.sqm ?? 0) - (roomB?.sqm ?? 0);
       });
     }
 
@@ -321,18 +384,31 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
   }
   const canContinue = !!pickedRoomId && !!pickedOfferId;
 
-  // ── Filtri disponibili (solo in WizardLibero) ────────────────────────────
+  // ── Flags disponibilità filtri ───────────────────────────────────────────
   const hasSea    = roomOffers.some(ro => ro.propertyId === 46871);
   const hasNature = roomOffers.some(ro => ro.propertyId === 46487);
+  const hasSeaFilter = hasSea && hasNature;
+  const hasMono   = roomOffers.some(ro => PROPERTIES.flatMap(p => p.rooms).find(r => r.roomId === ro.roomId)?.type === 'monolocale');
+  const hasAppart = roomOffers.some(ro => PROPERTIES.flatMap(p => p.rooms).find(r => r.roomId === ro.roomId)?.type === 'appartamento');
+  const hasVilla  = roomOffers.some(ro => PROPERTIES.flatMap(p => p.rooms).find(r => r.roomId === ro.roomId)?.type === 'villa');
+  const hasMultipleTypes = [hasMono, hasAppart, hasVilla].filter(Boolean).length > 1;
 
-  const filters: { key: FilterType; label: string; labelLong: string }[] = [
-    { key: 'all',       label: t.filterAll,       labelLong: t.filterAllLong },
-    { key: 'priceLow',  label: t.filterPriceLow,  labelLong: t.filterPriceLowLong },
-    { key: 'priceHigh', label: t.filterPriceHigh, labelLong: t.filterPriceHighLong },
-    { key: 'size',      label: t.filterSize,      labelLong: t.filterSizeLong },
-    ...(hasSea    ? [{ key: 'sea'    as FilterType, label: t.filterSea,    labelLong: t.filterSeaLong }]    : []),
-    ...(hasNature ? [{ key: 'nature' as FilterType, label: t.filterNature, labelLong: t.filterNatureLong }] : []),
-  ];
+  // Conteggio filtri attivi (per badge bottone)
+  const activeFiltersCount = [
+    activeFilter !== 'all' ? 1 : 0,
+    activeSeaFilter !== 'all' ? 1 : 0,
+    poolPreference !== 'none' ? 1 : 0,
+    activeTypeFilter !== 'all' ? 1 : 0,
+    activeBedsFilter > 0 ? 1 : 0,
+  ].reduce((a, b) => a + b, 0);
+
+  function resetAllFilters() {
+    setActiveFilter('all');
+    setActiveSeaFilter('all');
+    setPoolPreference('none');
+    setActiveTypeFilter('all');
+    setActiveBedsFilter(0);
+  }
 
   // ─────────────────────────────────────────────────────────────────────────
   return (
@@ -384,159 +460,259 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
         {isSingleRoom ? t.titleSingle : t.titleMulti}
       </h2>
 
-      {/* ── Filtri: pill bar desktop / bottone+sheet mobile ── */}
+      {/* ── Filtri ── */}
       {!isSingleRoom && !loading && !error && roomOffers.length > 0 && (
-        <>
-          {/* DESKTOP: pill inline */}
-          {isDesk && (
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
-              {filters.map(f => (
-                <button key={f.key} onClick={() => setActiveFilter(f.key)}
-                  style={{
-                    padding: '7px 16px', borderRadius: 20, fontSize: 13, fontWeight: 500, cursor: 'pointer',
-                    border: `1.5px solid ${activeFilter === f.key ? '#1E73BE' : '#dddddd'}`,
-                    background: activeFilter === f.key ? '#EEF5FC' : '#fff',
-                    color: activeFilter === f.key ? '#1E73BE' : '#333',
-                  }}>
-                  {f.labelLong}{activeFilter === f.key && ' ✓'}
-                </button>
-              ))}
-              <div style={{ display: 'flex', gap: 6 }}>
-                {([
-                  { val: 'none' as const, label: locale === 'it' ? 'Tutte' : 'All' },
-                  { val: 'private' as const, label: t.poolPrivate },
-                  { val: 'shared' as const, label: t.poolShared },
-                ]).map(({ val, label }) => (
-                  <button key={val} onClick={() => setPoolPreference(val)}
-                    style={{
-                      padding: '7px 14px', borderRadius: 20, fontSize: 13, fontWeight: 500, cursor: 'pointer',
-                      border: `1.5px solid ${poolPreference === val ? '#1E73BE' : '#dddddd'}`,
-                      background: poolPreference === val ? '#EEF5FC' : '#fff',
-                      color: poolPreference === val ? '#1E73BE' : '#333',
-                    }}>
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+        <div style={{ marginBottom: 16 }}>
 
-          {/* MOBILE: bottone Ordina e filtra + pills attivi */}
-          {!isDesk && (
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 14, overflowX: 'auto', scrollbarWidth: 'none' }}>
-              <button onClick={() => setShowFilterPanel(true)}
-                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 14px',
-                  borderRadius: 20, border: '1.5px solid #333', background: '#fff',
-                  color: '#111', fontSize: 13, fontWeight: 600, cursor: 'pointer', flexShrink: 0 }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="20" y2="12"/><line x1="12" y1="18" x2="20" y2="18"/>
-                </svg>
-                {locale === 'it' ? 'Ordina e filtra' : locale === 'de' ? 'Sortieren & filtern' : locale === 'pl' ? 'Sortuj i filtruj' : 'Sort & filter'}
+          {/* Riga: bottone Filtri + chip filtri attivi */}
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', overflowX: 'auto', scrollbarWidth: 'none' }}>
+
+            {/* Bottone Filtri */}
+            <button
+              onClick={() => setShowFilterPanel(true)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 7,
+                padding: '8px 16px', borderRadius: 24, flexShrink: 0,
+                border: activeFiltersCount > 0 ? '1.5px solid #FCAF1A' : '1.5px solid #333',
+                background: activeFiltersCount > 0 ? '#FCAF1A' : '#fff',
+                color: activeFiltersCount > 0 ? '#fff' : '#111',
+                fontSize: 14, fontWeight: 600, cursor: 'pointer',
+              }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="20" y2="12"/><line x1="12" y1="18" x2="20" y2="18"/>
+              </svg>
+              {t.filtriBtn}
+              {activeFiltersCount > 0 && (
+                <span style={{
+                  background: 'rgba(255,255,255,0.9)', color: '#B07820',
+                  borderRadius: '50%', width: 20, height: 20,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 11, fontWeight: 700, flexShrink: 0,
+                }}>
+                  {activeFiltersCount}
+                </span>
+              )}
+            </button>
+
+            {/* Chip filtri attivi */}
+            {activeFilter !== 'all' && (
+              <button onClick={() => setActiveFilter('all')} style={chipActiveStyle}>
+                {activeFilter === 'priceLow' ? t.sortPriceLow : activeFilter === 'priceHigh' ? t.sortPriceHigh : activeFilter === 'size' ? t.sortBiggest : t.sortSmallest}
+                <span style={{ fontSize: 15, lineHeight: 1 }}>×</span>
               </button>
-              {activeFilter !== 'all' && (
-                <button onClick={() => setActiveFilter('all')}
-                  style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '7px 12px',
-                    borderRadius: 20, border: '1.5px solid #1E73BE', background: '#EEF5FC',
-                    color: '#1E73BE', fontSize: 13, fontWeight: 600, cursor: 'pointer', flexShrink: 0 }}>
-                  {filters.find(f => f.key === activeFilter)?.label}
-                  <span style={{ fontSize: 16, lineHeight: 1 }}>×</span>
-                </button>
-              )}
-              {poolPreference !== 'none' && (
-                <button onClick={() => setPoolPreference('none')}
-                  style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '7px 12px',
-                    borderRadius: 20, border: '1.5px solid #1E73BE', background: '#EEF5FC',
-                    color: '#1E73BE', fontSize: 13, fontWeight: 600, cursor: 'pointer', flexShrink: 0 }}>
-                  {poolPreference === 'private' ? t.poolPrivate : t.poolShared}
-                  <span style={{ fontSize: 16, lineHeight: 1 }}>×</span>
-                </button>
-              )}
-            </div>
-          )}
-        </>
+            )}
+            {activeSeaFilter !== 'all' && (
+              <button onClick={() => setActiveSeaFilter('all')} style={chipActiveStyle}>
+                {activeSeaFilter === 'sea' ? t.sea250 : t.sea2km}
+                <span style={{ fontSize: 15, lineHeight: 1 }}>×</span>
+              </button>
+            )}
+            {poolPreference !== 'none' && (
+              <button onClick={() => setPoolPreference('none')} style={chipActiveStyle}>
+                {poolPreference === 'private' ? t.poolPrivate : t.poolShared}
+                <span style={{ fontSize: 15, lineHeight: 1 }}>×</span>
+              </button>
+            )}
+            {activeTypeFilter !== 'all' && (
+              <button onClick={() => setActiveTypeFilter('all')} style={chipActiveStyle}>
+                {activeTypeFilter === 'monolocale' ? t.typeMono : activeTypeFilter === 'appartamento' ? t.typeAppart : t.typeVilla}
+                <span style={{ fontSize: 15, lineHeight: 1 }}>×</span>
+              </button>
+            )}
+            {activeBedsFilter > 0 && (
+              <button onClick={() => setActiveBedsFilter(0)} style={chipActiveStyle}>
+                {activeBedsFilter}+ {t.camere}
+                <span style={{ fontSize: 15, lineHeight: 1 }}>×</span>
+              </button>
+            )}
+          </div>
+        </div>
       )}
 
-      {/* ── Panel filtri (bottom sheet) ── */}
+      {/* ── Panel filtri: modal su desktop, bottom sheet su mobile ── */}
       {showFilterPanel && (
         <>
-          <div onClick={() => setShowFilterPanel(false)}
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 200 }} />
-          <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 201,
-            background: '#fff', borderRadius: '20px 20px 0 0',
-            boxShadow: '0 -4px 24px rgba(0,0,0,0.15)', maxHeight: '85vh', overflowY: 'auto' }}>
+          {/* Overlay */}
+          <div
+            onClick={() => setShowFilterPanel(false)}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 300 }}
+          />
 
-            {/* Header panel */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              padding: '16px 20px 12px', borderBottom: '1px solid #f0f0f0', position: 'sticky', top: 0, background: '#fff', zIndex: 1 }}>
-              <button onClick={() => setShowFilterPanel(false)}
+          {/* Contenitore: centrato su desktop, bottom sheet su mobile */}
+          <div style={{
+            position: 'fixed', zIndex: 301,
+            ...(isDesk ? {
+              top: '50%', left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: 560, maxWidth: '90vw',
+              borderRadius: 16,
+              maxHeight: '85vh',
+            } : {
+              bottom: 0, left: 0, right: 0,
+              borderRadius: '20px 20px 0 0',
+              height: '85vh',
+            }),
+            background: '#fff',
+            boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
+            display: 'flex', flexDirection: 'column',
+            overflow: 'hidden',
+          }}>
+
+            {/* Header fisso */}
+            <div style={{
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              padding: '16px 20px', borderBottom: '1px solid #f0f0f0', flexShrink: 0,
+            }}>
+              <button
+                onClick={() => setShowFilterPanel(false)}
                 style={{ width: 32, height: 32, borderRadius: '50%', border: '1.5px solid #333',
-                  background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
+                  background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center',
+                  justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>
                 ×
               </button>
-              <span style={{ fontWeight: 700, fontSize: 16 }}>
-                {locale === 'it' ? 'Ordina e filtra' : locale === 'de' ? 'Sortieren & filtern' : locale === 'pl' ? 'Sortuj i filtruj' : 'Sort & filter'}
-              </span>
-              <button onClick={() => { setActiveFilter('all'); setPoolPreference('none'); }}
-                style={{ background: 'none', border: 'none', color: '#1E73BE', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
-                {locale === 'it' ? 'Rimuovi' : locale === 'de' ? 'Entfernen' : locale === 'pl' ? 'Usuń' : 'Clear'}
+              <span style={{ fontWeight: 700, fontSize: 16 }}>{t.filtriTitle}</span>
+              <button
+                onClick={resetAllFilters}
+                style={{ background: 'none', border: 'none', color: '#1E73BE', fontSize: 14,
+                  fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>
+                {t.filtriClear}
               </button>
             </div>
 
-            <div style={{ padding: '20px 20px 100px' }}>
+            {/* Corpo scrollabile */}
+            <div style={{ flex: 1, overflowY: 'scroll', WebkitOverflowScrolling: 'touch', padding: '0 20px' }}>
 
-              {/* Ordina per */}
-              <div style={{ marginBottom: 28 }}>
-                <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 12 }}>
-                  {locale === 'it' ? 'Ordina per' : locale === 'de' ? 'Sortieren nach' : locale === 'pl' ? 'Sortuj według' : 'Sort by'}
+              {/* ── 1. Ordina per ── */}
+              <div style={sectionStyle}>
+                <div style={sectionTitleStyle}>{t.sortSection}</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                  {([
+                    { key: 'all'       as FilterType, label: t.sortDefault },
+                    { key: 'priceLow'  as FilterType, label: t.sortPriceLow },
+                    { key: 'priceHigh' as FilterType, label: t.sortPriceHigh },
+                    { key: 'size'      as FilterType, label: t.sortBiggest },
+                    { key: 'sizeSmall' as FilterType, label: t.sortSmallest },
+                  ]).map(({ key, label }) => (
+                    <button key={key} onClick={() => setActiveFilter(key)} style={radioRowStyle}>
+                      <span style={{ fontSize: 15, color: activeFilter === key ? '#1E73BE' : '#111', fontWeight: activeFilter === key ? 600 : 400 }}>{label}</span>
+                      <div style={{
+                        width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
+                        border: `2px solid ${activeFilter === key ? '#1E73BE' : '#ccc'}`,
+                        background: activeFilter === key ? '#1E73BE' : '#fff',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        {activeFilter === key && <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#fff' }} />}
+                      </div>
+                    </button>
+                  ))}
                 </div>
-                {filters.map(f => (
-                  <button key={f.key} onClick={() => setActiveFilter(f.key)}
-                    style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                      width: '100%', padding: '14px 0', background: 'none', border: 'none',
-                      borderBottom: '1px solid #f5f5f5', cursor: 'pointer', textAlign: 'left' }}>
-                    <span style={{ fontSize: 15, color: activeFilter === f.key ? '#1E73BE' : '#111',
-                      fontWeight: activeFilter === f.key ? 700 : 400 }}>{f.labelLong}</span>
-                    {activeFilter === f.key && (
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="2.5">
-                        <polyline points="20 6 9 17 4 12"/>
-                      </svg>
-                    )}
-                  </button>
-                ))}
               </div>
 
-              {/* Piscina */}
-              <div style={{ marginBottom: 28 }}>
-                <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 12 }}>
-                  {locale === 'it' ? 'Piscina' : locale === 'de' ? 'Pool' : locale === 'pl' ? 'Basen' : 'Pool'}
+              <div style={dividerStyle} />
+
+              {/* ── 2. Distanza dal mare (solo se entrambe le proprietà disponibili) ── */}
+              {hasSeaFilter && (
+                <>
+                  <div style={sectionStyle}>
+                    <div style={sectionTitleStyle}>{t.seaSection}</div>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                      {([
+                        { key: 'all'    as const, label: t.seaAll },
+                        { key: 'sea'    as const, label: t.sea250 },
+                        { key: 'nature' as const, label: t.sea2km },
+                      ]).map(({ key, label }) => (
+                        <button key={key} onClick={() => setActiveSeaFilter(key)} style={pillStyle(activeSeaFilter === key)}>
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div style={dividerStyle} />
+                </>
+              )}
+
+              {/* ── 3. Piscina ── */}
+              <div style={sectionStyle}>
+                <div style={sectionTitleStyle}>{t.poolSection}</div>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {([
+                    { val: 'none'    as const, label: locale === 'it' ? 'Tutte' : locale === 'de' ? 'Tutte' : locale === 'pl' ? 'Wszystkie' : 'All' },
+                    { val: 'private' as const, label: t.poolPrivate },
+                    { val: 'shared'  as const, label: t.poolShared },
+                  ]).map(({ val, label }) => (
+                    <button key={val} onClick={() => setPoolPreference(val)} style={pillStyle(poolPreference === val)}>
+                      {label}
+                    </button>
+                  ))}
                 </div>
-                {([
-                  { val: 'none'    as const, label: locale === 'it' ? 'Tutte le strutture' : locale === 'de' ? 'Alle Unterkünfte' : locale === 'pl' ? 'Wszystkie' : 'All properties' },
-                  { val: 'private' as const, label: t.poolPrivate },
-                  { val: 'shared'  as const, label: t.poolShared },
-                ]).map(({ val, label }) => (
-                  <button key={val} onClick={() => setPoolPreference(val)}
-                    style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                      width: '100%', padding: '14px 0', background: 'none', border: 'none',
-                      borderBottom: '1px solid #f5f5f5', cursor: 'pointer', textAlign: 'left' }}>
-                    <span style={{ fontSize: 15, color: poolPreference === val ? '#1E73BE' : '#111',
-                      fontWeight: poolPreference === val ? 700 : 400 }}>{label}</span>
-                    {poolPreference === val && (
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="2.5">
-                        <polyline points="20 6 9 17 4 12"/>
-                      </svg>
-                    )}
-                  </button>
-                ))}
+                {poolPreference !== 'none' && (
+                  <div style={{
+                    marginTop: 10, padding: '9px 12px', borderRadius: 8,
+                    background: '#FFF8EC', border: '1px solid #FCAF1A',
+                    display: 'flex', alignItems: 'flex-start', gap: 8,
+                  }}>
+                    <span style={{ fontSize: 14, flexShrink: 0 }}>🏊</span>
+                    <span style={{ fontSize: 12, color: '#B07820', lineHeight: 1.5 }}>
+                      {locale === 'it' ? 'La piscina è aperta indicativamente da fine maggio a metà ottobre.' :
+                       locale === 'de' ? 'Der Pool ist voraussichtlich von Ende Mai bis Mitte Oktober geöffnet.' :
+                       locale === 'pl' ? 'Basen jest czynny orientacyjnie od końca maja do połowy października.' :
+                       'The pool is generally open from late May to mid-October.'}
+                    </span>
+                  </div>
+                )}
               </div>
+
+              {/* ── 4. Tipo di casa (solo se più tipi disponibili) ── */}
+              {hasMultipleTypes && (
+                <>
+                  <div style={dividerStyle} />
+                  <div style={sectionStyle}>
+                    <div style={sectionTitleStyle}>{t.typeSection}</div>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                      {([
+                        { val: 'all'          as const, label: locale === 'it' ? 'Tutti' : locale === 'de' ? 'Alle' : locale === 'pl' ? 'Wszystkie' : 'All' },
+                        ...(hasMono   ? [{ val: 'monolocale'   as const, label: t.typeMono }]   : []),
+                        ...(hasAppart ? [{ val: 'appartamento' as const, label: t.typeAppart }] : []),
+                        ...(hasVilla  ? [{ val: 'villa'        as const, label: t.typeVilla }]  : []),
+                      ]).map(({ val, label }) => (
+                        <button key={val} onClick={() => setActiveTypeFilter(val)} style={pillStyle(activeTypeFilter === val)}>
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* ── 5. Camere da letto ── */}
+              <div style={dividerStyle} />
+              <div style={sectionStyle}>
+                <div style={sectionTitleStyle}>{t.bedsSection}</div>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {([
+                    { val: 0 as const, label: t.bedsAny },
+                    { val: 1 as const, label: '1+' },
+                    { val: 2 as const, label: '2+' },
+                    { val: 3 as const, label: '3+' },
+                    { val: 4 as const, label: '4+' },
+                  ]).map(({ val, label }) => (
+                    <button key={val} onClick={() => setActiveBedsFilter(val)} style={pillStyle(activeBedsFilter === val)}>
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ height: 24 }} />
             </div>
 
-            {/* Footer sticky con Applica */}
-            <div style={{ position: 'sticky', bottom: 0, background: '#fff', padding: '12px 20px 28px', borderTop: '1px solid #f0f0f0' }}>
-              <button onClick={() => setShowFilterPanel(false)}
-                style={{ width: '100%', padding: '14px', borderRadius: 50,
-                  background: '#1E73BE', color: '#fff', border: 'none', fontWeight: 700, fontSize: 16, cursor: 'pointer' }}>
-                {locale === 'it' ? `Applica` : locale === 'de' ? 'Anwenden' : locale === 'pl' ? 'Zastosuj' : 'Apply'}
+            {/* Footer fisso */}
+            <div style={{ flexShrink: 0, background: '#fff', padding: '14px 20px 28px', borderTop: '1px solid #f0f0f0' }}>
+              <button
+                onClick={() => setShowFilterPanel(false)}
+                style={{ width: '100%', padding: '13px', borderRadius: 10,
+                  background: '#FCAF1A', color: '#fff', border: 'none', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>
+                {t.filtriApply}{activeFiltersCount > 0 ? ` (${activeFiltersCount})` : ''}
               </button>
             </div>
           </div>
@@ -592,40 +768,22 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                   {/* COL 1: Foto — solo WizardLibero */}
                   {!isSingleRoom && (
                     <div className="s5-card-photo" style={{ background: '#f0f4f8', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
-                      {coverUrl ? (
-                        <img src={coverUrl} alt={room.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} loading="lazy" />
-                      ) : (
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#ccc', fontSize: 24 }}>🏠</div>
-                      )}
-                      <span style={{ position: 'absolute', top: 10, left: 10, background: 'rgba(0,0,0,0.55)', color: '#fff', fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 20 }}>
-                        {room.type}
+                      <a
+                        href={`/${locale}/residenze/${room.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={e => e.stopPropagation()}
+                        style={{ display: 'block', width: '100%', height: '100%' }}
+                      >
+                        {coverUrl ? (
+                          <img src={coverUrl} alt={room.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} loading="lazy" />
+                        ) : (
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#ccc', fontSize: 24 }}>🏠</div>
+                        )}
+                      </a>
+                      <span style={{ position: 'absolute', top: 10, left: 10, background: 'rgba(0,0,0,0.55)', color: '#fff', fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 20, pointerEvents: 'none' }}>
+                        {getFloorLabel(room, loc)}
                       </span>
-                      {/* Badge Scopri — solo desktop, link alla scheda */}
-                      {isDesk && (
-                        <a
-                          href={`/${locale}/residenze/${room.slug}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={e => e.stopPropagation()}
-                          style={{
-                            position: 'absolute', bottom: 10, left: 10,
-                            background: '#fff', color: '#111',
-                            fontSize: 12, fontWeight: 700,
-                            padding: '5px 12px', borderRadius: 20,
-                            textDecoration: 'none',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.20)',
-                            display: 'flex', alignItems: 'center', gap: 4,
-                            transition: 'background 0.15s',
-                          }}
-                          onMouseEnter={e => (e.currentTarget.style.background = '#f0f7ff')}
-                          onMouseLeave={e => (e.currentTarget.style.background = '#fff')}
-                        >
-                          Scopri
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                            <path d="M7 17L17 7M17 7H7M17 7v10"/>
-                          </svg>
-                        </a>
-                      )}
                     </div>
                   )}
 
@@ -755,6 +913,33 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
     </div>
   );
 }
+
+const chipActiveStyle: React.CSSProperties = {
+  display: 'flex', alignItems: 'center', gap: 5,
+  padding: '6px 11px', borderRadius: 20, flexShrink: 0,
+  border: '1.5px solid #1E73BE', background: '#EEF5FC',
+  color: '#1E73BE', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+};
+const sectionStyle: React.CSSProperties = {
+  paddingTop: 14, paddingBottom: 10,
+};
+const sectionTitleStyle: React.CSSProperties = {
+  fontWeight: 700, fontSize: 13, color: '#111', marginBottom: 10,
+};
+const radioRowStyle: React.CSSProperties = {
+  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+  width: '100%', padding: '9px 0', background: 'none', border: 'none',
+  borderBottom: '1px solid #f0f0f0', cursor: 'pointer', textAlign: 'left',
+};
+const dividerStyle: React.CSSProperties = {
+  height: 1, background: '#e5e7eb',
+};
+const pillStyle = (active: boolean): React.CSSProperties => ({
+  padding: '7px 14px', borderRadius: 8, fontSize: 13, cursor: 'pointer', fontWeight: active ? 600 : 400,
+  border: `1.5px solid ${active ? '#1E73BE' : '#e5e7eb'}`,
+  background: active ? '#EEF5FC' : '#f5f5f5',
+  color: active ? '#1E73BE' : '#555',
+});
 
 const chip: React.CSSProperties = {
   fontSize: 11, color: '#555', background: '#f5f5f5', borderRadius: 6, padding: '3px 8px',

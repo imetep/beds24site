@@ -1,15 +1,17 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import Link from 'next/link';
 
 interface Props {
   cloudinaryFolder: string;
   coverUrl: string | null;
   roomName: string;
   noPhotoLabel: string;
+  linkHref?: string; // se passato, il click sulla foto naviga alla scheda (non apre gallery)
 }
 
-export default function CardPhotoGallery({ cloudinaryFolder, coverUrl, roomName, noPhotoLabel }: Props) {
+export default function CardPhotoGallery({ cloudinaryFolder, coverUrl, roomName, noPhotoLabel, linkHref }: Props) {
   const [open, setOpen] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -66,6 +68,33 @@ export default function CardPhotoGallery({ cloudinaryFolder, coverUrl, roomName,
     if (Math.abs(diff) > 50) { if (diff > 0) next(); else prev(); }
   };
 
+  const photoContent = coverUrl ? (
+    <img
+      src={coverUrl}
+      alt={roomName}
+      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.35s ease' }}
+      onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.04)')}
+      onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
+    />
+  ) : (
+    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <span style={{ color: '#bbb', fontSize: 13 }}>{noPhotoLabel}</span>
+    </div>
+  );
+
+  // Se linkHref: click foto → naviga alla scheda appartamento
+  if (linkHref) {
+    return (
+      <Link
+        href={linkHref}
+        style={{ display: 'block', position: 'relative', height: 220, background: '#f0f0f0', overflow: 'hidden', cursor: 'pointer', textDecoration: 'none' }}
+      >
+        {photoContent}
+      </Link>
+    );
+  }
+
+  // Altrimenti: comportamento gallery (lightbox) — usato nella pagina foto dedicata
   return (
     <>
       {/* Foto cover cliccabile */}
@@ -79,29 +108,7 @@ export default function CardPhotoGallery({ cloudinaryFolder, coverUrl, roomName,
           cursor: 'pointer',
         }}
       >
-        {coverUrl ? (
-          <img
-            src={coverUrl}
-            alt={roomName}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.35s ease' }}
-            onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.04)')}
-            onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
-          />
-        ) : (
-          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ color: '#bbb', fontSize: 13 }}>{noPhotoLabel}</span>
-          </div>
-        )}
-        {/* Overlay icona foto */}
-        <div style={{
-          position: 'absolute', bottom: 10, right: 10,
-          background: 'rgba(0,0,0,0.5)',
-          color: '#fff', fontSize: 12, fontWeight: 600,
-          padding: '4px 10px', borderRadius: 20,
-          backdropFilter: 'blur(4px)',
-        }}>
-          📷 Foto
-        </div>
+        {photoContent}
       </div>
 
       {/* Lightbox fullscreen */}
@@ -212,3 +219,4 @@ const arrowBtn = (side: 'left' | 'right'): React.CSSProperties => ({
   fontSize: 22, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
   backdropFilter: 'blur(8px)',
 });
+export type PoolType = 'none' | 'private' | 'shared';

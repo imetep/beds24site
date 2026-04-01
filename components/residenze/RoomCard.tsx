@@ -16,7 +16,7 @@ const LABELS: Record<string, {
   sqm: string;
   privatePool: string; sharedPool: string; noPool: string;
   prenota: string; noPhoto: string;
-  floorGround: string; floor: string;
+  floorGround: string; floor: string; basement: string;
 }> = {
   it: {
     bedroom: 'camera',   bedrooms: 'camere',
@@ -25,7 +25,7 @@ const LABELS: Record<string, {
     sqm: 'mq',
     privatePool: '🏊 Piscina privata', sharedPool: '🌊 Piscina condivisa', noPool: '🏖️ 250m dal mare',
     prenota: 'Scopri e Prenota →', noPhoto: 'Foto in arrivo',
-    floorGround: 'Piano terra', floor: 'Piano',
+    floorGround: 'Piano terra', floor: 'Piano', basement: 'Seminterrato',
   },
   en: {
     bedroom: 'bedroom',  bedrooms: 'bedrooms',
@@ -34,7 +34,7 @@ const LABELS: Record<string, {
     sqm: 'sqm',
     privatePool: '🏊 Private pool', sharedPool: '🌊 Shared pool', noPool: '🏖️ 250m from the sea',
     prenota: 'Discover & Book →', noPhoto: 'Photo coming soon',
-    floorGround: 'Ground floor', floor: 'Floor',
+    floorGround: 'Ground floor', floor: 'Floor', basement: 'Basement',
   },
   de: {
     bedroom: 'Schlafzimmer', bedrooms: 'Schlafzimmer',
@@ -43,7 +43,7 @@ const LABELS: Record<string, {
     sqm: 'qm',
     privatePool: '🏊 Privater Pool', sharedPool: '🌊 Gemeinschaftspool', noPool: '🏖️ 250m vom Meer',
     prenota: 'Entdecken & Buchen →', noPhoto: 'Foto folgt',
-    floorGround: 'Erdgeschoss', floor: 'Etage',
+    floorGround: 'Erdgeschoss', floor: 'Etage', basement: 'Untergeschoss',
   },
   pl: {
     bedroom: 'sypialnia', bedrooms: 'sypialnie',
@@ -52,7 +52,7 @@ const LABELS: Record<string, {
     sqm: 'mkw',
     privatePool: '🏊 Prywatny basen', sharedPool: '🌊 Wspólny basen', noPool: '🏖️ 250m od morza',
     prenota: 'Zobacz i Zarezerwuj →', noPhoto: 'Zdjęcie wkrótce',
-    floorGround: 'Parter', floor: 'Piętro',
+    floorGround: 'Parter', floor: 'Piętro', basement: 'Piwnica',
   },
 };
 
@@ -69,19 +69,22 @@ export default function RoomCard({ room, locale, coverUrl }: Props) {
   const t = LABELS[locale] ?? LABELS.it;
 
   const poolLabel  = room.privatePool ? t.privatePool : room.sharedPool ? t.sharedPool : t.noPool;
-  const floorLabel = room.floor === 0 ? t.floorGround : `${t.floor} ${room.floor}`;
+  const floorLabel = room.floor < 0 ? t.basement : room.floor === 0 ? t.floorGround : `${t.floor} ${room.floor}`;
+  const roomHref   = `/${locale}/residenze/${room.slug}`;
 
   return (
     <div style={cardStyle}>
 
-      {/* Foto cliccabile → gallery slider */}
+      {/* Foto cliccabile → scheda appartamento */}
       <div style={{ position: 'relative' }}>
         <CardPhotoGallery
           cloudinaryFolder={room.cloudinaryFolder}
           coverUrl={coverUrl}
           roomName={room.name}
           noPhotoLabel={t.noPhoto}
+          linkHref={roomHref}
         />
+        {/* Badge piano */}
         <div style={badgeStyle}>{floorLabel}</div>
       </div>
 
@@ -100,8 +103,8 @@ export default function RoomCard({ room, locale, coverUrl }: Props) {
           <span style={chipStyle}>{poolLabel}</span>
         </div>
 
-        {/* Solo "Prenota" → scheda appartamento (non più wizard) */}
-        <Link href={`/${locale}/residenze/${room.slug}`} style={btnPrimaryStyle}>
+        {/* Scopri e Prenota → scheda appartamento */}
+        <Link href={roomHref} style={btnPrimaryStyle}>
           {t.prenota}
         </Link>
 
