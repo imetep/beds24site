@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
     let invoiceAmount: number | null = null;
     try {
       await new Promise(r => setTimeout(r, 2000));
-      const getRes = await fetch(`${BASE_URL}/bookings?bookingId=${bookId}`, {
+      const getRes = await fetch(`${BASE_URL}/bookings?id=${bookId}`, {
         headers: { token },
         cache: 'no-store',
       });

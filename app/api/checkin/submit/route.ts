@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { PROPERTIES } from '@/config/properties';
 
 const REDIS_URL   = process.env.KV_REST_API_URL!;
 const REDIS_TOKEN = process.env.KV_REST_API_TOKEN!;
@@ -82,13 +83,15 @@ LivingApple — Scauri (LT)
 ${baseUrl}
   `.trim();
 
+  const fromAddress = process.env.RESEND_FROM ?? 'onboarding@resend.dev';
+
   // Invia in parallelo
   await Promise.allSettled([
     fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from:    'checkin@livingapple.it',
+        from:    fromAddress,
         to:      [hostEmail],
         subject: `[Check-in] #${data.bookId} — ${c.lastName} ${c.firstName}`,
         text:    hostBody,
@@ -98,7 +101,7 @@ ${baseUrl}
       method: 'POST',
       headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from:    'checkin@livingapple.it',
+        from:    fromAddress,
         to:      [guestEmail],
         subject: `Check-in confermato — Prenotazione #${data.bookId} — LivingApple`,
         text:    guestBody,
@@ -119,8 +122,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Dati obbligatori mancanti' }, { status: 400 });
     }
 
+    // Arricchisce roomName da PROPERTIES se vuoto
+    const propRoom = PROPERTIES.flatMap(p => p.rooms).find((r: any) => r.roomId === Number(bookId));
+    const resolvedRoomName = roomName || propRoom?.name || '';
+
     const checkinData = {
-      bookId, roomName, checkIn, checkOut,
+      bookId, roomName: resolvedRoomName, checkIn, checkOut,
       capogruppo, altri: altri ?? [],
       docs: docs ?? [],
       signature, consentTulps, consentGdpr,

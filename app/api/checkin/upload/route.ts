@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       folder:         `livingapple/checkin/${bookId}`,
       public_id:      label ?? `doc_${Date.now()}`,
       resource_type:  'image',
-      type:           'private',       // non accessibile pubblicamente
+      type:           'upload',      // accessibile con URL diretto
       overwrite:      true,
     });
 
