@@ -21,16 +21,34 @@ async function redisSet(key: string, value: string, ttlSeconds?: number) {
   }
 }
 
-async function sendEmails(data: any) {
-  const resendKey = process.env.RESEND_API_KEY;
-  if (!resendKey) { console.warn('[checkin/submit] RESEND_API_KEY mancante'); return; }
+async function sendBrevo(to: string, subject: string, text: string) {
+  const apiKey = process.env.BREVO_API_KEY;
+  if (!apiKey) { console.warn('[checkin/submit] BREVO_API_KEY mancante'); return; }
 
+  const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: { 'api-key': apiKey, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      sender:      { name: 'LivingApple', email: process.env.HOST_EMAIL ?? 'contattolivingapple@gmail.com' },
+      to:          [{ email: to }],
+      subject,
+      textContent: text,
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    console.error('[checkin/submit] Brevo error:', res.status, err);
+  }
+}
+
+async function sendEmails(data: any) {
   const hostEmail  = process.env.HOST_EMAIL ?? 'contattolivingapple@gmail.com';
   const guestEmail = data.capogruppo?.email;
   const c          = data.capogruppo;
   const baseUrl    = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://livingapple.it';
 
-  // ── Email all'host ────────────────────────────────────────────────────────
+  // ── Email all'host ─────────────────────────────────────────────────────────
   const capoLine = `${c.lastName} ${c.firstName} — nato il ${c.birthDate} a ${c.birthPlace} (${c.citizenship}) — ${c.gender} — ${c.docType} n° ${c.docNumber} rilasciato a ${c.docIssuePlace}`;
   const altriLines = (data.altri ?? []).map((a: any, i: number) =>
     `Ospite ${i + 2} (${a.guestType}): ${a.lastName} ${a.firstName} — nato il ${a.birthDate} a ${a.birthPlace} (${a.citizenship}) — ${a.gender}`
@@ -49,7 +67,7 @@ CAPOGRUPPO
 ${capoLine}
 ${data.altri?.length ? `\nALTRI OSPITI\n${altriLines}` : ''}
 
-DOCUMENTI (Cloudinary — cartella privata)
+DOCUMENTI (Cloudinary)
 ${docsLines || 'nessuno'}
 
 FIRMA: ${data.signature}
@@ -61,7 +79,7 @@ Ora invio: ${new Date().toLocaleString('it-IT')}
 Pannello admin: ${baseUrl}/admin/checkin
   `.trim();
 
-  // ── Email all'ospite ──────────────────────────────────────────────────────
+  // ── Email all'ospite ───────────────────────────────────────────────────────
   const guestBody = `
 Gentile ${c.firstName} ${c.lastName},
 
@@ -73,41 +91,25 @@ Check-in: ${data.checkIn}
 Check-out: ${data.checkOut}
 
 Cosa succede adesso:
-Il gestore verificherà i documenti e ti invierà una email di approvazione entro 24 ore. 
+Il gestore verificherà i documenti e ti invierà una email di approvazione entro 24 ore.
 Controlla anche la cartella spam.
 
-Per qualsiasi domanda puoi contattarci via WhatsApp al +39 328 313 1500 
-o per email a contattolivingapple@gmail.com
+Puoi seguire lo stato della tua richiesta e inviarci messaggi qui:
+${baseUrl}/it/self-checkin/wizard/status?bookId=${data.bookId}
+
+Per qualsiasi domanda puoi contattarci via WhatsApp al +39 328 313 1500
+o per email a ${hostEmail}
 
 LivingApple — Scauri (LT)
 ${baseUrl}
   `.trim();
 
-  const fromAddress = process.env.RESEND_FROM ?? 'onboarding@resend.dev';
-
-  // Invia in parallelo
   await Promise.allSettled([
-    fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        from:    fromAddress,
-        to:      [hostEmail],
-        subject: `[Check-in] #${data.bookId} — ${c.lastName} ${c.firstName}`,
-        text:    hostBody,
-      }),
-    }),
-    guestEmail && fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        from:    fromAddress,
-        to:      [guestEmail],
-        subject: `Check-in confermato — Prenotazione #${data.bookId} — LivingApple`,
-        text:    guestBody,
-      }),
-    }),
-  ].filter(Boolean));
+    sendBrevo(hostEmail, `[Check-in] #${data.bookId} — ${c.lastName} ${c.firstName}`, hostBody),
+    guestEmail
+      ? sendBrevo(guestEmail, `Check-in confermato — Prenotazione #${data.bookId} — LivingApple`, guestBody)
+      : Promise.resolve(),
+  ]);
 }
 
 export async function POST(req: NextRequest) {
@@ -122,7 +124,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Dati obbligatori mancanti' }, { status: 400 });
     }
 
-    // Arricchisce roomName da PROPERTIES se vuoto
     const propRoom = PROPERTIES.flatMap(p => p.rooms).find((r: any) => r.roomId === Number(bookId));
     const resolvedRoomName = roomName || propRoom?.name || '';
 
@@ -132,13 +133,14 @@ export async function POST(req: NextRequest) {
       docs: docs ?? [],
       signature, consentTulps, consentGdpr,
       status:    'PENDING',
+      messages:  [],           // thread messaggi host ↔ ospite
       createdAt: new Date().toISOString(),
     };
 
     // Salva su Redis — TTL 90 giorni
     await redisSet(`checkin:${bookId}`, JSON.stringify(checkinData), 90 * 24 * 3600);
 
-    // Invia entrambe le email
+    // Invia email via Brevo
     await sendEmails(checkinData);
 
     return NextResponse.json({ ok: true, bookId });

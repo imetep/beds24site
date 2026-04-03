@@ -90,14 +90,14 @@ const T: Record<'it' | 'en', Record<string, string>> = {
     amico:           'Amico',
     guestN:          'Ospite',
     mainGuest:       'Capogruppo',
-    step3Title:      'Documento di identità',
-    step3Sub:        'Carica fronte e retro del documento del capogruppo.',
-    step3SubExtra:   'Il documento è richiesto solo per il capogruppo.',
+    step3Title:      'Documenti di identità',
+    step3Sub:        'Carica fronte e retro del documento del capogruppo. Per gli altri ospiti carica il fronte.',
+    step3SubExtra:   '',
     docWarning:      'Documenti con visi oscurati, dati coperti o immagini modificate vengono rifiutati automaticamente.',
     gdprNote:        "I dati sono trasmessi alle autorità italiane ai sensi dell'art. 109 TULPS e trattati secondo il Reg. UE 2016/679 (GDPR).",
     frontLabel:      'Fronte',
     backLabel:       'Retro',
-    uploadBtn:       'Carica foto',
+    uploadBtn:       'Tocca per caricare',
     uploading:       'Caricamento…',
     uploaded:        'Caricato ✓',
     uploadErr:       'Errore caricamento',
@@ -107,7 +107,7 @@ const T: Record<'it' | 'en', Record<string, string>> = {
     summaryCapo:     'Capogruppo',
     summaryOspiti:   'Altri ospiti',
     consentTulps:    "Ho letto la normativa vigente e acconsento alla verifica de visu all'arrivo (art. 109 TULPS).",
-    consentGdpr:     'Acconsento al trattamento dei dati personali ai sensi del Reg. UE 2016/679 (GDPR) e dell\'art. 109 TULPS.',
+    consentGdpr:     "Acconsento al trattamento dei dati personali ai sensi del Reg. UE 2016/679 (GDPR) e dell'art. 109 TULPS.",
     signLabel:       'Firma digitale — cognome e nome come da documento',
     signPh:          'Es. Rossi Mario',
     submitBtn:       'Invia richiesta',
@@ -116,6 +116,7 @@ const T: Record<'it' | 'en', Record<string, string>> = {
     successText:     'Riceverai una email di conferma quando la tua richiesta sarà approvata. Controlla anche la cartella spam.',
     successRef:      'Riferimento prenotazione',
     errorGeneric:    'Si è verificato un errore. Riprova o contattaci via WhatsApp.',
+    docSection:      'Documenti',
   },
   en: {
     step1Title:      'Your booking number',
@@ -152,7 +153,7 @@ const T: Record<'it' | 'en', Record<string, string>> = {
     docIssuePlace:   'Place of issue',
     passport:        'Passport',
     idCard:          'ID card',
-    license:         'Driving licence',
+    license:         "Driver's licence",
     addGuest:        '+ Add guest',
     removeGuest:     'Remove',
     otherGuests:     'Other guests',
@@ -161,14 +162,14 @@ const T: Record<'it' | 'en', Record<string, string>> = {
     amico:           'Friend',
     guestN:          'Guest',
     mainGuest:       'Lead guest',
-    step3Title:      'Identity document',
-    step3Sub:        'Upload the front and back of the lead guest document.',
-    step3SubExtra:   'A document is only required for the lead guest.',
-    docWarning:      'Documents with obscured faces, covered data or altered images will be automatically rejected.',
-    gdprNote:        'Your data is transmitted to Italian authorities under Art. 109 TULPS and processed in accordance with EU Reg. 2016/679 (GDPR).',
+    step3Title:      'Identity documents',
+    step3Sub:        'Upload front and back of the lead guest document. For other guests, upload the front only.',
+    step3SubExtra:   '',
+    docWarning:      'Documents with obscured faces, covered data or edited images are automatically rejected.',
+    gdprNote:        'Your data is transmitted to Italian authorities under art. 109 TULPS and processed under EU Regulation 2016/679 (GDPR).',
     frontLabel:      'Front',
     backLabel:       'Back',
-    uploadBtn:       'Upload photo',
+    uploadBtn:       'Tap to upload',
     uploading:       'Uploading…',
     uploaded:        'Uploaded ✓',
     uploadErr:       'Upload error',
@@ -177,39 +178,69 @@ const T: Record<'it' | 'en', Record<string, string>> = {
     summaryTitle:    'Summary',
     summaryCapo:     'Lead guest',
     summaryOspiti:   'Other guests',
-    consentTulps:    'I have read the applicable regulations and consent to in-person (de visu) verification on arrival (Art. 109 TULPS).',
-    consentGdpr:     'I consent to the processing of my personal data in accordance with EU Reg. 2016/679 (GDPR) and Art. 109 TULPS.',
+    consentTulps:    'I have read the applicable regulations and consent to in-person verification on arrival (art. 109 TULPS).',
+    consentGdpr:     'I consent to the processing of my personal data under EU Regulation 2016/679 (GDPR) and art. 109 TULPS.',
     signLabel:       'Digital signature — last name and first name as on document',
     signPh:          'E.g. Rossi Mario',
     submitBtn:       'Submit request',
     submitting:      'Submitting…',
     successTitle:    'Request submitted',
-    successText:     'You will receive a confirmation email once your request has been approved. Please also check your spam folder.',
+    successText:     'You will receive a confirmation email once your request is approved. Check your spam folder too.',
     successRef:      'Booking reference',
     errorGeneric:    'An error occurred. Please try again or contact us via WhatsApp.',
+    docSection:      'Documents',
   },
 };
-
-function useT(locale: Locale) { return T[locale === 'it' ? 'it' : 'en']; }
+function useT(locale: Locale) {
+  const lang = (locale === 'it' || locale === 'en') ? locale : 'it';
+  return T[lang];
+}
 
 // ─── Stili ────────────────────────────────────────────────────────────────────
 const inp: React.CSSProperties = {
-  width: '100%', padding: '10px 12px', fontSize: 15,
-  border: '1px solid #d1d5db', borderRadius: 8,
-  background: '#fff', color: '#111', outline: 'none', boxSizing: 'border-box',
+  width: '100%', padding: '12px 14px', fontSize: 16,
+  border: '1.5px solid #e5e7eb', borderRadius: 10,
+  background: '#fafafa', color: '#111', outline: 'none',
+  boxSizing: 'border-box', fontFamily: 'inherit',
 };
 const lbl: React.CSSProperties = {
-  fontSize: 13, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 4,
+  fontSize: 12, fontWeight: 700, color: '#6b7280',
+  display: 'block', marginBottom: 5, letterSpacing: '0.04em',
+  textTransform: 'uppercase',
 };
-const fw: React.CSSProperties = { marginBottom: 12 };
+const fw: React.CSSProperties = { marginBottom: 14 };
+// Flex item per layout 2 colonne responsive
+const half: React.CSSProperties = { flex: '1 1 200px', marginBottom: 14 };
 const btnP: React.CSSProperties = {
-  width: '100%', padding: '13px 20px', fontSize: 15, fontWeight: 700,
+  width: '100%', padding: '14px 20px', fontSize: 16, fontWeight: 700,
   background: '#1E73BE', color: '#fff', border: 'none', borderRadius: 12, cursor: 'pointer',
 };
 const btnS: React.CSSProperties = {
-  padding: '10px 16px', fontSize: 14, background: 'none', color: '#6b7280',
-  border: '0.5px solid #d1d5db', borderRadius: 8, cursor: 'pointer',
+  padding: '12px 16px', fontSize: 14, background: '#fff', color: '#374151',
+  border: '1.5px solid #e5e7eb', borderRadius: 10, cursor: 'pointer',
 };
+
+// Helper: riga a due colonne responsive
+function Row({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+      {children}
+    </div>
+  );
+}
+
+// Helper: separatore sezione
+function SectionHeader({ label, icon }: { label: string; icon: string }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '20px 0 14px', paddingTop: 4,
+      borderTop: '1.5px solid #f3f4f6' }}>
+      <span style={{ fontSize: 16 }}>{icon}</span>
+      <span style={{ fontSize: 13, fontWeight: 700, color: '#1E73BE', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+        {label}
+      </span>
+    </div>
+  );
+}
 
 // ─── Componente principale ────────────────────────────────────────────────────
 export default function WizardCheckin({ locale }: { locale: Locale }) {
@@ -226,10 +257,15 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
     docNumber: '', docIssuePlace: '',
   });
   const [altri, setAltri] = useState<OspiteAltro[]>([]);
-  const [docs, setDocs]   = useState<DocUpload[]>([
+
+  // Docs capogruppo: front + back
+  const [docs, setDocs] = useState<DocUpload[]>([
     { label: 'capogruppo_front', publicId: '', preview: '', uploading: false, error: '' },
     { label: 'capogruppo_back',  publicId: '', preview: '', uploading: false, error: '' },
   ]);
+  // Docs altri ospiti: solo front, uno per ospite
+  const [altriDocs, setAltriDocs] = useState<DocUpload[]>([]);
+
   const [consentTulps, setTulps]    = useState(false);
   const [consentGdpr, setGdpr]      = useState(false);
   const [signature, setSignature]   = useState('');
@@ -283,6 +319,16 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
   const updA = (idx: number, f: keyof OspiteAltro, v: string) =>
     setAltri(p => p.map((a, i) => i === idx ? { ...a, [f]: v } : a));
 
+  function addAltro() {
+    setAltri(p => [...p, { guestType: 'familiare', lastName: '', firstName: '', birthDate: '', gender: 'M', birthPlace: '', citizenship: '' }]);
+    setAltriDocs(p => [...p, { label: `altro_${altri.length}_front`, publicId: '', preview: '', uploading: false, error: '' }]);
+  }
+
+  function removeAltro(idx: number) {
+    setAltri(p => p.filter((_, i) => i !== idx));
+    setAltriDocs(p => p.filter((_, i) => i !== idx));
+  }
+
   // ── Step 3 ────────────────────────────────────────────────────────────────
   async function uploadDoc(idx: number, file: File) {
     setDocs(d => d.map((x, i) => i === idx ? { ...x, uploading: true, error: '' } : x));
@@ -298,20 +344,42 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
       setDocs(docs => docs.map((x, i) => i === idx ? { ...x, uploading: false, error: t.uploadErr } : x));
     }
   }
-  const validateDocs = () => docs.every(d => d.publicId !== '');
+
+  async function uploadAltroDoc(idx: number, file: File) {
+    setAltriDocs(d => d.map((x, i) => i === idx ? { ...x, uploading: true, error: '' } : x));
+    try {
+      const preview = URL.createObjectURL(file);
+      const fd = new FormData();
+      fd.append('file', file); fd.append('bookId', String(booking!.bookId)); fd.append('label', `altro_${idx}_front`);
+      const res = await fetch('/api/checkin/upload', { method: 'POST', body: fd });
+      const d   = await res.json();
+      if (!res.ok || !d.ok) throw new Error(d.error ?? 'Upload fallito');
+      setAltriDocs(docs => docs.map((x, i) => i === idx ? { ...x, uploading: false, publicId: d.publicId, preview } : x));
+    } catch {
+      setAltriDocs(docs => docs.map((x, i) => i === idx ? { ...x, uploading: false, error: t.uploadErr } : x));
+    }
+  }
+
+  const validateDocs = () =>
+    docs.every(d => d.publicId !== '') &&
+    altriDocs.every(d => d.publicId !== '');
 
   // ── Step 4 ────────────────────────────────────────────────────────────────
   async function submit() {
     if (!signature.trim() || !consentTulps || !consentGdpr) return;
     setSubmitting(true); setSubmitErr('');
     try {
+      const allDocs = [
+        ...docs.filter(d => d.publicId).map(d => ({ label: d.label, publicId: d.publicId })),
+        ...altriDocs.filter(d => d.publicId).map(d => ({ label: d.label, publicId: d.publicId })),
+      ];
       const res = await fetch('/api/checkin/submit', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           bookId: booking!.bookId, roomName: booking!.roomName,
           checkIn: booking!.checkIn, checkOut: booking!.checkOut,
           capogruppo: capo, altri,
-          docs: docs.filter(d => d.publicId).map(d => ({ label: d.label, publicId: d.publicId })),
+          docs: allDocs,
           signature: signature.trim(), consentTulps, consentGdpr,
         }),
       });
@@ -324,7 +392,7 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
 
   // ── Progress bar ──────────────────────────────────────────────────────────
   const Bar = () => (
-    <div style={{ background: '#fff', padding: '14px 20px', borderBottom: '0.5px solid #f3f4f6', marginBottom: 8 }}>
+    <div style={{ background: '#fff', padding: '14px 20px 12px', borderBottom: '1px solid #f3f4f6', marginBottom: 0 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, fontSize: 12, color: '#9ca3af' }}>
         <span>Step {step} {t.stepOf} 4</span><span>{Math.round((step / 4) * 100)}%</span>
       </div>
@@ -335,45 +403,93 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
   );
 
   // ─── COMPLETATO ───────────────────────────────────────────────────────────
-  if (done) return (
-    <div style={{ maxWidth: 600, margin: '0 auto', padding: '40px 20px', textAlign: 'center' }}>
-      <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
-      <h1 style={{ fontSize: 22, fontWeight: 700, color: '#111', marginBottom: 12 }}>{t.successTitle}</h1>
-      <p style={{ fontSize: 15, color: '#4b5563', lineHeight: 1.7, marginBottom: 20 }}>{t.successText}</p>
-      <div style={{ background: '#EEF5FC', borderRadius: 10, padding: '12px 20px', display: 'inline-block' }}>
-        <p style={{ margin: 0, fontSize: 13, color: '#185FA5' }}>{t.successRef}: <strong>#{booking!.bookId}</strong></p>
+  if (done) {
+    const isEn = locale === 'en';
+    const statusUrl = `/it/self-checkin/wizard/status?bookId=${booking!.bookId}`;
+    const steps = isEn ? [
+      { icon: '📧', title: 'Deposit link incoming', text: "You will shortly receive an email with the link to authorize the security deposit. Check your inbox (and spam)." },
+      { icon: '🔍', title: 'Document review', text: 'We will verify your documents within 24 hours.' },
+      { icon: '✅', title: 'Approval email', text: 'You will receive a confirmation email with the outcome of your request.' },
+    ] : [
+      { icon: '📧', title: 'Link deposito in arrivo', text: "A breve riceverai un'email con il link per autorizzare il deposito cauzionale. Controlla la casella (e lo spam)." },
+      { icon: '🔍', title: 'Verifica documenti', text: 'Verificheremo i tuoi documenti entro 24 ore.' },
+      { icon: '✅', title: 'Email di approvazione', text: "Riceverai una email con l'esito della tua richiesta." },
+    ];
+    return (
+      <div style={{ maxWidth: 600, margin: '0 auto', padding: '32px 20px 60px' }}>
+        <div style={{ textAlign: 'center', marginBottom: 28 }}>
+          <div style={{ fontSize: 52, marginBottom: 14 }}>✅</div>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: '#111', marginBottom: 8 }}>
+            {isEn ? 'Request submitted' : 'Richiesta inviata'}
+          </h1>
+          <div style={{ display: 'inline-block', background: '#EEF5FC', borderRadius: 10, padding: '8px 18px' }}>
+            <p style={{ margin: 0, fontSize: 13, color: '#185FA5' }}>
+              {isEn ? 'Booking reference' : 'Riferimento prenotazione'}: <strong>#{booking!.bookId}</strong>
+            </p>
+          </div>
+        </div>
+        <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, padding: '20px', marginBottom: 20 }}>
+          <p style={{ margin: '0 0 16px', fontSize: 12, fontWeight: 700, color: '#6b7280', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+            {isEn ? 'What happens next' : 'Cosa succede adesso'}
+          </p>
+          {steps.map((s, i) => (
+            <div key={i} style={{ display: 'flex', gap: 14, marginBottom: i < steps.length - 1 ? 16 : 0, alignItems: 'flex-start' }}>
+              <div style={{ fontSize: 20, flexShrink: 0, marginTop: 1 }}>{s.icon}</div>
+              <div>
+                <p style={{ margin: '0 0 2px', fontSize: 14, fontWeight: 700, color: '#111' }}>{s.title}</p>
+                <p style={{ margin: 0, fontSize: 13, color: '#6b7280', lineHeight: 1.6 }}>{s.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 14, padding: '18px 20px' }}>
+          <p style={{ margin: '0 0 6px', fontSize: 14, fontWeight: 700, color: '#111' }}>
+            {isEn ? 'Track your request' : 'Segui la tua richiesta'}
+          </p>
+          <p style={{ margin: '0 0 12px', fontSize: 13, color: '#6b7280', lineHeight: 1.6 }}>
+            {isEn ? 'Check the status and send us messages at any time:' : 'Controlla lo stato e scrivici in qualsiasi momento:'}
+          </p>
+          <a href={statusUrl} style={{
+            display: 'block', textAlign: 'center', padding: '12px 20px',
+            background: '#1E73BE', color: '#fff', borderRadius: 10,
+            fontSize: 14, fontWeight: 700, textDecoration: 'none',
+          }}>
+            {isEn ? 'Go to my request →' : 'Vai alla mia richiesta →'}
+          </a>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 
   return (
-    <div style={{ maxWidth: 600, margin: '0 auto', padding: '0 0 60px' }}>
+    <div style={{ maxWidth: 600, margin: '0 auto', padding: '0 0 80px' }}>
 
       {/* ── STEP 1 ────────────────────────────────────────────────────────── */}
       {step === 1 && (<>
         <Bar />
-        <div style={{ background: '#fff', padding: '20px 20px 24px' }}>
-          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#111', margin: '0 0 6px' }}>{t.step1Title}</h1>
-          <p style={{ margin: '0 0 20px', fontSize: 14, color: '#6b7280' }}>{t.step1Sub}</p>
+        <div style={{ background: '#fff', padding: '24px 20px 28px' }}>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: '#111', margin: '0 0 6px' }}>{t.step1Title}</h1>
+          <p style={{ margin: '0 0 24px', fontSize: 14, color: '#6b7280', lineHeight: 1.6 }}>{t.step1Sub}</p>
           <div style={fw}>
             <label style={lbl}>{t.bookIdLabel}</label>
             <input style={inp} type="number" inputMode="numeric" placeholder={t.bookIdPh}
+              tabIndex={1}
               value={bookIdInput}
               onChange={e => { setBookIdInput(e.target.value); setVerifyErr(''); setBooking(null); }}
               onKeyDown={e => e.key === 'Enter' && verifyBooking()} />
           </div>
           {verifyErr && <p style={{ fontSize: 13, color: '#dc2626', marginBottom: 12 }}>{verifyErr}</p>}
           {booking ? (<>
-            <div style={{ background: '#EAF3DE', borderRadius: 10, padding: '14px 16px', marginBottom: 16, border: '0.5px solid #C0DD97' }}>
+            <div style={{ background: '#EAF3DE', borderRadius: 10, padding: '14px 16px', marginBottom: 20, border: '1px solid #C0DD97' }}>
               <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 700, color: '#27500A' }}>{t.foundTitle} ✓</p>
               <p style={{ margin: '0 0 2px', fontSize: 13, color: '#3B6D11' }}>{t.propLabel}: <strong>{booking.roomName}</strong></p>
               <p style={{ margin: '0 0 2px', fontSize: 13, color: '#3B6D11' }}>{t.checkinLabel}: <strong>{booking.checkIn}</strong> — {t.checkoutLabel}: <strong>{booking.checkOut}</strong></p>
               <p style={{ margin: 0, fontSize: 13, color: '#3B6D11' }}>{t.guestsLabel}: <strong>{booking.numAdult}</strong></p>
             </div>
-            <button style={btnP} onClick={() => setStep(2)}>{t.continueBtn}</button>
+            <button style={btnP} onClick={() => setStep(2)} tabIndex={2}>{t.continueBtn}</button>
           </>) : (
             <button style={{ ...btnP, opacity: verifying || !bookIdInput.trim() ? 0.6 : 1 }}
-              onClick={verifyBooking} disabled={verifying || !bookIdInput.trim()}>
+              onClick={verifyBooking} disabled={verifying || !bookIdInput.trim()} tabIndex={2}>
               {verifying ? t.verifying : t.verifyBtn}
             </button>
           )}
@@ -383,104 +499,155 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
       {/* ── STEP 2 ────────────────────────────────────────────────────────── */}
       {step === 2 && (<>
         <Bar />
-        <div style={{ background: '#fff', padding: '20px 20px 24px' }}>
-          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#111', margin: '0 0 6px' }}>{t.step2Title}</h1>
-          <p style={{ margin: '0 0 20px', fontSize: 14, color: '#6b7280' }}>{t.step2Sub}</p>
+        <div style={{ background: '#fff', padding: '24px 20px 28px' }}>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: '#111', margin: '0 0 4px' }}>{t.step2Title}</h1>
+          <p style={{ margin: '0 0 20px', fontSize: 14, color: '#6b7280', lineHeight: 1.6 }}>{t.step2Sub}</p>
 
-          {/* Capogruppo */}
-          <p style={{ margin: '0 0 14px', fontSize: 14, fontWeight: 700, color: '#374151' }}>👤 {t.mainGuest}</p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            <div style={fw}><label style={lbl}>{t.lastName} *</label>
-              <input style={inp} value={capo.lastName} onChange={e => setCapo(c => ({ ...c, lastName: e.target.value }))} /></div>
-            <div style={fw}><label style={lbl}>{t.firstName} *</label>
-              <input style={inp} value={capo.firstName} onChange={e => setCapo(c => ({ ...c, firstName: e.target.value }))} /></div>
-          </div>
+          {/* ── Capogruppo ── */}
+          <SectionHeader label={t.mainGuest} icon="👤" />
 
-          {/* Email — campo critico con nota di verifica */}
-          <div style={{ ...fw, marginBottom: 16 }}>
+          <Row>
+            <div style={half}>
+              <label style={lbl}>{t.lastName} *</label>
+              <input style={inp} tabIndex={1} value={capo.lastName}
+                onChange={e => setCapo(c => ({ ...c, lastName: e.target.value }))} />
+            </div>
+            <div style={half}>
+              <label style={lbl}>{t.firstName} *</label>
+              <input style={inp} tabIndex={2} value={capo.firstName}
+                onChange={e => setCapo(c => ({ ...c, firstName: e.target.value }))} />
+            </div>
+          </Row>
+
+          <div style={fw}>
             <label style={lbl}>{t.emailLabel} *</label>
             <input style={inp} type="email" inputMode="email" placeholder={t.emailPh}
-              value={capo.email} onChange={e => setCapo(c => ({ ...c, email: e.target.value }))} />
-            <div style={{ marginTop: 6, background: '#FFF9E6', border: '0.5px solid #FDE68A', borderRadius: 6, padding: '6px 10px' }}>
+              tabIndex={3} value={capo.email}
+              onChange={e => setCapo(c => ({ ...c, email: e.target.value }))} />
+            <div style={{ marginTop: 6, background: '#FFF9E6', border: '1px solid #FDE68A', borderRadius: 8, padding: '8px 12px' }}>
               <p style={{ margin: 0, fontSize: 12, color: '#713f12' }}>⚠️ {t.emailNote}</p>
             </div>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            <div style={fw}><label style={lbl}>{t.birthDate} *</label>
-              <input style={inp} type="date" value={capo.birthDate} onChange={e => setCapo(c => ({ ...c, birthDate: e.target.value }))} /></div>
-            <div style={fw}><label style={lbl}>{t.gender} *</label>
-              <select style={{ ...inp, appearance: 'none' }} value={capo.gender} onChange={e => setCapo(c => ({ ...c, gender: e.target.value }))}>
-                <option value="M">{t.male}</option><option value="F">{t.female}</option>
-              </select></div>
+
+          <Row>
+            <div style={half}>
+              <label style={lbl}>{t.birthDate} *</label>
+              <input style={inp} type="date" tabIndex={4} value={capo.birthDate}
+                onChange={e => setCapo(c => ({ ...c, birthDate: e.target.value }))} />
+            </div>
+            <div style={half}>
+              <label style={lbl}>{t.gender} *</label>
+              <select style={{ ...inp, appearance: 'none' }} tabIndex={5} value={capo.gender}
+                onChange={e => setCapo(c => ({ ...c, gender: e.target.value }))}>
+                <option value="M">{t.male}</option>
+                <option value="F">{t.female}</option>
+              </select>
+            </div>
+          </Row>
+
+          <div style={fw}>
+            <label style={lbl}>{t.birthPlace} *</label>
+            <input style={inp} tabIndex={6} value={capo.birthPlace}
+              onChange={e => setCapo(c => ({ ...c, birthPlace: e.target.value }))} />
           </div>
-          <div style={fw}><label style={lbl}>{t.birthPlace} *</label>
-            <input style={inp} value={capo.birthPlace} onChange={e => setCapo(c => ({ ...c, birthPlace: e.target.value }))} /></div>
-          <div style={fw}><label style={lbl}>{t.citizenship} *</label>
-            <input style={inp} value={capo.citizenship} onChange={e => setCapo(c => ({ ...c, citizenship: e.target.value }))} /></div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            <div style={fw}><label style={lbl}>{t.docType} *</label>
-              <select style={{ ...inp, appearance: 'none' }} value={capo.docType} onChange={e => setCapo(c => ({ ...c, docType: e.target.value }))}>
+
+          <div style={fw}>
+            <label style={lbl}>{t.citizenship} *</label>
+            <input style={inp} tabIndex={7} value={capo.citizenship}
+              onChange={e => setCapo(c => ({ ...c, citizenship: e.target.value }))} />
+          </div>
+
+          <Row>
+            <div style={half}>
+              <label style={lbl}>{t.docType} *</label>
+              <select style={{ ...inp, appearance: 'none' }} tabIndex={8} value={capo.docType}
+                onChange={e => setCapo(c => ({ ...c, docType: e.target.value }))}>
                 <option value="passport">{t.passport}</option>
                 <option value="id_card">{t.idCard}</option>
                 <option value="license">{t.license}</option>
-              </select></div>
-            <div style={fw}><label style={lbl}>{t.docNumber} *</label>
-              <input style={inp} value={capo.docNumber} onChange={e => setCapo(c => ({ ...c, docNumber: e.target.value }))} /></div>
+              </select>
+            </div>
+            <div style={half}>
+              <label style={lbl}>{t.docNumber} *</label>
+              <input style={inp} tabIndex={9} value={capo.docNumber}
+                onChange={e => setCapo(c => ({ ...c, docNumber: e.target.value }))} />
+            </div>
+          </Row>
+
+          <div style={{ ...fw, marginBottom: 20 }}>
+            <label style={lbl}>{t.docIssuePlace} *</label>
+            <input style={inp} tabIndex={10} value={capo.docIssuePlace}
+              onChange={e => setCapo(c => ({ ...c, docIssuePlace: e.target.value }))} />
           </div>
-          <div style={{ ...fw, marginBottom: 20 }}><label style={lbl}>{t.docIssuePlace} *</label>
-            <input style={inp} value={capo.docIssuePlace} onChange={e => setCapo(c => ({ ...c, docIssuePlace: e.target.value }))} /></div>
 
-          {/* Altri ospiti */}
-          {altri.length > 0 && (<>
-            <p style={{ margin: '0 0 12px', fontSize: 14, fontWeight: 700, color: '#374151', borderTop: '0.5px solid #f3f4f6', paddingTop: 16 }}>
-              👥 {t.otherGuests}
-            </p>
-            {altri.map((a, idx) => (
-              <div key={idx} style={{ marginBottom: 12, padding: 14, background: '#f9fafb', borderRadius: 10, border: '0.5px solid #e5e7eb' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                  <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: '#374151' }}>{t.guestN} {idx + 2}</p>
-                  <button style={{ ...btnS, fontSize: 12, padding: '4px 10px', color: '#dc2626', borderColor: '#fca5a5' }}
-                    onClick={() => setAltri(p => p.filter((_, i) => i !== idx))}>{t.removeGuest}</button>
-                </div>
-                <div style={fw}><label style={lbl}>{t.guestType} *</label>
-                  <select style={{ ...inp, appearance: 'none' }} value={a.guestType} onChange={e => updA(idx, 'guestType', e.target.value)}>
-                    <option value="familiare">{t.familiare}</option>
-                    <option value="amico">{t.amico}</option>
-                  </select></div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                  <div style={fw}><label style={lbl}>{t.lastName} *</label>
-                    <input style={inp} value={a.lastName} onChange={e => updA(idx, 'lastName', e.target.value)} /></div>
-                  <div style={fw}><label style={lbl}>{t.firstName} *</label>
-                    <input style={inp} value={a.firstName} onChange={e => updA(idx, 'firstName', e.target.value)} /></div>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                  <div style={fw}><label style={lbl}>{t.birthDate} *</label>
-                    <input style={inp} type="date" value={a.birthDate} onChange={e => updA(idx, 'birthDate', e.target.value)} /></div>
-                  <div style={fw}><label style={lbl}>{t.gender} *</label>
-                    <select style={{ ...inp, appearance: 'none' }} value={a.gender} onChange={e => updA(idx, 'gender', e.target.value)}>
-                      <option value="M">{t.male}</option><option value="F">{t.female}</option>
-                    </select></div>
-                </div>
-                <div style={fw}><label style={lbl}>{t.birthPlace} *</label>
-                  <input style={inp} value={a.birthPlace} onChange={e => updA(idx, 'birthPlace', e.target.value)} /></div>
-                <div style={fw}><label style={lbl}>{t.citizenship} *</label>
-                  <input style={inp} value={a.citizenship} onChange={e => updA(idx, 'citizenship', e.target.value)} /></div>
+          {/* ── Altri ospiti ── */}
+          {altri.length > 0 && (
+            <SectionHeader label={t.otherGuests} icon="👥" />
+          )}
+
+          {altri.map((a, idx) => (
+            <div key={idx} style={{ marginBottom: 16, padding: '16px 14px', background: '#f9fafb', borderRadius: 12, border: '1px solid #e5e7eb' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <span style={{ fontSize: 13, fontWeight: 700, color: '#1E73BE' }}>{t.guestN} {idx + 2}</span>
+                <button style={{ ...btnS, fontSize: 12, padding: '4px 10px', color: '#dc2626', borderColor: '#fca5a5' }}
+                  onClick={() => removeAltro(idx)}>{t.removeGuest}</button>
               </div>
-            ))}
-          </>)}
+              <div style={fw}>
+                <label style={lbl}>{t.guestType} *</label>
+                <select style={{ ...inp, appearance: 'none' }} value={a.guestType}
+                  onChange={e => updA(idx, 'guestType', e.target.value)}>
+                  <option value="familiare">{t.familiare}</option>
+                  <option value="amico">{t.amico}</option>
+                </select>
+              </div>
+              <Row>
+                <div style={half}>
+                  <label style={lbl}>{t.lastName} *</label>
+                  <input style={inp} value={a.lastName} onChange={e => updA(idx, 'lastName', e.target.value)} />
+                </div>
+                <div style={half}>
+                  <label style={lbl}>{t.firstName} *</label>
+                  <input style={inp} value={a.firstName} onChange={e => updA(idx, 'firstName', e.target.value)} />
+                </div>
+              </Row>
+              <Row>
+                <div style={half}>
+                  <label style={lbl}>{t.birthDate} *</label>
+                  <input style={inp} type="date" value={a.birthDate} onChange={e => updA(idx, 'birthDate', e.target.value)} />
+                </div>
+                <div style={half}>
+                  <label style={lbl}>{t.gender} *</label>
+                  <select style={{ ...inp, appearance: 'none' }} value={a.gender} onChange={e => updA(idx, 'gender', e.target.value)}>
+                    <option value="M">{t.male}</option>
+                    <option value="F">{t.female}</option>
+                  </select>
+                </div>
+              </Row>
+              <div style={fw}>
+                <label style={lbl}>{t.birthPlace} *</label>
+                <input style={inp} value={a.birthPlace} onChange={e => updA(idx, 'birthPlace', e.target.value)} />
+              </div>
+              <div style={{ ...fw, marginBottom: 0 }}>
+                <label style={lbl}>{t.citizenship} *</label>
+                <input style={inp} value={a.citizenship} onChange={e => updA(idx, 'citizenship', e.target.value)} />
+              </div>
+            </div>
+          ))}
 
-          <button style={{ ...btnS, width: '100%', marginBottom: 16 }}
-            onClick={() => setAltri(p => [...p, { guestType: 'amico', lastName: '', firstName: '', birthDate: '', gender: 'M', birthPlace: '', citizenship: '' }])}>
+          <button style={{ ...btnS, width: '100%', marginBottom: 20, textAlign: 'center' }}
+            onClick={addAltro}>
             {t.addGuest}
           </button>
+
           {step2Errors.length > 0 && (
-            <div style={{ background: '#FEF2F2', border: '0.5px solid #FECACA', borderRadius: 8, padding: '10px 14px', marginBottom: 12 }}>
+            <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 10, padding: '12px 14px', marginBottom: 14 }}>
               <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 700, color: '#991B1B' }}>Campi mancanti:</p>
               <ul style={{ margin: 0, padding: '0 0 0 16px' }}>
                 {step2Errors.map((e, i) => <li key={i} style={{ fontSize: 13, color: '#dc2626' }}>{e}</li>)}
               </ul>
             </div>
           )}
+
           <div style={{ display: 'flex', gap: 10 }}>
             <button style={{ ...btnS, flex: 1 }} onClick={() => setStep(1)}>{t.back}</button>
             <button style={{ ...btnP, flex: 2 }} onClick={tryStep3}>{t.continueBtn}</button>
@@ -491,23 +658,43 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
       {/* ── STEP 3 ────────────────────────────────────────────────────────── */}
       {step === 3 && (<>
         <Bar />
-        <div style={{ background: '#fff', padding: '20px 20px 24px' }}>
-          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#111', margin: '0 0 6px' }}>{t.step3Title}</h1>
-          <p style={{ margin: '0 0 4px', fontSize: 14, color: '#6b7280' }}>{t.step3Sub}</p>
-          <p style={{ margin: '0 0 14px', fontSize: 13, color: '#9ca3af' }}>{t.step3SubExtra}</p>
-          <div style={{ background: '#FEF2F2', border: '0.5px solid #FECACA', borderRadius: 8, padding: '10px 14px', marginBottom: 16 }}>
+        <div style={{ background: '#fff', padding: '24px 20px 28px' }}>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: '#111', margin: '0 0 6px' }}>{t.step3Title}</h1>
+          <p style={{ margin: '0 0 16px', fontSize: 14, color: '#6b7280', lineHeight: 1.6 }}>{t.step3Sub}</p>
+
+          <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 10, padding: '12px 14px', marginBottom: 20 }}>
             <p style={{ margin: '0 0 4px', fontSize: 12, fontWeight: 700, color: '#991B1B' }}>⚠️ {t.docWarning}</p>
             <p style={{ margin: 0, fontSize: 12, color: '#7f1d1d' }}>{t.gdprNote}</p>
           </div>
-          <p style={{ margin: '0 0 10px', fontSize: 14, fontWeight: 700, color: '#374151' }}>{capo.lastName} {capo.firstName}</p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 20 }}>
+
+          {/* Capogruppo docs */}
+          <SectionHeader label={`${capo.lastName} ${capo.firstName}`} icon="👤" />
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
             {docs.map((doc, idx) => (
-              <DocSlot key={doc.label} doc={doc}
-                side={doc.label.endsWith('_front') ? t.frontLabel : t.backLabel}
-                onFile={f => uploadDoc(idx, f)}
-                uploadTxt={t.uploadBtn} uploadingTxt={t.uploading} uploadedTxt={t.uploaded} />
+              <div key={doc.label} style={{ flex: '1 1 240px' }}>
+                <DocSlot doc={doc}
+                  side={doc.label.endsWith('_front') ? t.frontLabel : t.backLabel}
+                  onFile={f => uploadDoc(idx, f)}
+                  uploadTxt={t.uploadBtn} uploadingTxt={t.uploading} uploadedTxt={t.uploaded} />
+              </div>
             ))}
           </div>
+
+          {/* Altri ospiti docs */}
+          {altri.map((a, idx) => (
+            <div key={idx}>
+              <SectionHeader label={`${a.lastName} ${a.firstName}`} icon="👤" />
+              <div style={{ marginBottom: 20 }}>
+                {altriDocs[idx] && (
+                  <DocSlot doc={altriDocs[idx]}
+                    side={t.frontLabel}
+                    onFile={f => uploadAltroDoc(idx, f)}
+                    uploadTxt={t.uploadBtn} uploadingTxt={t.uploading} uploadedTxt={t.uploaded} />
+                )}
+              </div>
+            </div>
+          ))}
+
           <div style={{ display: 'flex', gap: 10 }}>
             <button style={{ ...btnS, flex: 1 }} onClick={() => setStep(2)}>{t.back}</button>
             <button style={{ ...btnP, flex: 2, opacity: validateDocs() ? 1 : 0.5 }}
@@ -519,39 +706,45 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
       {/* ── STEP 4 ────────────────────────────────────────────────────────── */}
       {step === 4 && (<>
         <Bar />
-        <div style={{ background: '#fff', padding: '20px 20px 24px' }}>
-          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#111', margin: '0 0 6px' }}>{t.step4Title}</h1>
-          <p style={{ margin: '0 0 16px', fontSize: 14, color: '#6b7280' }}>{t.step4Sub}</p>
-          <div style={{ background: '#f9fafb', borderRadius: 10, padding: '14px 16px', marginBottom: 20 }}>
-            <p style={{ margin: '0 0 8px', fontSize: 13, fontWeight: 700, color: '#374151' }}>{t.summaryTitle}</p>
-            <p style={{ margin: '0 0 2px', fontSize: 13, color: '#4b5563' }}>{t.propLabel}: <strong>{booking!.roomName}</strong></p>
-            <p style={{ margin: '0 0 6px', fontSize: 13, color: '#4b5563' }}>{t.checkinLabel}: <strong>{booking!.checkIn}</strong> — {t.checkoutLabel}: <strong>{booking!.checkOut}</strong></p>
-            <p style={{ margin: '0 0 4px', fontSize: 12, fontWeight: 600, color: '#6b7280' }}>{t.summaryCapo}</p>
-            <p style={{ margin: '0 0 2px', fontSize: 13, color: '#374151' }}>{capo.lastName} {capo.firstName} — {capo.docType} {capo.docNumber}</p>
+        <div style={{ background: '#fff', padding: '24px 20px 28px' }}>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: '#111', margin: '0 0 4px' }}>{t.step4Title}</h1>
+          <p style={{ margin: '0 0 20px', fontSize: 14, color: '#6b7280', lineHeight: 1.6 }}>{t.step4Sub}</p>
+
+          {/* Riepilogo */}
+          <div style={{ background: '#f9fafb', borderRadius: 12, padding: '16px', marginBottom: 24, border: '1px solid #e5e7eb' }}>
+            <p style={{ margin: '0 0 10px', fontSize: 12, fontWeight: 700, color: '#6b7280', letterSpacing: '0.04em', textTransform: 'uppercase' }}>{t.summaryTitle}</p>
+            <p style={{ margin: '0 0 2px', fontSize: 14, color: '#374151' }}>{t.propLabel}: <strong>{booking!.roomName}</strong></p>
+            <p style={{ margin: '0 0 10px', fontSize: 14, color: '#374151' }}>{t.checkinLabel}: <strong>{booking!.checkIn}</strong> → <strong>{booking!.checkOut}</strong></p>
+            <p style={{ margin: '0 0 3px', fontSize: 12, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase' }}>{t.summaryCapo}</p>
+            <p style={{ margin: '0 0 2px', fontSize: 14, color: '#111' }}>{capo.lastName} {capo.firstName} — {capo.docType} {capo.docNumber}</p>
             {altri.length > 0 && (<>
-              <p style={{ margin: '6px 0 4px', fontSize: 12, fontWeight: 600, color: '#6b7280' }}>{t.summaryOspiti}</p>
+              <p style={{ margin: '10px 0 3px', fontSize: 12, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase' }}>{t.summaryOspiti}</p>
               {altri.map((a, i) => (
-                <p key={i} style={{ margin: '0 0 2px', fontSize: 12, color: '#4b5563' }}>
+                <p key={i} style={{ margin: '0 0 2px', fontSize: 14, color: '#374151' }}>
                   {a.lastName} {a.firstName} ({t[a.guestType] ?? a.guestType})
                 </p>
               ))}
             </>)}
           </div>
-          <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 14, cursor: 'pointer' }}>
+
+          <label style={{ display: 'flex', gap: 12, alignItems: 'flex-start', marginBottom: 16, cursor: 'pointer' }}>
             <input type="checkbox" checked={consentTulps} onChange={e => setTulps(e.target.checked)}
-              style={{ marginTop: 2, flexShrink: 0, width: 16, height: 16 }} />
+              style={{ marginTop: 2, flexShrink: 0, width: 18, height: 18 }} />
             <span style={{ fontSize: 13, color: '#374151', lineHeight: 1.6 }}>{t.consentTulps} *</span>
           </label>
-          <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 20, cursor: 'pointer' }}>
+          <label style={{ display: 'flex', gap: 12, alignItems: 'flex-start', marginBottom: 24, cursor: 'pointer' }}>
             <input type="checkbox" checked={consentGdpr} onChange={e => setGdpr(e.target.checked)}
-              style={{ marginTop: 2, flexShrink: 0, width: 16, height: 16 }} />
+              style={{ marginTop: 2, flexShrink: 0, width: 18, height: 18 }} />
             <span style={{ fontSize: 13, color: '#374151', lineHeight: 1.6 }}>{t.consentGdpr} *</span>
           </label>
+
           <div style={fw}>
             <label style={lbl}>{t.signLabel} *</label>
             <input style={inp} value={signature} onChange={e => setSignature(e.target.value)} placeholder={t.signPh} />
           </div>
+
           {submitErr && <p style={{ fontSize: 13, color: '#dc2626', marginBottom: 12 }}>{submitErr}</p>}
+
           <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
             <button style={{ ...btnS, flex: 1 }} onClick={() => setStep(3)} disabled={submitting}>{t.back}</button>
             <button style={{ ...btnP, flex: 2, opacity: (consentTulps && consentGdpr && signature.trim() && !submitting) ? 1 : 0.5 }}
@@ -573,20 +766,32 @@ function DocSlot({ doc, side, onFile, uploadTxt, uploadingTxt, uploadedTxt }: {
   const ref = useRef<HTMLInputElement>(null);
   return (
     <div onClick={() => !doc.publicId && !doc.uploading && ref.current?.click()} style={{
-      border: `1.5px dashed ${doc.publicId ? '#86efac' : doc.error ? '#fca5a5' : '#d1d5db'}`,
-      borderRadius: 10, padding: '14px 10px', textAlign: 'center',
+      border: `2px dashed ${doc.publicId ? '#86efac' : doc.error ? '#fca5a5' : '#d1d5db'}`,
+      borderRadius: 12, padding: '12px',
       cursor: doc.publicId ? 'default' : 'pointer',
       background: doc.publicId ? '#f0fdf4' : '#fafafa',
-      minHeight: 110, display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center', gap: 6,
     }}>
       <input ref={ref} type="file" accept="image/*" capture="environment"
         style={{ display: 'none' }} onChange={e => e.target.files?.[0] && onFile(e.target.files[0])} />
-      {doc.preview
-        ? <img src={doc.preview} alt={side} style={{ width: '100%', maxHeight: 80, objectFit: 'cover', borderRadius: 6 }} />
-        : <span style={{ fontSize: 28 }}>📄</span>}
-      <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: '#374151' }}>{side}</p>
-      <p style={{ margin: 0, fontSize: 11, color: doc.publicId ? '#15803d' : doc.error ? '#dc2626' : '#9ca3af' }}>
+
+      {/* Preview immagine — grande e leggibile */}
+      {doc.preview ? (
+        <div style={{ marginBottom: 8, borderRadius: 8, overflow: 'hidden', background: '#f3f4f6', lineHeight: 0 }}>
+          <img src={doc.preview} alt={side} style={{
+            width: '100%',
+            maxHeight: 180,
+            objectFit: 'contain',
+            display: 'block',
+          }} />
+        </div>
+      ) : (
+        <div style={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
+          <span style={{ fontSize: 40 }}>📄</span>
+        </div>
+      )}
+
+      <p style={{ margin: '0 0 2px', fontSize: 13, fontWeight: 700, color: '#374151', textAlign: 'center' }}>{side}</p>
+      <p style={{ margin: 0, fontSize: 12, color: doc.publicId ? '#15803d' : doc.error ? '#dc2626' : '#9ca3af', textAlign: 'center' }}>
         {doc.uploading ? uploadingTxt : doc.publicId ? uploadedTxt : doc.error || uploadTxt}
       </p>
     </div>

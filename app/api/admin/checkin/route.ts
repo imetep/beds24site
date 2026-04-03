@@ -34,10 +34,29 @@ async function redisScan(pattern: string): Promise<string[]> {
   });
   if (!res.ok) return [];
   const data = await res.json();
-  // Upstash scan restituisce [cursor, [keys]]
   return data.result?.[1] ?? [];
 }
 
+async function sendBrevo(to: string, subject: string, text: string) {
+  const apiKey = process.env.BREVO_API_KEY;
+  if (!apiKey) { console.warn('[admin/checkin] BREVO_API_KEY mancante'); return; }
+  const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: { 'api-key': apiKey, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      sender:      { name: 'LivingApple', email: process.env.HOST_EMAIL ?? 'contattolivingapple@gmail.com' },
+      to:          [{ email: to }],
+      subject,
+      textContent: text,
+    }),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    console.error('[admin/checkin] Brevo error:', res.status, err);
+  }
+}
+
+// ─── GET ─────────────────────────────────────────────────────────────────────
 // GET /api/admin/checkin          → lista tutte le richieste
 // GET /api/admin/checkin?id=12345 → dettaglio singola
 export async function GET(req: NextRequest) {
@@ -51,7 +70,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: true, data: JSON.parse(raw) });
   }
 
-  // Lista tutte le chiavi checkin:*
   const keys = await redisScan('checkin:*');
   const items = await Promise.all(
     keys.map(async k => {
@@ -59,15 +77,18 @@ export async function GET(req: NextRequest) {
       if (!raw) return null;
       try {
         const d = JSON.parse(raw);
+        const messages: any[] = d.messages ?? [];
+        const unreadGuest = messages.filter(m => m.from === 'guest' && !m.read).length;
         return {
-          bookId:    d.bookId,
-          roomName:  d.roomName,
-          checkIn:   d.checkIn,
-          checkOut:  d.checkOut,
-          guestName: `${d.capogruppo?.lastName} ${d.capogruppo?.firstName}`,
-          email:     d.capogruppo?.email,
-          status:    d.status,
-          createdAt: d.createdAt,
+          bookId:      d.bookId,
+          roomName:    d.roomName,
+          checkIn:     d.checkIn,
+          checkOut:    d.checkOut,
+          guestName:   `${d.capogruppo?.lastName} ${d.capogruppo?.firstName}`,
+          email:       d.capogruppo?.email,
+          status:      d.status,
+          createdAt:   d.createdAt,
+          unreadGuest,
         };
       } catch { return null; }
     })
@@ -80,12 +101,13 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ ok: true, items: sorted });
 }
 
-// POST /api/admin/checkin — approva o rifiuta
+// ─── POST ─────────────────────────────────────────────────────────────────────
+// action: 'approve' | 'reject' | 'reset' | 'reply'
 export async function POST(req: NextRequest) {
   if (!isAuthed(req)) return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 });
 
-  const { bookId, action, reason } = await req.json();
-  if (!bookId || !['approve', 'reject', 'reset'].includes(action)) {
+  const { bookId, action, reason, message } = await req.json();
+  if (!bookId || !['approve', 'reject', 'reset', 'reply'].includes(action)) {
     return NextResponse.json({ error: 'Parametri non validi' }, { status: 400 });
   }
 
@@ -93,7 +115,9 @@ export async function POST(req: NextRequest) {
   if (!raw) return NextResponse.json({ error: 'Non trovato' }, { status: 404 });
 
   const data = JSON.parse(raw);
+  if (!data.messages) data.messages = [];
 
+  // ── Reset ──────────────────────────────────────────────────────────────────
   if (action === 'reset') {
     data.status    = 'PENDING';
     data.updatedAt = new Date().toISOString();
@@ -101,28 +125,49 @@ export async function POST(req: NextRequest) {
     await redisSet(`checkin:${bookId}`, JSON.stringify(data));
     return NextResponse.json({ ok: true, status: 'PENDING' });
   }
+
+  // ── Risposta host nel thread ───────────────────────────────────────────────
+  if (action === 'reply') {
+    if (!message?.trim()) return NextResponse.json({ error: 'Messaggio vuoto' }, { status: 400 });
+
+    const newMsg = {
+      from: 'host',
+      text: message.trim(),
+      time: new Date().toISOString(),
+      read: true,
+    };
+    data.messages.push(newMsg);
+    data.updatedAt = new Date().toISOString();
+    await redisSet(`checkin:${bookId}`, JSON.stringify(data));
+
+    // Email all'ospite
+    const guestEmail = data.capogruppo?.email;
+    const baseUrl    = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://livingapple.it';
+    if (guestEmail) {
+      await sendBrevo(
+        guestEmail,
+        `Risposta LivingApple — Prenotazione #${bookId}`,
+        `Gentile ${data.capogruppo.firstName},\n\nhai ricevuto un messaggio da LivingApple riguardo alla tua prenotazione #${bookId}.\n\n"${message.trim()}"\n\nPuoi rispondere qui:\n${baseUrl}/it/self-checkin/wizard/status?bookId=${bookId}\n\nLivingApple — Scauri (LT)`,
+      );
+    }
+
+    return NextResponse.json({ ok: true, messages: data.messages });
+  }
+
+  // ── Approva / Rifiuta ──────────────────────────────────────────────────────
   data.status    = action === 'approve' ? 'APPROVED' : 'REJECTED';
   data.updatedAt = new Date().toISOString();
   if (reason) data.rejectReason = reason;
 
   await redisSet(`checkin:${bookId}`, JSON.stringify(data));
 
-  // Invia email all'ospite
-  await sendStatusEmail(data, action, reason);
-
-  return NextResponse.json({ ok: true, status: data.status });
-}
-
-async function sendStatusEmail(data: any, action: string, reason?: string) {
-  const resendKey  = process.env.RESEND_API_KEY;
+  // Email all'ospite
   const guestEmail = data.capogruppo?.email;
-  const fromAddress = process.env.RESEND_FROM ?? 'onboarding@resend.dev';
-  if (!resendKey || !guestEmail) return;
+  const baseUrl    = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://livingapple.it';
+  const c          = data.capogruppo;
 
-  const c       = data.capogruppo;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://livingapple.it';
-
-  const approvedBody = `
+  if (guestEmail) {
+    const approvedBody = `
 Gentile ${c.firstName} ${c.lastName},
 
 la tua richiesta di self check-in è stata APPROVATA.
@@ -134,36 +179,56 @@ Check-out: ${data.checkOut}
 
 Al momento del tuo arrivo effettueremo una breve videochiamata di verifica come previsto dalla normativa (art. 109 TULPS).
 
-Per qualsiasi domanda: WhatsApp +39 328 313 1500 o contattolivingapple@gmail.com
+Per qualsiasi domanda: WhatsApp +39 328 313 1500 o ${process.env.HOST_EMAIL ?? 'contattolivingapple@gmail.com'}
 
 LivingApple — Scauri (LT)
 ${baseUrl}
-  `.trim();
+    `.trim();
 
-  const rejectedBody = `
+    const rejectedBody = `
 Gentile ${c.firstName} ${c.lastName},
 
 purtroppo la tua richiesta di self check-in non è stata approvata.
-
-${reason ? `Motivo: ${reason}\n` : ''}
-Ti chiediamo di contattarci al più presto per risolvere la situazione:
+${reason ? `\nMotivo: ${reason}\n` : ''}
+Ti chiediamo di contattarci al più presto:
 WhatsApp: +39 328 313 1500
-Email: contattolivingapple@gmail.com
+Email: ${process.env.HOST_EMAIL ?? 'contattolivingapple@gmail.com'}
+
+Puoi anche scriverci direttamente qui:
+${baseUrl}/it/self-checkin/wizard/status?bookId=${bookId}
 
 LivingApple — Scauri (LT)
 ${baseUrl}
-  `.trim();
+    `.trim();
 
-  await fetch('https://api.resend.com/emails', {
-    method:  'POST',
-    headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      from:    fromAddress,
-      to:      [guestEmail],
-      subject: action === 'approve'
+    await sendBrevo(
+      guestEmail,
+      action === 'approve'
         ? `Check-in approvato — Prenotazione #${data.bookId} — LivingApple`
         : `Check-in — azione richiesta — Prenotazione #${data.bookId}`,
-      text: action === 'approve' ? approvedBody : rejectedBody,
-    }),
+      action === 'approve' ? approvedBody : rejectedBody,
+    );
+  }
+
+  return NextResponse.json({ ok: true, status: data.status });
+}
+
+// DELETE /api/admin/checkin?id=12345 — elimina record check-in da Redis
+export async function DELETE(req: NextRequest) {
+  if (!isAuthed(req)) return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 });
+
+  const id = req.nextUrl.searchParams.get('id');
+  if (!id) return NextResponse.json({ error: 'id mancante' }, { status: 400 });
+
+  const res = await fetch(`${REDIS_URL}/del/checkin:${id}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${REDIS_TOKEN}` },
+    cache: 'no-store',
   });
+
+  if (!res.ok) {
+    return NextResponse.json({ error: 'Errore eliminazione Redis' }, { status: 500 });
+  }
+
+  return NextResponse.json({ ok: true });
 }
