@@ -38,6 +38,9 @@ const ROOMS: Record<number, { name: string; property: string; mqInterni: number;
 const MIN_NOTTI = 7;
 const BASE_URL  = 'https://beds24.com/api/v2';
 
+// Solo questi status sono prenotazioni reali ai fini operativi
+const VALID_STATUSES = new Set(['new', 'confirmed']);
+
 // ── Auth ──────────────────────────────────────────────────────────────────────
 function isAuthed(req: NextRequest): boolean {
   const cookie = req.cookies.get('admin_session');
@@ -49,6 +52,7 @@ interface B24Booking {
   id:         number;
   roomId:     number;
   propertyId: number;
+  status:     string;
   arrival:    string;
   departure:  string;
   numAdult:   number;
@@ -71,8 +75,12 @@ async function fetchAllBookings(token: string, today: string, maxDateStr: string
     const d = await r.json();
     const rows: B24Booking[] = d.data ?? [];
 
-    // Filtra: partenza futura nei prossimi 12 mesi
-    const filtered = rows.filter(b => b.departure >= today && b.arrival <= maxDateStr);
+    // Filtra: partenza futura nei prossimi 12 mesi + escludi status non operativi
+    const filtered = rows.filter(b =>
+      b.departure >= today &&
+      b.arrival <= maxDateStr &&
+      VALID_STATUSES.has(b.status)
+    );
     all.push(...filtered);
 
     const hasNext = d.pages?.nextPageExists === true;
