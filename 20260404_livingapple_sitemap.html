@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LivingApple — Sitemap Dev</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #0f1117;
+    --surface: #181c27;
+    --border: #252a38;
+    --accent: #3ecf8e;
+    --accent2: #f6a623;
+    --accent3: #7c6cf8;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --danger: #ef4444;
+    --env-local: #3ecf8e;
+    --env-mobile: #f6a623;
+    --env-vercel: #7c6cf8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .logo span { color: var(--text); }
+
+  .badge-spec {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: #1e2430;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  /* ENV SWITCHER */
+  .env-switcher {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+    flex-wrap: wrap;
+  }
+
+  .env-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: transparent;
+    letter-spacing: 0.2px;
+  }
+
+  .env-btn.local  { border-color: var(--env-local);  color: var(--env-local); }
+  .env-btn.mobile { border-color: var(--env-mobile); color: var(--env-mobile); }
+  .env-btn.vercel { border-color: var(--env-vercel); color: var(--env-vercel); }
+
+  .env-btn.active.local  { background: var(--env-local);  color: #000; }
+  .env-btn.active.mobile { background: var(--env-mobile); color: #000; }
+  .env-btn.active.vercel { background: var(--env-vercel); color: #fff; }
+
+  /* CURRENT ENV BANNER */
+  .env-banner {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    padding: 8px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .env-banner .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+  .env-banner .base-url { opacity: 0.6; }
+
+  /* MAIN LAYOUT */
+  .main {
+    padding: 32px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* SECTION CARD */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .section-header {
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-icon { font-size: 18px; }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .section-count {
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    background: var(--bg);
+    padding: 2px 7px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+
+  /* ROUTE ROWS */
+  .routes { padding: 8px 0; }
+
+  .route {
+    display: flex;
+    align-items: center;
+    padding: 7px 18px;
+    gap: 10px;
+    transition: background 0.1s;
+    text-decoration: none;
+    color: inherit;
+    border: none;
+    background: none;
+    width: 100%;
+    cursor: pointer;
+  }
+  .route:hover { background: rgba(255,255,255,0.03); }
+
+  .locale-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    padding: 2px 5px;
+    border-radius: 3px;
+    min-width: 22px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .it { background: #1e3a2f; color: #34d399; }
+  .en { background: #1e293b; color: #60a5fa; }
+  .de { background: #2a1e1e; color: #f87171; }
+  .pl { background: #2d1e2e; color: #d946ef; }
+  .admin-tag { background: #2a2010; color: #fbbf24; }
+  .api-tag { background: #1a1a2e; color: #a78bfa; }
+  .any-tag { background: #1e2430; color: var(--muted); }
+
+  .route-path {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .route-path .param { color: var(--accent2); }
+  .route-path .query { color: var(--muted); }
+
+  .route-label {
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .new-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    background: rgba(62,207,142,0.15);
+    color: var(--accent);
+    border: 1px solid rgba(62,207,142,0.3);
+    padding: 1px 5px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .method {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .get  { background: #0d2e1a; color: #34d399; }
+  .post { background: #1a2a0d; color: #84cc16; }
+  .patch { background: #1a1a2a; color: #818cf8; }
+  .delete { background: #2a0d0d; color: #f87171; }
+
+  /* DIVIDER */
+  .route-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 4px 18px;
+    opacity: 0.5;
+  }
+
+  /* SPAN FULL WIDTH SECTION */
+  .span-2 { grid-column: span 2; }
+  @media (max-width: 760px) { .span-2 { grid-column: span 1; } }
+
+  /* OPEN LINK ICON */
+  .open-icon { color: var(--muted); font-size: 11px; flex-shrink: 0; opacity: 0.4; }
+  .route:hover .open-icon { opacity: 1; color: var(--accent); }
+
+  /* STATUS PILLS */
+  .status-todo { color: var(--danger); font-size: 10px; }
+  .status-done { color: var(--accent); font-size: 10px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Living<span>Apple</span></div>
+  <div class="badge-spec">spec v5.1 — 4 Apr 2026</div>
+  <div class="env-switcher">
+    <button class="env-btn local active" onclick="setEnv('local')">💻 localhost:3000</button>
+    <button class="env-btn mobile" onclick="setEnv('mobile')">📱 192.168.1.67:3000</button>
+    <button class="env-btn vercel" onclick="setEnv('vercel')">🚀 Vercel</button>
+  </div>
+</header>
+
+<div class="env-banner" id="envBanner">
+  <span class="dot" id="envDot" style="background: var(--env-local)"></span>
+  <span id="envLabel">Locale</span>
+  <span class="base-url" id="baseUrlDisplay">http://localhost:3000</span>
+</div>
+
+<div class="main">
+
+  <!-- HOME -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏠</span>
+      <span class="section-title">Home</span>
+      <span class="section-count">4 locale</span>
+    </div>
+    <div class="routes">
+      <a class="route" onclick="open_('/it')"><span class="locale-tag it">IT</span><span class="route-path">/it</span><span class="route-label">Home italiana</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/en')"><span class="locale-tag en">EN</span><span class="route-path">/en</span><span class="route-label">Home inglese</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/de')"><span class="locale-tag de">DE</span><span class="route-path">/de</span><span class="route-label">Home tedesca</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/pl')"><span class="locale-tag pl">PL</span><span class="route-path">/pl</span><span class="route-label">Home polacca</span><span class="open-icon">↗</span></a>
+    </div>
+  </div>
+
+  <!-- RESIDENZE -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏡</span>
+      <span class="section-title">Residenze</span>
+      <span class="section-count">11 route</span>
+    </div>
+    <div class="routes">
+      <a class="route" onclick="open_('/it/residenze')"><span class="locale-tag it">IT</span><span class="route-path">/it/residenze</span><span class="route-label">Lista</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/en/residences')"><span class="locale-tag en">EN</span><span class="route-path">/en/residences</span><span class="route-label">Lista</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/de/residenzen')"><span class="locale-tag de">DE</span><span class="route-path">/de/residenzen</span><span class="route-label">Liste</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/pl/rezydencje')"><span class="locale-tag pl">PL</span><span class="route-path">/pl/rezydencje</span><span class="route-label">Lista</span><span class="open-icon">↗</span></a>
+      <div class="route-divider"></div>
+      <a class="route" onclick="open_('/it/residenze/campagna')"><span class="locale-tag it">IT</span><span class="route-path">/it/residenze/<span class="param">campagna</span></span><span class="route-label">Scheda #46487</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/it/residenze/spiaggia')"><span class="locale-tag it">IT</span><span class="route-path">/it/residenze/<span class="param">spiaggia</span></span><span class="route-label">Scheda #46871</span><span class="open-icon">↗</span></a>
+      <div class="route-divider"></div>
+      <a class="route" onclick="open_('/it/residenze/campagna/foto')"><span class="locale-tag it">IT</span><span class="route-path">/it/residenze/<span class="param">campagna</span>/foto</span><span class="route-label">Galleria</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/it/residenze/spiaggia/foto')"><span class="locale-tag it">IT</span><span class="route-path">/it/residenze/<span class="param">spiaggia</span>/foto</span><span class="route-label">Galleria</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/en/residences/campagna/photos')"><span class="locale-tag en">EN</span><span class="route-path">/en/residences/<span class="param">campagna</span>/photos</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/de/residenzen/campagna/fotos')"><span class="locale-tag de">DE</span><span class="route-path">/de/residenzen/<span class="param">campagna</span>/fotos</span><span class="open-icon">↗</span></a>
+    </div>
+  </div>
+
+  <!-- PRENOTA / PAGA -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📅</span>
+      <span class="section-title">Prenotazione & Pagamento</span>
+      <span class="section-count">10 route</span>
+    </div>
+    <div class="routes">
+      <a class="route" onclick="open_('/it/prenota')"><span class="locale-tag it">IT</span><span class="route-path">/it/prenota</span><span class="route-label">Wizard booking IT</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/en/book')"><span class="locale-tag en">EN</span><span class="route-path">/en/book</span><span class="route-label">Wizard booking EN</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/de/buchen')"><span class="locale-tag de">DE</span><span class="route-path">/de/buchen</span><span class="route-label">Wizard booking DE</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/pl/rezerwuj')"><span class="locale-tag pl">PL</span><span class="route-path">/pl/rezerwuj</span><span class="route-label">Wizard booking PL</span><span class="open-icon">↗</span></a>
+      <div class="route-divider"></div>
+      <a class="route" onclick="open_('/it/paga')"><span class="locale-tag it">IT</span><span class="route-path">/it/paga</span><span class="route-label">Pagamento</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/en/pay')"><span class="locale-tag en">EN</span><span class="route-path">/en/pay</span><span class="route-label">Payment</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/de/zahlen')"><span class="locale-tag de">DE</span><span class="route-path">/de/zahlen</span><span class="route-label">Zahlung</span><span class="open-icon">↗</span></a>
+      <div class="route-divider"></div>
+      <a class="route" onclick="open_('/it/prenota/successo')"><span class="locale-tag it">IT</span><span class="route-path">/it/prenota/successo</span><span class="route-label">Conferma pagamento</span><span class="open-icon">↗</span></a>
+    </div>
+  </div>
+
+  <!-- SELF CHECK-IN -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🛂</span>
+      <span class="section-title">Self Check-in</span>
+      <span class="section-count">7 route</span>
+    </div>
+    <div class="routes">
+      <a class="route" onclick="open_('/it/self-checkin')"><span class="locale-tag it">IT</span><span class="route-path">/it/self-checkin</span><span class="route-label">Info normativa</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/en/self-checkin')"><span class="locale-tag en">EN</span><span class="route-path">/en/self-checkin</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/de/self-checkin')"><span class="locale-tag de">DE</span><span class="route-path">/de/self-checkin</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/pl/self-checkin')"><span class="locale-tag pl">PL</span><span class="route-path">/pl/self-checkin</span><span class="open-icon">↗</span></a>
+      <div class="route-divider"></div>
+      <a class="route" onclick="open_('/it/self-checkin/wizard')"><span class="locale-tag it">IT</span><span class="route-path">/it/self-checkin/wizard</span><span class="route-label">Wizard 4 step</span><span class="open-icon">↗</span></a>
+      <div class="route-divider"></div>
+      <a class="route" onclick="open_('/it/self-checkin/wizard/status')"><span class="locale-tag it">IT</span><span class="route-path">/it/self-checkin/wizard/status<span class="query">?bookId=X</span></span><span class="open-icon">↗</span></a>
+    </div>
+  </div>
+
+  <!-- ADMIN -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🔐</span>
+      <span class="section-title">Admin</span>
+      <span class="section-count">3 pagine</span>
+    </div>
+    <div class="routes">
+      <a class="route" onclick="open_('/admin')"><span class="locale-tag admin-tag">ADM</span><span class="route-path">/admin</span><span class="route-label">Hub — pannello admin</span><span class="new-badge">✨ NEW</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/admin/checkin')"><span class="locale-tag admin-tag">ADM</span><span class="route-path">/admin/checkin</span><span class="route-label">Check-in online</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/admin/operativo')"><span class="locale-tag admin-tag">ADM</span><span class="route-path">/admin/operativo</span><span class="route-label">Buchi + pulizie</span><span class="new-badge">✨ NEW</span><span class="open-icon">↗</span></a>
+    </div>
+  </div>
+
+  <!-- CONTATTI / DOVE SIAMO / UTENZE -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📍</span>
+      <span class="section-title">Info & Contatti</span>
+      <span class="section-count">12 route</span>
+    </div>
+    <div class="routes">
+      <a class="route" onclick="open_('/it/contatti')"><span class="locale-tag it">IT</span><span class="route-path">/it/contatti</span><span class="route-label">Contatti</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/en/contact')"><span class="locale-tag en">EN</span><span class="route-path">/en/contact</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/de/kontakt')"><span class="locale-tag de">DE</span><span class="route-path">/de/kontakt</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/pl/kontakt')"><span class="locale-tag pl">PL</span><span class="route-path">/pl/kontakt</span><span class="open-icon">↗</span></a>
+      <div class="route-divider"></div>
+      <a class="route" onclick="open_('/it/dove-siamo')"><span class="locale-tag it">IT</span><span class="route-path">/it/dove-siamo</span><span class="route-label">Dove siamo</span><span class="status-todo">⚠ link morto</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/en/location')"><span class="locale-tag en">EN</span><span class="route-path">/en/location</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/de/lage')"><span class="locale-tag de">DE</span><span class="route-path">/de/lage</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/pl/lokalizacja')"><span class="locale-tag pl">PL</span><span class="route-path">/pl/lokalizacja</span><span class="open-icon">↗</span></a>
+      <div class="route-divider"></div>
+      <a class="route" onclick="open_('/it/utenze')"><span class="locale-tag it">IT</span><span class="route-path">/it/utenze</span><span class="route-label">Tariffe energetiche</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/en/utilities')"><span class="locale-tag en">EN</span><span class="route-path">/en/utilities</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/de/energie')"><span class="locale-tag de">DE</span><span class="route-path">/de/energie</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/pl/media')"><span class="locale-tag pl">PL</span><span class="route-path">/pl/media</span><span class="open-icon">↗</span></a>
+    </div>
+  </div>
+
+  <!-- PORTALE OSPITE -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🔐</span>
+      <span class="section-title">Portale Ospite</span>
+      <span class="section-count">7 route</span>
+    </div>
+    <div class="routes">
+      <a class="route" onclick="open_('/it/guest/portal')"><span class="locale-tag it">IT</span><span class="route-path">/it/guest/portal</span><span class="route-label">Login + dashboard</span><span class="new-badge">✨ NEW</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/en/guest/portal')"><span class="locale-tag en">EN</span><span class="route-path">/en/guest/portal</span><span class="new-badge">✨ NEW</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/de/guest/portal')"><span class="locale-tag de">DE</span><span class="route-path">/de/guest/portal</span><span class="new-badge">✨ NEW</span><span class="open-icon">↗</span></a>
+      <a class="route" onclick="open_('/pl/guest/portal')"><span class="locale-tag pl">PL</span><span class="route-path">/pl/guest/portal</span><span class="new-badge">✨ NEW</span><span class="open-icon">↗</span></a>
+      <div class="route-divider"></div>
+      <a class="route"><span class="method post">POST</span><span class="locale-tag api-tag">API</span><span class="route-path">/api/portal/auth</span><span class="route-label">login + logout ospite</span><span class="new-badge">✨</span></a>
+      <a class="route"><span class="method get">GET</span><span class="locale-tag api-tag">API</span><span class="route-path">/api/portal/booking</span><span class="route-label">dati prenotazione aggregati</span><span class="new-badge">✨</span></a>
+      <a class="route"><span class="method post">POST</span><span class="locale-tag api-tag">API</span><span class="route-path">/api/portal/deposit</span><span class="route-label">Stripe checkout autonomo</span><span class="new-badge">✨</span></a>
+    </div>
+  </div>
+
+  <!-- API ROUTES -->
+  <div class="section span-2">
+    <div class="section-header">
+      <span class="section-icon">⚡</span>
+      <span class="section-title">API Routes</span>
+      <span class="section-count">16 endpoint</span>
+    </div>
+    <div class="routes" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
+      <div>
+        <a class="route" onclick="open_('/api/booking-info?id=')"><span class="method get">GET</span><span class="locale-tag api-tag">API</span><span class="route-path">/api/booking-info<span class="query">?id=X</span></span><span class="open-icon">↗</span></a>
+        <a class="route" onclick="open_('/api/checkin/upload')"><span class="method post">POST</span><span class="locale-tag api-tag">API</span><span class="route-path">/api/checkin/upload</span><span class="open-icon">↗</span></a>
+        <a class="route" onclick="open_('/api/checkin/submit')"><span class="method post">POST</span><span class="locale-tag api-tag">API</span><span class="route-path">/api/checkin/submit</span><span class="new-badge">✨</span><span class="open-icon">↗</span></a>
+        <a class="route" onclick="open_('/api/checkin/status?bookId=')"><span class="method get">GET</span><span class="locale-tag api-tag">API</span><span class="route-path">/api/checkin/status<span class="query">?bookId=X</span></span><span class="new-badge">✨</span><span class="open-icon">↗</span></a>
+        <a class="route" onclick="open_('/api/checkin/message')"><span class="method post">POST</span><span class="locale-tag api-tag">API</span><span class="route-path">/api/checkin/message</span><span class="new-badge">✨</span><span class="open-icon">↗</span></a>
+        <a class="route" onclick="open_('/api/admin/login')"><span class="method post">POST</span><span class="locale-tag admin-tag">ADM</span><span class="route-path">/api/admin/login</span><span class="open-icon">↗</span></a>
+      </div>
+      <div>
+        <a class="route" onclick="open_('/api/admin/checkin')"><span class="method get">GET</span><span class="locale-tag admin-tag">ADM</span><span class="route-path">/api/admin/checkin</span><span class="new-badge">✨</span><span class="open-icon">↗</span></a>
+        <a class="route" onclick="open_('/api/admin/checkin')"><span class="method post">POST</span><span class="locale-tag admin-tag">ADM</span><span class="route-path">/api/admin/checkin</span><span class="route-label">approva/rifiuta/reply</span><span class="open-icon">↗</span></a>
+        <a class="route" onclick="open_('/api/admin/checkin')"><span class="method delete">DEL</span><span class="locale-tag admin-tag">ADM</span><span class="route-path">/api/admin/checkin</span><span class="route-label">elimina record</span><span class="open-icon">↗</span></a>
+        <a class="route" onclick="open_('/api/admin/deposit')"><span class="method post">POST</span><span class="locale-tag admin-tag">ADM</span><span class="route-path">/api/admin/deposit</span><span class="route-label">crea sessione Stripe</span><span class="new-badge">✨</span><span class="open-icon">↗</span></a>
+        <a class="route" onclick="open_('/api/admin/deposit')"><span class="method patch">PATCH</span><span class="locale-tag admin-tag">ADM</span><span class="route-path">/api/admin/deposit</span><span class="route-label">invia link via email</span><span class="new-badge">✨</span><span class="open-icon">↗</span></a>
+        <a class="route" onclick="open_('/api/admin/deposit')"><span class="method get">GET</span><span class="locale-tag admin-tag">ADM</span><span class="route-path">/api/admin/deposit</span><span class="route-label">stato deposito</span><span class="open-icon">↗</span></a>
+        <a class="route" onclick="open_('/api/admin/operativo')"><span class="method get">GET</span><span class="locale-tag admin-tag">ADM</span><span class="route-path">/api/admin/operativo</span><span class="route-label">buchi + pulizie</span><span class="open-icon">↗</span></a>
+        <a class="route" onclick="open_('/api/test-portal-booking?bookId=')"><span class="method get">GET</span><span class="locale-tag api-tag">API</span><span class="route-path">/api/test-portal-booking<span class="query">?bookId=X</span></span><span class="route-label">debug Beds24 raw</span><span class="new-badge">✨ DEV</span><span class="open-icon">↗</span></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- TODO RAPIDO -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📋</span>
+      <span class="section-title">To-Do Rapido</span>
+    </div>
+    <div class="routes">
+      <div class="route" style="cursor:default"><span style="color:#ef4444; font-size:11px">🔴</span><span class="route-path" style="color: var(--muted); font-size:11px">Test Stripe/PayPal live (carta reale)</span></div>
+      <div class="route" style="cursor:default"><span style="color:#ef4444; font-size:11px">🔴</span><span class="route-path" style="color: var(--muted); font-size:11px">Auto Action Beds24: request +1h → cancelled</span></div>
+      <div class="route" style="cursor:default"><span style="color:#ef4444; font-size:11px">🔴</span><span class="route-path" style="color: var(--muted); font-size:11px">Collegare livingapple.it a Vercel</span></div>
+      <div class="route-divider"></div>
+      <div class="route" style="cursor:default"><span style="color:#f6a623; font-size:11px">🟡</span><span class="route-path" style="color: var(--muted); font-size:11px">Fix navigator.maxTouchPoints (4 file)</span></div>
+      <div class="route" style="cursor:default"><span style="color:#f6a623; font-size:11px">🟡</span><span class="route-path" style="color: var(--muted); font-size:11px">Pagina /dove-siamo (link morto in nav/footer)</span></div>
+      <div class="route" style="cursor:default"><span style="color:#f6a623; font-size:11px">🟡</span><span class="route-path" style="color: var(--muted); font-size:11px">Pagina /contatti (in attesa FAQ da Luca)</span></div>
+      <div class="route" style="cursor:default"><span style="color:#f6a623; font-size:11px">🟡</span><span class="route-path" style="color: var(--muted); font-size:11px">Google Analytics 4 + Search Console</span></div>
+      <div class="route" style="cursor:default"><span style="color:#f6a623; font-size:11px">🟡</span><span class="route-path" style="color: var(--muted); font-size:11px">Auto Action Beds24 per ospiti Airbnb (guest@livingapple.com)</span></div>
+      <div class="route" style="cursor:default"><span style="color:#f6a623; font-size:11px">🟡</span><span class="route-path" style="color: var(--muted); font-size:11px">Rimuovere /api/test-portal-booking prima del go-live</span></div>
+      <div class="route-divider"></div>
+      <div class="route" style="cursor:default"><span style="color:#3ecf8e; font-size:11px">🟢</span><span class="route-path" style="color: var(--muted); font-size:11px">✅ Portale Ospite /[locale]/guest/portal — DONE</span></div>
+      <div class="route" style="cursor:default"><span style="color:#3ecf8e; font-size:11px">🟢</span><span class="route-path" style="color: var(--muted); font-size:11px">✅ Sitemap.xml dinamica (app/sitemap.ts) — DONE</span></div>
+      <div class="route" style="cursor:default"><span style="color:#3ecf8e; font-size:11px">🟢</span><span class="route-path" style="color: var(--muted); font-size:11px">✅ generateStaticParams home + paga — DONE</span></div>
+      <div class="route" style="cursor:default"><span style="color:#3ecf8e; font-size:11px">🟢</span><span class="route-path" style="color: var(--muted); font-size:11px">✅ i18n portale ospite — tutte 4 le lingue — DONE</span></div>
+      <div class="route" style="cursor:default"><span style="color:#3ecf8e; font-size:11px">🟢</span><span class="route-path" style="color: var(--muted); font-size:11px">Alloggiati Web automation</span></div>
+      <div class="route" style="cursor:default"><span style="color:#3ecf8e; font-size:11px">🟢</span><span class="route-path" style="color: var(--muted); font-size:11px">Guidebook /checkin/[token]/benvenuto</span></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const ENVS = {
+  local:  { base: 'http://localhost:3000',       label: 'Locale',        color: 'var(--env-local)',  dot: '#3ecf8e' },
+  mobile: { base: 'http://192.168.1.67:3000',    label: 'Mobile iPhone', color: 'var(--env-mobile)', dot: '#f6a623' },
+  vercel: { base: 'https://beds24site.vercel.app', label: 'Vercel Test', color: 'var(--env-vercel)', dot: '#7c6cf8' },
+};
+
+let currentEnv = 'local';
+
+function setEnv(env) {
+  currentEnv = env;
+  document.querySelectorAll('.env-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.env-btn.' + env).classList.add('active');
+  document.getElementById('envDot').style.background = ENVS[env].dot;
+  document.getElementById('envLabel').textContent = ENVS[env].label;
+  document.getElementById('baseUrlDisplay').textContent = ENVS[env].base;
+}
+
+function open_(path) {
+  const url = ENVS[currentEnv].base + path;
+  window.open(url, '_blank');
+}
+</script>
+</body>
+</html>

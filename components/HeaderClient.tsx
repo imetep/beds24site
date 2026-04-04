@@ -40,11 +40,22 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
             <Image src="/logo.png" alt="LivingApple" height={34} width={130} style={{ objectFit: 'contain' }} priority />
           </a>
 
-          {/* Nav desktop: Home · Residenze · Prenota */}
+          {/* Nav desktop: Home · Residenze · Prenota · Lucchetto ospiti */}
           <nav className="desktop-nav" style={{ display: 'flex', gap: '1.25rem', marginLeft: 'auto', alignItems: 'center' }}>
             <a href={`/${locale}`}           style={navLinkStyle}>{nav.home}</a>
             <a href={`/${locale}/residenze`} style={navLinkStyle}>{nav.residences}</a>
-            <a href={`/${locale}`}   style={ctaStyle}>{nav.book}</a>
+            <a href={`/${locale}`}           style={ctaStyle}>{nav.book}</a>
+            <a
+              href={`/${locale}/guest/portal`}
+              aria-label="Area Ospiti"
+              title="Area Ospiti"
+              style={{ color: '#9ca3af', display: 'flex', alignItems: 'center', textDecoration: 'none', transition: 'color 0.15s' }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </a>
           </nav>
 
           {/* Hamburger mobile */}
@@ -70,9 +81,10 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
           {/* Link principali */}
           <div style={{ padding: '0.5rem 1.5rem' }}>
             {[
-              { href: `/${locale}`,           label: nav.home },
-              { href: `/${locale}/residenze`, label: nav.residences },
-              { href: `/${locale}/dove-siamo`,label: nav.location },
+              { href: `/${locale}`,                label: nav.home },
+              { href: `/${locale}/residenze`,      label: nav.residences },
+              { href: `/${locale}/dove-siamo`,     label: nav.location },
+              { href: `/${locale}/guest/portal`,   label: '🔐 Area Ospiti' },
             ].map(({ href, label }) => (
               <a key={href} href={href} style={{ fontSize: '1.15rem', fontWeight: 600, color: '#111', textDecoration: 'none', padding: '0.9rem 0', borderBottom: '1px solid #f0f0f0', display: 'block' }}>
                 {label}
