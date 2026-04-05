@@ -17,7 +17,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   if (!isValidLocale(locale)) return {};
-  const t = await getTranslations(locale);
+  const t = getTranslations(locale);
   return {
     title: t.meta.home_title,
     description: t.meta.home_description,
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function LocaleLayout({ children, params }: Props) {
   const { locale } = await params;
   if (!isValidLocale(locale)) notFound();
-  const t = await getTranslations(locale);
+  const t = getTranslations(locale);
 
   return (
     <>

@@ -16,7 +16,7 @@ export default async function PrenotaPage({ params }: Props) {
   const { locale } = await params;
   if (!isValidLocale(locale)) notFound();
 
-  const t = await getTranslations(locale);
+  const t = getTranslations(locale);
 
   return (
     <main style={{ minHeight: '80vh', paddingTop: '2rem', paddingBottom: '3rem' }}>

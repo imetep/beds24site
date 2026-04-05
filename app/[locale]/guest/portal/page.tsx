@@ -15,7 +15,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   if (!isValidLocale(locale)) return {};
-  const t = await getTranslations(locale);
+  const t = getTranslations(locale);
 
   const titles: Record<Locale, string> = {
     it: 'Area Ospiti — LivingApple',
@@ -35,7 +35,7 @@ export default async function GuestPortalPage({ params }: Props) {
   const { locale } = await params;
   if (!isValidLocale(locale)) notFound();
 
-  const t = await getTranslations(locale);
+  const t = getTranslations(locale);
 
   return <GuestPortal locale={locale} t={t.portal} />;
 }
