@@ -16,6 +16,8 @@ const T: Record<Locale, {
   // Sezione 3 — Deposito cauzionale
   s3_title: string;
   s3_text: string;
+  s3_link: string;
+  s3_href: string;
   // Tariffe
   rates_title: string;
   rates_note: string;

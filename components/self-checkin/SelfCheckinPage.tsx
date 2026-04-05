@@ -34,7 +34,7 @@ const T: Record<Locale, {
   needs: string[];
   timeNote: string;
   faqTitle: string;
-  faqs: { q: string; a: string }[];
+  faqs: { q: string; a: string; link?: { label: string; href: string } }[];
   ctaTitle: string;
   ctaText: string;
   ctaBtn: string;
