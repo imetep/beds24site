@@ -20,14 +20,16 @@ const BASE_URL = 'https://livingapple.it';
 
 // Slug localizzati per le sezioni del sito
 const SLUGS: Record<string, Record<Locale, string>> = {
-  residences: { it: 'residenze',   en: 'residences',  de: 'residenzen', pl: 'rezydencje'  },
-  contact:    { it: 'contatti',    en: 'contact',      de: 'kontakt',    pl: 'kontakt'     },
-  location:   { it: 'dove-siamo', en: 'location',     de: 'lage',       pl: 'lokalizacja' },
-  checkin:    { it: 'self-checkin',en: 'self-checkin', de: 'self-checkin',pl: 'self-checkin'},
-  utilities:  { it: 'utenze',     en: 'utilities',    de: 'energie',    pl: 'media'       },
-  privacy:    { it: 'privacy',    en: 'privacy',      de: 'datenschutz',pl: 'prywatnosc'  },
-  terms:      { it: 'condizioni', en: 'terms',        de: 'bedingungen',pl: 'regulamin'   },
-  data:       { it: 'trattamento-dati', en: 'data-processing', de: 'datenverarbeitung', pl: 'przetwarzanie-danych' },
+  residences:   { it: 'residenze',           en: 'residences',         de: 'residenzen',          pl: 'rezydencje'          },
+  contact:      { it: 'contatti',            en: 'contact',            de: 'kontakt',             pl: 'kontakt'             },
+  location:     { it: 'dove-siamo',          en: 'location',           de: 'lage',                pl: 'lokalizacja'         },
+  safebooking:  { it: 'prenotazione-sicura', en: 'prenotazione-sicura',de: 'prenotazione-sicura', pl: 'prenotazione-sicura' },
+  deposit:      { it: 'deposito',            en: 'deposito',           de: 'deposito',            pl: 'deposito'            },
+  checkin:      { it: 'self-checkin',        en: 'self-checkin',       de: 'self-checkin',        pl: 'self-checkin'        },
+  utilities:    { it: 'utenze',              en: 'utilities',          de: 'energie',             pl: 'media'               },
+  privacy:      { it: 'privacy',            en: 'privacy',            de: 'datenschutz',         pl: 'prywatnosc'          },
+  terms:        { it: 'condizioni',          en: 'terms',              de: 'bedingungen',         pl: 'regulamin'           },
+  data:         { it: 'trattamento-dati',    en: 'data-processing',    de: 'datenverarbeitung',   pl: 'przetwarzanie-danych'},
 };
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -107,7 +109,37 @@ export default function sitemap(): MetadataRoute.Sitemap {
     });
   }
 
-  // ── 8. Utenze ────────────────────────────────────────────────────────────
+  // ── 8. Dove siamo ────────────────────────────────────────────────────────
+  for (const locale of locales) {
+    entries.push({
+      url:             `${BASE_URL}/${locale}/${SLUGS.location[locale]}`,
+      lastModified:    now,
+      changeFrequency: 'yearly',
+      priority:        0.7,
+    });
+  }
+
+  // ── 9. Prenotazione sicura ───────────────────────────────────────────────
+  for (const locale of locales) {
+    entries.push({
+      url:             `${BASE_URL}/${locale}/${SLUGS.safebooking[locale]}`,
+      lastModified:    now,
+      changeFrequency: 'yearly',
+      priority:        0.6,
+    });
+  }
+
+  // ── 10. Deposito cauzionale ──────────────────────────────────────────────
+  for (const locale of locales) {
+    entries.push({
+      url:             `${BASE_URL}/${locale}/${SLUGS.deposit[locale]}`,
+      lastModified:    now,
+      changeFrequency: 'yearly',
+      priority:        0.6,
+    });
+  }
+
+  // ── 11. Utenze ────────────────────────────────────────────────────────────
   for (const locale of locales) {
     entries.push({
       url:             `${BASE_URL}/${locale}/${SLUGS.utilities[locale]}`,

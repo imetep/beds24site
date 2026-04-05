@@ -20,10 +20,13 @@ export const localeLabels: Record<Locale, string> = {
 
 /** Slug localizzati per ogni pagina */
 export const localeSlugs: Record<string, Record<Locale, string>> = {
-  location:   { it: 'dove-siamo',  en: 'location',   de: 'lage',       pl: 'lokalizacja' },
-  contact:    { it: 'contatti',    en: 'contact',     de: 'kontakt',    pl: 'kontakt'     },
-  residences: { it: 'residenze',   en: 'residences',  de: 'residenzen', pl: 'rezydencje'  },
-  book:       { it: 'prenota',     en: 'book',        de: 'buchen',     pl: 'rezerwuj'    },
+  location:     { it: 'dove-siamo',           en: 'location',          de: 'lage',                pl: 'lokalizacja'         },
+  contact:      { it: 'contatti',             en: 'contact',           de: 'kontakt',             pl: 'kontakt'             },
+  residences:   { it: 'residenze',            en: 'residences',        de: 'residenzen',          pl: 'rezydencje'          },
+  book:         { it: 'prenota',              en: 'book',              de: 'buchen',              pl: 'rezerwuj'            },
+  pets:         { it: 'animali',              en: 'animali',           de: 'animali',             pl: 'animali'             },
+  safebooking:  { it: 'prenotazione-sicura',  en: 'prenotazione-sicura', de: 'prenotazione-sicura', pl: 'prenotazione-sicura' },
+  deposit:      { it: 'deposito',             en: 'deposito',          de: 'deposito',            pl: 'deposito'            },
 };
 
 export function isValidLocale(locale: string): locale is Locale {

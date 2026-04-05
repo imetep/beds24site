@@ -74,7 +74,7 @@ const T: Record<Locale, {
       { q: 'I miei dati sono al sicuro?', a: 'Sì. I documenti vengono caricati su Cloudinary in una cartella privata non indicizzabile. I dati personali sono trattati ai sensi del Regolamento UE 2016/679 (GDPR) e trasmessi alle autorità italiane come previsto dall\'art. 109 TULPS. Non vengono condivisi con terze parti per finalità commerciali.' },
       { q: 'Cosa succede se il documento non viene accettato?', a: 'Riceverai una email con la motivazione del rifiuto e l\'invito a ripetere la procedura. Documenti con volti oscurati, dati coperti o immagini modificate vengono rifiutati automaticamente.' },
       { q: 'Posso completare la procedura per conto di altri ospiti?', a: 'Sì, il titolare della prenotazione può compilare i dati di tutti gli ospiti adulti del gruppo. Ogni adulto però deve essere titolare di un documento valido.' },
-      { q: 'Il deposito cauzionale viene addebitato subito?', a: 'No. Viene effettuata una pre-autorizzazione (blocco temporaneo) sulla carta di credito, non un addebito reale. Se non ci sono danni, il blocco viene rilasciato automaticamente entro 7–30 giorni dalla partenza a seconda del circuito (Visa/Mastercard/Amex).' },
+      { q: 'Il deposito cauzionale viene addebitato subito?', a: 'No. Viene effettuata una pre-autorizzazione (blocco temporaneo) sulla carta di credito, non un addebito reale. Se non ci sono danni, il blocco viene rilasciato automaticamente entro 7–30 giorni dalla partenza a seconda del circuito (Visa/Mastercard/Amex).', link: { label: 'Come funziona il deposito →', href: '/it/deposito' } },
     ],
     ctaTitle: 'Pronto per il check-in?',
     ctaText: 'Hai ricevuto il link di check-in nella email di conferma della prenotazione. Se non lo trovi, contattaci via WhatsApp.',
@@ -115,7 +115,7 @@ const T: Record<Locale, {
       { q: 'Is my data secure?', a: 'Yes. Documents are uploaded to Cloudinary in a private, non-indexed folder. Personal data is processed in accordance with EU Regulation 2016/679 (GDPR) and transmitted to Italian authorities as required by Art. 109 TULPS. It is not shared with third parties for commercial purposes.' },
       { q: 'What happens if my document is not accepted?', a: 'You will receive an email explaining why it was rejected and asking you to repeat the procedure. Documents with obscured faces, covered data or altered images are automatically rejected.' },
       { q: 'Can I complete the procedure on behalf of other guests?', a: 'Yes, the lead guest can fill in the details for all adult members of the group. However, each adult must hold a valid document.' },
-      { q: 'Is the security deposit charged immediately?', a: 'No. A pre-authorisation (temporary hold) is placed on the credit card — no actual charge is made. If there is no damage, the hold is released automatically within 7–30 days of departure depending on the card network (Visa/Mastercard/Amex).' },
+      { q: 'Is the security deposit charged immediately?', a: 'No. A pre-authorisation (temporary hold) is placed on the credit card — no actual charge is made. If there is no damage, the hold is released automatically within 7–30 days of departure depending on the card network (Visa/Mastercard/Amex).', link: { label: 'How the deposit works →', href: '/en/deposito' } },
     ],
     ctaTitle: 'Ready to check in?',
     ctaText: 'You received the check-in link in your booking confirmation email. If you cannot find it, contact us via WhatsApp.',
@@ -156,7 +156,7 @@ const T: Record<Locale, {
       { q: 'Sind meine Daten sicher?', a: 'Ja. Dokumente werden in einem privaten, nicht indizierten Ordner auf Cloudinary hochgeladen. Personenbezogene Daten werden gemäß EU-Verordnung 2016/679 (DSGVO) verarbeitet und den italienischen Behörden gemäß Art. 109 TULPS übermittelt. Sie werden nicht zu kommerziellen Zwecken an Dritte weitergegeben.' },
       { q: 'Was passiert, wenn mein Dokument nicht akzeptiert wird?', a: 'Sie erhalten eine E-Mail mit der Begründung der Ablehnung und der Bitte, das Verfahren zu wiederholen. Dokumente mit verdeckten Gesichtern, abgedeckten Daten oder veränderten Bildern werden automatisch abgelehnt.' },
       { q: 'Kann ich das Verfahren für andere Gäste ausfüllen?', a: 'Ja, der Hauptbuchende kann die Daten aller erwachsenen Mitglieder der Gruppe ausfüllen. Jeder Erwachsene muss jedoch ein gültiges Dokument besitzen.' },
-      { q: 'Wird die Kaution sofort abgebucht?', a: 'Nein. Es wird eine Vorautorisierung (vorübergehende Blockierung) auf der Kreditkarte durchgeführt — keine tatsächliche Abbuchung. Wenn keine Schäden vorliegen, wird die Blockierung je nach Kartennetz (Visa/Mastercard/Amex) automatisch innerhalb von 7–30 Tagen nach der Abreise aufgehoben.' },
+      { q: 'Wird die Kaution sofort abgebucht?', a: 'Nein. Es wird eine Vorautorisierung (vorübergehende Blockierung) auf der Kreditkarte durchgeführt — keine tatsächliche Abbuchung. Wenn keine Schäden vorliegen, wird die Blockierung je nach Kartennetz (Visa/Mastercard/Amex) automatisch innerhalb von 7–30 Tagen nach der Abreise aufgehoben.', link: { label: 'So funktioniert die Kaution →', href: '/de/deposito' } },
     ],
     ctaTitle: 'Bereit zum Einchecken?',
     ctaText: 'Sie haben den Check-in-Link in Ihrer Buchungsbestätigungs-E-Mail erhalten. Wenn Sie ihn nicht finden, kontaktieren Sie uns über WhatsApp.',
@@ -197,7 +197,7 @@ const T: Record<Locale, {
       { q: 'Czy moje dane są bezpieczne?', a: 'Tak. Dokumenty są przesyłane do Cloudinary w prywatnym, nieindeksowanym folderze. Dane osobowe są przetwarzane zgodnie z Rozporządzeniem UE 2016/679 (RODO) i przekazywane władzom włoskim zgodnie z art. 109 TULPS. Nie są udostępniane stronom trzecim w celach komercyjnych.' },
       { q: 'Co się stanie, jeśli dokument nie zostanie zaakceptowany?', a: 'Otrzymasz e-mail wyjaśniający przyczyny odrzucenia i prośbę o powtórzenie procedury. Dokumenty z zakrytymi twarzami, ukrytymi danymi lub zmienionymi obrazami są automatycznie odrzucane.' },
       { q: 'Czy mogę wypełnić procedurę w imieniu innych gości?', a: 'Tak, główny rezerwujący może wypełnić dane wszystkich dorosłych członków grupy. Jednak każdy dorosły musi posiadać ważny dokument.' },
-      { q: 'Czy kaucja jest pobierana od razu?', a: 'Nie. Na karcie kredytowej dokonywana jest pre-autoryzacja (tymczasowe zablokowanie) — bez rzeczywistego obciążenia. Jeśli nie ma szkód, blokada jest automatycznie zwalniana w ciągu 7–30 dni od wyjazdu, w zależności od sieci kartowej (Visa/Mastercard/Amex).' },
+      { q: 'Czy kaucja jest pobierana od razu?', a: 'Nie. Na karcie kredytowej dokonywana jest pre-autoryzacja (tymczasowe zablokowanie) — bez rzeczywistego obciążenia. Jeśli nie ma szkód, blokada jest automatycznie zwalniana w ciągu 7–30 dni od wyjazdu, w zależności od sieci kartowej (Visa/Mastercard/Amex).', link: { label: 'Jak działa kaucja →', href: '/pl/deposito' } },
     ],
     ctaTitle: 'Gotowy do zameldowania?',
     ctaText: 'Link do check-in otrzymałeś w e-mailu potwierdzającym rezerwację. Jeśli go nie możesz znaleźć, skontaktuj się z nami przez WhatsApp.',
@@ -230,11 +230,17 @@ function StepCard({ n, title, text }: { n: string; title: string; text: string }
   );
 }
 
-function FaqItem({ q, a }: { q: string; a: string }) {
+function FaqItem({ q, a, link }: { q: string; a: string; link?: { label: string; href: string } }) {
   return (
     <div style={{ padding: '14px 0', borderBottom: '0.5px solid #f3f4f6' }}>
       <p style={{ margin: '0 0 6px', fontSize: 14, fontWeight: 700, color: '#111' }}>{q}</p>
       <p style={{ margin: 0, fontSize: 14, color: '#4b5563', lineHeight: 1.65 }}>{a}</p>
+      {link && (
+        <a href={link.href} target="_blank" rel="noopener noreferrer"
+          style={{ display: 'inline-block', marginTop: 6, fontSize: 12, color: '#1E73BE', textDecoration: 'none', fontWeight: 600 }}>
+          {link.label}
+        </a>
+      )}
     </div>
   );
 }

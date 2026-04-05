@@ -19,8 +19,12 @@ const LABELS: Record<string, Record<string, string>> = {
     checkOut: 'Check-out',
     depositTitle: 'Deposito cauzionale',
     depositText: 'Richiesto al check-in con Carta di Credito (no Debit Card). Verrà rimborsato integralmente alla partenza, salvo danni.',
+    depositLink: 'Come funziona il deposito →',
+    depositHref: '/it/deposito',
     energyTitle: 'Consumi energetici',
     energyText: 'I consumi energetici vengono conteggiati in base all\'utilizzo reale, tramite contatori presenti in ogni abitazione. Non si tratta di un costo aggiuntivo per guadagno, ma di una misura per evitare sprechi.',
+    energyLink: 'Tariffe e consigli →',
+    energyHref: '/it/utenze',
     taxTitle: 'Imposta di soggiorno',
     taxText: 'Nel Comune di Minturno, in cui si trova la struttura, è prevista un\'imposta di soggiorno di €2,00 a persona al giorno, valida solo per i primi 10 giorni di soggiorno e solo per gli ospiti con più di 12 anni di età.',
     rulesTitle: 'Regole della casa',
@@ -36,8 +40,12 @@ const LABELS: Record<string, Record<string, string>> = {
     checkOut: 'Check-out',
     depositTitle: 'Security deposit',
     depositText: 'Required at check-in by Credit Card (no Debit Card). Fully refunded at departure, subject to no damage.',
+    depositLink: 'How the deposit works →',
+    depositHref: '/en/deposito',
     energyTitle: 'Energy consumption',
     energyText: 'Energy consumption is calculated based on actual usage, measured through meters installed in each accommodation. This is not an additional charge for profit, but a measure to prevent energy waste.',
+    energyLink: 'Rates and tips →',
+    energyHref: '/en/utilities',
     taxTitle: 'Tourist tax',
     taxText: 'A tourist tax of €2.00 per person per day applies, valid only for the first 10 nights and only for guests over 12 years of age.',
     rulesTitle: 'House rules',
@@ -53,8 +61,12 @@ const LABELS: Record<string, Record<string, string>> = {
     checkOut: 'Check-out',
     depositTitle: 'Kaution',
     depositText: 'Beim Check-in per Kreditkarte (keine Debitkarte). Wird bei Abreise vollständig zurückerstattet, sofern keine Schäden vorliegen.',
+    depositLink: 'So funktioniert die Kaution →',
+    depositHref: '/de/deposito',
     energyTitle: 'Energieverbrauch',
     energyText: 'Der Energieverbrauch wird auf Grundlage des tatsächlichen Verbrauchs berechnet und über in jeder Unterkunft installierte Zähler erfasst. Dabei handelt es sich nicht um eine zusätzliche Gebühr zur Gewinnerzielung, sondern um eine Maßnahme zur Vermeidung von Energieverschwendung.',
+    energyLink: 'Tarife und Tipps →',
+    energyHref: '/de/energie',
     taxTitle: 'Kurtaxe',
     taxText: 'Es wird eine Kurtaxe von €2,00 pro Person und Nacht erhoben, gültig nur für die ersten 10 Nächte und nur für Gäste über 12 Jahre.',
     rulesTitle: 'Hausregeln',
@@ -70,8 +82,12 @@ const LABELS: Record<string, Record<string, string>> = {
     checkOut: 'Check-out',
     depositTitle: 'Kaucja',
     depositText: 'Wymagana przy zameldowaniu kartą kredytową (bez kart debetowych). Zwracana w całości przy wyjeździe, o ile nie wystąpią szkody.',
+    depositLink: 'Jak działa kaucja →',
+    depositHref: '/pl/deposito',
     energyTitle: 'Zużycie energii',
     energyText: 'Zużycie energii jest rozliczane na podstawie rzeczywistego wykorzystania, mierzonego przez liczniki zainstalowane w każdym obiekcie. Nie jest to dodatkowa opłata w celu osiągnięcia zysku, lecz środek mający na celu zapobieganie marnotrawstwu energii.',
+    energyLink: 'Taryfy i wskazówki →',
+    energyHref: '/pl/media',
     taxTitle: 'Opłata turystyczna',
     taxText: 'Obowiązuje opłata turystyczna w wysokości €2,00 za osobę za dobę, tylko przez pierwsze 10 nocy i tylko dla gości powyżej 12 roku życia.',
     rulesTitle: 'Zasady domu',
@@ -138,12 +154,14 @@ export default function ThingsToKnow({ locale, checkInStart, checkInEnd, checkOu
           <div style={sectionStyle}>
             <div style={sectionTitleStyle}>💳 {t.depositTitle}: €{securityDeposit}</div>
             <p style={textStyle}>{t.depositText}</p>
+            <a href={t.depositHref} target="_blank" rel="noopener noreferrer" style={linkStyle}>{t.depositLink}</a>
           </div>
 
           {/* Consumi */}
           <div style={sectionStyle}>
             <div style={sectionTitleStyle}>⚡ {t.energyTitle}</div>
             <p style={textStyle}>{t.energyText}</p>
+            <a href={t.energyHref} target="_blank" rel="noopener noreferrer" style={linkStyle}>{t.energyLink}</a>
           </div>
 
           {/* Imposta di soggiorno */}
@@ -176,6 +194,8 @@ export default function ThingsToKnow({ locale, checkInStart, checkInEnd, checkOu
     </div>
   );
 }
+
+const linkStyle: React.CSSProperties = { display: 'inline-block', marginTop: 4, fontSize: 12, color: '#1E73BE', textDecoration: 'none' };
 
 const sectionStyle: React.CSSProperties = {
   paddingBottom: 16,

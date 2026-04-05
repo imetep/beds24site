@@ -20,7 +20,9 @@ const UI: Record<string, Record<string, string>> = {
     loading: 'Caricamento prenotazione...', notFound: 'Prenotazione non trovata.',
     errTitle: 'Errore', chooseMethod: 'Metodo di pagamento',
     energy: '⚡ Consumi energetici a consumo — contatori in ogni abitazione',
+    energyLink: 'Tariffe e consigli →', energyHref: '/it/utenze',
     deposit_info: '🔐 Deposito cauzionale: verrà richiesto separatamente',
+    depositLink: 'Come funziona il deposito →', depositHref: '/it/deposito',
   },
   en: {
     title: 'Booking summary', subtitle: 'Check the details and proceed to payment',
@@ -35,7 +37,9 @@ const UI: Record<string, Record<string, string>> = {
     loading: 'Loading booking...', notFound: 'Booking not found.',
     errTitle: 'Error', chooseMethod: 'Payment method',
     energy: '⚡ Energy billed by actual usage — meters in each unit',
+    energyLink: 'Rates and tips →', energyHref: '/en/utilities',
     deposit_info: '🔐 Security deposit: will be requested separately',
+    depositLink: 'How it works →', depositHref: '/en/deposito',
   },
   de: {
     title: 'Buchungsübersicht', subtitle: 'Details prüfen und zur Zahlung fortfahren',
@@ -50,7 +54,9 @@ const UI: Record<string, Record<string, string>> = {
     loading: 'Buchung wird geladen...', notFound: 'Buchung nicht gefunden.',
     errTitle: 'Fehler', chooseMethod: 'Zahlungsmethode',
     energy: '⚡ Energiekosten nach Verbrauch — Zähler in jeder Einheit',
+    energyLink: 'Tarife und Tipps →', energyHref: '/de/energie',
     deposit_info: '🔐 Kaution: wird separat angefordert',
+    depositLink: 'So funktioniert sie →', depositHref: '/de/deposito',
   },
   pl: {
     title: 'Podsumowanie rezerwacji', subtitle: 'Sprawdź szczegóły i przejdź do płatności',
@@ -65,7 +71,9 @@ const UI: Record<string, Record<string, string>> = {
     loading: 'Ładowanie rezerwacji...', notFound: 'Rezerwacja nie znaleziona.',
     errTitle: 'Błąd', chooseMethod: 'Metoda płatności',
     energy: '⚡ Koszty energii według zużycia — liczniki w każdym lokalu',
+    energyLink: 'Taryfy i wskazówki →', energyHref: '/pl/media',
     deposit_info: '🔐 Kaucja: zostanie pobrana oddzielnie',
+    depositLink: 'Jak działa →', depositHref: '/pl/deposito',
   },
 };
 
@@ -278,8 +286,10 @@ export default function PagaClient({ locale }: Props) {
 
       {/* Info box */}
       <div style={{ ...card, background: '#f9fafb', border: '1px solid #e5e7eb' }}>
-        <p style={{ margin: '0 0 8px', fontSize: 13, color: '#555' }}>{t.energy}</p>
-        <p style={{ margin: 0, fontSize: 13, color: '#555' }}>{t.deposit_info}</p>
+        <p style={{ margin: '0 0 4px', fontSize: 13, color: '#555' }}>{t.energy}</p>
+        <a href={t.energyHref} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginBottom: 8, fontSize: 11, color: '#1E73BE', textDecoration: 'none', fontWeight: 600 }}>{t.energyLink}</a>
+        <p style={{ margin: '0 0 4px', fontSize: 13, color: '#555' }}>{t.deposit_info}</p>
+        <a href={t.depositHref} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', fontSize: 11, color: '#1E73BE', textDecoration: 'none', fontWeight: 600 }}>{t.depositLink}</a>
       </div>
 
       {/* Metodo di pagamento */}

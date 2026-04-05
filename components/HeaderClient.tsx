@@ -84,6 +84,7 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
               { href: `/${locale}`,                label: nav.home },
               { href: `/${locale}/residenze`,      label: nav.residences },
               { href: `/${locale}/dove-siamo`,     label: nav.location },
+              { href: `/${locale}/contatti`,       label: nav.contact },
               { href: `/${locale}/guest/portal`,   label: '🔐 Area Ospiti' },
             ].map(({ href, label }) => (
               <a key={href} href={href} style={{ fontSize: '1.15rem', fontWeight: 600, color: '#111', textDecoration: 'none', padding: '0.9rem 0', borderBottom: '1px solid #f0f0f0', display: 'block' }}>

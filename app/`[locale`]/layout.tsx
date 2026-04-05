@@ -99,7 +99,6 @@ export default async function LocaleLayout({ children, params }: Props) {
                 Link utili
               </p>
               {[
-                { href: `/${locale}/contatti`,           label: t.footer.contact },
                 { href: `/${locale}/dove-siamo`,         label: t.footer.location },
                 { href: `/${locale}/prenotazione-sicura`,label: t.footer.safe_booking },
                 { href: `/${locale}/condizioni`,         label: t.footer.terms },
@@ -122,6 +121,11 @@ export default async function LocaleLayout({ children, params }: Props) {
         </div>
       </footer>
 
+      <style>{`
+        @media (max-width: 680px) {
+          .footer-links-col { display: block; }
+        }
+      `}</style>
     </>
   );
 }
