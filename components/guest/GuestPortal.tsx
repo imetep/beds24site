@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import GuestLogin     from './GuestLogin';
 import DepositSection from './DepositSection';
 import CheckinSection from './CheckinSection';
+import BedSection     from './BedSection';
 
 const C = {
   blue:        '#1E73BE',
@@ -81,6 +82,7 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
     { q: tFQ.q3, a: tFQ.a3 },
     { q: tFQ.q4, a: tFQ.a4 },
     { q: tFQ.q5, a: tFQ.a5 },
+    { q: tFQ.q6, a: tFQ.a6 },
   ];
 
   return (
@@ -170,6 +172,9 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
         </div>
 
         {/* 2. Deposito */}
+        {/* Configurazione letti */}
+        <BedSection locale={locale} t={t.beds} numGuests={(booking.numAdult ?? 0) + (booking.numChild ?? 0)} />
+
         <DepositSection locale={locale} t={t} bookId={booking.bookId} amount={booking.depositAmount} deposit={deposit} onDepositStarted={() => {}} />
 
         {/* 3. Self check-in */}

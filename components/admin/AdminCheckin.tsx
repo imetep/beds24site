@@ -230,7 +230,8 @@ export default function AdminCheckin() {
   const [rejectNote, setRejectNote] = useState('');
   const [showReject, setShowReject] = useState(false);
   const [feedback, setFeedback]     = useState('');
-  const [activeTab, setActiveTab]   = useState<'info' | 'msg'>('info');
+  const [activeTab, setActiveTab]   = useState<'info' | 'msg' | 'letti'>('info');
+  const [bedData,    setBedData]     = useState<any>(null);
 
   useEffect(() => {
     fetch('/api/admin/checkin')
@@ -274,6 +275,12 @@ export default function AdminCheckin() {
       setDepositEmailSent(false);
       setDepositEmailBusy(false);
       setActiveTab('info');
+      setBedData(null);
+      // Carica configurazione letti
+      fetch(`/api/portal/beds?adminBookId=${bookId}`)
+        .then(r => r.ok ? r.json() : null)
+        .then(d => { if (d) setBedData(d); })
+        .catch(() => {});
     }
     const b24 = await fetch(`/api/booking-info?bookId=${bookId}`);
     if (b24.ok) {
@@ -461,7 +468,7 @@ Operazione irreversibile.`);
 
               {/* Tab Info / Messaggi */}
               <div style={{ display: 'flex', gap: 0, marginBottom: 16, borderBottom: '1px solid #e5e7eb' }}>
-                {(['info', 'msg'] as const).map(tab => (
+                {(['info', 'letti', 'msg'] as const).map(tab => (
                   <button key={tab}
                     onClick={() => setActiveTab(tab)}
                     style={{
@@ -470,7 +477,7 @@ Operazione irreversibile.`);
                       borderBottom: activeTab === tab ? '2px solid #1E73BE' : '2px solid transparent',
                       color: activeTab === tab ? '#1E73BE' : '#6b7280',
                     }}>
-                    {tab === 'info' ? 'Dati ospite' : (
+                    {tab === 'info' ? 'Dati ospite' : tab === 'letti' ? '🛏 Letti & Biancheria' : (
                       <span>
                         Messaggi
                         {selected.messages?.filter(m => m.from === 'guest').length > 0 && (
@@ -717,6 +724,104 @@ Operazione irreversibile.`);
                     </>
                   )}
                 </>
+              )}
+
+
+              {/* ── TAB LETTI & BIANCHERIA ── */}
+              {activeTab === 'letti' && (
+                <div>
+                  {!bedData || !bedData.config ? (
+                    <p style={{ color: '#9ca3af', fontSize: 13 }}>Nessuna configurazione letti salvata dall'ospite.</p>
+                  ) : (
+                    <>
+                      {/* Configurazione camere */}
+                      {bedData.config.rooms.map((room: any) => {
+                        const roomLabel = room.label?.it ?? room.id;
+                        return (
+                          <div key={room.id} style={{ marginBottom: 12, padding: '10px 14px', background: '#f9fafb', borderRadius: 8 }}>
+                            <p style={{ margin: '0 0 6px', fontSize: 12, fontWeight: 700, color: '#1E73BE', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{roomLabel}</p>
+                            {room.beds.map((bed: any) => {
+                              const state = bedData.bedStates?.[bed.id] ?? 'off';
+                              const label = state === 'off'
+                                ? '— non usato'
+                                : state === 'A'
+                                  ? (bed.configOptions?.closed?.label?.it ?? (bed.baseType === 'matrimoniale' ? 'Matrimoniale' : 'Singolo'))
+                                  : (bed.configOptions?.open?.label?.it ?? 'Config. B');
+                              const bedName = bed.variant === 'sommier' ? 'Sommier'
+                                : bed.variant === 'impilabile' ? 'Impilabile'
+                                : bed.variant === 'estraibile' ? 'Estraibile'
+                                : bed.variant === 'poltrona' ? 'Poltrona letto'
+                                : bed.variant === 'divano' ? 'Divano letto'
+                                : bed.variant === 'castello' ? 'Castello'
+                                : bed.variant === 'pavimento' ? 'A pavimento'
+                                : bed.baseType === 'matrimoniale' ? 'Matrimoniale'
+                                : 'Singolo';
+                              return (
+                                <div key={bed.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: state === 'off' ? '#9ca3af' : '#111', marginBottom: 2 }}>
+                                  <span>{bedName}</span>
+                                  <span style={{ fontWeight: state !== 'off' ? 600 : 400 }}>{label}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        );
+                      })}
+
+                      {/* Culle */}
+                      <div style={{ marginBottom: 12, padding: '8px 14px', background: '#FFF8EC', borderRadius: 8, border: '1px solid #FCAF1A' }}>
+                        <p style={{ margin: 0, fontSize: 13, fontWeight: 600 }}>🍼 Culle richieste: {bedData.cribs ?? 0}</p>
+                      </div>
+
+                      {/* Calcolo biancheria */}
+                      {bedData.linen && (
+                        <>
+                          <span style={lbl}>Biancheria calcolata</span>
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
+                            {[
+                              { label: 'Lenz. matrimoniali', val: bedData.linen.lenzMatrimoniali },
+                              { label: 'Lenz. singoli',      val: bedData.linen.lenzSingoli },
+                              { label: 'Federe',             val: bedData.linen.federe },
+                              { label: 'Asciugamani (pers.)',val: bedData.linen.persone },
+                              { label: 'Culle',              val: bedData.linen.culle },
+                            ].map(({ label: l, val: v }) => (
+                              <div key={l} style={{ background: '#f9fafb', borderRadius: 8, padding: '8px 12px', border: '1px solid #e5e7eb' }}>
+                                <p style={{ margin: 0, fontSize: 11, color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase' }}>{l}</p>
+                                <p style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#1E73BE' }}>{v}</p>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Export CSV */}
+                          <button
+                            onClick={() => {
+                              const rows = [
+                                ['Campo', 'Valore'],
+                                ['BookId', selected.bookId],
+                                ['Check-in', selected.checkIn],
+                                ['Check-out', selected.checkOut],
+                                ['Struttura', selected.roomName],
+                                ['Lenzuola matrimoniali', bedData.linen.lenzMatrimoniali],
+                                ['Lenzuola singole', bedData.linen.lenzSingoli],
+                                ['Federe', bedData.linen.federe],
+                                ['Asciugamani (persone)', bedData.linen.persone],
+                                ['Culle', bedData.linen.culle],
+                              ];
+                              const csv = rows.map(r => r.join(',')).join('\n');
+                              const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                              const url = URL.createObjectURL(blob);
+                              const a = document.createElement('a');
+                              a.href = url; a.download = `${selected.bookId}_biancheria.csv`;
+                              a.click(); URL.revokeObjectURL(url);
+                            }}
+                            style={{ width: '100%', padding: '10px', fontSize: 13, fontWeight: 700, background: '#1E73BE', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer' }}
+                          >
+                            ⬇ Esporta CSV biancheria
+                          </button>
+                        </>
+                      )}
+                    </>
+                  )}
+                </div>
               )}
 
               {/* ── TAB MESSAGGI ── */}

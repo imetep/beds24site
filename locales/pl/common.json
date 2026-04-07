@@ -212,7 +212,29 @@
       "q4": "Co się stanie, jeśli self check-in zostanie odrzucony?",
       "a4": "Wiadomość o odrzuceniu wyjaśni powód. Napisz do gospodarza lub skontaktuj się z nami przez WhatsApp.",
       "q5": "Kontakty alarmowe",
-      "a5": "WhatsApp +39 328 313 1500 · E-mail: contattolivingapple@gmail.com"
+      "a5": "WhatsApp +39 328 313 1500 · E-mail: contattolivingapple@gmail.com",
+      "q6": "Czy dostępne jest łóżeczko dla niemowląt?",
+      "a6": "Tak, dysponujemy łóżeczkiem turystycznym z pościelą w cenie 50 € za pobyt. Prosimy o rezerwację z co najmniej 48-godzinnym wyprzedzeniem przez WhatsApp pod numer +39 328 313 1500."
+    },
+    "beds": {
+      "title": "Gdzie będziecie spać",
+      "subtitle": "Skonfigurujcie łóżka w kilku kliknięciach. Dom będzie przygotowany dokładnie tak, jak chcecie — bez niespodzianek, dla idealnych wakacji od pierwszej chwili.",
+      "confirmHint": "Dotknij, aby potwierdzić →",
+      "progressOf": "z",
+      "progressLabel": "pokoi potwierdzonych",
+      "allConfirmed": "Wszystko gotowe! Teraz zapisz.",
+      "save": "Zapisz konfigurację",
+      "saved": "Konfiguracja zapisana",
+      "saving": "Zapisywanie…",
+      "saveHint": "Potwierdź wszystkie pokoje, aby zapisać.",
+      "errorSave": "Błąd podczas zapisywania. Spróbuj ponownie.",
+      "warningTooFew": "Uwaga: skonfigurowane miejsca do spania są mniejsze niż liczba gości w rezerwacji.",
+      "loading": "Ładowanie…",
+      "cribTitle": "Czy potrzebujecie łóżeczka dla niemowlęcia?",
+      "cribDesc": "Łóżeczko turystyczne z pościelą — 50 € za pobyt. Prosimy o rezerwację min. 72 godziny wcześniej.",
+      "cribNo": "Nie, dziękuję",
+      "crib1": "Tak, 1 łóżeczko",
+      "crib2": "Tak, 2 łóżeczka"
     }
   }
 }

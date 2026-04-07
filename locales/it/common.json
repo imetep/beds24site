@@ -212,7 +212,29 @@
       "q4": "Cosa succede se il self check-in viene rifiutato?",
       "a4": "Il messaggio di rifiuto ti spiegherà il motivo. Scrivi al gestore nel thread messaggi o contattaci via WhatsApp.",
       "q5": "Contatti di emergenza",
-      "a5": "WhatsApp +39 328 313 1500 · Email: contattolivingapple@gmail.com"
+      "a5": "WhatsApp +39 328 313 1500 · Email: contattolivingapple@gmail.com",
+      "q6": "È disponibile una culla per neonati?",
+      "a6": "Sì, disponiamo di una culla da campeggio con biancheria inclusa al costo di €50 a soggiorno. Prenotatela con almeno 48 ore di anticipo contattando il gestore via WhatsApp al +39 328 313 1500."
+    },
+    "beds": {
+      "title": "Dove dormirete",
+      "subtitle": "Configurate i vostri letti in pochi tocchi. Troverete la casa già pronta esattamente come volete, senza sorprese — per una vacanza perfetta fin dal primo momento.",
+      "confirmHint": "Tocca per confermare →",
+      "progressOf": "di",
+      "progressLabel": "camere confermate",
+      "allConfirmed": "Tutto configurato! Ora salvate.",
+      "save": "Salva configurazione",
+      "saved": "Configurazione salvata",
+      "saving": "Salvataggio…",
+      "saveHint": "Confermate tutte le camere per salvare.",
+      "errorSave": "Errore nel salvataggio. Riprova.",
+      "warningTooFew": "Attenzione: i posti letto configurati sono meno degli ospiti della prenotazione.",
+      "loading": "Caricamento…",
+      "cribTitle": "Avete bisogno di una culla?",
+      "cribDesc": "Culla da campeggio con biancheria inclusa — €50 a soggiorno. Prenotate con almeno 72 ore di anticipo.",
+      "cribNo": "No, grazie",
+      "crib1": "Sì, 1 culla",
+      "crib2": "Sì, 2 culle"
     }
   }
 }

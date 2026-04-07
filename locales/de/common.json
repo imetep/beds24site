@@ -212,7 +212,29 @@
       "q4": "Was passiert, wenn der Self Check-in abgelehnt wird?",
       "a4": "Die Ablehnungsnachricht erklärt den Grund. Schreiben Sie dem Gastgeber oder kontaktieren Sie uns per WhatsApp.",
       "q5": "Notfallkontakte",
-      "a5": "WhatsApp +39 328 313 1500 · E-Mail: contattolivingapple@gmail.com"
+      "a5": "WhatsApp +39 328 313 1500 · E-Mail: contattolivingapple@gmail.com",
+      "q6": "Ist ein Babybett verfügbar?",
+      "a6": "Ja, wir stellen ein Campingbettchen mit Bettwäsche für €50 pro Aufenthalt zur Verfügung. Bitte reservieren Sie es mindestens 48 Stunden im Voraus über WhatsApp unter +39 328 313 1500."
+    },
+    "beds": {
+      "title": "Wo Sie schlafen",
+      "subtitle": "Konfigurieren Sie Ihre Betten in wenigen Schritten. Alles wird genau so vorbereitet, wie Sie es möchten — für einen perfekten Urlaub von Anfang an.",
+      "confirmHint": "Antippen zum Bestätigen →",
+      "progressOf": "von",
+      "progressLabel": "Zimmern bestätigt",
+      "allConfirmed": "Alles konfiguriert! Jetzt speichern.",
+      "save": "Konfiguration speichern",
+      "saved": "Konfiguration gespeichert",
+      "saving": "Wird gespeichert…",
+      "saveHint": "Bestätigen Sie alle Zimmer zum Speichern.",
+      "errorSave": "Fehler beim Speichern. Bitte erneut versuchen.",
+      "warningTooFew": "Hinweis: Die konfigurierten Schlafplätze sind weniger als die Gäste Ihrer Buchung.",
+      "loading": "Wird geladen…",
+      "cribTitle": "Benötigen Sie ein Babybett?",
+      "cribDesc": "Campingbettchen mit Bettwäsche — €50 pro Aufenthalt. Bitte mindestens 72 Stunden im Voraus reservieren.",
+      "cribNo": "Nein, danke",
+      "crib1": "Ja, 1 Bettchen",
+      "crib2": "Ja, 2 Bettchen"
     }
   }
 }

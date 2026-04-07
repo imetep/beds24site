@@ -212,7 +212,29 @@
       "q4": "What if self check-in is rejected?",
       "a4": "The rejection message explains the reason. Message the host or contact us via WhatsApp.",
       "q5": "Emergency contacts",
-      "a5": "WhatsApp +39 328 313 1500 · Email: contattolivingapple@gmail.com"
+      "a5": "WhatsApp +39 328 313 1500 · Email: contattolivingapple@gmail.com",
+      "q6": "Is a baby cot available?",
+      "a6": "Yes, we provide a camping cot with bedding included at €50 per stay. Please book it at least 48 hours in advance by contacting us on WhatsApp at +39 328 313 1500."
+    },
+    "beds": {
+      "title": "Where you'll sleep",
+      "subtitle": "Set up your beds in just a few taps. Everything will be ready exactly as you want it, with no surprises — for a perfect holiday from the very first moment.",
+      "confirmHint": "Tap to confirm →",
+      "progressOf": "of",
+      "progressLabel": "rooms confirmed",
+      "allConfirmed": "All set! Now save.",
+      "save": "Save configuration",
+      "saved": "Configuration saved",
+      "saving": "Saving…",
+      "saveHint": "Confirm all rooms to save.",
+      "errorSave": "Error saving. Please try again.",
+      "warningTooFew": "Note: the configured sleeping places are fewer than the guests in your booking.",
+      "loading": "Loading…",
+      "cribTitle": "Do you need a baby cot?",
+      "cribDesc": "Camping cot with bedding included — €50 per stay. Book at least 72 hours in advance.",
+      "cribNo": "No, thanks",
+      "crib1": "Yes, 1 cot",
+      "crib2": "Yes, 2 cots"
     }
   }
 }
