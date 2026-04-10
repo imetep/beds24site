@@ -200,6 +200,7 @@ export default function WizardStep7({ locale = 'it' }: Props) {
     checkIn, checkOut,
     selectedRoomId, selectedOfferId,
     cachedOffers,
+    selectedExtras,
     voucherCode,
     paymentMethod,
     guestFirstName, guestLastName, guestEmail,
@@ -240,7 +241,8 @@ export default function WizardStep7({ locale = 'it' }: Props) {
   const realPrice      = discountedPrice !== null ? discountedPrice : offerPrice;
   const hasDiscount    = discountedPrice !== null && discountedPrice < offerPrice;
   const discountAmount = hasDiscount ? offerPrice - discountedPrice! : 0;
-  const total          = realPrice + touristTax;
+  const extrasTotal    = (selectedExtras ?? []).reduce((sum: number, e: any) => sum + e.price * (e.quantity ?? 1), 0);
+  const total          = realPrice + touristTax + extrasTotal;
 
   // ── Crea booking su Beds24 — chiamata solo al click del bottone Paga ──────
   // Restituisce il bookId oppure null se errore (setPhase('error') già chiamato)
@@ -547,9 +549,9 @@ export default function WizardStep7({ locale = 'it' }: Props) {
 
       {/* Politica cancellazione */}
       {cancelPolicy && (
-        <div style={{ ...card, background: '#f9fafb', border: '1px solid #e5e7eb' }}>
-          <p style={labelStyle}>{t.cancelPolicy}</p>
-          <p style={{ fontSize: 13, color: '#444', margin: 0, lineHeight: 1.6 }}>{cancelPolicy}</p>
+        <div style={{ ...card, background: '#FFF8EC', border: '1px solid #fcd34d', borderLeft: '4px solid #FCAF1A' }}>
+          <p style={{ ...labelStyle, color: '#B07820' }}>{t.cancelPolicy}</p>
+          <p style={{ fontSize: 13, color: '#78350f', margin: 0, lineHeight: 1.6 }}>{cancelPolicy}</p>
         </div>
       )}
 
@@ -570,14 +572,23 @@ export default function WizardStep7({ locale = 'it' }: Props) {
           />
         )}
 
+        {/* Righe extras selezionati */}
+        {(selectedExtras ?? []).map((extra: any) => (
+          <PriceRow
+            key={extra.id}
+            label={`${extra.name[loc] ?? extra.name.it}${(extra.quantity ?? 1) > 1 ? ` ×${extra.quantity}` : ''}`}
+            value={`+${fmt(extra.price * (extra.quantity ?? 1))}`}
+          />
+        ))}
+
         {touristTax > 0 && <PriceRow label={t.touristTax} value={fmt(touristTax)} />}
         {touristTax > 0 && <p style={{ fontSize: 11, color: '#9ca3af', margin: '-4px 0 12px' }}>{t.touristNote}</p>}
 
         <div style={{ height: 1, background: '#e5e7eb', margin: '12px 0' }} />
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: 15, fontWeight: 800, color: '#111' }}>{t.total}</span>
-          <span style={{ fontSize: 28, fontWeight: 900, color: '#1E73BE' }}>{fmt(total)}</span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#EEF5FC', borderRadius: 12, padding: '14px 16px', marginTop: 4 }}>
+          <span style={{ fontSize: 16, fontWeight: 800, color: '#111' }}>{t.total}</span>
+          <span style={{ fontSize: 32, fontWeight: 900, color: '#1E73BE', letterSpacing: '-0.02em' }}>{fmt(total)}</span>
         </div>
 
         {hasDiscount && (
@@ -695,6 +706,6 @@ const card: React.CSSProperties = {
 };
 
 const labelStyle: React.CSSProperties = {
-  fontSize: 11, fontWeight: 700, color: '#9ca3af',
+  fontSize: 11, fontWeight: 700, color: '#1E73BE',
   textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 12px',
 };

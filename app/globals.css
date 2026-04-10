@@ -24,3 +24,37 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ── BedConfigDisplay ── */
+
+/* Nascondi scrollbar webkit su tutti gli schermi */
+.bed-config-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hint scroll: nascosto su desktop, visibile su mobile */
+.bed-scroll-hint-mobile {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  /* Container: padding-right 40px → la card successiva fa capolino */
+  .bed-scroll-container {
+    padding-right: 40px !important;
+    margin-right: -16px;        /* estende fino al bordo pagina */
+  }
+
+  /* Card più piccola su mobile */
+  .bed-card {
+    width: 150px !important;
+    height: 195px !important;
+  }
+
+  /* Hint scorri → visibile sotto le card */
+  .bed-scroll-hint-mobile {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 6px;
+    padding-right: 4px;
+  }
+}

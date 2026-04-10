@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
-import { PROPERTIES } from '@/config/properties';
+import type { SelectedExtra } from '@/store/wizard-store';
+import { PROPERTIES, getPropertyForRoom } from '@/config/properties';
 
 // ─── Testi fissi 4 lingue ─────────────────────────────────────────────────────
 const ENERGY_BOX: Record<string, string> = {
@@ -42,9 +43,11 @@ const UI: Record<string, Record<string, string>> = {
     title: 'Conferma e paga',
     back: '← Indietro',
     sec1title: '1. Come vuoi pagare?',
+    sec2title: '2. Servizi extra (opzionale)',
+    sec2sub: 'Aggiungi servizi alla tua prenotazione',
+    sec3title: '2. I tuoi dati',
     payFull: 'Paga tutto ora',
     payInstall: 'Paga in 3 rate con PayPal',
-    sec2title: '2. I tuoi dati',
     firstName: 'Nome *', lastName: 'Cognome *', email: 'Email *',
     phone: 'Telefono', country: 'Paese', arrivalTime: 'Ora di arrivo prevista',
     comments: 'Richieste speciali',
@@ -69,14 +72,17 @@ const UI: Record<string, Record<string, string>> = {
     adults: 'adulti', children: 'bambini',
     summaryTitle: 'Il tuo soggiorno',
     paypalFlexNote: 'Con PayPal il pagamento viene addebitato subito.',
+    vediRiepilogo: 'Vedi riepilogo finale',
   },
   en: {
     title: 'Confirm and pay',
     back: '← Back',
     sec1title: '1. How do you want to pay?',
+    sec2title: '2. Optional extras',
+    sec2sub: 'Add services to your booking',
+    sec3title: '2. Your details',
     payFull: 'Pay in full now',
     payInstall: 'Pay in 3 installments with PayPal',
-    sec2title: '2. Your details',
     firstName: 'First name *', lastName: 'Last name *', email: 'Email *',
     phone: 'Phone', country: 'Country', arrivalTime: 'Expected arrival time',
     comments: 'Special requests',
@@ -101,14 +107,17 @@ const UI: Record<string, Record<string, string>> = {
     adults: 'adults', children: 'children',
     summaryTitle: 'Your stay',
     paypalFlexNote: 'With PayPal, payment is charged immediately.',
+    vediRiepilogo: 'View booking summary',
   },
   de: {
     title: 'Bestätigen und bezahlen',
     back: '← Zurück',
     sec1title: '1. Wie möchten Sie bezahlen?',
+    sec2title: '2. Optionale Extras',
+    sec2sub: 'Zusatzleistungen zur Buchung hinzufügen',
+    sec3title: '2. Ihre Daten',
     payFull: 'Jetzt vollständig bezahlen',
     payInstall: 'In 3 Raten mit PayPal bezahlen',
-    sec2title: '2. Ihre Daten',
     firstName: 'Vorname *', lastName: 'Nachname *', email: 'E-Mail *',
     phone: 'Telefon', country: 'Land', arrivalTime: 'Voraussichtliche Ankunftszeit',
     comments: 'Besondere Wünsche',
@@ -133,14 +142,17 @@ const UI: Record<string, Record<string, string>> = {
     adults: 'Erwachsene', children: 'Kinder',
     summaryTitle: 'Ihr Aufenthalt',
     paypalFlexNote: 'Bei PayPal wird der Betrag sofort belastet.',
+    vediRiepilogo: 'Buchungsübersicht anzeigen',
   },
   pl: {
     title: 'Potwierdź i zapłać',
     back: '← Wstecz',
     sec1title: '1. Jak chcesz zapłacić?',
+    sec2title: '2. Opcjonalne dodatki',
+    sec2sub: 'Dodaj usługi do rezerwacji',
+    sec3title: '2. Twoje dane',
     payFull: 'Zapłać teraz w całości',
     payInstall: 'Zapłać w 3 ratach przez PayPal',
-    sec2title: '2. Twoje dane',
     firstName: 'Imię *', lastName: 'Nazwisko *', email: 'E-mail *',
     phone: 'Telefon', country: 'Kraj', arrivalTime: 'Przewidywana godzina przyjazdu',
     comments: 'Specjalne życzenia',
@@ -165,6 +177,7 @@ const UI: Record<string, Record<string, string>> = {
     adults: 'dorośli', children: 'dzieci',
     summaryTitle: 'Twój pobyt',
     paypalFlexNote: 'W przypadku PayPal płatność jest naliczana natychmiast.',
+    vediRiepilogo: 'Zobacz podsumowanie',
   },
 };
 const PAY_INSTALL_NOTE: Record<string, (n: number) => string> = {
@@ -176,6 +189,10 @@ const PAY_INSTALL_NOTE: Record<string, (n: number) => string> = {
 
 // Offerte Flex (3-6): con PayPal il pagamento è immediato — avvisa l'utente
 const FLEX_OFFER_IDS = [3, 4, 5, 6];
+
+// ─── Mock upsell items ────────────────────────────────────────────────────────
+// TODO: sostituire con chiamata API Beds24 quando gli upsell saranno configurati
+// Upsell items caricati dinamicamente da /api/upsells — vedi useEffect sotto.
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function getRoomData(roomId: number | null) {
@@ -218,6 +235,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
     checkIn, checkOut,
     selectedRoomId, selectedOfferId,
     cachedOffers,
+    selectedExtras, setExtraQuantity,
     paymentMethod, setPaymentMethod,
     voucherCode, setVoucherCode,
     guestFirstName, guestLastName, guestEmail,
@@ -227,6 +245,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
   } = useWizardStore();
 
   const [error, setError]                     = useState<string | null>(null);
+  const [upsellItems, setUpsellItems]          = useState<SelectedExtra[]>([]);
   const [voucherInput, setVoucherInput]        = useState(voucherCode);
   const [summaryOpen, setSummaryOpen]          = useState(true);
   const [voucherError, setVoucherError]        = useState<string | null>(null);
@@ -236,7 +255,6 @@ export default function WizardStep2({ locale = 'it' }: Props) {
   // ── Dati calcolati ─────────────────────────────────────────────────────────
   const room = getRoomData(selectedRoomId);
 
-  // ✅ Indietro: se from=room torna alla pagina residenza, altrimenti prevStep
   function handleBack() {
     if (fromRoom && room?.slug) {
       router.push(`/${locale}/residenze/${room.slug}`);
@@ -261,7 +279,11 @@ export default function WizardStep2({ locale = 'it' }: Props) {
   const taxableAdults   = numAdult + childrenTaxable;
   const touristTax    = taxableNights * taxableAdults * 2;
   const basePrice     = discountedPrice !== null ? discountedPrice : offerPrice;
-  const total         = basePrice + touristTax;
+
+  // ── Totale extras selezionati ──────────────────────────────────────────────
+  const extrasTotal = selectedExtras.reduce((sum, e) => sum + e.price * e.quantity, 0);
+
+  const total         = basePrice + touristTax + extrasTotal;
   const installment   = Math.round(total / 3);
 
   const isFlexOffer = selectedOfferId !== null && FLEX_OFFER_IDS.includes(selectedOfferId);
@@ -271,11 +293,9 @@ export default function WizardStep2({ locale = 'it' }: Props) {
     && guestEmail.trim() && guestEmail.includes('@');
 
   // ── Pre-carica script PayPal SDK quando utente seleziona PayPal ──────────
-  // Così quando arriva a Step3 lo script è già pronto e i bottoni si
-  // renderizzano immediatamente senza problemi di timing
   useEffect(() => {
     if (paymentMethod !== 'paypal') return;
-    if (document.getElementById('paypal-sdk-script')) return; // già caricato
+    if (document.getElementById('paypal-sdk-script')) return;
     const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
     if (!clientId) return;
     const script = document.createElement('script');
@@ -284,6 +304,25 @@ export default function WizardStep2({ locale = 'it' }: Props) {
     script.async = true;
     document.head.appendChild(script);
   }, [paymentMethod]);
+
+  // ── Carica upsell items da API ───────────────────────────────────────────
+  useEffect(() => {
+    if (!selectedRoomId) return;
+    const prop = getPropertyForRoom(selectedRoomId);
+    if (!prop) return;
+
+    fetch(`/api/upsells?propertyId=${prop.propertyId}`)
+      .then(r => r.json())
+      .then(data => {
+        const items: SelectedExtra[] = (data.data ?? []).map((item: any) => ({
+          id:    item.id,
+          name:  item.name,
+          price: item.price,
+        }));
+        setUpsellItems(items);
+      })
+      .catch(() => {}); // silenzioso — se fallisce la sezione resta nascosta
+  }, [selectedRoomId]);
 
   // ── Carica foto cover ────────────────────────────────────────────────────
   useEffect(() => {
@@ -331,7 +370,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
   // ── Sidebar content ──────────────────────────────────────────────────────
   const sideBasePrice = discountedPrice !== null ? discountedPrice : offerPrice;
-  const totalDisplay  = sideBasePrice + touristTax;
+  const totalDisplay  = sideBasePrice + touristTax + extrasTotal;
 
   const SidebarContent = () => (
     <div>
@@ -354,7 +393,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
         </div>
       )}
 
-      {/* ⚡ Consumi energetici — subito dopo il nome, ben visibile */}
+      {/* ⚡ Consumi energetici */}
       <div style={{ background: '#f0f7ff', border: '1px solid #bfdbfe', borderRadius: 10, padding: '12px 14px', marginBottom: 14 }}>
         <p style={{ fontSize: 13, fontWeight: 700, color: '#1e40af', margin: '0 0 5px' }}>⚡ {t.energyTitle}</p>
         <p style={{ fontSize: 12, color: '#374151', margin: 0, lineHeight: 1.5 }}>{ENERGY_BOX[locale] ?? ENERGY_BOX.it}</p>
@@ -370,6 +409,10 @@ export default function WizardStep2({ locale = 'it' }: Props) {
           value={voucherInput}
           onChange={e => { setVoucherInput(e.target.value); if (voucherApplied) { setVoucherApplied(false); setDiscountedPrice(null); setVoucherCode(''); } }}
           placeholder="es. ESTATE2026"
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck={false}
           style={{ flex: 1, padding: '8px 10px', fontSize: 13, border: `1.5px solid ${voucherApplied ? '#16a34a' : '#e5e7eb'}`, borderRadius: 8, outline: 'none' }}
         />
         <button
@@ -422,6 +465,86 @@ export default function WizardStep2({ locale = 'it' }: Props) {
         </div>
       )}
 
+      {/* Righe extras selezionati */}
+      {selectedExtras.map(extra => (
+        <div key={extra.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: '#444', marginBottom: 6 }}>
+          <span>{extra.name[loc] ?? extra.name.it}{extra.quantity > 1 ? ` ×${extra.quantity}` : ''}</span>
+          <span>+{fmt(extra.price * extra.quantity)}</span>
+        </div>
+      ))}
+
+      {/* Stepper upsell — visibile in sidebar desktop e accordion mobile */}
+      {upsellItems.length > 0 && (
+        <>
+          <div style={{ height: 1, background: '#e5e7eb', margin: '10px 0 10px' }} />
+          <p style={{ ...sideLabel, marginBottom: 8 }}>{t.sec2title}</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 10 }}>
+            {upsellItems.map(item => {
+              const sel = selectedExtras.find(e => e.id === item.id);
+              const qty = sel?.quantity ?? 0;
+              const MAX_QTY = 4;
+              return (
+                <div key={item.id} style={{
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  padding: '10px 12px',
+                  border: `1.5px solid ${qty > 0 ? '#1E73BE' : '#e5e7eb'}`,
+                  borderRadius: 10,
+                  background: qty > 0 ? '#EEF5FC' : '#fafafa',
+                  transition: 'all 0.15s',
+                }}>
+                  <span style={{ fontSize: 20, flexShrink: 0 }}>🛏️</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: '#111', lineHeight: 1.3 }}>
+                      {item.name[loc] ?? item.name.it}
+                    </p>
+                    <p style={{ margin: '1px 0 0', fontSize: 11, color: '#888' }}>
+                      +{fmt(item.price)} / unità
+                    </p>
+                  </div>
+                  {/* Stepper */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 0, flexShrink: 0 }}>
+                    <button
+                      onClick={() => setExtraQuantity(item, qty - 1)}
+                      disabled={qty === 0}
+                      style={{
+                        width: 28, height: 28, borderRadius: '50%',
+                        border: `1.5px solid ${qty > 0 ? '#1E73BE' : '#d1d5db'}`,
+                        background: '#fff', color: qty > 0 ? '#1E73BE' : '#ccc',
+                        fontSize: 16, fontWeight: 700, cursor: qty > 0 ? 'pointer' : 'not-allowed',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        transition: 'all 0.15s', lineHeight: 1,
+                      }}
+                    >−</button>
+                    <span style={{
+                      width: 28, textAlign: 'center', fontSize: 14, fontWeight: 700,
+                      color: qty > 0 ? '#1E73BE' : '#999',
+                    }}>{qty}</span>
+                    <button
+                      onClick={() => setExtraQuantity(item, qty + 1)}
+                      disabled={qty >= MAX_QTY}
+                      style={{
+                        width: 28, height: 28, borderRadius: '50%',
+                        border: `1.5px solid ${qty < MAX_QTY ? '#1E73BE' : '#d1d5db'}`,
+                        background: qty < MAX_QTY ? '#1E73BE' : '#f5f5f5',
+                        color: qty < MAX_QTY ? '#fff' : '#ccc',
+                        fontSize: 16, fontWeight: 700, cursor: qty < MAX_QTY ? 'pointer' : 'not-allowed',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        transition: 'all 0.15s', lineHeight: 1,
+                      }}
+                    >+</button>
+                  </div>
+                  {qty > 0 && (
+                    <span style={{ fontSize: 13, fontWeight: 800, color: '#1E73BE', flexShrink: 0, minWidth: 40, textAlign: 'right' }}>
+                      {fmt(item.price * qty)}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+
       {touristTax > 0 && (
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: '#444', marginBottom: 6 }}>
           <span>{t.touristTax}</span>
@@ -435,7 +558,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
         <div style={{ textAlign: 'right' }}>
           {voucherApplied && discountedPrice !== null && (
             <span style={{ fontSize: 13, color: '#aaa', textDecoration: 'line-through', marginRight: 8 }}>
-              {fmt(offerPrice + touristTax)}
+              {fmt(offerPrice + touristTax + extrasTotal)}
             </span>
           )}
           <span style={{ fontSize: 20, fontWeight: 800, color: '#1E73BE' }}>{fmt(totalDisplay)}</span>
@@ -445,7 +568,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
         <p style={{ fontSize: 11, color: '#9ca3af', margin: '4px 0 0' }}>{t.touristTaxNote}</p>
       )}
 
-      {/* Deposito cauzionale — integrato subito dopo il totale */}
+      {/* Deposito cauzionale */}
       {depositAmount && (
         <div style={{ background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 10, padding: '12px 14px', marginTop: 12 }}>
           <p style={{ fontSize: 12, fontWeight: 700, color: '#92610a', margin: '0 0 5px' }}>🔐 {t.depositTitle}</p>
@@ -455,7 +578,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
         </div>
       )}
 
-      {/* Politica cancellazione — in fondo */}
+      {/* Politica cancellazione */}
       {cancelPolicy && (
         <>
           <div style={divider} />
@@ -468,11 +591,9 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div style={{ fontFamily: 'sans-serif' }}>
-      {/* Titolo */}
+    <div style={{ fontFamily: 'sans-serif', background: '#f9fafb', minHeight: '100vh', margin: '-24px -16px', padding: '24px 16px' }}>
       <h2 style={{ fontSize: 22, fontWeight: 700, color: '#111', margin: '0 0 16px' }}>{t.title}</h2>
 
-      {/* Layout 2 colonne */}
       <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start' }}>
 
         {/* ── Colonna sinistra: form ── */}
@@ -496,9 +617,13 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
           {/* Sezione 1: Pagamento */}
           <div style={sectionCard}>
-            <p style={sectionTitle}>{t.sec1title}</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+              <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#1E73BE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <span style={{ color: '#fff', fontSize: 13, fontWeight: 800 }}>1</span>
+              </div>
+              <p style={{ ...sectionTitle, margin: 0 }}>{t.sec1title.replace('1. ', '')}</p>
+            </div>
 
-            {/* Opzione Stripe */}
             <label style={radioRow(paymentMethod === 'stripe')} onClick={() => setPaymentMethod('stripe')}>
               <div style={radioOuter(paymentMethod === 'stripe')}>
                 {paymentMethod === 'stripe' && <div style={radioInner} />}
@@ -509,7 +634,6 @@ export default function WizardStep2({ locale = 'it' }: Props) {
               </div>
             </label>
 
-            {/* Opzione PayPal */}
             <label style={radioRow(paymentMethod === 'paypal')} onClick={() => setPaymentMethod('paypal')}>
               <div style={radioOuter(paymentMethod === 'paypal')}>
                 {paymentMethod === 'paypal' && <div style={radioInner} />}
@@ -525,7 +649,6 @@ export default function WizardStep2({ locale = 'it' }: Props) {
               </div>
             </label>
 
-            {/* Avviso per offerte Flex + PayPal */}
             {showPaypalFlexWarning && (
               <div style={{ background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginTop: 4, fontSize: 13, color: '#92400e' }}>
                 ⚠️ {t.paypalFlexNote}
@@ -533,9 +656,15 @@ export default function WizardStep2({ locale = 'it' }: Props) {
             )}
           </div>
 
+
           {/* Sezione 2: Dati ospite */}
           <div style={sectionCard}>
-            <p style={sectionTitle}>{t.sec2title}</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+              <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#1E73BE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <span style={{ color: '#fff', fontSize: 13, fontWeight: 800 }}>2</span>
+              </div>
+              <p style={{ ...sectionTitle, margin: 0 }}>{t.sec3title.replace('2. ', '')}</p>
+            </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
               <Field label={t.firstName} value={guestFirstName} onChange={v => setGuestField('guestFirstName', v)} autoComplete="given-name" />
@@ -565,7 +694,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
             </div>
           )}
 
-          {/* CTA */}
+          {/* CTA — mostra totale aggiornato */}
           <button
             onClick={handleVediRiepilogo}
             disabled={!formValid}
@@ -578,7 +707,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
               transition: 'background 0.15s',
             }}
           >
-            {`Vedi riepilogo finale →`}
+            {`${t.vediRiepilogo} → ${fmt(totalDisplay)}`}
           </button>
 
           <p style={{ fontSize: 12, color: '#aaa', textAlign: 'center', margin: '0 0 12px' }}>
@@ -646,6 +775,8 @@ function Field({ label, value, onChange, type = 'text', autoComplete, style: ext
 const sectionCard: React.CSSProperties = {
   border: '1px solid #e5e7eb', borderRadius: 14,
   padding: '20px', marginBottom: 16,
+  background: '#fff',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
 };
 const sectionTitle: React.CSSProperties = {
   fontSize: 17, fontWeight: 700, color: '#111', margin: '0 0 16px',

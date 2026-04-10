@@ -3,11 +3,19 @@ import type { PoolType } from '@/config/properties';
 
 export type PaymentMethod = 'stripe' | 'paypal';
 
+// ─── Tipo upsell extra selezionato ───────────────────────────────────────────
+export interface SelectedExtra {
+  id: string;
+  name: Record<string, string>;   // { it, en, de, pl }
+  price: number;                  // prezzo unitario
+  quantity: number;               // quante unità selezionate (1–4)
+}
+
 export interface WizardState {
   // Step 1 — Quante persone?
   numAdult: number;
   numChild: number;
-  childrenAges: number[];   // età di ogni bambino (0-17)
+  childrenAges: number[];
 
   // Step 2 — Quando?
   checkIn: string | null;
@@ -19,8 +27,8 @@ export interface WizardState {
   // Risultato filtro
   selectedRoomId: number | null;
 
-  // Step 4 — Servizi extra (non più usato per under12)
-  selectedExtras: string[];
+  // Servizi extra opzionali (upsell items)
+  selectedExtras: SelectedExtra[];
 
   // Step 5 → 6 — Offerte caricate da /api/offers
   cachedOffers: any[];
@@ -53,7 +61,9 @@ export interface WizardState {
   setCheckOut: (date: string) => void;
   setPoolPreference: (pool: PoolType) => void;
   setSelectedRoomId: (id: number | null) => void;
-  toggleExtra: (id: string) => void;
+  // qty=0 rimuove l'extra; qty>0 aggiunge o aggiorna la quantità
+  setExtraQuantity: (extra: Omit<SelectedExtra, 'quantity'>, qty: number) => void;
+  clearExtras: () => void;
   setSelectedOfferId: (id: number | null) => void;
   setPaymentMethod: (method: PaymentMethod) => void;
   setVoucherCode: (code: string) => void;
@@ -75,7 +85,7 @@ const initialState = {
   checkOut: null,
   poolPreference: 'none' as PoolType,
   selectedRoomId: null,
-  selectedExtras: [],
+  selectedExtras: [] as SelectedExtra[],
   cachedOffers: [],
   selectedOfferId: null,
   paymentMethod: 'stripe' as PaymentMethod,
@@ -100,9 +110,8 @@ export const useWizardStore = create<WizardState>((set) => ({
 
   setNumChild: (n) => set((state) => {
     const newN = Math.max(0, n);
-    // Adatta l'array childrenAges alla nuova lunghezza
     const ages = [...state.childrenAges];
-    while (ages.length < newN) ages.push(-1); // -1 = non ancora selezionata
+    while (ages.length < newN) ages.push(-1);
     return { numChild: newN, childrenAges: ages.slice(0, newN) };
   }),
 
@@ -116,12 +125,18 @@ export const useWizardStore = create<WizardState>((set) => ({
   setCheckOut: (date) => set({ checkOut: date }),
   setPoolPreference: (pool) => set({ poolPreference: pool, selectedRoomId: null }),
   setSelectedRoomId: (id) => set({ selectedRoomId: id }),
-  toggleExtra: (id) =>
-    set((state) => ({
-      selectedExtras: state.selectedExtras.includes(id)
-        ? state.selectedExtras.filter((e) => e !== id)
-        : [...state.selectedExtras, id],
-    })),
+
+  setExtraQuantity: (extra, qty) =>
+    set((state) => {
+      const filtered = state.selectedExtras.filter(e => e.id !== extra.id);
+      if (qty <= 0) return { selectedExtras: filtered };
+      return {
+        selectedExtras: [...filtered, { ...extra, quantity: qty }],
+      };
+    }),
+
+  clearExtras: () => set({ selectedExtras: [] }),
+
   setSelectedOfferId: (id) => set({ selectedOfferId: id }),
   setPaymentMethod: (method) => set({ paymentMethod: method }),
   setVoucherCode: (code) => set({ voucherCode: code }),

@@ -8,6 +8,7 @@ import PhotoCarousel from '@/components/residenze/PhotoCarousel';
 import PropertyMap from '@/components/residenze/PropertyMap';
 import AvailabilityCalendar from '@/components/residenze/AvailabilityCalendar';
 import BookingPanel from '@/components/residenze/BookingPanel';
+import BedConfigDisplay from '@/components/residenze/BedConfigDisplay';
 
 
 cloudinary.config({
@@ -235,6 +236,9 @@ export default async function RoomPage({ params }: Props) {
           </p>
         </div>
       )}
+
+      {/* Dove dormirete */}
+      <BedConfigDisplay roomId={room.roomId} locale={locale} />
 
       {/* Servizi */}
       <div style={{ marginBottom: 32, padding: '0 16px' }}>

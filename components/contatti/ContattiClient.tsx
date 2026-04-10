@@ -102,7 +102,7 @@ function getFaqData(locale: Locale): FaqCategory[] {
         icon: '🧸', label: 'Bambini',
         items: [
           { q: 'I bambini fino a 2 anni pagano?', a: 'I bambini fino a 2 anni non sono compresi nel prezzo ma vengono conteggiati ai fini della massima capienza della struttura e non pagano la tassa di soggiorno.' },
-          { q: 'È disponibile una culla da campeggio?', a: 'Sì, per i bambini fino a 2 anni è disponibile su richiesta la culla da campeggio con seggiolone al costo di €50 a soggiorno. Va prenotata con almeno 72 ore di anticipo contattandoci via WhatsApp.' },
+          { q: 'È disponibile una culla da campeggio?', a: 'Sì, per i bambini fino a 2 anni è disponibile su richiesta la culla da campeggio con seggiolone al costo di €40 a soggiorno. Va prenotata con almeno 72 ore di anticipo contattandoci via WhatsApp.' },
           { q: 'I bambini dai 3 agli 11 anni pagano?', a: 'I bambini dai 3 agli 11 anni pagano come gli adulti e non pagano la tassa di soggiorno.' },
         ],
       },
@@ -174,7 +174,7 @@ function getFaqData(locale: Locale): FaqCategory[] {
         icon: '🧸', label: 'Children',
         items: [
           { q: 'Do children up to 2 years old pay?', a: 'Children up to 2 years old are not included in the price but are counted towards the maximum capacity of the property and do not pay tourist tax.' },
-          { q: 'Is a camping cot available?', a: 'Yes, for children up to 2 years old a camping cot with highchair is available on request at €50 per stay. Please book at least 72 hours in advance by contacting us via WhatsApp.' },
+          { q: 'Is a camping cot available?', a: 'Yes, for children up to 2 years old a camping cot with highchair is available on request at €40 per stay. Please book at least 72 hours in advance by contacting us via WhatsApp.' },
           { q: 'Do children aged 3 to 11 pay?', a: 'Children aged 3 to 11 pay the same rate as adults and do not pay tourist tax.' },
         ],
       },
@@ -246,7 +246,7 @@ function getFaqData(locale: Locale): FaqCategory[] {
         icon: '🧸', label: 'Kinder',
         items: [
           { q: 'Zahlen Kinder bis 2 Jahre?', a: 'Kinder bis 2 Jahre sind nicht im Preis enthalten, werden jedoch für die maximale Kapazität der Unterkunft gezählt und zahlen keine Kurtaxe.' },
-          { q: 'Ist ein Campingbettchen verfügbar?', a: 'Ja, für Kinder bis 2 Jahre ist auf Anfrage ein Campingbettchen mit Hochstuhl für €50 pro Aufenthalt verfügbar. Bitte mindestens 72 Stunden im Voraus über WhatsApp reservieren.' },
+          { q: 'Ist ein Campingbettchen verfügbar?', a: 'Ja, für Kinder bis 2 Jahre ist auf Anfrage ein Campingbettchen mit Hochstuhl für €40 pro Aufenthalt verfügbar. Bitte mindestens 72 Stunden im Voraus über WhatsApp reservieren.' },
           { q: 'Zahlen Kinder von 3 bis 11 Jahren?', a: 'Kinder von 3 bis 11 Jahren zahlen denselben Tarif wie Erwachsene und zahlen keine Kurtaxe.' },
         ],
       },
@@ -318,7 +318,7 @@ function getFaqData(locale: Locale): FaqCategory[] {
         icon: '🧸', label: 'Dzieci',
         items: [
           { q: 'Czy dzieci do 2 lat płacą?', a: 'Dzieci do 2 lat nie są wliczone w cenę, ale są liczone do maksymalnej pojemności obiektu i nie płacą podatku turystycznego.' },
-          { q: 'Czy dostępne jest łóżeczko turystyczne?', a: 'Tak, dla dzieci do 2 lat na życzenie dostępne jest łóżeczko turystyczne z krzesełkiem do karmienia za €50 za pobyt. Prosimy o rezerwację co najmniej 72 godziny wcześniej przez WhatsApp.' },
+          { q: 'Czy dostępne jest łóżeczko turystyczne?', a: 'Tak, dla dzieci do 2 lat na życzenie dostępne jest łóżeczko turystyczne z krzesełkiem do karmienia za €40 za pobyt. Prosimy o rezerwację co najmniej 72 godziny wcześniej przez WhatsApp.' },
           { q: 'Czy dzieci w wieku 3–11 lat płacą?', a: 'Dzieci w wieku od 3 do 11 lat płacą tyle samo co dorośli i nie płacą podatku turystycznego.' },
         ],
       },
