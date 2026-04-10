@@ -32,7 +32,7 @@ function getContent(locale: Locale): { h1: string; subtitle: string; sections: S
         { title: '2. Prenotazione e perfezionamento', body: (<p>La Prenotazione si intende perfezionata nel momento in cui il Cliente riceve la Lettera di Conferma spedita da LivingApple immediatamente dopo aver ricevuto la caparra. Al Contratto di Locazione è allegato un modulo Elenco Inquilini, che dovrà essere compilato, sottoscritto e rispedito a LivingApple.</p>) },
         { title: '3. Acconto, pagamento e deposito cauzionale', body: (<>
           <p>L'acconto corrisponde al 30% (minimo € 150,00) del canone e può essere versato tramite bonifico, carta di credito (+2,5%) o PayPal (+3,4%). Deve pervenire entro 7 giorni dalla comunicazione della disponibilità (3 giorni per pagamento online).</p>
-          <p>Il saldo del canone e il deposito cauzionale (€ 260,00) devono essere versati in contanti o con pre-autorizzazione di carta di credito all'arrivo, contestualmente al ritiro delle chiavi.</p>
+          <p>Il saldo del canone e il deposito cauzionale devono essere versati in contanti o con pre-autorizzazione di carta di credito all'arrivo, contestualmente al ritiro delle chiavi.</p>
         </>) },
         { title: '4. Disdetta e recesso', body: (<>
           <p>Una prenotazione confermata non può essere annullata o modificata. Ogni richiesta di cancellazione dovrà essere comunicata via email a LivingApple. Per prenotazioni a tariffa scontata o nei periodi festivi, ogni cancellazione prevede il pagamento del 100% del valore.</p>
@@ -59,7 +59,7 @@ function getContent(locale: Locale): { h1: string; subtitle: string; sections: S
         { title: '9. Aree esterne e pic nic', body: (<p>L'accesso all'area Pic Nic è consentito dalle 11:00 alle 24:00. I bambini devono essere sorvegliati. Non sono ammessi vetro, animali, biciclette o skateboard. Il numero di ospiti è limitato a quanto indicato nel contratto.</p>) },
         { title: '10. Piscina', body: (<p>La piscina è riservata agli ospiti LivingApple della sede di Via Tore. Gli ospiti di LivingApple Beach <strong>non hanno accesso alla piscina</strong>. Aperta dalle 9:00 alle 19:00. I bambini sotto i 12 anni devono essere accompagnati. Vietati salti e contenitori di vetro.</p>) },
         { title: '11. Sanzioni', body: (<p>Per l'inosservanza delle regole di cui ai punti 7 e 8 sono previste sanzioni da € 10,00 a € 500,00 e maggiorazioni sul costo delle pulizie finali.</p>) },
-        { title: '12. Deposito cauzionale', body: (<p>A garanzia del rispetto delle norme, è richiesta una cauzione di <strong>€ 260,00</strong> per abitazione al momento della consegna delle chiavi. La cauzione viene restituita dopo la verifica dello stato dell'appartamento.</p>) },
+        { title: '12. Deposito cauzionale', body: (<p>A garanzia del rispetto delle norme, è richiesta una cauzione il cui importo varia in base all'appartamento prenotato, al momento della consegna delle chiavi. La cauzione viene restituita dopo la verifica dello stato dell'appartamento.</p>) },
         { title: '13. Responsabilità', body: (<p>Nessuna responsabilità può essere attribuita a LivingApple per rotture, infortuni, smarrimenti, furti, ritardi o inconvenienti. Per eventuali controversie legali, il Foro esclusivo competente è quello di Cassino (FR).</p>) },
         { title: '14. Accettazione', body: (<p>All'atto della prenotazione il locatario accetta espressamente tutte le condizioni qui esposte.</p>) },
       ],
@@ -80,7 +80,7 @@ function getContent(locale: Locale): { h1: string; subtitle: string; sections: S
         { title: '2. Booking and conclusion', body: (<p>The Booking is considered finalised when the Customer receives the Confirmation Letter, sent by LivingApple immediately upon receipt of the deposit. The Rental Agreement includes a Guest List form which must be completed, signed and returned to LivingApple as soon as possible.</p>) },
         { title: '3. Deposit, payment and security deposit', body: (<>
           <p>The advance deposit equals 30% of the rental fee (minimum €150.00) and may be paid by bank transfer, credit card (+2.5%) or PayPal (+3.4%). It must be received within 7 days of the availability notification (3 days for online payment).</p>
-          <p>The balance and security deposit (€260.00) must be paid in cash or by credit card pre-authorisation upon arrival when collecting the keys.</p>
+          <p>The balance and security deposit must be paid in cash or by credit card pre-authorisation upon arrival when collecting the keys.</p>
         </>) },
         { title: '4. Cancellation', body: (<>
           <p>A confirmed booking cannot be cancelled or modified. Any cancellation request must be communicated by email. For discounted rates or holiday periods, any cancellation requires payment of 100% of the booking value.</p>
@@ -107,7 +107,7 @@ function getContent(locale: Locale): { h1: string; subtitle: string; sections: S
         { title: '9. Outdoor areas and picnic area', body: (<p>The picnic area is accessible from 11:00 to 24:00. Children must be supervised. Glass, animals, bicycles and skateboards are not permitted. The number of guests is limited to those specified in the contract.</p>) },
         { title: '10. Swimming pool', body: (<p>The pool is reserved exclusively for guests at the Via Tore property. LivingApple Beach guests <strong>do not have pool access</strong>. Open 09:00–19:00. Children under 12 must be accompanied. Diving, jumping and glass containers are prohibited.</p>) },
         { title: '11. Penalties', body: (<p>Failure to comply with the rules in sections 7 and 8 may result in penalties ranging from €10.00 to €500.00 and surcharges on final cleaning costs.</p>) },
-        { title: '12. Security deposit', body: (<p>A security deposit of <strong>€260.00</strong> per apartment is required upon key collection, as a guarantee of compliance with these rules. The deposit is returned after the apartment has been inspected.</p>) },
+        { title: '12. Security deposit', body: (<p>A security deposit is required upon key collection, as a guarantee of compliance with these rules. The amount varies depending on the apartment booked. The deposit is returned after the apartment has been inspected.</p>) },
         { title: '13. Liability', body: (<p>LivingApple accepts no liability for breakages, injuries, losses, thefts, delays or inconveniences of any kind. Any legal disputes shall be subject to the exclusive jurisdiction of the Court of Cassino (FR), Italy.</p>) },
         { title: '14. Acceptance', body: (<p>By making a booking, the customer expressly accepts all the terms and conditions set out herein.</p>) },
       ],
@@ -128,7 +128,7 @@ function getContent(locale: Locale): { h1: string; subtitle: string; sections: S
         { title: '2. Buchung und Vertragsabschluss', body: (<p>Die Buchung gilt als abgeschlossen, wenn der Kunde das Bestätigungsschreiben erhält, das LivingApple unmittelbar nach Eingang der Anzahlung verschickt. Dem Mietvertrag ist ein Gästelistenformular beigefügt, das ausgefüllt, unterzeichnet und so schnell wie möglich an LivingApple zurückgesendet werden muss.</p>) },
         { title: '3. Anzahlung, Zahlung und Kaution', body: (<>
           <p>Die Anzahlung beträgt 30% des Mietpreises (mindestens €150,00) und kann per Banküberweisung, Kreditkarte (+2,5%) oder PayPal (+3,4%) geleistet werden. Sie muss innerhalb von 7 Tagen nach der Verfügbarkeitsbestätigung eingehen (3 Tage bei Online-Zahlung).</p>
-          <p>Der Restbetrag und die Kaution (€260,00) sind bei der Ankunft bei der Schlüsselübergabe in bar oder per Kreditkarten-Vorautorisierung zu zahlen.</p>
+          <p>Der Restbetrag und die Kaution sind bei der Ankunft bei der Schlüsselübergabe in bar oder per Kreditkarten-Vorautorisierung zu zahlen.</p>
         </>) },
         { title: '4. Stornierung', body: (<>
           <p>Eine bestätigte Buchung kann weder storniert noch geändert werden. Jede Stornierungsanfrage muss per E-Mail mitgeteilt werden. Bei Sondertarifen oder Ferienzeiträumen ist bei jeder Stornierung 100% des Buchungswerts zu zahlen.</p>
@@ -155,7 +155,7 @@ function getContent(locale: Locale): { h1: string; subtitle: string; sections: S
         { title: '9. Außenbereiche und Picknickplatz', body: (<p>Der Picknickplatz ist von 11:00 bis 24:00 Uhr zugänglich. Kinder müssen beaufsichtigt werden. Glaswaren, Tiere, Fahrräder und Skateboards sind nicht erlaubt. Die Gästezahl ist auf die im Vertrag angegebene Personenanzahl begrenzt.</p>) },
         { title: '10. Schwimmbad', body: (<p>Das Schwimmbad steht ausschließlich LivingApple-Gästen am Standort Via Tore zur Verfügung. LivingApple Beach Gäste <strong>haben keinen Zugang zum Schwimmbad</strong>. Geöffnet von 09:00 bis 19:00 Uhr. Kinder unter 12 Jahren müssen begleitet werden. Springen und Glasflaschen sind verboten.</p>) },
         { title: '11. Sanktionen', body: (<p>Bei Nichteinhaltung der Regeln gemäß den Punkten 7 und 8 können Strafen von €10,00 bis €500,00 sowie Aufschläge auf die Endreinigungskosten erhoben werden.</p>) },
-        { title: '12. Kaution', body: (<p>Als Sicherheit für die Einhaltung aller Regeln wird bei der Schlüsselübergabe eine Kaution von <strong>€260,00</strong> pro Unterkunft erhoben. Die Kaution wird nach Überprüfung des Zustands der Unterkunft zurückgezahlt.</p>) },
+        { title: '12. Kaution', body: (<p>Als Sicherheit für die Einhaltung aller Regeln wird bei der Schlüsselübergabe eine Kaution erhoben, deren Höhe je nach gebuchter Unterkunft variiert. Die Kaution wird nach Überprüfung des Zustands der Unterkunft zurückgezahlt.</p>) },
         { title: '13. Haftung', body: (<p>LivingApple übernimmt keine Haftung für Schäden, Verletzungen, Verluste, Diebstahl, Verzögerungen oder sonstige Unannehmlichkeiten. Für eventuelle Rechtsstreitigkeiten ist ausschließlich das Gericht Cassino (FR), Italien, zuständig.</p>) },
         { title: '14. Annahme', body: (<p>Mit der Buchung akzeptiert der Mieter ausdrücklich alle hier dargelegten Bedingungen.</p>) },
       ],
@@ -176,7 +176,7 @@ function getContent(locale: Locale): { h1: string; subtitle: string; sections: S
         { title: '2. Rezerwacja i zawarcie umowy', body: (<p>Rezerwacja jest uważana za sfinalizowaną w momencie, gdy Klient otrzyma List potwierdzający wysłany przez LivingApple natychmiast po otrzymaniu zaliczki. Do Umowy najmu dołączony jest formularz listy gości, który należy wypełnić, podpisać i jak najszybciej odesłać do LivingApple.</p>) },
         { title: '3. Zaliczka, płatność i kaucja', body: (<>
           <p>Zaliczka wynosi 30% czynszu (minimum €150,00) i może być opłacona przelewem bankowym, kartą kredytową (+2,5%) lub PayPal (+3,4%). Musi wpłynąć w ciągu 7 dni od powiadomienia o dostępności (3 dni w przypadku płatności online).</p>
-          <p>Pozostała kwota i kaucja (€260,00) muszą być opłacone gotówką lub autoryzacją wstępną karty kredytowej przy odbiorze kluczy.</p>
+          <p>Pozostała kwota i kaucja muszą być opłacone gotówką lub autoryzacją wstępną karty kredytowej przy odbiorze kluczy.</p>
         </>) },
         { title: '4. Anulowanie rezerwacji', body: (<>
           <p>Potwierdzona rezerwacja nie może być anulowana ani zmieniona. Każda prośba o anulowanie musi zostać przekazana e-mailem. W przypadku cen promocyjnych lub okresów świątecznych każde anulowanie wiąże się z koniecznością uiszczenia 100% wartości rezerwacji.</p>
@@ -203,7 +203,7 @@ function getContent(locale: Locale): { h1: string; subtitle: string; sections: S
         { title: '9. Strefy zewnętrzne i piknikowe', body: (<p>Strefa piknikowa jest dostępna w godzinach 11:00–24:00. Dzieci muszą być pod opieką. Szkło, zwierzęta, rowery i deskorolki są niedozwolone. Liczba gości jest ograniczona do liczby osób wskazanej w umowie.</p>) },
         { title: '10. Basen', body: (<p>Basen jest przeznaczony wyłącznie dla gości LivingApple przy Via Tore. Goście LivingApple Beach <strong>nie mają dostępu do basenu</strong>. Czynny od 09:00 do 19:00. Dzieci poniżej 12 lat muszą być pod opieką. Skakanie i szklane pojemniki są zabronione.</p>) },
         { title: '11. Kary', body: (<p>Niestosowanie się do zasad opisanych w punktach 7 i 8 może skutkować karami od €10,00 do €500,00 oraz dopłatami do kosztów końcowego sprzątania.</p>) },
-        { title: '12. Kaucja', body: (<p>Jako gwarancja przestrzegania wszystkich zasad, przy wydaniu kluczy pobierana jest kaucja w wysokości <strong>€260,00</strong> za apartament. Kaucja jest zwracana po sprawdzeniu stanu apartamentu.</p>) },
+        { title: '12. Kaucja', body: (<p>Jako gwarancja przestrzegania wszystkich zasad, przy wydaniu kluczy pobierana jest kaucja, której wysokość zależy od zarezerwowanego apartamentu. Kaucja jest zwracana po sprawdzeniu stanu apartamentu.</p>) },
         { title: '13. Odpowiedzialność', body: (<p>LivingApple nie ponosi odpowiedzialności za uszkodzenia, obrażenia, zagubienia, kradzieże, opóźnienia ani żadne inne niedogodności. Wszelkie spory prawne podlegają wyłącznej jurysdykcji Sądu w Cassino (FR), Włochy.</p>) },
         { title: '14. Akceptacja', body: (<p>Dokonując rezerwacji, najemca wyraźnie akceptuje wszystkie warunki określone w niniejszym dokumencie.</p>) },
       ],
