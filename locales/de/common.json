@@ -118,15 +118,16 @@
   "portal": {
     "login": {
       "title": "Gastbereich",
-      "subtitle": "Melden Sie sich mit Ihrer Buchungsnummer und E-Mail-Adresse an.",
+      "subtitle": "Melden Sie sich mit Ihrer Buchungsnummer und dem Anreisedatum an.",
       "bookingId": "Buchungsnummer",
-      "email": "E-Mail",
+      "arrival": "Anreisedatum",
+      "arrivalPlaceholder": "TT/MM/JJJJ",
       "btn": "Anmelden",
       "loading": "Anmeldung läuft…",
       "noBooking": "Buchungsnummer nicht gefunden?",
-      "errorGeneric": "Buchung nicht gefunden oder E-Mail falsch.",
+      "errorGeneric": "Buchung nicht gefunden oder falsches Anreisedatum.",
       "errorNetwork": "Netzwerkfehler. Bitte versuchen Sie es erneut.",
-      "errorFields": "Bitte geben Sie Buchungsnummer und E-Mail ein.",
+      "errorFields": "Bitte geben Sie Buchungsnummer und Anreisedatum ein.",
       "rateLimited": "Zu viele Versuche",
       "rateLimitedMsg": "Zu viele Anmeldeversuche. Bitte versuchen Sie es in einigen Minuten erneut.",
       "logout": "Abmelden"

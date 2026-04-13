@@ -89,11 +89,18 @@ export default function AdminPage() {
       color: '#1E73BE',
     },
     {
-      icon: '🗓️',
-      title: 'Operativo',
-      desc: 'Analizza buchi tra prenotazioni (< 7 notti) e pianifica le pulizie con livello di rischio giornaliero per tutte le proprietà.',
-      href: '/admin/operativo',
+      icon: '🧹',
+      title: 'Pulizie',
+      desc: 'Alert giornalieri per livello di rischio (CRITICO / ALTO / NORMALE) e tabella movimenti ordinabile per partenze, arrivi e ore di lavoro.',
+      href: '/admin/pulizie',
       color: '#16a34a',
+    },
+    {
+      icon: '🕳️',
+      title: 'Buchi',
+      desc: 'Finestre libere inferiori a 7 notti nei prossimi 12 mesi. Filtra per mese e ordina per numero di notti.',
+      href: '/admin/buchi',
+      color: '#9333ea',
     },
   ];
 

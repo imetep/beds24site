@@ -118,15 +118,16 @@
   "portal": {
     "login": {
       "title": "Area Ospiti",
-      "subtitle": "Accedi con il numero di prenotazione e la tua email.",
+      "subtitle": "Accedi con il numero di prenotazione e la data di arrivo.",
       "bookingId": "Numero prenotazione",
-      "email": "Email",
+      "arrival": "Data di arrivo",
+      "arrivalPlaceholder": "GG/MM/AAAA",
       "btn": "Accedi",
       "loading": "Accesso in corso…",
       "noBooking": "Non trovi il numero prenotazione?",
-      "errorGeneric": "Prenotazione non trovata o email non corretta.",
+      "errorGeneric": "Prenotazione non trovata o data non corretta.",
       "errorNetwork": "Errore di rete. Riprova.",
-      "errorFields": "Inserisci numero prenotazione e indirizzo email.",
+      "errorFields": "Inserisci numero prenotazione e data di arrivo.",
       "rateLimited": "Troppi tentativi",
       "rateLimitedMsg": "Hai eseguito troppi tentativi di accesso. Riprova tra qualche minuto.",
       "logout": "Esci"

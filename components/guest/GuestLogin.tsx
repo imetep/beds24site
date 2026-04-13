@@ -25,19 +25,29 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
   const tL = t.login;
 
   const [bookId, setBookId]           = useState('');
-  const [email, setEmail]             = useState('');
+  const [arrival, setArrival]         = useState('');
   const [loading, setLoading]         = useState(false);
   const [error, setError]             = useState('');
   const [rateLimited, setRateLimited] = useState(false);
 
+  // Formatta input → GG/MM/AAAA aggiungendo "/" automaticamente
+  const handleArrivalChange = (raw: string) => {
+    // Rimuovi tutto tranne cifre
+    const digits = raw.replace(/\D/g, '').slice(0, 8);
+    let formatted = digits;
+    if (digits.length > 4) formatted = digits.slice(0,2) + '/' + digits.slice(2,4) + '/' + digits.slice(4);
+    else if (digits.length > 2) formatted = digits.slice(0,2) + '/' + digits.slice(2);
+    setArrival(formatted);
+  };
+
   const handleSubmit = async () => {
-    if (!bookId.trim() || !email.trim()) { setError(tL.errorFields); return; }
+    if (!bookId.trim() || !arrival.trim()) { setError(tL.errorFields); return; }
     setLoading(true); setError('');
     try {
       const res = await fetch('/api/portal/auth', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ bookId: bookId.trim(), email: email.trim() }),
+        body:    JSON.stringify({ bookId: bookId.trim(), arrival: arrival.trim() }),
       });
       if (res.status === 429) { setRateLimited(true); setLoading(false); return; }
       if (!res.ok) {
@@ -95,10 +105,14 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
             />
           </div>
           <div>
-            <label style={labelStyle}>{tL.email}</label>
+            <label style={labelStyle}>{tL.arrival}</label>
             <input
-              type="email" value={email} onChange={e => setEmail(e.target.value)}
-              placeholder="nome@email.com" style={inputStyle}
+              type="text" value={arrival}
+              onChange={e => handleArrivalChange(e.target.value)}
+              placeholder={tL.arrivalPlaceholder}
+              style={inputStyle}
+              inputMode="numeric"
+              maxLength={10}
               onKeyDown={e => e.key === 'Enter' && handleSubmit()}
             />
           </div>

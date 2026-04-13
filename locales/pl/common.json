@@ -118,15 +118,16 @@
   "portal": {
     "login": {
       "title": "Portal Gościa",
-      "subtitle": "Zaloguj się numerem rezerwacji i adresem e-mail.",
+      "subtitle": "Zaloguj się numerem rezerwacji i datą przyjazdu.",
       "bookingId": "Numer rezerwacji",
-      "email": "E-mail",
+      "arrival": "Data przyjazdu",
+      "arrivalPlaceholder": "DD/MM/RRRR",
       "btn": "Zaloguj się",
       "loading": "Logowanie…",
       "noBooking": "Nie możesz znaleźć numeru rezerwacji?",
-      "errorGeneric": "Rezerwacja nie znaleziona lub błędny adres e-mail.",
+      "errorGeneric": "Rezerwacja nie znaleziona lub błędna data przyjazdu.",
       "errorNetwork": "Błąd sieci. Spróbuj ponownie.",
-      "errorFields": "Podaj numer rezerwacji i adres e-mail.",
+      "errorFields": "Podaj numer rezerwacji i datę przyjazdu.",
       "rateLimited": "Zbyt wiele prób",
       "rateLimitedMsg": "Zbyt wiele prób logowania. Spróbuj ponownie za kilka minut.",
       "logout": "Wyloguj"
