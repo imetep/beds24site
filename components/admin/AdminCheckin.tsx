@@ -394,7 +394,7 @@ Operazione irreversibile.`);
   if (!authed) return <LoginForm onLogin={() => { setAuthed(true); loadList(); }} />;
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto', padding: '20px 16px 60px' }}>
+    <div style={{ maxWidth: 1400, margin: '0 auto', padding: '20px 16px 60px' }}>
 
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
@@ -403,6 +403,7 @@ Operazione irreversibile.`);
           <p style={{ margin: 0, fontSize: 13, color: '#9ca3af' }}>{items.length} richieste totali</p>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
+          <a href="/admin" style={{ ...btnSec, textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>← Admin</a>
           <button style={btnSec} onClick={loadList}>↻ Aggiorna</button>
           <button style={btnSec} onClick={logout}>Esci</button>
         </div>

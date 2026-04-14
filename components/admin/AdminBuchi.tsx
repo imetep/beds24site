@@ -161,7 +161,7 @@ export default function AdminBuchi() {
   });
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto', padding: '20px 16px 80px' }}>
+    <div style={{ maxWidth: 1400, margin: '0 auto', padding: '20px 16px 80px' }}>
 
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>

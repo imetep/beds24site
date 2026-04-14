@@ -520,6 +520,115 @@ const BED_CONFIGS: ApartmentBedConfig[] = [
       room('108613_sv', SOGGIORNO, [divano('108613_sv_b1')]),
     ],
   },
+
+  // ── CHERRY HOUSE (propertyId 47410) ──────────────────────────────────────
+
+  {
+    roomId: 109685, propertyId: 47410, name: 'Cherry',
+    rooms: [
+      room('109685_c1', cam(1), [std('109685_c1_b1', 'matrimoniale')]),
+      room('109685_sv', SPAZI_COMUNI, [divano('109685_sv_b1', 'matrimoniale', NOTE_NON_OSCURABILE)]),
+    ],
+  },
+
+  {
+    roomId: 113528, propertyId: 47410, name: 'Mulberry',
+    rooms: [
+      room('113528_c1', cam(1), [std('113528_c1_b1', 'matrimoniale'), poltrona('113528_c1_b2')]),
+      room('113528_c2', cam(2), [trasformabile('113528_c2_b1')]),
+    ],
+  },
+
+  // ── IL MARE IN GIARDINO (propertyId 48556) ────────────────────────────────
+
+  {
+    roomId: 112982, propertyId: 48556, name: 'Ciclamino',
+    rooms: [
+      room('112982_c1', cam(1), [std('112982_c1_b1', 'matrimoniale')]),
+      room('112982_c2', cam(2), [impilabile('112982_c2_b1')]),
+      room('112982_sv', SOGGIORNO, [divano('112982_sv_b1')]),
+    ],
+  },
+
+  {
+    roomId: 113880, propertyId: 48556, name: 'Fiordaliso',
+    rooms: [
+      room('113880_c1', cam(1), [std('113880_c1_b1', 'matrimoniale')]),
+      room('113880_c2', cam(2), [impilabile('113880_c2_b1')]),
+      room('113880_sv', SOGGIORNO, [divano('113880_sv_b1')]),
+    ],
+  },
+
+  {
+    roomId: 113881, propertyId: 48556, name: 'Lavanda',
+    rooms: [
+      room('113881_c1', cam(1), [std('113881_c1_b1', 'matrimoniale')]),
+      room('113881_c2', cam(2), [std('113881_c2_b1', 'matrimoniale')]),
+      room('113881_sv', SOGGIORNO, [divano('113881_sv_b1')]),
+    ],
+  },
+
+  {
+    roomId: 113882, propertyId: 48556, name: 'Narciso',
+    rooms: [
+      room('113882_c1', cam(1), [std('113882_c1_b1', 'matrimoniale')]),
+      room('113882_c2', cam(2), [trasformabile('113882_c2_b1')]),
+      room('113882_sv', SOGGIORNO, [divano('113882_sv_b1')]),
+    ],
+  },
+
+  {
+    roomId: 113883, propertyId: 48556, name: 'Orchidea',
+    rooms: [
+      room('113883_c1', cam(1), [std('113883_c1_b1', 'matrimoniale')]),
+      room('113883_c2', cam(2), [std('113883_c2_b1', 'singolo'), std('113883_c2_b2', 'singolo')]),
+      room('113883_sv', SOGGIORNO, [divano('113883_sv_b1')]),
+    ],
+  },
+
+  {
+    roomId: 113884, propertyId: 48556, name: 'Primula',
+    rooms: [
+      room('113884_c1', cam(1), [std('113884_c1_b1', 'matrimoniale')]),
+      room('113884_c2', cam(2), [impilabile('113884_c2_b1')]),
+      room('113884_c3', cam(3), [std('113884_c3_b1', 'matrimoniale')]),
+    ],
+  },
+
+  {
+    roomId: 113885, propertyId: 48556, name: 'Mughetto',
+    rooms: [
+      room('113885_sv', SOGGIORNO, [std('113885_sv_b1', 'matrimoniale')]),
+    ],
+  },
+
+  {
+    roomId: 113887, propertyId: 48556, name: 'Viola',
+    rooms: [
+      room('113887_c1', cam(1), [std('113887_c1_b1', 'matrimoniale')]),
+      room('113887_c2', cam(2), [std('113887_c2_b1', 'matrimoniale')]),
+      room('113887_sv', SOGGIORNO, [divano('113887_sv_b1')]),
+    ],
+  },
+
+  {
+    roomId: 179295, propertyId: 48556, name: 'Peonia',
+    rooms: [
+      room('179295_c1', cam(1), [std('179295_c1_b1', 'matrimoniale')]),
+      room('179295_sv', SOGGIORNO, [divano('179295_sv_b1')]),
+    ],
+  },
+
+  // ── VILLA PATRIZIA (propertyId 190754) ───────────────────────────────────
+
+  {
+    roomId: 411401, propertyId: 190754, name: 'Villa Patrizia',
+    rooms: [
+      room('411401_c1', cam(1), [std('411401_c1_b1', 'matrimoniale'), std('411401_c1_b2', 'singolo')]),
+      room('411401_c2', cam(2), [std('411401_c2_b1', 'matrimoniale'), std('411401_c2_b2', 'singolo')]),
+      room('411401_sv', SPAZI_COMUNI, [divano('411401_sv_b1', 'matrimoniale', NOTE_NON_OSCURABILE)]),
+    ],
+  },
 ]
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -89,6 +89,13 @@ export default function AdminPage() {
       color: '#1E73BE',
     },
     {
+      icon: '🛏',
+      title: 'Biancheria',
+      desc: 'Calcolo automatico della biancheria per ogni check-in nel periodo. Configurabile da admin o ospite; totali aggregati per periodo.',
+      href: '/admin/biancheria',
+      color: '#0284c7',
+    },
+    {
       icon: '🧹',
       title: 'Pulizie',
       desc: 'Alert giornalieri per livello di rischio (CRITICO / ALTO / NORMALE) e tabella movimenti ordinabile per partenze, arrivi e ore di lavoro.',
@@ -105,7 +112,7 @@ export default function AdminPage() {
   ];
 
   return (
-    <div style={{ maxWidth: 700, margin: '0 auto', padding: '40px 16px 80px' }}>
+    <div style={{ maxWidth: 1400, margin: '0 auto', padding: '40px 16px 80px' }}>
 
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
