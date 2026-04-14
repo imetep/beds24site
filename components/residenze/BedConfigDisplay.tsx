@@ -272,6 +272,7 @@ function RoomCard({ room, locale, ui }: { room: Room; locale: Locale; ui: typeof
 
   return (
     <div
+      className="bed-card"
       style={{
         background: 'white',
         border: hasSommier ? '2px solid #FCAF1A' : '0.5px solid #e5e7eb',
@@ -328,21 +329,19 @@ function RoomCard({ room, locale, ui }: { room: Room; locale: Locale; ui: typeof
 
             {/* Sommier: due pill esclusivi */}
             {bed.variant === 'sommier' && bed.configOptions && (
-              <div style={{ display: 'flex', gap: 4, alignItems: 'center', flexWrap: 'nowrap', marginTop: 4 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'flex-start', marginTop: 4 }}>
                 <span style={{
                   background: '#EEF5FC', border: '0.5px solid #1E73BE',
-                  borderRadius: 20, padding: '2px 7px',
+                  borderRadius: 20, padding: '2px 8px',
                   fontSize: 10, color: '#1E73BE', fontWeight: 500,
-                  whiteSpace: 'nowrap', flexShrink: 0,
                 }}>
                   {shortLabel(bed.configOptions.closed.label[locale])}
                 </span>
-                <span style={{ fontSize: 10, color: '#888', flexShrink: 0 }}>{ui.or}</span>
+                <span style={{ fontSize: 10, color: '#aaa', paddingLeft: 4 }}>{ui.or}</span>
                 <span style={{
                   background: '#f5f5f5', border: '0.5px solid #e5e7eb',
-                  borderRadius: 20, padding: '2px 7px',
+                  borderRadius: 20, padding: '2px 8px',
                   fontSize: 10, color: '#555',
-                  whiteSpace: 'nowrap', flexShrink: 0,
                 }}>
                   {shortLabel(bed.configOptions.open.label[locale])}
                 </span>
@@ -351,21 +350,19 @@ function RoomCard({ room, locale, ui }: { room: Room; locale: Locale; ui: typeof
 
             {/* Impilabile: stessa logica pill */}
             {bed.variant === 'impilabile' && bed.configOptions && (
-              <div style={{ display: 'flex', gap: 4, alignItems: 'center', flexWrap: 'nowrap', marginTop: 4 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'flex-start', marginTop: 4 }}>
                 <span style={{
                   background: '#EEF5FC', border: '0.5px solid #1E73BE',
-                  borderRadius: 20, padding: '2px 7px',
+                  borderRadius: 20, padding: '2px 8px',
                   fontSize: 10, color: '#1E73BE', fontWeight: 500,
-                  whiteSpace: 'nowrap', flexShrink: 0,
                 }}>
                   {shortLabel(bed.configOptions.closed.label[locale])}
                 </span>
-                <span style={{ fontSize: 10, color: '#888', flexShrink: 0 }}>{ui.or}</span>
+                <span style={{ fontSize: 10, color: '#aaa', paddingLeft: 4 }}>{ui.or}</span>
                 <span style={{
                   background: '#f5f5f5', border: '0.5px solid #e5e7eb',
-                  borderRadius: 20, padding: '2px 7px',
+                  borderRadius: 20, padding: '2px 8px',
                   fontSize: 10, color: '#555',
-                  whiteSpace: 'nowrap', flexShrink: 0,
                 }}>
                   {shortLabel(bed.configOptions.open.label[locale])}
                 </span>
@@ -418,7 +415,7 @@ export default function BedConfigDisplay({ roomId, locale }: Props) {
   if (!hasAnythingToShow) return null
 
   return (
-    <div style={{ marginBottom: 32, padding: '0 16px' }}>
+    <div style={{ marginBottom: 20 }}>
       {/* Section title — stesso stile degli altri h2 in page.tsx */}
       <h2 style={{ fontSize: 20, fontWeight: 700, color: '#222', marginBottom: 16 }}>
         {ui.sectionTitle}

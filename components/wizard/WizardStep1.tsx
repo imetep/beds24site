@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
 import { getAvailableRooms, getPropertyForRoom, PROPERTIES } from '@/config/properties';
 import type { Room } from '@/config/properties';
@@ -224,6 +225,7 @@ interface Props { locale?: string; onBack?: () => void; }
 export default function WizardStep1({ locale = 'it', onBack }: Props) {
   const t = UI[locale] ?? UI.it;
   const loc = locale in UI ? locale : 'it';
+  const router = useRouter();
 
   const {
     numAdult, numChild, childrenAges, checkIn, checkOut, poolPreference, setPoolPreference,
@@ -768,19 +770,16 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                   {/* COL 1: Foto — solo WizardLibero */}
                   {!isSingleRoom && (
                     <div className="s5-card-photo" style={{ background: '#f0f4f8', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
-                      <a
-                        href={`/${locale}/residenze/${room.slug}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={e => e.stopPropagation()}
-                        style={{ display: 'block', width: '100%', height: '100%' }}
+                      <div
+                        onClick={e => { e.stopPropagation(); router.push(`/${locale}/residenze/${room.slug}`); }}
+                        style={{ display: 'block', width: '100%', height: '100%', cursor: 'pointer' }}
                       >
                         {coverUrl ? (
                           <img src={coverUrl} alt={room.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} loading="lazy" />
                         ) : (
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#ccc', fontSize: 24 }}>🏠</div>
                         )}
-                      </a>
+                      </div>
                       <span style={{ position: 'absolute', top: 10, left: 10, background: 'rgba(0,0,0,0.55)', color: '#fff', fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 20, pointerEvents: 'none' }}>
                         {getFloorLabel(room, loc)}
                       </span>

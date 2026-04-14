@@ -9,6 +9,7 @@ import PropertyMap from '@/components/residenze/PropertyMap';
 import AvailabilityCalendar from '@/components/residenze/AvailabilityCalendar';
 import BookingPanel from '@/components/residenze/BookingPanel';
 import BedConfigDisplay from '@/components/residenze/BedConfigDisplay';
+import StickyBookingBar from '@/components/residenze/StickyBookingBar';
 
 
 cloudinary.config({
@@ -187,25 +188,28 @@ export default async function RoomPage({ params }: Props) {
   const featureCodes = PROPERTY_FEATURES[property.propertyId] ?? [];
 
   return (
-    <main style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 16px 120px' }}>
+    <main style={{ maxWidth: 1100, margin: '0 auto', padding: '20px 16px 120px' }}>
 
       {/* Back link */}
-      <Link href={`/${locale}/residenze`} style={{ color: '#1E73BE', fontSize: 14, textDecoration: 'none', padding: '0 16px', display: 'inline-block' }}>
+      <Link href={`/${locale}/residenze`} style={{ color: '#1E73BE', fontSize: 14, textDecoration: 'none', display: 'inline-block', marginBottom: 12 }}>
         {t.back}
       </Link>
 
       {/* Titolo */}
-      <h1 style={{ fontSize: 28, fontWeight: 800, color: '#222', margin: '16px 16px 4px' }}>
+      <h1 style={{ fontSize: 26, fontWeight: 800, color: '#222', margin: '0 0 4px' }}>
         {room.name}
       </h1>
-      <div style={{ fontSize: 14, color: '#888', marginBottom: 20, padding: '0 16px' }}>
+      <div style={{ fontSize: 14, color: '#888', marginBottom: 16 }}>
         {property.distanceLabel} · {floorLabel}
       </div>
 
-      <PhotoCarousel photos={photos} roomName={room.name} slug={room.slug} locale={locale} />
+      {/* Foto — edge-to-edge su mobile, normale su desktop */}
+      <div className="photo-carousel-wrapper">
+        <PhotoCarousel photos={photos} roomName={room.name} slug={room.slug} locale={locale} />
+      </div>
 
       {/* Caratteristiche principali */}
-      <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', padding: '20px 16px', borderTop: '1px solid #eee', borderBottom: '1px solid #eee', marginBottom: 28 }}>
+      <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', padding: '14px 0', borderTop: '1px solid #eee', borderBottom: '1px solid #eee', marginBottom: 20 }}>
         <div style={statStyle}>
           <span style={statNumStyle}>{room.bedrooms}</span>
           <span style={statLabelStyle}>{plLabel(t, 'bedroom', 'bedrooms', room.bedrooms)}</span>
@@ -223,13 +227,13 @@ export default async function RoomPage({ params }: Props) {
           <span style={statLabelStyle}>{t.sqm}</span>
         </div>
         <div style={statStyle}>
-          <span style={{ fontSize: 18 }}>{poolLabel}</span>
+          <span style={{ fontSize: 16 }}>{poolLabel}</span>
         </div>
       </div>
 
       {/* Descrizione */}
       {description && (
-        <div style={{ marginBottom: 32, padding: '0 16px' }}>
+        <div style={{ marginBottom: 20 }}>
           <h2 style={sectionTitleStyle}>{t.description}</h2>
           <p style={{ fontSize: 15, lineHeight: 1.7, color: '#444', whiteSpace: 'pre-line' }}>
             {description}
@@ -241,16 +245,16 @@ export default async function RoomPage({ params }: Props) {
       <BedConfigDisplay roomId={room.roomId} locale={locale} />
 
       {/* Servizi */}
-      <div style={{ marginBottom: 32, padding: '0 16px' }}>
+      <div style={{ marginBottom: 20 }}>
         <h2 style={sectionTitleStyle}>{t.services}</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '2px 16px' }}>
+        <div className="services-grid">
           {featureCodes.map((code) => {
             const feature = FEATURE_LABELS[code];
             if (!feature) return null;
             return (
-              <div key={code} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, color: '#333', padding: '1px 0' }}>
-                <span style={{ fontSize: 20 }}>{feature.icon}</span>
-                <span>{feature[locale as keyof typeof feature] ?? feature.it}</span>
+              <div key={code} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, color: '#333', padding: '5px 0' }}>
+                <span style={{ fontSize: 20, flexShrink: 0 }}>{feature.icon}</span>
+                <span style={{ lineHeight: 1.3 }}>{feature[locale as keyof typeof feature] ?? feature.it}</span>
               </div>
             );
           })}
@@ -258,55 +262,60 @@ export default async function RoomPage({ params }: Props) {
       </div>
 
       {/* Mappa */}
-      <div style={{ padding: '0 16px' }}>
-      <PropertyMap
-        latitude={property.latitude}
-        longitude={property.longitude}
-        name={room.name}
-        locale={locale}
-      />
+      <div style={{ marginBottom: 20 }}>
+        <PropertyMap
+          latitude={property.latitude}
+          longitude={property.longitude}
+          name={room.name}
+          locale={locale}
+        />
       </div>
 
       {/* Cose da sapere */}
-      <div style={{ padding: '0 16px' }}>
-      <ThingsToKnow
-        locale={locale}
-        checkInStart={property.propertyId === 46487 ? '16:00' : '16:00'}
-        checkInEnd={property.propertyId === 46487 ? '19:00' : '19:00'}
-        checkOutEnd="10:00"
-        securityDeposit={room.securityDeposit}
-      />
+      <div style={{ marginBottom: 20 }}>
+        <ThingsToKnow
+          locale={locale}
+          checkInStart={property.propertyId === 46487 ? '16:00' : '16:00'}
+          checkInEnd={property.propertyId === 46487 ? '19:00' : '19:00'}
+          checkOutEnd="10:00"
+          securityDeposit={room.securityDeposit}
+        />
       </div>
 
-      {/* Calendario disponibilità — 12 mesi */}
-      <div style={{ padding: '0 16px' }}>
-      <AvailabilityCalendar
-        roomId={room.roomId}
-        locale={locale}
-        interactive={true}
-      />
-      <BookingPanel
-        roomId={room.roomId}
-        locale={locale}
-        maxPeople={room.maxPeople}
-      />
+      {/* Calendario disponibilità + BookingPanel — anchor per sticky */}
+      <div id="booking-panel">
+        <AvailabilityCalendar
+          roomId={room.roomId}
+          locale={locale}
+          interactive={true}
+        />
+        <BookingPanel
+          roomId={room.roomId}
+          locale={locale}
+          maxPeople={room.maxPeople}
+        />
       </div>
 
-
+      {/* Sticky CTA */}
+      <StickyBookingBar
+        roomId={room.roomId}
+        locale={locale}
+        roomName={room.name}
+      />
 
     </main>
   );
 }
 
 const statStyle: React.CSSProperties = {
-  display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 60,
+  display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 52,
 };
 const statNumStyle: React.CSSProperties = {
-  fontSize: 22, fontWeight: 800, color: '#1E73BE',
+  fontSize: 20, fontWeight: 800, color: '#1E73BE',
 };
 const statLabelStyle: React.CSSProperties = {
-  fontSize: 12, color: '#888', marginTop: 2,
+  fontSize: 11, color: '#888', marginTop: 2,
 };
 const sectionTitleStyle: React.CSSProperties = {
-  fontSize: 20, fontWeight: 700, color: '#222', marginBottom: 16,
+  fontSize: 18, fontWeight: 700, color: '#222', marginBottom: 14,
 };
