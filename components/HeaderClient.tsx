@@ -20,7 +20,7 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
     return (
       <header style={headerStyle}>
         <div style={innerStyle}>
-          <a href={`/${locale}/residenze`} style={logoLinkStyle}>
+          <a href={`/${locale}`} style={logoLinkStyle}>
             <Image src="/logo.png" alt="LivingApple" height={34} width={130} style={{ objectFit: 'contain' }} priority />
           </a>
           <a href={`/${locale}/residenze`} style={{ fontSize: '0.85rem', color: '#9ca3af', textDecoration: 'none', marginLeft: 'auto', whiteSpace: 'nowrap' }}>
