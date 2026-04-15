@@ -1,7 +1,8 @@
-import { PROPERTIES, getCloudinaryUrl } from '@/config/properties';
+import { PROPERTIES } from '@/config/properties';
 import { locales, isValidLocale, type Locale } from '@/config/i18n';
 import { notFound } from 'next/navigation';
 import RoomCard from '@/components/residenze/RoomCard';
+import { getCovers } from '@/lib/cloudinary-covers';
 
 interface Props {
   params: Promise<{ locale: Locale }>;
@@ -43,6 +44,7 @@ export default async function ResidenzePage({ params }: Props) {
   if (!isValidLocale(locale)) notFound();
 
   const t = LABELS[locale] ?? LABELS.it;
+  const covers = await getCovers();
 
   return (
     <main style={{ maxWidth: 1100, margin: '0 auto', padding: 'clamp(24px,4vw,40px) clamp(0px,2vw,16px)' }}>
@@ -62,7 +64,7 @@ export default async function ResidenzePage({ params }: Props) {
               key={room.roomId}
               room={room}
               locale={locale}
-              coverUrl={getCloudinaryUrl(room, 1, 600)}
+              coverUrl={covers[room.cloudinaryFolder] ?? null}
             />
           ))}
         </div>
@@ -76,7 +78,7 @@ export default async function ResidenzePage({ params }: Props) {
               key={room.roomId}
               room={room}
               locale={locale}
-              coverUrl={getCloudinaryUrl(room, 1, 600)}
+              coverUrl={covers[room.cloudinaryFolder] ?? null}
             />
           ))}
         </div>
