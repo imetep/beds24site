@@ -56,6 +56,7 @@ export async function GET(req: NextRequest) {
     // ── Invoice ──────────────────────────────────────────────────────────────
     let totalCharged = 0;
     let totalPaid    = 0;
+    let chargeItems: { description: string; amount: number }[] = [];
 
     try {
       const invRes = await fetch(`${BASE_URL}/bookings/invoices?bookingId=${bookId}`, {
@@ -65,6 +66,13 @@ export async function GET(req: NextRequest) {
       if (invRes.ok) {
         const invData = await invRes.json();
         const items: any[] = invData?.data?.[0]?.invoiceItems ?? [];
+
+        chargeItems = items
+          .filter((i: any) => i.type === 'charge' && i.description)
+          .map((i: any) => ({
+            description: i.description,
+            amount:      Number(i.lineTotal ?? i.amount ?? 0),
+          }));
 
         if (isAirbnb) {
           // Airbnb: l'invoice contiene il payout netto all'host (dopo commissione).
@@ -146,6 +154,7 @@ export async function GET(req: NextRequest) {
         totalPaid,
         balanceDue,
         depositAmount,
+        invoiceItems: chargeItems,
       },
       checkin: checkinData,
       deposit: depositRedis,

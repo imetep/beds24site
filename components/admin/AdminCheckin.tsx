@@ -11,6 +11,9 @@ interface CheckinSummary {
   email:       string;
   status:      string;
   createdAt:   string;
+  numAdult:    number;
+  numChild:    number;
+  cancelled:   boolean;
   unreadGuest: number;
 }
 
@@ -421,16 +424,23 @@ Operazione irreversibile.`);
           )}
           {items.map(item => (
             <div key={item.bookId}
-              onClick={() => loadDetail(item.bookId)}
+              onClick={() => !item.cancelled && loadDetail(item.bookId)}
               style={{
-                ...card, cursor: 'pointer',
+                ...card, cursor: item.cancelled ? 'default' : 'pointer',
                 border: selected?.bookId === item.bookId ? '1.5px solid #1E73BE' : '0.5px solid #e5e7eb',
-                background: selected?.bookId === item.bookId ? '#EEF5FC' : '#fff',
+                background: item.cancelled ? '#fafafa' : selected?.bookId === item.bookId ? '#EEF5FC' : '#fff',
+                opacity: item.cancelled ? 0.6 : 1,
               }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
-                <p style={{ margin: 0, fontSize: 15, fontWeight: 700, color: '#111' }}>{item.guestName}</p>
+                <p style={{ margin: 0, fontSize: 15, fontWeight: 700, color: item.cancelled ? '#9ca3af' : '#111' }}>{item.guestName}</p>
                 <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                  {item.unreadGuest > 0 && (
+                  {item.cancelled && (
+                    <span style={{ background: '#6b7280', color: '#fff', fontSize: 10,
+                      fontWeight: 700, padding: '2px 7px', borderRadius: 20 }}>
+                      Cancellata
+                    </span>
+                  )}
+                  {!item.cancelled && item.unreadGuest > 0 && (
                     <span style={{ background: '#dc2626', color: '#fff', fontSize: 10,
                       fontWeight: 700, padding: '2px 7px', borderRadius: 20 }}>
                       {item.unreadGuest} msg
@@ -440,7 +450,15 @@ Operazione irreversibile.`);
                 </div>
               </div>
               <p style={{ margin: '0 0 2px', fontSize: 13, color: '#4b5563' }}>#{item.bookId} — {item.roomName}</p>
-              <p style={{ margin: '0 0 2px', fontSize: 12, color: '#6b7280' }}>{item.checkIn} → {item.checkOut}</p>
+              <p style={{ margin: '0 0 2px', fontSize: 12, color: '#6b7280' }}>
+                {item.checkIn} → {item.checkOut}
+                {(item.numAdult > 0 || item.numChild > 0) && (
+                  <span style={{ marginLeft: 8 }}>
+                    · {item.numAdult} adult{item.numAdult === 1 ? 'o' : 'i'}
+                    {item.numChild > 0 && ` + ${item.numChild} bambin${item.numChild === 1 ? 'o' : 'i'}`}
+                  </span>
+                )}
+              </p>
               <p style={{ margin: 0, fontSize: 11, color: '#9ca3af' }}>
                 {new Date(item.createdAt).toLocaleString('it-IT')}
               </p>

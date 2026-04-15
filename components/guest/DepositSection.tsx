@@ -113,7 +113,7 @@ export default function DepositSection({ locale, t, bookId, amount, deposit, onD
   return (
     <div style={sectionCard}>
       <BackBtn label={tD.back} onClick={() => setMode('choose')} />
-      <SectionHeader icon="💳" title={`${tD.onlineTitle} — Stripe`} />
+      <SectionHeader icon="💳" title={tD.onlineTitle} />
       <div style={{ background: C.blueLight, border: '1px solid #bfdbfe', borderRadius: '12px', padding: '1.1rem 1.2rem', marginBottom: '1.25rem' }}>
         <p style={{ margin: '0 0 0.5rem', fontWeight: 700, color: C.blue, fontSize: '0.88rem' }}>🔒 {tD.stripeTitle}</p>
         <ul style={{ margin: 0, paddingLeft: '1.2rem', color: C.text, fontSize: '0.84rem', lineHeight: 1.8 }}>

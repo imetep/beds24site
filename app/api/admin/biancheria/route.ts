@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from '@/lib/beds24-token';
-import { getBedConfig, calcLinenSetsFromBedStates, ApartmentBedConfig } from '@/lib/bedConfig';
+import { getBedConfig, calcLinenSetsFromBedStates, calcDefaultBedStates, ApartmentBedConfig } from '@/lib/bedConfig';
 
 const REDIS_URL   = process.env.KV_REST_API_URL!;
 const REDIS_TOKEN = process.env.KV_REST_API_TOKEN!;
@@ -55,19 +55,7 @@ async function redisSet(key: string, value: string, ttl: number): Promise<void> 
 }
 
 // ── Default bedStates ─────────────────────────────────────────────────────────
-// Regola: estraibile e poltrona → off (non preparati per default)
-//         tutto il resto         → A  (prima posizione / configurazione base)
-
-function defaultBedStates(config: ApartmentBedConfig): Record<string, BedState> {
-  const states: Record<string, BedState> = {};
-  for (const room of config.rooms) {
-    for (const bed of room.beds) {
-      states[bed.id] =
-        bed.variant === 'estraibile' || bed.variant === 'poltrona' ? 'off' : 'A';
-    }
-  }
-  return states;
-}
+// Delegato a calcDefaultBedStates in bedConfig.ts (guest-count aware)
 
 // ── Beds24 fetch ──────────────────────────────────────────────────────────────
 
@@ -146,9 +134,19 @@ export async function GET(req: NextRequest) {
         try {
           const stored = JSON.parse(raw);
           if (stored.bedStates && Object.keys(stored.bedStates).length > 0) {
-            bedStates = stored.bedStates;
-            cribs     = stored.cribs ?? 0;
-            source    = stored.adminOverride ? 'admin' : 'guest';
+            const currentNumGuests = bk.numAdult + bk.numChild;
+            const cachedNumGuests  = stored.numGuests ?? 0;
+            const guestsChanged    = cachedNumGuests > 0 && currentNumGuests !== cachedNumGuests;
+
+            if (guestsChanged) {
+              // Numero ospiti cambiato → ricalcola default, non usare il salvato
+              console.log(`[biancheria/GET] numGuests cambiato: ${cachedNumGuests} → ${currentNumGuests} (bookId=${bk.id})`);
+              source = 'default';
+            } else {
+              bedStates = stored.bedStates;
+              cribs     = stored.cribs ?? 0;
+              source    = stored.adminOverride ? 'admin' : 'guest';
+            }
           }
         } catch { /* JSON malformato → default */ }
       }
@@ -175,7 +173,7 @@ export async function GET(req: NextRequest) {
       }
 
       if (source === 'default') {
-        bedStates = defaultBedStates(config);
+        bedStates = calcDefaultBedStates(config, bk.numAdult + bk.numChild);
       }
 
       const linen = calcLinenSetsFromBedStates(bk.roomId, bedStates, cribs);
@@ -221,7 +219,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   if (!isAuthed(req)) return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 });
 
-  let body: { bookId: number; roomId: number; bedStates: Record<string, BedState>; cribs: number };
+  let body: { bookId: number; roomId: number; bedStates: Record<string, BedState>; cribs: number; numGuests: number };
   try { body = await req.json(); }
   catch { return NextResponse.json({ error: 'Body non valido' }, { status: 400 }); }
 
@@ -233,6 +231,7 @@ export async function POST(req: NextRequest) {
     redisKey,
     JSON.stringify({
       roomId,
+      numGuests:     body.numGuests ?? 0,
       bedStates,
       cribs:         cribsClamped,
       savedAt:       new Date().toISOString(),

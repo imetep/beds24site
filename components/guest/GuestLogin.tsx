@@ -25,29 +25,29 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
   const tL = t.login;
 
   const [bookId, setBookId]           = useState('');
-  const [arrival, setArrival]         = useState('');
+  const [arrDay,   setArrDay]         = useState('');
+  const [arrMonth, setArrMonth]       = useState('');
+  const [arrYear,  setArrYear]        = useState('');
   const [loading, setLoading]         = useState(false);
   const [error, setError]             = useState('');
   const [rateLimited, setRateLimited] = useState(false);
 
-  // Formatta input → GG/MM/AAAA aggiungendo "/" automaticamente
-  const handleArrivalChange = (raw: string) => {
-    // Rimuovi tutto tranne cifre
-    const digits = raw.replace(/\D/g, '').slice(0, 8);
-    let formatted = digits;
-    if (digits.length > 4) formatted = digits.slice(0,2) + '/' + digits.slice(2,4) + '/' + digits.slice(4);
-    else if (digits.length > 2) formatted = digits.slice(0,2) + '/' + digits.slice(2);
-    setArrival(formatted);
-  };
+  const months = tL.months as string[];
+  const years = Array.from({ length: 3 }, (_, i) => String(new Date().getFullYear() + i));
+
+  // Formatta in GG/MM/AAAA per l'API
+  const arrivalFormatted = arrDay && arrMonth && arrYear
+    ? `${arrDay.padStart(2,'0')}/${arrMonth.padStart(2,'0')}/${arrYear}`
+    : '';
 
   const handleSubmit = async () => {
-    if (!bookId.trim() || !arrival.trim()) { setError(tL.errorFields); return; }
+    if (!bookId.trim() || !arrivalFormatted) { setError(tL.errorFields); return; }
     setLoading(true); setError('');
     try {
       const res = await fetch('/api/portal/auth', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ bookId: bookId.trim(), arrival: arrival.trim() }),
+        body:    JSON.stringify({ bookId: bookId.trim(), arrival: arrivalFormatted }),
       });
       if (res.status === 429) { setRateLimited(true); setLoading(false); return; }
       if (!res.ok) {
@@ -106,15 +106,38 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
           </div>
           <div>
             <label style={labelStyle}>{tL.arrival}</label>
-            <input
-              type="text" value={arrival}
-              onChange={e => handleArrivalChange(e.target.value)}
-              placeholder={tL.arrivalPlaceholder}
-              style={inputStyle}
-              inputMode="numeric"
-              maxLength={10}
-              onKeyDown={e => e.key === 'Enter' && handleSubmit()}
-            />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 1.4fr', gap: '0.5rem' }}>
+              <select
+                value={arrDay}
+                onChange={e => setArrDay(e.target.value)}
+                style={selectStyle}
+              >
+                <option value="">{tL.dayPlaceholder}</option>
+                {Array.from({ length: 31 }, (_, i) => i + 1).map(d => (
+                  <option key={d} value={String(d)}>{String(d).padStart(2,'0')}</option>
+                ))}
+              </select>
+              <select
+                value={arrMonth}
+                onChange={e => setArrMonth(e.target.value)}
+                style={selectStyle}
+              >
+                <option value="">{tL.monthPlaceholder}</option>
+                {months.map((m, i) => (
+                  <option key={i} value={String(i + 1)}>{m}</option>
+                ))}
+              </select>
+              <select
+                value={arrYear}
+                onChange={e => setArrYear(e.target.value)}
+                style={selectStyle}
+              >
+                <option value="">{tL.yearPlaceholder}</option>
+                {years.map(y => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           {error && (
@@ -148,4 +171,5 @@ const wrap: React.CSSProperties = { minHeight: '70vh', display: 'flex', alignIte
 const card: React.CSSProperties = { background: '#fff', borderRadius: '20px', boxShadow: '0 4px 32px rgba(0,0,0,0.09)', padding: '2.5rem', width: '100%', maxWidth: '420px' };
 const labelStyle: React.CSSProperties = { display: 'block', fontSize: '0.82rem', fontWeight: 700, color: '#555555', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.04em' };
 const inputStyle: React.CSSProperties = { width: '100%', padding: '0.7rem 0.95rem', border: '1.5px solid #e5e7eb', borderRadius: '9px', fontSize: '0.95rem', color: '#111', outline: 'none', boxSizing: 'border-box' };
+const selectStyle: React.CSSProperties = { width: '100%', padding: '0.7rem 0.5rem', border: '1.5px solid #e5e7eb', borderRadius: '9px', fontSize: '0.92rem', color: '#111', outline: 'none', background: '#fff', cursor: 'pointer', appearance: 'auto' };
 const supportLink: React.CSSProperties = { color: '#1E73BE', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 600 };

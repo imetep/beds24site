@@ -130,7 +130,24 @@
       "errorFields": "Bitte geben Sie Buchungsnummer und Anreisedatum ein.",
       "rateLimited": "Zu viele Versuche",
       "rateLimitedMsg": "Zu viele Anmeldeversuche. Bitte versuchen Sie es in einigen Minuten erneut.",
-      "logout": "Abmelden"
+      "logout": "Abmelden",
+      "dayPlaceholder": "TT",
+      "monthPlaceholder": "Monat",
+      "yearPlaceholder": "Jahr",
+      "months": [
+        "Januar",
+        "Februar",
+        "März",
+        "April",
+        "Mai",
+        "Juni",
+        "Juli",
+        "August",
+        "September",
+        "Oktober",
+        "November",
+        "Dezember"
+      ]
     },
     "dashboard": {
       "title": "Gastbereich",
@@ -156,14 +173,14 @@
       "description": "Die Kaution schützt die Unterkunft vor möglichen Schäden. Wählen Sie, wie Sie sie bezahlen möchten.",
       "offlineTitle": "Vor Ort bei Ankunft",
       "offlineSub": "Kreditkarte an der Rezeption",
-      "onlineTitle": "Online mit Stripe",
-      "onlineSub": "Sichere Vorautorisierung jetzt",
+      "onlineTitle": "Online — Vorautorisierung",
+      "onlineSub": "Vorübergehende Sperre, keine Abbuchung",
       "back": "Zurück",
       "offlineHowTitle": "So funktioniert es:",
       "offlineStep1": "Erscheinen Sie bei Ankunft an der Rezeption mit Ihrer Kreditkarte (keine Debitkarte).",
       "offlineStep2": "Die Rezeptionistin füllt das Kautionsformular aus, das Sie unterschreiben.",
-      "offlineStep3": "Das Formular wird bis zur Abreise aufbewahrt und dann vernichtet.",
-      "offlineStep4": "Keine Vorautorisierung auf Ihrer Karte.",
+      "offlineStep3": "Das Formular wird innerhalb von 8 Stunden nach Ihrer Abreise vernichtet.",
+      "offlineStep4": "Keine Belastung oder Sperrung der Karte.",
       "offlineNote": "Sie können jederzeit zur Online-Zahlung wechseln.",
       "stripeTitle": "Sichere Zahlung mit Stripe-Zertifizierung",
       "stripeBullet1": "Vorautorisierung: Betrag wird auf der Karte geblockt, nicht belastet.",
@@ -171,7 +188,7 @@
       "stripeBullet3": "Ihre Kartendaten werden nie an uns weitergegeben.",
       "stripeBullet4": "PCI DSS Level 1 zertifiziert.",
       "amountLabel": "Zu blockierender Betrag:",
-      "btnPay": "Zur sicheren Zahlung",
+      "btnPay": "Kaution registrieren ohne Kartendaten anzugeben",
       "btnPayLoading": "Vorbereitung…",
       "stripeNote": "Sie werden zu Stripe weitergeleitet.",
       "errorPayment": "Fehler beim Erstellen der Zahlung.",
@@ -207,7 +224,7 @@
       "q1": "Check-in- und Check-out-Zeiten?",
       "a1": "Check-in ab 15:00 Uhr, Check-out bis 10:00 Uhr. Gepäckaufbewahrung auf Anfrage.",
       "q2": "Wie funktioniert die Kaution vor Ort?",
-      "a2": "Erscheinen Sie bei Ankunft mit Ihrer Kreditkarte (keine Debitkarte) an der Rezeption. Sie unterschreiben ein Formular, das bei Abreise vernichtet wird. Kein Kartenabbuchung.",
+      "a2": "Melden Sie sich bei der Rezeptionistin mit Ihrer Kreditkarte (keine Debitkarte) bei der Ankunft. Sie unterschreiben ein Formular, das innerhalb von 8 Stunden nach Ihrer Abreise vernichtet wird. Keine Belastung oder Sperrung der Karte.",
       "q3": "Wie funktioniert die Online-Kaution (Stripe)?",
       "a3": "Stripe blockiert den Betrag auf Ihrer Karte als Vorautorisierung ohne Abbuchung. Bei Abreise wird der Betrag automatisch freigegeben, wenn keine Schäden vorliegen.",
       "q4": "Was passiert, wenn der Self Check-in abgelehnt wird?",
@@ -215,7 +232,7 @@
       "q5": "Notfallkontakte",
       "a5": "WhatsApp +39 328 313 1500 · E-Mail: contattolivingapple@gmail.com",
       "q6": "Ist ein Babybett verfügbar?",
-      "a6": "Ja, wir stellen ein Campingbettchen mit Bettwäsche für €50 pro Aufenthalt zur Verfügung. Bitte reservieren Sie es mindestens 48 Stunden im Voraus über WhatsApp unter +39 328 313 1500."
+      "a6": "Ja, Sie können ein Campingbett mit Bettwäsche für €40 pro Aufenthalt anfragen. Bestellen Sie es mindestens 72 Stunden im Voraus über WhatsApp unter +39 328 313 1500."
     },
     "beds": {
       "title": "Wo Sie schlafen",
@@ -236,6 +253,31 @@
       "cribNo": "Nein, danke",
       "crib1": "Ja, 1 Bettchen",
       "crib2": "Ja, 2 Bettchen"
+    },
+    "changeRequest": {
+      "btnOpen": "Änderung der Buchung anfragen",
+      "title": "Änderung anfragen",
+      "step1Hint": "Was möchten Sie ändern? Sie können mehrere Optionen auswählen.",
+      "step2Hint": "Geben Sie die neuen Details ein.",
+      "step3Hint": "Überprüfen Sie die Zusammenfassung und senden Sie die Anfrage.",
+      "optDates": "An- und Abreisedaten",
+      "optGuests": "Anzahl der Gäste",
+      "optApartment": "Apartment",
+      "labelArrival": "Anreise",
+      "labelDeparture": "Abreise",
+      "labelAdults": "Erwachsene",
+      "labelChildren": "Kinder",
+      "aptPlaceholder": "Welches Apartment bevorzugen Sie? (z.B. Fuji, Renetta...)",
+      "labelNotes": "Zusätzliche Hinweise (optional)",
+      "notesPlaceholder": "Fügen Sie hilfreiche Informationen hinzu...",
+      "btnNext": "Weiter",
+      "btnBack": "Zurück",
+      "btnSend": "Anfrage senden",
+      "btnSending": "Wird gesendet…",
+      "btnClose": "Schließen",
+      "sentTitle": "Anfrage gesendet!",
+      "sentSub": "Wir melden uns innerhalb von 24 Stunden.",
+      "errorSend": "Fehler beim Senden. Bitte erneut versuchen oder WhatsApp kontaktieren."
     }
   }
 }

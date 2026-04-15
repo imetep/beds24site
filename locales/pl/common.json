@@ -130,7 +130,24 @@
       "errorFields": "Podaj numer rezerwacji i datę przyjazdu.",
       "rateLimited": "Zbyt wiele prób",
       "rateLimitedMsg": "Zbyt wiele prób logowania. Spróbuj ponownie za kilka minut.",
-      "logout": "Wyloguj"
+      "logout": "Wyloguj",
+      "dayPlaceholder": "DD",
+      "monthPlaceholder": "Miesiąc",
+      "yearPlaceholder": "Rok",
+      "months": [
+        "Styczeń",
+        "Luty",
+        "Marzec",
+        "Kwiecień",
+        "Maj",
+        "Czerwiec",
+        "Lipiec",
+        "Sierpień",
+        "Wrzesień",
+        "Październik",
+        "Listopad",
+        "Grudzień"
+      ]
     },
     "dashboard": {
       "title": "Portal Gościa",
@@ -156,14 +173,14 @@
       "description": "Kaucja chroni nieruchomość przed ewentualnymi szkodami. Wybierz preferowany sposób wpłaty.",
       "offlineTitle": "Osobiście przy przyjeździe",
       "offlineSub": "Karta kredytowa na recepcji",
-      "onlineTitle": "Online przez Stripe",
-      "onlineSub": "Bezpieczna preautoryzacja teraz",
+      "onlineTitle": "Online — preautoryzacja",
+      "onlineSub": "Tymczasowa blokada, bez obciążenia",
       "back": "Wstecz",
       "offlineHowTitle": "Jak to działa:",
       "offlineStep1": "Przy przyjeździe zgłoś się do recepcji z kartą kredytową (nie debetową).",
       "offlineStep2": "Recepcjonistka wypełni formularz kaucji, który podpiszesz.",
-      "offlineStep3": "Formularz jest przechowywany do wyjazdu, a następnie niszczony.",
-      "offlineStep4": "Brak preautoryzacji na Twojej karcie.",
+      "offlineStep3": "Formularz zostanie zniszczony w ciągu 8 godzin od wyjazdu.",
+      "offlineStep4": "Brak obciążenia lub blokady na karcie.",
       "offlineNote": "Możesz w każdej chwili przejść na płatność online z tej strony.",
       "stripeTitle": "Bezpieczna płatność z certyfikatem Stripe",
       "stripeBullet1": "Preautoryzacja: kwota jest zablokowana na karcie, nie pobrana.",
@@ -171,7 +188,7 @@
       "stripeBullet3": "Dane Twojej karty nigdy nie są nam udostępniane.",
       "stripeBullet4": "Certyfikat PCI DSS Level 1.",
       "amountLabel": "Kwota do zablokowania:",
-      "btnPay": "Przejdź do bezpiecznej płatności",
+      "btnPay": "Zarejestruj kaucję bez podawania danych karty",
       "btnPayLoading": "Przygotowanie…",
       "stripeNote": "Zostaniesz przekierowany do Stripe.",
       "errorPayment": "Błąd podczas tworzenia płatności.",
@@ -207,7 +224,7 @@
       "q1": "Godziny check-in i check-out?",
       "a1": "Check-in od 15:00, check-out do 10:00. Przechowywanie bagażu na życzenie.",
       "q2": "Jak działa kaucja offline?",
-      "a2": "Przy przyjeździe zgłoś się do recepcji z kartą kredytową (nie debetową). Podpiszesz formularz, który zostanie zniszczony przy wyjeździe. Brak obciążenia karty.",
+      "a2": "Zgłoś się do recepcjonistki z kartą kredytową (bez kart debetowych) przy przyjeździe. Podpiszesz formularz, który zostanie zniszczony w ciągu 8 godzin od wyjazdu. Brak obciążenia lub blokady na karcie.",
       "q3": "Jak działa kaucja online (Stripe)?",
       "a3": "Stripe preautoryzuje kwotę na Twojej karcie bez pobierania środków. Przy wyjeździe kwota jest automatycznie zwalniana, jeśli nie ma szkód.",
       "q4": "Co się stanie, jeśli self check-in zostanie odrzucony?",
@@ -215,7 +232,7 @@
       "q5": "Kontakty alarmowe",
       "a5": "WhatsApp +39 328 313 1500 · E-mail: contattolivingapple@gmail.com",
       "q6": "Czy dostępne jest łóżeczko dla niemowląt?",
-      "a6": "Tak, dysponujemy łóżeczkiem turystycznym z pościelą w cenie 50 € za pobyt. Prosimy o rezerwację z co najmniej 48-godzinnym wyprzedzeniem przez WhatsApp pod numer +39 328 313 1500."
+      "a6": "Tak, możesz zamówić łóżeczko turystyczne z pościelą w cenie €40 za pobyt. Zarezerwuj je co najmniej 72 godziny wcześniej, kontaktując się z gospodarzem przez WhatsApp pod numerem +39 328 313 1500."
     },
     "beds": {
       "title": "Gdzie będziecie spać",
@@ -236,6 +253,31 @@
       "cribNo": "Nie, dziękuję",
       "crib1": "Tak, 1 łóżeczko",
       "crib2": "Tak, 2 łóżeczka"
+    },
+    "changeRequest": {
+      "btnOpen": "Poproś o zmianę rezerwacji",
+      "title": "Poproś o zmianę",
+      "step1Hint": "Co chcesz zmienić? Możesz wybrać kilka opcji.",
+      "step2Hint": "Wprowadź nowe szczegóły.",
+      "step3Hint": "Sprawdź podsumowanie i wyślij prośbę.",
+      "optDates": "Daty przyjazdu i wyjazdu",
+      "optGuests": "Liczba osób",
+      "optApartment": "Apartament",
+      "labelArrival": "Przyjazd",
+      "labelDeparture": "Wyjazd",
+      "labelAdults": "Dorośli",
+      "labelChildren": "Dzieci",
+      "aptPlaceholder": "Który apartament wolisz? (np. Fuji, Renetta...)",
+      "labelNotes": "Dodatkowe uwagi (opcjonalne)",
+      "notesPlaceholder": "Dodaj przydatne informacje...",
+      "btnNext": "Dalej",
+      "btnBack": "Wstecz",
+      "btnSend": "Wyślij prośbę",
+      "btnSending": "Wysyłanie…",
+      "btnClose": "Zamknij",
+      "sentTitle": "Prośba wysłana!",
+      "sentSub": "Odpowiemy w ciągu 24 godzin.",
+      "errorSend": "Błąd podczas wysyłania. Spróbuj ponownie lub skontaktuj się przez WhatsApp."
     }
   }
 }

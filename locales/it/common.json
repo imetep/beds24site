@@ -130,7 +130,24 @@
       "errorFields": "Inserisci numero prenotazione e data di arrivo.",
       "rateLimited": "Troppi tentativi",
       "rateLimitedMsg": "Hai eseguito troppi tentativi di accesso. Riprova tra qualche minuto.",
-      "logout": "Esci"
+      "logout": "Esci",
+      "dayPlaceholder": "GG",
+      "monthPlaceholder": "Mese",
+      "yearPlaceholder": "Anno",
+      "months": [
+        "Gennaio",
+        "Febbraio",
+        "Marzo",
+        "Aprile",
+        "Maggio",
+        "Giugno",
+        "Luglio",
+        "Agosto",
+        "Settembre",
+        "Ottobre",
+        "Novembre",
+        "Dicembre"
+      ]
     },
     "dashboard": {
       "title": "Area Ospiti",
@@ -156,14 +173,14 @@
       "description": "Il deposito cauzionale garantisce la struttura da eventuali danni durante il soggiorno. Scegli come preferisci versarlo.",
       "offlineTitle": "Offline all'arrivo",
       "offlineSub": "Carta di credito alla reception",
-      "onlineTitle": "Online con Stripe",
-      "onlineSub": "Pre-autorizzazione sicura ora",
+      "onlineTitle": "Online — pre-autorizzazione",
+      "onlineSub": "Blocco temporaneo senza addebito",
       "back": "Indietro",
       "offlineHowTitle": "Come funziona:",
       "offlineStep1": "Presentati alla receptionist con la tua Carta di Credito (no Debit Card) all'arrivo.",
       "offlineStep2": "La receptionist compila il modulo di deposito che tu dovrai firmare.",
-      "offlineStep3": "Il modulo viene conservato fino alla partenza e poi distrutto.",
-      "offlineStep4": "Nessuna pre-autorizzazione sulla tua carta.",
+      "offlineStep3": "Il modulo verrà distrutto entro 8 ore dalla tua partenza.",
+      "offlineStep4": "Nessun addebito o blocco sulla carta.",
       "offlineNote": "Se cambi idea puoi sempre scegliere il pagamento online da questa pagina.",
       "stripeTitle": "Pagamento sicuro certificato Stripe",
       "stripeBullet1": "Pre-autorizzazione: la cifra viene bloccata sulla carta, non addebitata.",
@@ -171,7 +188,7 @@
       "stripeBullet3": "I tuoi dati carta non vengono mai condivisi con noi.",
       "stripeBullet4": "Certificazione PCI DSS Level 1.",
       "amountLabel": "Importo da bloccare:",
-      "btnPay": "Vai al pagamento sicuro",
+      "btnPay": "Registra il deposito cauzionale senza mostrare la carta",
       "btnPayLoading": "Preparazione…",
       "stripeNote": "Sarai reindirizzato su Stripe.",
       "errorPayment": "Errore durante la creazione del pagamento.",
@@ -207,7 +224,7 @@
       "q1": "Orari check-in e check-out?",
       "a1": "Check-in dalle 15:00, check-out entro le 10:00. Il deposito bagagli è disponibile su richiesta.",
       "q2": "Come funziona il deposito offline?",
-      "a2": "Presentati alla receptionist con la tua Carta di Credito (no Debit Card) all'arrivo. Firmerai un modulo che sarà distrutto alla partenza. Nessun addebito sulla carta.",
+      "a2": "Presentati alla receptionist con la tua Carta di Credito (no Debit Card) all'arrivo. Firmerai un modulo che sarà distrutto entro 8 ore dalla tua partenza. Nessun addebito o blocco sulla carta.",
       "q3": "Come funziona il deposito online (Stripe)?",
       "a3": "Stripe blocca la cifra sulla tua carta in pre-autorizzazione, senza addebito. A fine soggiorno la cifra viene svincolata automaticamente se non ci sono danni.",
       "q4": "Cosa succede se il self check-in viene rifiutato?",
@@ -215,7 +232,7 @@
       "q5": "Contatti di emergenza",
       "a5": "WhatsApp +39 328 313 1500 · Email: contattolivingapple@gmail.com",
       "q6": "È disponibile una culla per neonati?",
-      "a6": "Sì, disponiamo di una culla da campeggio con biancheria inclusa al costo di €50 a soggiorno. Prenotatela con almeno 48 ore di anticipo contattando il gestore via WhatsApp al +39 328 313 1500."
+      "a6": "Sì, puoi richiedere una culla da campeggio con biancheria inclusa al costo di €40 a soggiorno. Prenotatela con almeno 72 ore di anticipo contattando il gestore via WhatsApp al +39 328 313 1500."
     },
     "beds": {
       "title": "Dove dormirete",
@@ -236,6 +253,31 @@
       "cribNo": "No, grazie",
       "crib1": "Sì, 1 culla",
       "crib2": "Sì, 2 culle"
+    },
+    "changeRequest": {
+      "btnOpen": "Richiedi una modifica alla prenotazione",
+      "title": "Richiedi modifica",
+      "step1Hint": "Cosa vuoi modificare? Puoi selezionare più opzioni.",
+      "step2Hint": "Inserisci i nuovi dettagli.",
+      "step3Hint": "Controlla il riepilogo e invia la richiesta.",
+      "optDates": "Date di arrivo e partenza",
+      "optGuests": "Numero di persone",
+      "optApartment": "Appartamento",
+      "labelArrival": "Arrivo",
+      "labelDeparture": "Partenza",
+      "labelAdults": "Adulti",
+      "labelChildren": "Bambini",
+      "aptPlaceholder": "Quale appartamento preferiresti? (es. Fuji, Renetta...)",
+      "labelNotes": "Note aggiuntive (opzionale)",
+      "notesPlaceholder": "Aggiungi qualsiasi informazione utile...",
+      "btnNext": "Avanti",
+      "btnBack": "Indietro",
+      "btnSend": "Invia richiesta",
+      "btnSending": "Invio in corso…",
+      "btnClose": "Chiudi",
+      "sentTitle": "Richiesta inviata!",
+      "sentSub": "Ti risponderemo entro 24 ore.",
+      "errorSend": "Errore durante l'invio. Riprova o contattaci su WhatsApp."
     }
   }
 }

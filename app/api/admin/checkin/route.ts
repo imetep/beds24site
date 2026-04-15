@@ -1,7 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getToken } from '@/lib/beds24-token';
 
 const REDIS_URL   = process.env.KV_REST_API_URL!;
 const REDIS_TOKEN = process.env.KV_REST_API_TOKEN!;
+
+// Mappa roomId → nome (identica a operativo e biancheria)
+const ROOM_NAMES: Record<number, string> = {
+  107773: 'Stark',     107799: 'Idared',    107846: 'Delicious',
+  107847: 'Fuji',      107848: 'PinkLady',  107849: 'Renetta',
+  107851: 'Smith',     198030: 'Annurca',   432215: 'Kissabel',
+  507514: 'Sergente',  108607: 'Gala',      108612: 'Rubens',
+  108613: 'Braeburn',  109685: 'Cherry',    113528: 'Mulberry',
+  112982: 'Ciclamino', 113880: 'Fiordaliso',113881: 'Lavanda',
+  113882: 'Narciso',   113883: 'Orchidea',  113884: 'Primula',
+  113885: 'Mughetto',  113887: 'Viola',     179295: 'Peonia',
+  411401: 'Villa Patrizia',
+};
 
 function isAuthed(req: NextRequest) {
   const cookie = req.cookies.get('admin_session')?.value;
@@ -56,6 +70,67 @@ async function sendBrevo(to: string, subject: string, text: string) {
   }
 }
 
+// ── Sincronizza roomName, checkIn, checkOut, ospiti con Beds24 ────────────────
+// Gestisce anche prenotazioni cancellate: aggiunge il flag cancelled al record Redis
+const VALID_STATUSES = new Set(['new', 'confirmed', 'request']);
+
+async function syncBookingData(bookId: string, data: any): Promise<any> {
+  try {
+    const token = await getToken();
+    const res = await fetch(`https://beds24.com/api/v2/bookings?id=${encodeURIComponent(bookId)}`, {
+      headers: { token }, cache: 'no-store',
+    });
+    if (!res.ok) return data;
+    const json = await res.json();
+    const bk = json?.data?.[0];
+
+    // Prenotazione non trovata o cancellata
+    if (!bk || !VALID_STATUSES.has(bk.status)) {
+      if (!data.cancelled) {
+        console.log(`[admin/checkin] bookId=${bookId} cancellata (status=${bk?.status ?? 'not found'})`);
+        data.cancelled = true;
+        data.cancelledAt = new Date().toISOString();
+        await redisSet(`checkin:${bookId}`, JSON.stringify(data));
+      }
+      return data;
+    }
+
+    // Rimozione flag cancelled se la prenotazione è tornata valida
+    if (data.cancelled) {
+      data.cancelled = false;
+      delete data.cancelledAt;
+    }
+
+    const currentRoomId: number = bk.roomId ?? bk.unitId ?? 0;
+    const currentRoomName = currentRoomId ? (ROOM_NAMES[currentRoomId] ?? `Room ${currentRoomId}`) : data.roomName;
+    const currentCheckIn  = bk.arrival   ?? data.checkIn;
+    const currentCheckOut = bk.departure ?? data.checkOut;
+    const currentNumAdult = bk.numAdult  ?? data.numAdult;
+    const currentNumChild = bk.numChild  ?? data.numChild;
+
+    const changed =
+      data.cancelled === false ||
+      data.roomName !== currentRoomName ||
+      data.checkIn  !== currentCheckIn  ||
+      data.checkOut !== currentCheckOut ||
+      data.numAdult !== currentNumAdult ||
+      data.numChild !== currentNumChild;
+
+    if (changed) {
+      console.log(`[admin/checkin] sync bookId=${bookId}: room=${currentRoomName}, in=${currentCheckIn}, out=${currentCheckOut}, adulti=${currentNumAdult}, bambini=${currentNumChild}`);
+      data.roomName = currentRoomName;
+      data.checkIn  = currentCheckIn;
+      data.checkOut = currentCheckOut;
+      data.numAdult = currentNumAdult;
+      data.numChild = currentNumChild;
+      await redisSet(`checkin:${bookId}`, JSON.stringify(data));
+    }
+  } catch (e) {
+    console.error('[admin/checkin] syncBookingData error:', e);
+  }
+  return data;
+}
+
 // ─── GET ─────────────────────────────────────────────────────────────────────
 // GET /api/admin/checkin          → lista tutte le richieste
 // GET /api/admin/checkin?id=12345 → dettaglio singola
@@ -67,7 +142,10 @@ export async function GET(req: NextRequest) {
   if (id) {
     const raw = await redisGet(`checkin:${id}`);
     if (!raw) return NextResponse.json({ error: 'Non trovato' }, { status: 404 });
-    return NextResponse.json({ ok: true, data: JSON.parse(raw) });
+    let data = JSON.parse(raw);
+    // Sincronizza sempre il roomName con Beds24 sul dettaglio
+    data = await syncBookingData(id, data);
+    return NextResponse.json({ ok: true, data });
   }
 
   const keys = await redisScan('checkin:*');
@@ -76,7 +154,10 @@ export async function GET(req: NextRequest) {
       const raw = await redisGet(k);
       if (!raw) return null;
       try {
-        const d = JSON.parse(raw);
+        const bookId = k.replace('checkin:', '');
+        let d = JSON.parse(raw);
+        // Sincronizza sempre con Beds24 anche nella lista
+        d = await syncBookingData(bookId, d);
         const messages: any[] = d.messages ?? [];
         const unreadGuest = messages.filter(m => m.from === 'guest' && !m.read).length;
         return {
@@ -88,6 +169,9 @@ export async function GET(req: NextRequest) {
           email:       d.capogruppo?.email,
           status:      d.status,
           createdAt:   d.createdAt,
+          numAdult:    d.numAdult ?? 0,
+          numChild:    d.numChild ?? 0,
+          cancelled:   d.cancelled ?? false,
           unreadGuest,
         };
       } catch { return null; }

@@ -62,6 +62,8 @@
 export type Locale = 'it' | 'en' | 'de' | 'pl'
 export type ML = Record<Locale, string>
 
+import { getShowers } from '@/config/showers'
+
 export type BedVariant =
   | 'standard'
   | 'sommier'
@@ -71,6 +73,8 @@ export type BedVariant =
   | 'castello'
   | 'poltrona'
   | 'divano'
+
+export type BedState = 'off' | 'A' | 'B'
 
 export type BedBaseType = 'matrimoniale' | 'singolo' | 'divano'
 
@@ -211,6 +215,29 @@ const POLTRONA_OPTS: { closed: ConfigOption; open: ConfigOption } = {
   },
 }
 
+// Opzioni toggle divano letto (matrimoniale o singolo)
+const DIVANO_MATRIM_OPTS: { closed: ConfigOption; open: ConfigOption } = {
+  closed: {
+    label: { it: 'Non preparato', en: 'Not made up', de: 'Nicht vorbereitet', pl: 'Nie przygotowane' },
+    linenType: 'none', linenCount: 0,
+  },
+  open: {
+    label: { it: 'Preparato (2 posti)', en: 'Made up (2 places)', de: 'Vorbereitet (2 Plätze)', pl: 'Przygotowane (2 miejsca)' },
+    linenType: 'matrimoniale', linenCount: 1,
+  },
+}
+
+const DIVANO_SINGOLO_OPTS: { closed: ConfigOption; open: ConfigOption } = {
+  closed: {
+    label: { it: 'Non preparato', en: 'Not made up', de: 'Nicht vorbereitet', pl: 'Nie przygotowane' },
+    linenType: 'none', linenCount: 0,
+  },
+  open: {
+    label: { it: 'Preparato (1 posto)', en: 'Made up (1 place)', de: 'Vorbereitet (1 Platz)', pl: 'Przygotowane (1 miejsce)' },
+    linenType: 'singolo', linenCount: 1,
+  },
+}
+
 // Opzioni custom estraibile PinkLady C3 (roomId 107848):
 // il letto estraibile qui funziona come secondo letto affiancato → label più umane
 const ESTRAIBILE_PINKLADY_C3: { closed: ConfigOption; open: ConfigOption } = {
@@ -291,15 +318,16 @@ function castello(id: string): Bed {
 function poltrona(id: string): Bed {
   return {
     id, baseType: 'singolo', variant: 'poltrona',
-    canConfigure: false, note: NOTES.poltrona,
+    canConfigure: true, configOptions: POLTRONA_OPTS, note: NOTES.poltrona,
     defaultLinenType: 'singolo', defaultLinenCount: 1,
   }
 }
 
 function divano(id: string, base: 'matrimoniale' | 'singolo' = 'matrimoniale', note?: ML): Bed {
+  const opts = base === 'matrimoniale' ? DIVANO_MATRIM_OPTS : DIVANO_SINGOLO_OPTS;
   return {
     id, baseType: 'divano', variant: 'divano',
-    canConfigure: false, note,
+    canConfigure: true, configOptions: opts, note,
     showNoteAlways: note != null,
     defaultLinenType: base, defaultLinenCount: 1,
   }
@@ -711,9 +739,11 @@ export interface LinenResult {
   // Lenzuola
   lenzMatrimoniali: number   // set copri-materasso matrimoniale (2 lenzuola)
   lenzSingoli:      number   // set copri-materasso singolo (2 lenzuola)
-  federe:           number   // federe sacco/cuscino
+  federe:           number   // federe sacco/cuscino (2 per matrim, 1 per singolo)
   // Asciugamani (= persone totali)
   persone:          number
+  // Scendibagno (= docce)
+  scendibagno:      number
   // Culle (gestite separatamente)
   culle:            number
 }
@@ -727,20 +757,19 @@ function bedLinen(bed: Bed, state: 'A' | 'B'): { matrim: number; singoli: number
     return { matrim: 0, singoli: 4, federe: 2, persone: 2 }
   }
 
-  // Trasformabile B (matrimoniale, 2 persone)
+  // Trasformabile stato A = singolo
   if (bed.variant === 'sommier' && effectiveState === 'A' && bed.iconStates?.A === 'singolo') {
-    // trasformabile stato A = singolo
     return { matrim: 0, singoli: 2, federe: 1, persone: 1 }
   }
 
-  // Matrimoniale (standard, sommier A, trasformabile B, divano matrim)
+  // Matrimoniale (standard, sommier A, divano matrim)
   if (bed.baseType === 'matrimoniale' ||
       (bed.variant === 'divano' && bed.defaultLinenType === 'matrimoniale') ||
       (bed.variant === 'sommier' && effectiveState === 'A')) {
     return { matrim: 2, singoli: 0, federe: 2, persone: 2 }
   }
 
-  // Tutti i singoli: singolo std, estraibile, impilabile A/B, poltrona,
+  // Tutti i singoli: singolo std, estraibile, impilabile, poltrona,
   //                  divano singolo, castello, pavimento, trasformabile A
   return { matrim: 0, singoli: 2, federe: 1, persone: 1 }
 }
@@ -751,7 +780,7 @@ export function calcLinenSetsFromBedStates(
   cribs = 0
 ): LinenResult {
   const config = getBedConfig(roomId)
-  if (!config) return { lenzMatrimoniali: 0, lenzSingoli: 0, federe: 0, persone: 0, culle: cribs }
+  if (!config) return { lenzMatrimoniali: 0, lenzSingoli: 0, federe: 0, persone: 0, scendibagno: getShowers(roomId), culle: cribs }
 
   let lenzMatrimoniali = 0
   let lenzSingoli      = 0
@@ -770,7 +799,74 @@ export function calcLinenSetsFromBedStates(
     }
   }
 
-  return { lenzMatrimoniali, lenzSingoli, federe, persone, culle: cribs }
+  return { lenzMatrimoniali, lenzSingoli, federe, persone, scendibagno: getShowers(roomId), culle: cribs }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// calcDefaultBedStates — default guest-count aware
+// ─────────────────────────────────────────────────────────────────────────────
+//
+// Regola:
+//  Pass 1 (sempre attivi): standard, sommier, trasformabile, castello, pavimento
+//  Pass 2 (solo se servono): impilabile → estraibile → poltrona → divano
+//
+// I letti opzionali vengono attivati in ordine di priorità solo se il numero
+// di posti già coperti è inferiore a numGuests.
+
+function slotsForBedDefault(bed: Bed): number {
+  switch (bed.variant) {
+    case 'sommier':
+      return bed.iconStates?.A === 'singolo' ? 1 : 2 // trasformabile A=singolo, sommier A=matrimoniale
+    case 'impilabile':  return 1  // A = 1 singolo in struttura
+    case 'estraibile':  return 1
+    case 'poltrona':    return 1
+    case 'divano':      return bed.defaultLinenType === 'matrimoniale' ? 2 : 1
+    case 'castello':    return 1
+    case 'pavimento':   return 1
+    case 'standard':
+      return bed.baseType === 'matrimoniale' ? 2 : 1
+    default:
+      return bed.baseType === 'matrimoniale' ? 2 : 1
+  }
+}
+
+export function calcDefaultBedStates(
+  config: ApartmentBedConfig,
+  numGuests: number,
+): Record<string, BedState> {
+  const states: Record<string, BedState> = {}
+  let covered = 0
+
+  const ALWAYS_ON: BedVariant[] = ['standard', 'sommier', 'castello', 'pavimento']
+  const OPTIONAL_ORDER: BedVariant[] = ['impilabile', 'estraibile', 'poltrona', 'divano']
+
+  // Pass 1: letti fissi — sempre preparati
+  for (const room of config.rooms) {
+    for (const bed of room.beds) {
+      if (ALWAYS_ON.includes(bed.variant)) {
+        states[bed.id] = 'A'
+        covered += slotsForBedDefault(bed)
+      }
+    }
+  }
+
+  // Pass 2: letti opzionali — attivati solo se servono altri posti
+  for (const variant of OPTIONAL_ORDER) {
+    for (const room of config.rooms) {
+      for (const bed of room.beds) {
+        if (bed.variant === variant) {
+          if (covered < numGuests) {
+            states[bed.id] = 'A'
+            covered += slotsForBedDefault(bed)
+          } else {
+            states[bed.id] = 'off'
+          }
+        }
+      }
+    }
+  }
+
+  return states
 }
 
 export default BED_CONFIGS

@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import type { ApartmentBedConfig, Bed, BedVariant } from '@/lib/bedConfig';
+import { calcDefaultBedStates, calcLinenSetsFromBedStates } from '@/lib/bedConfig';
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
 
@@ -11,6 +12,7 @@ interface LinenResult {
   lenzSingoli:      number;
   federe:           number;
   persone:          number;
+  scendibagno?:     number;
   culle:            number;
 }
 
@@ -61,20 +63,7 @@ function fmtDate(d: string) {
   });
 }
 
-/** Genera bedStates di default dalla config:
- *  estraibile/poltrona → off (non preparati)
- *  tutto il resto      → A  (configurazione base)
- */
-function defaultBedStates(config: ApartmentBedConfig): Record<string, BedState> {
-  const states: Record<string, BedState> = {};
-  for (const room of config.rooms) {
-    for (const bed of room.beds) {
-      states[bed.id] =
-        bed.variant === 'estraibile' || bed.variant === 'poltrona' ? 'off' : 'A';
-    }
-  }
-  return states;
-}
+// defaultBedStates → calcDefaultBedStates in lib/bedConfig.ts (guest-count aware)
 
 // ─── Helpers calendario ───────────────────────────────────────────────────────
 
@@ -144,16 +133,13 @@ function RangeCalendar({ from, to, onChange }: {
   function renderMonth(year: number, month: number) {
     const cells = buildCells(year, month);
     return (
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 15, marginBottom: 12, color: '#111' }}>
-          {MONTHS_IT[month]} {year}
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', marginBottom: 4 }}>
+      <div style={{ flex: 1, minWidth: 210 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(28px, 1fr))', marginBottom: 4 }}>
           {DAYS_IT.map(d => (
             <div key={d} style={{ textAlign: 'center', fontSize: 11, fontWeight: 600, color: '#bbb', paddingBottom: 4 }}>{d}</div>
           ))}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(28px, 1fr))', gap: 2 }}>
           {cells.map((day, i) => {
             if (!day) return <div key={i} style={{ height: 36 }} />;
             const ymd     = toYMD(year, month, day);
@@ -234,36 +220,45 @@ function RangeCalendar({ from, to, onChange }: {
 
       {/* Calendario — visibile solo se open */}
       {open && (
-        <div style={{ border: '1px solid #e5e7eb', borderRadius: 16, padding: isDesktop ? '20px 28px 24px' : '16px 12px 20px', background: '#fff' }}>
+        <div style={{ border: '1px solid #e5e7eb', borderRadius: 16, padding: isDesktop ? '20px 28px 24px' : '16px 12px 20px', background: '#fff', overflowX: 'auto' }}>
           {/* Hint fase */}
           <p style={{ margin: '0 0 10px', fontSize: 12, color: '#9ca3af' }}>
             {phase === 'from' ? '📅 Seleziona la data di inizio' : '📅 Seleziona la data di fine'}
           </p>
-          {/* Navigazione */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-            <button onClick={() => { if (!isPrevDisabled) { const p = addMonths(viewYear, viewMonth, -1); setViewYear(p.year); setViewMonth(p.month); } }}
-              disabled={isPrevDisabled} style={navBtn(isPrevDisabled)}>‹</button>
-            {isDesktop ? (
-              <div style={{ flex: 1, display: 'flex', justifyContent: 'space-around' }}>
-                <span style={{ fontWeight: 700, fontSize: 15, color: '#111' }}>{MONTHS_IT[viewMonth]} {viewYear}</span>
-                <span style={{ fontWeight: 700, fontSize: 15, color: '#111' }}>{MONTHS_IT[second.month]} {second.year}</span>
+          {/* Navigazione + mesi — struttura unica allineata */}
+          {isDesktop ? (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
+                <button onClick={() => { if (!isPrevDisabled) { const p = addMonths(viewYear, viewMonth, -1); setViewYear(p.year); setViewMonth(p.month); } }}
+                  disabled={isPrevDisabled} style={navBtn(isPrevDisabled)}>‹</button>
+                <div style={{ flex: 1, textAlign: 'center', fontWeight: 700, fontSize: 15, color: '#111' }}>
+                  {MONTHS_IT[viewMonth]} {viewYear}
+                </div>
+                <div style={{ width: 1, background: 'transparent', flexShrink: 0, margin: '0 20px' }} />
+                <div style={{ flex: 1, textAlign: 'center', fontWeight: 700, fontSize: 15, color: '#111' }}>
+                  {MONTHS_IT[second.month]} {second.year}
+                </div>
+                <button onClick={() => { const n = addMonths(viewYear, viewMonth, 1); setViewYear(n.year); setViewMonth(n.month); }}
+                  style={navBtn(false)}>›</button>
               </div>
-            ) : (
-              <span style={{ fontWeight: 700, fontSize: 15, color: '#111', flex: 1, textAlign: 'center' }}>{MONTHS_IT[viewMonth]} {viewYear}</span>
-            )}
-            <button onClick={() => { const n = addMonths(viewYear, viewMonth, 1); setViewYear(n.year); setViewMonth(n.month); }}
-              style={navBtn(false)}>›</button>
-          </div>
-          {/* Mesi */}
-          <div style={{ display: 'flex', gap: isDesktop ? 40 : 0 }}>
-            {renderMonth(viewYear, viewMonth)}
-            {isDesktop && (
-              <>
+              <div style={{ display: 'flex', gap: 40 }}>
+                {renderMonth(viewYear, viewMonth)}
                 <div style={{ width: 1, background: '#f0f0f0', flexShrink: 0 }} />
                 {renderMonth(second.year, second.month)}
-              </>
-            )}
-          </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                <button onClick={() => { if (!isPrevDisabled) { const p = addMonths(viewYear, viewMonth, -1); setViewYear(p.year); setViewMonth(p.month); } }}
+                  disabled={isPrevDisabled} style={navBtn(isPrevDisabled)}>‹</button>
+                <span style={{ fontWeight: 700, fontSize: 15, color: '#111' }}>{MONTHS_IT[viewMonth]} {viewYear}</span>
+                <button onClick={() => { const n = addMonths(viewYear, viewMonth, 1); setViewYear(n.year); setViewMonth(n.month); }}
+                  style={navBtn(false)}>›</button>
+              </div>
+              {renderMonth(viewYear, viewMonth)}
+            </>
+          )}
         </div>
       )}
     </div>
@@ -292,11 +287,14 @@ function SourceBadge({ source }: { source: BiancheriaItem['source'] }) {
 
 function LinenSummary({ linen }: { linen: LinenResult }) {
   return (
-    <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', fontSize: 13, color: '#374151', marginTop: 6 }}>
-      <span>🛏 <b>{linen.lenzMatrimoniali}</b> matr</span>
-      <span>🛌 <b>{linen.lenzSingoli}</b> sing</span>
-      <span>🪶 <b>{linen.federe}</b> federe</span>
-      <span>🧺 <b>{linen.persone}</b> asciug</span>
+    <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', fontSize: 12, color: '#374151', marginTop: 6 }}>
+      <span title="Lenzuola matrimoniali">🛏 <b>{linen.lenzMatrimoniali}</b> lenz.matr</span>
+      <span title="Lenzuola singole">🛌 <b>{linen.lenzSingoli}</b> lenz.sing</span>
+      <span title="Federe sacco cuscino">🪶 <b>{linen.federe}</b> federe</span>
+      <span title="Asciugamano viso">🧻 <b>{linen.persone}</b> viso</span>
+      <span title="Asciugamano bidet">🧻 <b>{linen.persone}</b> bidet</span>
+      <span title="Telo doccia">🚿 <b>{linen.persone}</b> telo doccia</span>
+      <span title="Scendibagno spugna">🟫 <b>{linen.scendibagno ?? 1}</b> scendibagno</span>
       {linen.culle > 0 && <span>🚼 <b>{linen.culle}</b> culle</span>}
     </div>
   );
@@ -312,91 +310,178 @@ function LinenSummary({ linen }: { linen: LinenResult }) {
  *  - sommier/impilabile/pavimento  → toggle A ↔ B   (A=chiuso, B=aperto)
  *  - trasformabile (sommier+iconStates.A=singolo) → toggle A ↔ B
  */
-function BedRow({
-  bed,
-  state,
-  onChange,
-}: {
-  bed: Bed;
-  state: BedState;
-  onChange: (bedId: string, newState: BedState) => void;
-}) {
-  const variant = bed.variant as BedVariant;
+// ─── Componenti visivi letti (stesso stile portale ospiti) ───────────────────
 
-  // ── Fissi: standard, castello, divano ──────────────────────────────────────
-  const STATIC: BedVariant[] = ['standard', 'castello', 'divano'];
-  if (STATIC.includes(variant)) {
-    let label =
-      variant === 'divano'   ? `Divano letto (${bed.defaultLinenType})` :
-      variant === 'castello' ? 'Letto a castello' :
-      bed.baseType === 'matrimoniale'
-        ? `Matrimoniale${bed.dimensions ? ` (${bed.dimensions})` : ''}`
-        : `Singolo${bed.dimensions ? ` (${bed.dimensions})` : ''}`;
+type IconVariant = 'singolo' | 'matrimoniale' | 'sommier_b' | 'impilabile_b' |
+                   'poltrona_off' | 'poltrona_on' | 'castello' | 'divano' |
+                   'estraibile' | 'pavimento';
 
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-        <span style={{ fontSize: 12, color: '#374151', flex: 1 }}>{label}</span>
-        <span style={{
-          fontSize: 11, background: '#f3f4f6', color: '#6b7280',
-          padding: '2px 8px', borderRadius: 6,
-        }}>Fisso</span>
-      </div>
-    );
+function resolveIcon(bed: Bed, displayState: 'A' | 'B'): IconVariant {
+  if (bed.iconStates) {
+    const t = displayState === 'A' ? bed.iconStates.A : (bed.iconStates.B ?? bed.iconStates.A);
+    return t === 'matrimoniale' ? 'matrimoniale' : 'singolo';
   }
+  if (bed.variant === 'sommier')    return displayState === 'B' ? 'sommier_b'    : 'matrimoniale';
+  if (bed.variant === 'impilabile') return displayState === 'B' ? 'impilabile_b' : 'singolo';
+  if (bed.variant === 'poltrona')   return displayState === 'A' ? 'poltrona_on'  : 'poltrona_off';
+  if (bed.variant === 'castello')   return 'castello';
+  if (bed.variant === 'divano' || bed.baseType === 'divano') return 'divano';
+  if (bed.variant === 'estraibile') return 'estraibile';
+  if (bed.variant === 'pavimento')  return 'pavimento';
+  if (bed.baseType === 'matrimoniale') return 'matrimoniale';
+  return 'singolo';
+}
 
-  // ── Poltrona: toggle off / A (non usa configOptions) ──────────────────────
-  if (variant === 'poltrona') {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-        <span style={{ fontSize: 12, color: '#374151', minWidth: 80 }}>Poltrona letto</span>
-        {(['off', 'A'] as BedState[]).map(s => {
-          const active = state === s;
-          const lbl    = s === 'off' ? 'Non aperta' : 'Aperta (1 posto)';
-          return (
-            <button key={s} onClick={() => onChange(bed.id, s)} style={{
-              padding: '4px 10px', fontSize: 12, borderRadius: 6, cursor: 'pointer',
-              border:      active ? '1.5px solid #1E73BE' : '1px solid #d1d5db',
-              background:  active ? '#EEF5FC' : '#fff',
-              color:       active ? '#1E73BE' : '#6b7280',
-              fontWeight:  active ? 700 : 400,
-            }}>{lbl}</button>
-          );
-        })}
-      </div>
-    );
+function bedSlots(bed: Bed, state: BedState): number {
+  if (state === 'off') return 0;
+  if (state === 'B') {
+    if (bed.variant === 'impilabile') return 2;
+    if (bed.variant === 'sommier') return 2;
+    return 0;
   }
+  if (bed.variant === 'sommier') return bed.iconStates?.A === 'singolo' ? 1 : 2;
+  if (bed.variant === 'impilabile') return 1;
+  if (bed.variant === 'castello')   return 1;
+  if (bed.variant === 'estraibile') return 1;
+  if (bed.variant === 'poltrona')   return 1;
+  if (bed.variant === 'pavimento')  return 1;
+  if (bed.baseType === 'matrimoniale') return 2;
+  if (bed.baseType === 'divano') return bed.defaultLinenType === 'matrimoniale' ? 2 : 1;
+  return 1;
+}
 
-  // ── Configurable con configOptions ─────────────────────────────────────────
-  if (!bed.canConfigure || !bed.configOptions) return null;
+function bedChipLabel(bed: Bed, displayState: 'A' | 'B'): string {
+  if (bed.configOptions) {
+    const opt = displayState === 'A' ? bed.configOptions.closed : bed.configOptions.open;
+    return opt.label.it;
+  }
+  if (bed.baseType === 'matrimoniale') return `Matrimoniale${bed.dimensions ? ` (${bed.dimensions})` : ''}`;
+  if (bed.baseType === 'divano')       return 'Divano letto';
+  return `Singolo${bed.dimensions ? ` (${bed.dimensions})` : ''}`;
+}
 
-  // estraibile: off = chiuso, A = aperto
-  // tutti gli altri (sommier, impilabile, pavimento, trasformabile): A = chiuso, B = aperto
-  const isOffClosed = variant === 'estraibile';
+function singleChipLabel(bed: Bed, state: BedState): string {
+  if (bed.variant === 'standard' || bed.variant === 'castello') {
+    if (bed.baseType === 'matrimoniale') return `Matrimoniale${bed.dimensions ? ` (${bed.dimensions})` : ''}`;
+    return `Singolo${bed.dimensions ? ` (${bed.dimensions})` : ''}`;
+  }
+  if (bed.canConfigure && bed.configOptions) {
+    return state === 'A' ? bed.configOptions.open.label.it : bed.configOptions.closed.label.it;
+  }
+  return bed.baseType;
+}
 
-  const closedState: BedState = isOffClosed ? 'off' : 'A';
-  const openState:   BedState = isOffClosed ? 'A'   : 'B';
+function AdminBedIcon({ variant, active }: { variant: IconVariant; active: boolean }) {
+  const fill   = active ? '#DBEAFE' : '#E5E7EB';
+  const stroke = active ? '#1E73BE' : '#9CA3AF';
+  const pil    = active ? '#93C5FD' : '#D1D5DB';
 
-  const closedLabel = bed.configOptions.closed.label.it;
-  const openLabel   = bed.configOptions.open.label.it;
-
+  if (variant === 'poltrona_off') return (
+    <svg width="48" height="44" viewBox="0 0 48 44" fill="none">
+      <rect x="2" y="16" width="44" height="26" rx="3" fill={fill} stroke={stroke} strokeWidth="1.2"/>
+      <rect x="2" y="2"  width="44" height="18" rx="3" fill={pil}  stroke={stroke} strokeWidth="1.2"/>
+      <rect x="2" y="2"  width="9"  height="40" rx="3" fill={pil}  stroke={stroke} strokeWidth="1.2"/>
+      <rect x="37" y="2" width="9"  height="40" rx="3" fill={pil}  stroke={stroke} strokeWidth="1.2"/>
+    </svg>
+  );
+  if (variant === 'poltrona_on') return (
+    <svg width="48" height="52" viewBox="0 0 48 52" fill="none">
+      <rect x="2" y="22" width="44" height="28" rx="3" fill={fill} stroke={stroke} strokeWidth="1.2"/>
+      <rect x="3" y="2"  width="20" height="22" rx="2" fill={pil}/>
+      <rect x="25" y="2" width="20" height="22" rx="2" fill={pil}/>
+    </svg>
+  );
+  if (variant === 'castello') return (
+    <svg width="48" height="58" viewBox="0 0 48 58" fill="none">
+      <rect x="2" y="2"  width="38" height="26" rx="3" fill={fill}   stroke={stroke} strokeWidth="1.2"/>
+      <rect x="3" y="4"  width="16" height="14" rx="2" fill={pil}/>
+      <rect x="2" y="30" width="38" height="26" rx="3" fill="#E5E7EB" stroke="#9CA3AF" strokeWidth="1.2"/>
+      <rect x="3" y="32" width="16" height="14" rx="2" fill="#D1D5DB"/>
+      <line x1="40" y1="2"  x2="40" y2="56" stroke={stroke} strokeWidth="2.5"/>
+      <line x1="46" y1="2"  x2="46" y2="56" stroke={stroke} strokeWidth="2.5"/>
+      <line x1="40" y1="10" x2="46" y2="10" stroke={stroke} strokeWidth="2"/>
+      <line x1="40" y1="20" x2="46" y2="20" stroke={stroke} strokeWidth="2"/>
+      <line x1="40" y1="38" x2="46" y2="38" stroke={stroke} strokeWidth="2"/>
+      <line x1="40" y1="50" x2="46" y2="50" stroke={stroke} strokeWidth="2"/>
+    </svg>
+  );
+  if (variant === 'divano') return (
+    <svg width="86" height="44" viewBox="0 0 86 44" fill="none">
+      <rect x="2" y="14" width="82" height="28" rx="3" fill={fill} stroke={stroke} strokeWidth="1.2"/>
+      <rect x="2" y="2"  width="82" height="18" rx="3" fill={pil}  stroke={stroke} strokeWidth="1.2"/>
+    </svg>
+  );
+  if (variant === 'sommier_b' || variant === 'impilabile_b') return (
+    <svg width="86" height="52" viewBox="0 0 86 52" fill="none">
+      <rect x="2"  y="22" width="38" height="28" rx="3" fill={fill} stroke={stroke} strokeWidth="1.2"/>
+      <rect x="3"  y="2"  width="16" height="22" rx="2" fill={pil}/>
+      <rect x="46" y="22" width="38" height="28" rx="3" fill={fill} stroke={stroke} strokeWidth="1.2"/>
+      <rect x="47" y="2"  width="16" height="22" rx="2" fill={pil}/>
+    </svg>
+  );
+  if (variant === 'matrimoniale') return (
+    <svg width="86" height="52" viewBox="0 0 86 52" fill="none">
+      <rect x="2" y="22" width="82" height="28" rx="3" fill={fill} stroke={stroke} strokeWidth="1.2"/>
+      <rect x="3" y="2"  width="36" height="22" rx="2" fill={pil}/>
+      <rect x="47" y="2" width="36" height="22" rx="2" fill={pil}/>
+    </svg>
+  );
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6, flexWrap: 'wrap' }}>
-      {[
-        { s: closedState, lbl: closedLabel, color: '#1E73BE', bg: '#EEF5FC' },
-        { s: openState,   lbl: openLabel,   color: '#16a34a', bg: '#DCFCE7' },
-      ].map(({ s, lbl, color, bg }) => {
-        const active = state === s;
-        return (
-          <button key={s} onClick={() => onChange(bed.id, s)} style={{
-            padding: '4px 10px', fontSize: 12, borderRadius: 6, cursor: 'pointer',
-            border:     active ? `1.5px solid ${color}` : '1px solid #d1d5db',
-            background: active ? bg   : '#fff',
-            color:      active ? color : '#6b7280',
-            fontWeight: active ? 700   : 400,
-          }}>{lbl}</button>
-        );
-      })}
-    </div>
+    <svg width="48" height="52" viewBox="0 0 48 52" fill="none">
+      <rect x="2" y="22" width="44" height="28" rx="3" fill={fill} stroke={stroke} strokeWidth="1.2"/>
+      <rect x="3" y="2"  width="42" height="22" rx="2" fill={pil}/>
+    </svg>
+  );
+}
+
+function AdminBedChip({ bed, displayState, isActive, label, slots, onClick, disabled }: {
+  bed: Bed; displayState: 'A' | 'B'; isActive: boolean;
+  label: string; slots: number;
+  onClick?: () => void; disabled?: boolean;
+}) {
+  const icon = resolveIcon(bed, displayState);
+  const isWide = ['matrimoniale', 'sommier_b', 'impilabile_b', 'divano'].includes(icon);
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+        padding: '10px 8px', minWidth: 88,
+        border: isActive ? '2px solid #1E73BE' : '1px solid #e5e7eb',
+        borderRadius: 12,
+        background: isActive ? '#DBEAFE' : disabled ? '#f9fafb' : '#fff',
+        cursor: disabled ? 'default' : 'pointer',
+        transition: 'all .15s',
+        flex: isWide ? 1 : 'none',
+        position: 'relative',
+      }}
+    >
+      <AdminBedIcon variant={icon} active={isActive} />
+      <span style={{
+        fontSize: '0.72rem', fontWeight: isActive ? 700 : 400,
+        color: isActive ? '#1E73BE' : '#888888',
+        textAlign: 'center', lineHeight: 1.3, maxWidth: 100,
+      }}>
+        {label}
+      </span>
+      {isActive && slots > 0 && (
+        <span style={{
+          fontSize: '0.65rem', color: '#1E73BE',
+          background: '#fff', border: '1px solid #93C5FD',
+          borderRadius: 10, padding: '1px 6px',
+        }}>
+          {slots === 1 ? '1p' : `${slots}p`}
+        </span>
+      )}
+      {disabled && (
+        <span style={{
+          position: 'absolute', top: 4, right: 4,
+          fontSize: 10, background: '#f3f4f6', color: '#6b7280',
+          padding: '1px 5px', borderRadius: 4,
+        }}>fisso</span>
+      )}
+    </button>
   );
 }
 
@@ -466,6 +551,23 @@ export default function AdminBiancheria() {
   const [saving,     setSaving]     = useState(false);
   const [saveMsg,    setSaveMsg]    = useState('');
 
+  // Magazzino — valori manuali prima dell'export, reset ad ogni caricamento pagina
+  const ARTICOLI = ['lenzMatrimoniali', 'lenzSingoli', 'federe', 'viso', 'bidet', 'telodoccia', 'scendibagno'] as const;
+  type ArticoloKey = typeof ARTICOLI[number];
+  const ARTICOLI_LABEL: Record<ArticoloKey, string> = {
+    lenzMatrimoniali: 'Lenzuolo matrimoniale',
+    lenzSingoli:      'Lenzuolo singolo',
+    federe:           'Federa sacco cuscino',
+    viso:             'Asciugamano viso',
+    bidet:            'Asciugamano bidet',
+    telodoccia:       'Telo doccia',
+    scendibagno:      'Scendibagno spugna',
+  };
+  const [magazzino, setMagazzino] = useState<Record<ArticoloKey, number>>({
+    lenzMatrimoniali: 0, lenzSingoli: 0, federe: 0,
+    viso: 0, bidet: 0, telodoccia: 0, scendibagno: 0,
+  });
+
   // Verifica auth all'avvio
   useEffect(() => {
     fetch('/api/admin/checkin')
@@ -520,7 +622,7 @@ export default function AdminBiancheria() {
 
   function resetToDefault(item: BiancheriaItem) {
     if (!item.config) return;
-    setEditStates(defaultBedStates(item.config));
+    setEditStates(calcDefaultBedStates(item.config, item.numAdult + item.numChild));
     setEditCribs(0);
     setSaveMsg('');
   }
@@ -534,6 +636,7 @@ export default function AdminBiancheria() {
         body: JSON.stringify({
           bookId:    item.bookId,
           roomId:    item.roomId,
+          numGuests: item.numAdult + item.numChild,
           bedStates: editStates,
           cribs:     editCribs,
         }),
@@ -541,10 +644,15 @@ export default function AdminBiancheria() {
       if (!res.ok) { setSaveMsg('❌ Errore nel salvataggio'); return; }
       const data = await res.json();
 
+      // Correggi persone (asciugamani) = ospiti reali, non posti letto
+      const correctedLinen = data.linen
+        ? { ...data.linen, persone: item.numAdult + item.numChild }
+        : null;
+
       // Aggiorna la lista locale
       const updated = items.map(i =>
         i.bookId === item.bookId
-          ? { ...i, bedStates: editStates, cribs: editCribs, linen: data.linen, source: 'admin' as const }
+          ? { ...i, bedStates: editStates, cribs: editCribs, linen: correctedLinen, source: 'admin' as const }
           : i,
       );
       setItems(updated);
@@ -575,55 +683,40 @@ export default function AdminBiancheria() {
     const sourceLabel = (s: BiancheriaItem['source']) =>
       s === 'guest' ? 'ospite' : s === 'admin' ? 'admin' : 'auto';
 
-    // Righe dati (dalla riga 4 in poi)
     const dataRows: BiancheriaItem[] = items.filter(i => i.hasConfig && i.linen);
     const firstDataRow = 4;
     const lastDataRow  = firstDataRow + dataRows.length - 1;
 
-    // ── Struttura foglio ──────────────────────────────────────────────────────
     // Colonne: A=arrivo B=nr persone C=casa D=prenotazione nr
     //          E=lenz matrim F=lenz sing G=federe H=ascig viso
-    //          I=ascig bidet J=telo spugna K=scendibagno L=note
+    //          I=ascig bidet J=telo doccia K=scendibagno L=note
 
     const wsData: (string | number | Date | null)[][] = [
-      // Riga 1 — metadati
       ['importazione del', new Date()],
-      // Riga 2 — maggiorazione (B2 = 0.1, usato dalle formule come $B$2)
-      ['maggiorazione manuale del biancheria', 0.1],
-      // Riga 3 — intestazioni
+      ['maggiorazione manuale del biancheria', 0.2],
       [
         'arrivo', 'nr persone', 'casa', 'prenotazione nr',
         'lenzuolo matrimoniale', 'LENZUOLO SINGOLO', 'FEDERA SACCO cuscino',
-        'ASCIUGAMANO VISO', 'ASCIUGAMANO BIDET SPUGNA', 'TELO SPUGNA', 'SCENDIBAGNO SPUGNA',
+        'ASCIUGAMANO VISO', 'ASCIUGAMANO BIDET SPUGNA', 'TELO DOCCIA', 'SCENDIBAGNO SPUGNA',
         'Note',
       ],
     ];
 
-    // Righe prenotazioni
     for (const item of dataRows) {
-      const { lenzMatrimoniali, lenzSingoli, federe, persone, culle } = item.linen!;
+      const { lenzMatrimoniali, lenzSingoli, federe, persone, culle, scendibagno } = item.linen!;
       const note = [
         sourceLabel(item.source),
         culle > 0 ? `${culle} culle` : null,
       ].filter(Boolean).join(' · ');
-
       wsData.push([
-        item.arrival,
-        item.numAdult + item.numChild,   // nr persone
-        item.roomName,
-        item.bookId,
-        lenzMatrimoniali,
-        lenzSingoli,
-        federe,
-        persone,  // asciugamano viso
-        persone,  // asciugamano bidet spugna
-        persone,  // telo spugna
-        persone,  // scendibagno spugna
+        item.arrival, item.numAdult + item.numChild, item.roomName, item.bookId,
+        lenzMatrimoniali, lenzSingoli, federe,
+        persone, persone, persone,
+        scendibagno ?? 1,
         note,
       ]);
     }
 
-    // Righe senza config (solo informative, senza valori numerici)
     for (const item of items.filter(i => !i.hasConfig)) {
       wsData.push([item.arrival, item.numAdult + item.numChild, item.roomName, item.bookId,
         null, null, null, null, null, null, null, 'Config N/D']);
@@ -631,31 +724,49 @@ export default function AdminBiancheria() {
 
     const ws = XLSX.utils.aoa_to_sheet(wsData);
 
-    // ── 3 righe riepilogo con formule ────────────────────────────────────────
-    // TOTALE (riga dopo l'ultima data row)
-    const totRow  = lastDataRow + 1;
-    const maggRow = totRow + 1;
-    const arroRow = maggRow + 1;
+    // ── Riga TOTALE ──────────────────────────────────────────────────────────
+    const totRow = lastDataRow + 1;
+    const cols   = ['E', 'F', 'G', 'H', 'I', 'J', 'K'];
 
-    const cols = ['E', 'F', 'G', 'H', 'I', 'J', 'K'];
-
-    ws[`A${totRow}`]  = { v: 'TOTALE', t: 's' };
-    ws[`D${maggRow}`] = { v: 'maggiorazione', t: 's' };
-    ws[`D${arroRow}`] = { v: 'arrotondamento', t: 's' };
-
+    ws[`A${totRow}`] = { v: 'TOTALE', t: 's' };
     for (const col of cols) {
-      // TOTALE: =SUM(E4:Eultima)
-      ws[`${col}${totRow}`]  = { f: `SUM(${col}${firstDataRow}:${col}${lastDataRow})`, t: 'n' };
-      // maggiorazione: =(E_tot*$B$2)+E_tot
-      ws[`${col}${maggRow}`] = { f: `(${col}${totRow}*$B$2)+${col}${totRow}`, t: 'n' };
-      // arrotondamento al 5 più vicino: =ROUND(E_magg/5,0)*5
-      ws[`${col}${arroRow}`] = { f: `ROUND(${col}${maggRow}/5,0)*5`, t: 'n' };
+      ws[`${col}${totRow}`] = { f: `SUM(${col}${firstDataRow}:${col}${lastDataRow})`, t: 'n' };
     }
 
-    // Aggiorna range foglio
-    ws['!ref'] = `A1:L${arroRow}`;
+    // ── Sezione 2 — Magazzino e ordine ───────────────────────────────────────
+    // Intestazioni (2 righe di spazio)
+    const hdrRow = totRow + 3;
+    ws[`D${hdrRow}`] = { v: 'articolo',           t: 's' };
+    ws[`E${hdrRow}`] = { v: 'tot necessario',      t: 's' };
+    ws[`F${hdrRow}`] = { v: 'magazzino',           t: 's' };
+    ws[`G${hdrRow}`] = { v: 'subtotale',           t: 's' };
+    ws[`H${hdrRow}`] = { v: 'maggiorazione',       t: 's' };
+    ws[`I${hdrRow}`] = { v: 'arrotonda e ordina',  t: 's' };
 
-    // Larghezze colonne
+    // Mappa colonne totale → chiave magazzino
+    const colMap: Array<{ col: string; label: string; key: ArticoloKey }> = [
+      { col: 'E', label: 'lenzuolo matrimoniale',    key: 'lenzMatrimoniali' },
+      { col: 'F', label: 'LENZUOLO SINGOLO',         key: 'lenzSingoli'      },
+      { col: 'G', label: 'FEDERA SACCO cuscino',     key: 'federe'           },
+      { col: 'H', label: 'ASCIUGAMANO VISO',         key: 'viso'             },
+      { col: 'I', label: 'ASCIUGAMANO BIDET SPUGNA', key: 'bidet'            },
+      { col: 'J', label: 'TELO DOCCIA',              key: 'telodoccia'       },
+      { col: 'K', label: 'SCENDIBAGNO SPUGNA',       key: 'scendibagno'      },
+    ];
+
+    colMap.forEach(({ col, label, key }, idx) => {
+      const r = hdrRow + 1 + idx;
+      ws[`D${r}`] = { v: label,                             t: 's' };
+      ws[`E${r}`] = { f: `${col}${totRow}`,                t: 'n' };
+      ws[`F${r}`] = { v: magazzino[key],                   t: 'n' };
+      ws[`G${r}`] = { f: `E${r}-F${r}`,                   t: 'n' };
+      ws[`H${r}`] = { f: `(G${r}*$B$2)+G${r}`,            t: 'n' };
+      ws[`I${r}`] = { f: `ROUND(H${r}/5,0)*5`,            t: 'n' };
+    });
+
+    const lastSecRow = hdrRow + colMap.length;
+    ws['!ref'] = `A1:L${lastSecRow}`;
+
     ws['!cols'] = [
       { wch: 12 }, // A arrivo
       { wch: 11 }, // B nr persone
@@ -738,12 +849,48 @@ export default function AdminBiancheria() {
             Totale — {items.filter(i => i.hasConfig).length} appartamenti
           </p>
           <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', fontSize: 15, fontWeight: 700, color: '#0c4a6e' }}>
-            <span>🛏 {totals.lenzMatrimoniali} matrimoniali</span>
-            <span>🛌 {totals.lenzSingoli} singoli</span>
+            <span>🛏 {totals.lenzMatrimoniali} lenz.matr</span>
+            <span>🛌 {totals.lenzSingoli} lenz.sing</span>
             <span>🪶 {totals.federe} federe</span>
-            <span>🧺 {totals.persone} asciugamani</span>
+            <span>🧻 {totals.persone} viso</span>
+            <span>🧻 {totals.persone} bidet</span>
+            <span>🚿 {totals.persone} telo doccia</span>
             {totals.culle > 0 && <span>🚼 {totals.culle} culle</span>}
           </div>
+        </div>
+      )}
+
+      {/* Magazzino — input prima dell'export */}
+      {items.length > 0 && (
+        <div style={{ ...card, marginBottom: 20 }}>
+          <p style={{
+            margin: '0 0 12px', fontSize: 11, fontWeight: 700, color: '#374151',
+            textTransform: 'uppercase', letterSpacing: '0.06em',
+          }}>
+            🏪 Magazzino disponibile
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 8 }}>
+            {ARTICOLI.map(key => (
+              <label key={key} style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                gap: 8, fontSize: 13, color: '#374151',
+                background: '#f9fafb', borderRadius: 8, padding: '6px 10px',
+              }}>
+                <span>{ARTICOLI_LABEL[key]}</span>
+                <input
+                  type="number" min={0} value={magazzino[key]}
+                  onChange={e => setMagazzino(prev => ({ ...prev, [key]: Math.max(0, parseInt(e.target.value) || 0) }))}
+                  style={{
+                    width: 60, padding: '4px 6px', fontSize: 13, textAlign: 'right',
+                    border: '1px solid #d1d5db', borderRadius: 6,
+                  }}
+                />
+              </label>
+            ))}
+          </div>
+          <p style={{ margin: '10px 0 0', fontSize: 11, color: '#9ca3af', fontStyle: 'italic' }}>
+            I valori vengono sottratti dal totale nell'export XLSX. Si azzerano ad ogni ricaricamento della pagina.
+          </p>
         </div>
       )}
 
@@ -810,7 +957,16 @@ export default function AdminBiancheria() {
                       {item.numChild > 0 ? ` + ${item.numChild} bambin${item.numChild === 1 ? 'o' : 'i'}` : ''}
                       {' · '}fino al {fmtDate(item.departure)}
                     </p>
-                    {item.linen && <LinenSummary linen={item.linen} />}
+                    {item.linen && <LinenSummary linen={
+                      // Quando il pannello è aperto: ricalcola in tempo reale da editStates
+                      // Quando è chiuso: usa il linen salvato dall'API
+                      expanded === item.bookId && item.config
+                        ? {
+                            ...calcLinenSetsFromBedStates(item.roomId, editStates, editCribs),
+                            persone: item.numAdult + item.numChild,
+                          }
+                        : item.linen
+                    } />}
                     {!item.hasConfig && (
                       <p style={{ margin: '4px 0 0', fontSize: 12, color: '#9ca3af' }}>
                         Appartamento senza configurazione letti
@@ -872,27 +1028,84 @@ export default function AdminBiancheria() {
                   marginBottom: 10,
                 }}>
 
-                  {/* Stanze e letti */}
-                  {item.config.rooms.map(room => (
-                    <div key={room.id} style={{ marginBottom: 14 }}>
-                      <p style={{
-                        margin: '0 0 8px', fontSize: 11, fontWeight: 700, color: '#6b7280',
-                        textTransform: 'uppercase', letterSpacing: '0.06em',
-                      }}>
-                        {room.label.it}
-                      </p>
-                      {room.beds.map(bed => (
-                        <BedRow
-                          key={bed.id}
-                          bed={bed}
-                          state={editStates[bed.id] ?? 'off'}
-                          onChange={handleBedChange}
-                        />
-                      ))}
-                    </div>
-                  ))}
+                  {/* Stanze — box orizzontali scrollabili */}
+                  <div style={{
+                    display: 'flex',
+                    gap: 10,
+                    overflowX: 'auto',
+                    paddingBottom: 8,
+                    marginBottom: 12,
+                    scrollbarWidth: 'thin',
+                  }}>
+                    {item.config.rooms.map((room: any) => {
+                      let matrim = 0, singoli = 0, federe = 0;
+                      for (const bed of room.beds) {
+                        const state = editStates[bed.id] ?? 'off';
+                        if (state === 'off') continue;
+                        const eff = (bed.variant === 'impilabile' && state === 'B') ? 'A' : state;
+                        if (bed.variant === 'sommier' && eff === 'B') { singoli += 4; federe += 2; }
+                        else if (bed.variant === 'sommier' && eff === 'A' && bed.iconStates?.A === 'singolo') { singoli += 2; federe += 1; }
+                        else if (bed.baseType === 'matrimoniale' || (bed.variant === 'divano' && bed.defaultLinenType === 'matrimoniale') || (bed.variant === 'sommier' && eff === 'A')) { matrim += 2; federe += 2; }
+                        else { singoli += 2; federe += 1; }
+                      }
+                      const hasLinen = matrim > 0 || singoli > 0;
+                      return (
+                        <div key={room.id} style={{
+                          minWidth: 160, maxWidth: 220, flexShrink: 0,
+                          background: '#fff', borderRadius: 10,
+                          border: '0.5px solid #e5e7eb',
+                          padding: '10px 12px',
+                          display: 'flex', flexDirection: 'column', gap: 6,
+                        }}>
+                          <p style={{
+                            margin: 0, fontSize: 10, fontWeight: 700, color: '#6b7280',
+                            textTransform: 'uppercase', letterSpacing: '0.06em',
+                          }}>{room.label.it}</p>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                            {room.beds.map((bed: Bed) => {
+                              const state = editStates[bed.id] ?? 'off';
+                              const isFixed = bed.variant === 'standard' || bed.variant === 'castello';
+                              const isTwoChips = bed.variant === 'sommier' || bed.variant === 'impilabile';
+                              if (isTwoChips) return (
+                                <div key={bed.id} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                  {(['A', 'B'] as const).map(ds => (
+                                    <AdminBedChip key={ds} bed={bed} displayState={ds}
+                                      isActive={state === ds} label={bedChipLabel(bed, ds)}
+                                      slots={bedSlots(bed, ds)} onClick={() => handleBedChange(bed.id, ds)} />
+                                  ))}
+                                </div>
+                              );
+                              if (isFixed) return (
+                                <AdminBedChip key={bed.id} bed={bed} displayState="A"
+                                  isActive={true} label={singleChipLabel(bed, 'A')}
+                                  slots={bedSlots(bed, 'A')} disabled={true} />
+                              );
+                              const isOn = state === 'A';
+                              return (
+                                <AdminBedChip key={bed.id} bed={bed} displayState="A"
+                                  isActive={isOn} label={singleChipLabel(bed, state)}
+                                  slots={bedSlots(bed, 'A')}
+                                  onClick={() => handleBedChange(bed.id, isOn ? 'off' : 'A')} />
+                              );
+                            })}
+                          </div>
+                          {hasLinen && (
+                            <div style={{
+                              marginTop: 4, paddingTop: 6,
+                              borderTop: '0.5px solid #e5e7eb',
+                              fontSize: 11, color: '#374151',
+                              display: 'flex', flexDirection: 'column', gap: 2,
+                            }}>
+                              {matrim > 0 && <span>🛏 {matrim/2} matr · 🪶 {federe} federe</span>}
+                              {singoli > 0 && <span>🛌 {singoli/2} sing</span>}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
 
-                  {/* Culle */}
+                                    {/* Culle */}
                   <div style={{ paddingTop: 10, borderTop: '0.5px solid #e5e7eb', marginBottom: 14 }}>
                     <p style={{
                       margin: '0 0 8px', fontSize: 11, fontWeight: 700, color: '#6b7280',

@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import GuestLogin     from './GuestLogin';
-import DepositSection from './DepositSection';
-import CheckinSection from './CheckinSection';
-import BedSection     from './BedSection';
+import DepositSection        from './DepositSection';
+import CheckinSection        from './CheckinSection';
+import BedSection            from './BedSection';
+import ChangeRequestWizard   from './ChangeRequestWizard';
 
 const C = {
   blue:        '#1E73BE',
@@ -26,6 +27,7 @@ interface BookingData {
   status: string; channel: string; isAirbnb: boolean;
   totalCharged: number; totalPaid: number; balanceDue: number;
   depositAmount: number | null;
+  invoiceItems: { description: string; amount: number }[];
 }
 interface CheckinData { status: 'PENDING'|'APPROVED'|'REJECTED'; rejectReason: string|null; messages: {from:'host'|'guest';text:string;time:string}[]; }
 interface DepositData  { url?: string; amount: number; status: 'pending'|'authorized'|'captured'|'cancelled'; createdAt: string; }
@@ -101,7 +103,7 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
       )}
 
       {/* Header */}
-      <div style={{ background: '#fff', borderBottom: `1px solid ${C.border}`, padding: '1.1rem 1.5rem' }}>
+      <div style={{ background: '#fff', borderBottom: `1px solid ${C.border}`, padding: '0.85rem 1rem' }}>
         <div style={{ maxWidth: '720px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <h1 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: C.text, letterSpacing: '-0.02em' }}>
@@ -118,60 +120,101 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
       </div>
 
       {/* Contenuto */}
-      <div style={{ maxWidth: '720px', margin: '0 auto', padding: '1.5rem 1rem', display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
+      <div style={{ maxWidth: '720px', margin: '0 auto', padding: '0.75rem 0.75rem 3rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
 
         {/* 1. Info prenotazione */}
-        <div style={card}>
-          <div style={{ marginBottom: '1.25rem', padding: '1rem 1.1rem', background: C.blueLight, borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <div>
-              <p style={{ margin: '0 0 0.2rem', fontSize: '0.75rem', fontWeight: 700, color: C.blue, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                {tD.yourProperty}
-              </p>
-              {booking.roomSlug
-                ? <a href={`/${locale}/residenze/${booking.roomSlug}`} style={{ fontSize: '1.2rem', fontWeight: 800, color: C.text, textDecoration: 'none' }}>{booking.roomName}</a>
-                : <span style={{ fontSize: '1.2rem', fontWeight: 800, color: C.text }}>{booking.roomName}</span>
-              }
-              {booking.propertyName && <p style={{ margin: '0.15rem 0 0', fontSize: '0.82rem', color: C.textMid }}>{booking.propertyName}</p>}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+
+          {/* Hero struttura */}
+          <div style={{ background: C.blue, borderRadius: '14px', padding: '1rem 1.1rem', position: 'relative', overflow: 'hidden' }}>
+            <p style={{ margin: '0 0 0.2rem', fontSize: '0.7rem', fontWeight: 600, color: C.blueLight, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{tD.yourProperty}</p>
+            {booking.roomSlug
+              ? <a href={`/${locale}/residenze/${booking.roomSlug}`} target="_blank" rel="noopener noreferrer" style={{ display: 'block', fontSize: '1.3rem', fontWeight: 700, color: '#fff', textDecoration: 'none', lineHeight: 1.2, marginBottom: '0.2rem' }}>{booking.roomName} ↗</a>
+              : <p style={{ margin: '0 0 0.2rem', fontSize: '1.3rem', fontWeight: 700, color: '#fff' }}>{booking.roomName}</p>
+            }
+            {booking.propertyName && <p style={{ margin: 0, fontSize: '0.78rem', color: C.blueLight, opacity: 0.8 }}>{booking.propertyName}</p>}
+          </div>
+
+          {/* Date affiancate */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '0.5rem', alignItems: 'stretch' }}>
+            <div style={{ background: '#fff', border: `1px solid ${C.border}`, borderRadius: '12px', padding: '0.75rem' }}>
+              <p style={{ margin: '0 0 0.2rem', fontSize: '0.7rem', fontWeight: 600, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.07em' }}>Check-in</p>
+              <p style={{ margin: '0 0 0.25rem', fontSize: '0.95rem', fontWeight: 700, color: C.text }}>{fmtDate(booking.checkIn)}</p>
+              <p style={{ margin: 0, fontSize: '0.72rem', color: C.blue, fontWeight: 600 }}>dalle 15:00 alle 19:00</p>
             </div>
-            <span style={{ fontSize: '2rem' }}>🏡</span>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.2rem', padding: '0 0.25rem' }}>
+              <div style={{ width: 1, flex: 1, background: C.border }} />
+              <p style={{ margin: 0, fontSize: '0.68rem', color: C.textMuted, whiteSpace: 'nowrap' }}>{nights} {tD.nights.toLowerCase()}</p>
+              <div style={{ width: 1, flex: 1, background: C.border }} />
+            </div>
+            <div style={{ background: '#fff', border: `1px solid ${C.border}`, borderRadius: '12px', padding: '0.75rem' }}>
+              <p style={{ margin: '0 0 0.2rem', fontSize: '0.7rem', fontWeight: 600, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.07em' }}>Check-out</p>
+              <p style={{ margin: '0 0 0.25rem', fontSize: '0.95rem', fontWeight: 700, color: C.text }}>{fmtDate(booking.checkOut)}</p>
+              <p style={{ margin: 0, fontSize: '0.72rem', color: C.blue, fontWeight: 600 }}>dalle 8:00 alle 10:00</p>
+            </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
-            <InfoTile label="Check-in"          value={fmtDate(booking.checkIn)}  icon="📅" />
-            <InfoTile label="Check-out"         value={fmtDate(booking.checkOut)} icon="📅" />
-            <InfoTile label={tD.nights}         value={String(nights)}            icon="🌙" />
-            <InfoTile label={tD.guests}
-              value={`${booking.numAdult} ${tD.adults}${booking.numChild > 0 ? ` · ${booking.numChild} ${tD.children}` : ''}`}
-              icon="👥" />
-          </div>
+          {/* Ospiti + Pagamenti */}
+          <div style={{ background: '#fff', border: `1px solid ${C.border}`, borderRadius: '14px', padding: '1rem' }}>
 
-          {/* Pagamenti */}
-          {booking.totalCharged > 0 && (
-            <div style={{ paddingTop: '1rem', borderTop: `1px solid ${C.borderLight}` }}>
-              <p style={{ margin: '0 0 0.65rem', fontSize: '0.75rem', fontWeight: 700, color: C.textMid, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                💰 {tD.payments}
-              </p>
-              {booking.isAirbnb ? (
-                <div>
-                  <PayRow label={tD.total} value={`€ ${booking.totalCharged.toFixed(2)}`} />
-                  <div style={{ marginTop: '0.4rem', fontSize: '0.82rem', color: C.success, fontWeight: 600 }}>✅ {tD.paidViaAirbnb}</div>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-                  <PayRow label={tD.total}      value={`€ ${booking.totalCharged.toFixed(2)}`} />
-                  <PayRow label={tD.paid}       value={`€ ${booking.totalPaid.toFixed(2)}`}    color={C.success} />
-                  <div style={{ borderTop: `1px solid ${C.borderLight}`, paddingTop: '0.35rem', marginTop: '0.1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '0.88rem', fontWeight: 700, color: C.text }}>{tD.balanceDue}</span>
-                    <span style={{ fontSize: '1.05rem', fontWeight: 800, color: booking.balanceDue === 0 ? C.success : C.orange }}>€ {booking.balanceDue.toFixed(2)}</span>
+            {/* Ospiti */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '0.75rem', marginBottom: '0.75rem', borderBottom: `1px solid ${C.borderLight}` }}>
+              <div>
+                <p style={{ margin: '0 0 0.15rem', fontSize: '0.7rem', fontWeight: 600, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.07em' }}>{tD.guests}</p>
+                <p style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: C.text }}>
+                  {booking.numAdult} {tD.adults}{booking.numChild > 0 ? ` · ${booking.numChild} ${tD.children}` : ''}
+                </p>
+              </div>
+              <div style={{ background: C.blueLight, borderRadius: '50%', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem' }}>👥</div>
+            </div>
+
+            {/* Pagamenti */}
+            {booking.totalCharged > 0 && (
+              <>
+                <p style={{ margin: '0 0 0.5rem', fontSize: '0.7rem', fontWeight: 600, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.07em' }}>💰 {tD.payments}</p>
+                {booking.isAirbnb ? (
+                  <>
+                    <PayRow label={tD.total} value={`€ ${booking.totalCharged.toFixed(2)}`} />
+                    <div style={{ marginTop: '0.4rem', fontSize: '0.82rem', color: C.success, fontWeight: 600 }}>✅ {tD.paidViaAirbnb}</div>
+                  </>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                    {/* Voci invoice dettagliate */}
+                    {(booking.invoiceItems ?? []).map((item, i) => (
+                      <PayRow key={i} label={item.description} value={`€ ${item.amount.toFixed(2)}`} small />
+                    ))}
+                    {(booking.invoiceItems ?? []).length > 0 && (
+                      <div style={{ borderTop: `1px solid ${C.borderLight}`, marginTop: '0.25rem', paddingTop: '0.25rem' }} />
+                    )}
+                    <PayRow label={tD.total} value={`€ ${booking.totalCharged.toFixed(2)}`} />
+                    <PayRow label={tD.paid}  value={`€ ${booking.totalPaid.toFixed(2)}`} color={C.success} />
+                    <div style={{ background: '#FFF8EC', border: `1px solid ${C.orange}`, borderRadius: '10px', padding: '0.6rem 0.75rem', marginTop: '0.4rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#B07820' }}>{tD.balanceDue}</span>
+                      <span style={{ fontSize: '1rem', fontWeight: 700, color: booking.balanceDue === 0 ? C.success : '#B07820' }}>€ {booking.balanceDue.toFixed(2)}</span>
+                    </div>
+                    {booking.balanceDue === 0 && <div style={{ fontSize: '0.82rem', color: C.success, fontWeight: 600, textAlign: 'center', paddingTop: '0.25rem' }}>✅ {tD.fullyPaid}</div>}
                   </div>
-                  {booking.balanceDue === 0 && <div style={{ fontSize: '0.82rem', color: C.success, fontWeight: 600 }}>✅ {tD.fullyPaid}</div>}
-                </div>
-              )}
-            </div>
-          )}
+                )}
+              </>
+            )}
+          </div>
+
         </div>
 
-        {/* 2. Deposito */}
+        {/* Richiesta modifica */}
+        <ChangeRequestWizard
+          locale={locale}
+          t={t}
+          booking={{
+            bookId:   booking.bookId,
+            roomName: booking.roomName,
+            checkIn:  booking.checkIn,
+            checkOut: booking.checkOut,
+            numAdult: booking.numAdult,
+            numChild: booking.numChild,
+          }}
+        />
+
         {/* Configurazione letti */}
         <BedSection locale={locale} t={t.beds} numGuests={(booking.numAdult ?? 0) + (booking.numChild ?? 0)} />
 
@@ -211,23 +254,24 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
   );
 }
 
-function InfoTile({ label, value, icon }: { label: string; value: string; icon: string }) {
+function InfoTile({ label, value, icon, sub }: { label: string; value: string; icon: string; sub?: string }) {
   return (
     <div style={{ background: '#f9fafb', borderRadius: '10px', padding: '0.75rem', border: '1px solid #e5e7eb' }}>
       <p style={{ margin: '0 0 0.25rem', fontSize: '0.72rem', color: '#888888', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{icon} {label}</p>
       <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 700, color: '#111111' }}>{value}</p>
+      {sub && <p style={{ margin: '0.15rem 0 0', fontSize: '0.75rem', color: '#9ca3af' }}>{sub}</p>}
     </div>
   );
 }
 
-function PayRow({ label, value, color }: { label: string; value: string; color?: string }) {
+function PayRow({ label, value, color, small }: { label: string; value: string; color?: string; small?: boolean }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.875rem' }}>
-      <span style={{ color: '#555555' }}>{label}</span>
-      <span style={{ fontWeight: 700, color: color ?? '#111111' }}>{value}</span>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: small ? '0.8rem' : '0.875rem' }}>
+      <span style={{ color: small ? '#888888' : '#555555' }}>{label}</span>
+      <span style={{ fontWeight: small ? 400 : 700, color: color ?? '#111111' }}>{value}</span>
     </div>
   );
 }
 
-const card: React.CSSProperties        = { background: '#fff', borderRadius: '16px', border: '1px solid #e5e7eb', padding: '1.5rem', boxShadow: '0 1px 4px rgba(0,0,0,0.05)' };
+const card: React.CSSProperties        = { background: '#fff', borderRadius: '14px', border: '1px solid #e5e7eb', padding: '1rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' };
 const supportLink: React.CSSProperties = { color: '#1E73BE', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 700 };
