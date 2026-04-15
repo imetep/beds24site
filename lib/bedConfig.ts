@@ -749,8 +749,12 @@ export interface LinenResult {
 }
 
 function bedLinen(bed: Bed, state: 'A' | 'B'): { matrim: number; singoli: number; federe: number; persone: number } {
-  // Impilabile B = stesso di A (1 persona, 1 singolo)
-  const effectiveState = (bed.variant === 'impilabile' && state === 'B') ? 'A' : state
+  // Impilabile B = 2 materassi a pavimento = 2 singoli
+  if (bed.variant === 'impilabile' && state === 'B') {
+    return { matrim: 0, singoli: 4, federe: 2, persone: 2 }
+  }
+
+  const effectiveState = state
 
   // Sommier B (2 singoli, 2 persone)
   if (bed.variant === 'sommier' && effectiveState === 'B') {
@@ -770,7 +774,11 @@ function bedLinen(bed: Bed, state: 'A' | 'B'): { matrim: number; singoli: number
   }
 
   // Tutti i singoli: singolo std, estraibile, impilabile, poltrona,
-  //                  divano singolo, castello, pavimento, trasformabile A
+  //                  divano singolo, castello, trasformabile A
+  // Pavimento: 2 materassi a pavimento = 2 singoli
+  if (bed.variant === 'pavimento') {
+    return { matrim: 0, singoli: 4, federe: 2, persone: 2 }
+  }
   return { matrim: 0, singoli: 2, federe: 1, persone: 1 }
 }
 

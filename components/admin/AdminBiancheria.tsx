@@ -286,16 +286,33 @@ function SourceBadge({ source }: { source: BiancheriaItem['source'] }) {
 }
 
 function LinenSummary({ linen }: { linen: LinenResult }) {
+  const items = [
+    { icon: '🛏', val: linen.lenzMatrimoniali, label: 'lenz.matr', title: 'Lenzuola matrimoniali' },
+    { icon: '🛌', val: linen.lenzSingoli,      label: 'lenz.sing', title: 'Lenzuola singole' },
+    { icon: '🪶', val: linen.federe,           label: 'federe',    title: 'Federe sacco cuscino' },
+    { icon: '🧻', val: linen.persone,          label: 'viso',      title: 'Asciugamano viso' },
+    { icon: '🧻', val: linen.persone,          label: 'bidet',     title: 'Asciugamano bidet' },
+    { icon: '🚿', val: linen.persone,          label: 'telo doc.', title: 'Telo doccia' },
+    { icon: '🟫', val: linen.scendibagno ?? 1, label: 'scendib.',  title: 'Scendibagno spugna' },
+  ];
   return (
-    <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', fontSize: 12, color: '#374151', marginTop: 6 }}>
-      <span title="Lenzuola matrimoniali">🛏 <b>{linen.lenzMatrimoniali}</b> lenz.matr</span>
-      <span title="Lenzuola singole">🛌 <b>{linen.lenzSingoli}</b> lenz.sing</span>
-      <span title="Federe sacco cuscino">🪶 <b>{linen.federe}</b> federe</span>
-      <span title="Asciugamano viso">🧻 <b>{linen.persone}</b> viso</span>
-      <span title="Asciugamano bidet">🧻 <b>{linen.persone}</b> bidet</span>
-      <span title="Telo doccia">🚿 <b>{linen.persone}</b> telo doccia</span>
-      <span title="Scendibagno spugna">🟫 <b>{linen.scendibagno ?? 1}</b> scendibagno</span>
-      {linen.culle > 0 && <span>🚼 <b>{linen.culle}</b> culle</span>}
+    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 8 }}>
+      {items.map((item, i) => (
+        <span key={i} title={item.title} style={{
+          display: 'inline-flex', alignItems: 'center', gap: 3,
+          background: '#f3f4f6', borderRadius: 6, padding: '3px 8px',
+          fontSize: 13, color: '#111',
+        }}>
+          <span style={{ fontSize: 13 }}>{item.icon}</span>
+          <b style={{ fontWeight: 700 }}>{item.val}</b>
+          <span style={{ color: '#6b7280', fontSize: 12 }}>{item.label}</span>
+        </span>
+      ))}
+      {linen.culle > 0 && (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, background: '#f3f4f6', borderRadius: 6, padding: '3px 8px', fontSize: 13, color: '#111' }}>
+          🚼 <b>{linen.culle}</b> <span style={{ color: '#6b7280', fontSize: 12 }}>culle</span>
+        </span>
+      )}
     </div>
   );
 }
@@ -1040,7 +1057,8 @@ export default function AdminBiancheria() {
                     {item.config.rooms.map((room: any) => {
                       let matrim = 0, singoli = 0, federe = 0;
                       for (const bed of room.beds) {
-                        const state = editStates[bed.id] ?? 'off';
+                        const isFixed = bed.variant === 'standard' || bed.variant === 'castello';
+                        const state = editStates[bed.id] ?? (isFixed ? 'A' : 'off');
                         if (state === 'off') continue;
                         const eff = (bed.variant === 'impilabile' && state === 'B') ? 'A' : state;
                         if (bed.variant === 'sommier' && eff === 'B') { singoli += 4; federe += 2; }
@@ -1058,34 +1076,69 @@ export default function AdminBiancheria() {
                           display: 'flex', flexDirection: 'column', gap: 6,
                         }}>
                           <p style={{
-                            margin: 0, fontSize: 10, fontWeight: 700, color: '#6b7280',
+                            margin: 0, fontSize: 11, fontWeight: 700, color: '#374151',
                             textTransform: 'uppercase', letterSpacing: '0.06em',
                           }}>{room.label.it}</p>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                             {room.beds.map((bed: Bed) => {
                               const state = editStates[bed.id] ?? 'off';
                               const isFixed = bed.variant === 'standard' || bed.variant === 'castello';
                               const isTwoChips = bed.variant === 'sommier' || bed.variant === 'impilabile';
-                              if (isTwoChips) return (
-                                <div key={bed.id} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                                  {(['A', 'B'] as const).map(ds => (
-                                    <AdminBedChip key={ds} bed={bed} displayState={ds}
-                                      isActive={state === ds} label={bedChipLabel(bed, ds)}
-                                      slots={bedSlots(bed, ds)} onClick={() => handleBedChange(bed.id, ds)} />
-                                  ))}
-                                </div>
-                              );
-                              if (isFixed) return (
-                                <AdminBedChip key={bed.id} bed={bed} displayState="A"
-                                  isActive={true} label={singleChipLabel(bed, 'A')}
-                                  slots={bedSlots(bed, 'A')} disabled={true} />
-                              );
+
+                              // Calcola biancheria per questo singolo letto
+                              const bedLinenLabel = (st: 'A' | 'B' | 'off'): string => {
+                                if (st === 'off') return '';
+                                if (bed.variant === 'impilabile' && st === 'B') return '4 lenz. sing · 2 federe';
+                                const eff = st;
+                                if (bed.variant === 'sommier' && eff === 'B') return '4 lenz. sing · 2 federe';
+                                if (bed.variant === 'sommier' && eff === 'A' && bed.iconStates?.A === 'singolo') return '2 lenz. sing · 1 federa';
+                                if (bed.variant === 'pavimento') return '4 lenz. sing · 2 federe';
+                                if (bed.baseType === 'matrimoniale' || (bed.variant === 'divano' && bed.defaultLinenType === 'matrimoniale') || (bed.variant === 'sommier' && eff === 'A')) return '2 lenz. matrim · 2 federe';
+                                return '2 lenz. sing · 1 federa';
+                              };
+
+                              if (isTwoChips) {
+                                return (
+                                  <div key={bed.id} style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                                    {(['A', 'B'] as const).map(ds => {
+                                      const active = state === ds;
+                                      const ll = active ? bedLinenLabel(ds) : '';
+                                      return (
+                                        <div key={ds}>
+                                          <AdminBedChip bed={bed} displayState={ds}
+                                            isActive={active} label={bedChipLabel(bed, ds)}
+                                            slots={bedSlots(bed, ds)}
+                                            onClick={() => handleBedChange(bed.id, state === ds ? 'off' : ds)} />
+                                          {ll && <p style={{ margin: '2px 0 0', fontSize: 11, color: '#1E73BE', fontWeight: 600, textAlign: 'center' }}>{ll}</p>}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                );
+                              }
+                              if (isFixed) {
+                                const isOn = (editStates[bed.id] ?? 'A') !== 'off';
+                                const ll = isOn ? bedLinenLabel('A') : '';
+                                return (
+                                  <div key={bed.id}>
+                                    <AdminBedChip bed={bed} displayState="A"
+                                      isActive={isOn} label={singleChipLabel(bed, isOn ? 'A' : 'off')}
+                                      slots={bedSlots(bed, 'A')}
+                                      onClick={() => handleBedChange(bed.id, isOn ? 'off' : 'A')} />
+                                    {ll && <p style={{ margin: '2px 0 0', fontSize: 11, color: '#1E73BE', fontWeight: 600, textAlign: 'center' }}>{ll}</p>}
+                                  </div>
+                                );
+                              }
                               const isOn = state === 'A';
+                              const ll = isOn ? bedLinenLabel('A') : '';
                               return (
-                                <AdminBedChip key={bed.id} bed={bed} displayState="A"
-                                  isActive={isOn} label={singleChipLabel(bed, state)}
-                                  slots={bedSlots(bed, 'A')}
-                                  onClick={() => handleBedChange(bed.id, isOn ? 'off' : 'A')} />
+                                <div key={bed.id}>
+                                  <AdminBedChip bed={bed} displayState="A"
+                                    isActive={isOn} label={singleChipLabel(bed, state)}
+                                    slots={bedSlots(bed, 'A')}
+                                    onClick={() => handleBedChange(bed.id, isOn ? 'off' : 'A')} />
+                                  {ll && <p style={{ margin: '2px 0 0', fontSize: 11, color: '#1E73BE', fontWeight: 600, textAlign: 'center' }}>{ll}</p>}
+                                </div>
                               );
                             })}
                           </div>
