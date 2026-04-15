@@ -7,7 +7,8 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const TTL_SECONDS = 60 * 60; // 1 ora
+const TTL_FOLDER_SECONDS  = 60 * 60;          // 1 ora  — lightbox singola cartella
+const TTL_COVERS_SECONDS  = 60 * 60 * 24 * 7; // 7 giorni — cover di tutti gli appart.
 
 // ─── Redis helpers ────────────────────────────────────────────────────────────
 
@@ -58,10 +59,6 @@ function makeUrl(publicId: string, width: number, height?: number): string {
   return cloudinary.url(publicId, transforms);
 }
 
-// ─── Covers: URL diretto, zero Search API ────────────────────────────────────
-
-const CLOUD = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? 'dsnlduczj';
-
 const FOLDERS = [
   'livingapple/annurca', 'livingapple/delicious', 'livingapple/fuji',
   'livingapple/idared', 'livingapple/kissabel', 'livingapple/pink-lady',
@@ -70,28 +67,62 @@ const FOLDERS = [
   'livingapple-beach/gala', 'livingapple-beach/rubens',
 ];
 
-function coverUrlDirect(folder: string): string {
-  return `https://res.cloudinary.com/${CLOUD}/image/upload/w_600,h_400,c_fill,q_auto,f_auto/${folder}/1.jpg`;
-}
-
 // ─── Route handler ────────────────────────────────────────────────────────────
-// GET /api/cloudinary?covers=true              → cover di ogni appartamento (URL diretto, zero Search API)
-// GET /api/cloudinary?folder=livingapple/fuji  → tutte le foto (lightbox, cachato su Redis)
+// GET /api/cloudinary?covers=true              → cover tutti gli appart. (Redis 7gg, poi Search API)
+// GET /api/cloudinary?folder=livingapple/fuji  → tutte le foto (Redis 1h, poi Search API)
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const folder = searchParams.get('folder');
   const covers = searchParams.get('covers') === 'true';
 
-  // ── COVERS: zero chiamate API ─────────────────────────────────────────────
+  // ── COVERS ────────────────────────────────────────────────────────────────
   if (covers) {
-    const coverMap: Record<string, string> = {};
-    FOLDERS.forEach(f => { coverMap[f] = coverUrlDirect(f); });
-    return NextResponse.json({ covers: coverMap }, {
-      headers: { 'Cache-Control': 's-maxage=86400, stale-while-revalidate' },
-    });
+    const redisKey = 'cloudinary:covers';
+
+    // 1. Prova Redis (TTL 7 giorni → max 2 chiamate Search API/settimana)
+    const cached = await redisGet(redisKey);
+    if (cached) {
+      try {
+        const coverMap = JSON.parse(cached) as Record<string, string | null>;
+        return NextResponse.json({ covers: coverMap, cached: true }, {
+          headers: { 'Cache-Control': 's-maxage=604800, stale-while-revalidate' },
+        });
+      } catch { /* JSON corrotto → ricarica */ }
+    }
+
+    // 2. Fetch da Cloudinary: 1 chiamata per cartella, prima foto per public_id desc
+    try {
+      const results = await Promise.all(
+        FOLDERS.map(async (f) => {
+          const res = await cloudinary.search
+            .expression(`folder:${f}`)
+            .sort_by('public_id', 'asc')
+            .max_results(1)
+            .execute();
+          const photo = res.resources[0];
+          return { folder: f, url: photo ? makeUrl(photo.public_id, 600, 400) : null };
+        })
+      );
+
+      const coverMap: Record<string, string | null> = {};
+      results.forEach(({ folder: f, url }) => { coverMap[f] = url; });
+
+      // 3. Salva Redis 7 giorni
+      if (Object.keys(coverMap).length > 0) {
+        await redisSet(redisKey, JSON.stringify(coverMap), TTL_COVERS_SECONDS);
+      }
+
+      return NextResponse.json({ covers: coverMap }, {
+        headers: { 'Cache-Control': 's-maxage=604800, stale-while-revalidate' },
+      });
+    } catch (err) {
+      console.error('[cloudinary] covers error:', err);
+      return NextResponse.json({ error: String(err) }, { status: 500 });
+    }
   }
 
+  // ── FOLDER (lightbox) ─────────────────────────────────────────────────────
   if (!folder) {
     return NextResponse.json({ error: 'Missing folder parameter' }, { status: 400 });
   }
@@ -99,7 +130,7 @@ export async function GET(req: NextRequest) {
   try {
     const redisKey = `cloudinary:folder:${folder}`;
 
-    // 1. Prova Redis
+    // 1. Prova Redis (TTL 1 ora)
     const cached = await redisGet(redisKey);
     if (cached) {
       try {
@@ -107,12 +138,10 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ photos, cached: true }, {
           headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate' },
         });
-      } catch {
-        // JSON corrotto → ricarica da Cloudinary
-      }
+      } catch { /* JSON corrotto → ricarica */ }
     }
 
-    // 2. Fetch da Cloudinary (solo quando si apre il lightbox di un appartamento)
+    // 2. Fetch da Cloudinary
     const result = await cloudinary.search
       .expression(`folder:${folder}`)
       .sort_by('public_id', 'asc')
@@ -126,9 +155,9 @@ export async function GET(req: NextRequest) {
       publicId: r.public_id,
     }));
 
-    // 3. Salva su Redis (solo se ci sono foto)
+    // 3. Salva Redis 1 ora
     if (photos.length > 0) {
-      await redisSet(redisKey, JSON.stringify(photos), TTL_SECONDS);
+      await redisSet(redisKey, JSON.stringify(photos), TTL_FOLDER_SECONDS);
     }
 
     return NextResponse.json({ photos }, {
