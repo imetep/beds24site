@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PROPERTIES } from '@/config/properties';
 
-// Tipo residenza
 const TIPO: Record<string, Record<string, string>> = {
   it: { holidayHome: 'Casa vacanze', villa: 'Villa', apartment: 'Appartamento', studio: 'Monolocale' },
   en: { holidayHome: 'Holiday home', villa: 'Villa', apartment: 'Apartment', studio: 'Studio' },
@@ -16,18 +15,18 @@ interface Props { locale: string }
 
 export default function ResidenzaSlider({ locale }: Props) {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const tipo = TIPO[locale] ?? TIPO.it;
 
   const rooms = PROPERTIES.flatMap(p => p.rooms);
 
-  // Cover reali da Cloudinary (via API con cache Redis)
   const [covers, setCovers] = useState<Record<string, string | null>>({});
 
   useEffect(() => {
     fetch('/api/cloudinary?covers=true')
       .then(r => r.json())
       .then(data => { if (data.covers) setCovers(data.covers); })
-      .catch(() => {/* silenzioso: le card restano senza foto */});
+      .catch(() => { /* silenzioso: le card restano con sfondo grigio */ });
   }, []);
 
   return (
@@ -59,7 +58,7 @@ export default function ResidenzaSlider({ locale }: Props) {
               scrollSnapAlign: 'start',
               border: 'none',
               padding: 0,
-              background: '#f0f0f0',
+              background: '#e8e8e8',
               cursor: 'pointer',
               borderRadius: 16,
               overflow: 'hidden',
@@ -69,22 +68,17 @@ export default function ResidenzaSlider({ locale }: Props) {
               display: 'block',
             }}
           >
-            {/* Foto (solo se disponibile) */}
+            {/* Foto */}
             {photoUrl && (
               <img
                 src={photoUrl}
                 alt={room.name}
                 loading="lazy"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block',
-                }}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
               />
             )}
 
-            {/* Overlay gradiente */}
+            {/* Overlay gradiente (sempre visibile per leggibilità testo) */}
             <div style={{
               position: 'absolute',
               bottom: 0, left: 0, right: 0,

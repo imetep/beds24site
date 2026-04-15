@@ -9,7 +9,7 @@ cloudinary.config({
 
 const TTL_SECONDS = 60 * 60; // 1 ora
 
-// ─── Redis helpers (stesso pattern di /api/offers) ───────────────────────────
+// ─── Redis helpers (stesso pattern di /api/offers) ────────────────────────────
 
 async function redisGet(key: string): Promise<string | null> {
   const url   = process.env.KV_REST_API_URL;
@@ -50,16 +50,16 @@ async function redisSet(key: string, value: string, ttlSeconds: number): Promise
 
 // ─── Cloudinary helpers ───────────────────────────────────────────────────────
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function makeUrl(publicId: string, width: number, height?: number): string {
-  const transforms: Record<string, unknown> = {
-    width, crop: 'fill', quality: 'auto', fetch_format: 'auto',
-  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const transforms: any = { width, crop: 'fill', quality: 'auto', fetch_format: 'auto' };
   if (height) transforms.height = height;
   return cloudinary.url(publicId, transforms);
 }
 
 // ─── Route handler ────────────────────────────────────────────────────────────
-// GET /api/cloudinary?covers=true          → prima foto di ogni appartamento
+// GET /api/cloudinary?covers=true              → prima foto di ogni appartamento
 // GET /api/cloudinary?folder=livingapple/fuji  → tutte le foto di una cartella
 
 export async function GET(req: NextRequest) {
@@ -81,7 +81,7 @@ export async function GET(req: NextRequest) {
             headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate' },
           });
         } catch {
-          // JSON corrotto → ignora e ricarica da Cloudinary
+          // JSON corrotto → ricarica da Cloudinary
         }
       }
 
@@ -109,8 +109,10 @@ export async function GET(req: NextRequest) {
       const coverMap: Record<string, string | null> = {};
       results.forEach(({ folder: f, url }) => { coverMap[f] = url; });
 
-      // 3. Salva su Redis
-      await redisSet(redisKey, JSON.stringify(coverMap), TTL_SECONDS);
+      // 3. Salva su Redis (solo se ci sono dati)
+      if (Object.keys(coverMap).length > 0) {
+        await redisSet(redisKey, JSON.stringify(coverMap), TTL_SECONDS);
+      }
 
       return NextResponse.json({ covers: coverMap }, {
         headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate' },
@@ -130,7 +132,7 @@ export async function GET(req: NextRequest) {
             headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate' },
           });
         } catch {
-          // JSON corrotto → ignora e ricarica da Cloudinary
+          // JSON corrotto → ricarica da Cloudinary
         }
       }
 
@@ -141,14 +143,17 @@ export async function GET(req: NextRequest) {
         .max_results(30)
         .execute();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const photos = result.resources.map((r: any) => ({
         url:      makeUrl(r.public_id, 1200),
         thumbUrl: makeUrl(r.public_id, 400, 300),
         publicId: r.public_id,
       }));
 
-      // 3. Salva su Redis
-      await redisSet(redisKey, JSON.stringify(photos), TTL_SECONDS);
+      // 3. Salva su Redis (solo se ci sono foto)
+      if (photos.length > 0) {
+        await redisSet(redisKey, JSON.stringify(photos), TTL_SECONDS);
+      }
 
       return NextResponse.json({ photos }, {
         headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate' },
