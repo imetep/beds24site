@@ -58,15 +58,39 @@ function makeUrl(publicId: string, width: number, height?: number): string {
   return cloudinary.url(publicId, transforms);
 }
 
+// ─── Covers: URL diretto, zero Search API ────────────────────────────────────
+
+const CLOUD = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? 'dsnlduczj';
+
+const FOLDERS = [
+  'livingapple/annurca', 'livingapple/delicious', 'livingapple/fuji',
+  'livingapple/idared', 'livingapple/kissabel', 'livingapple/pink-lady',
+  'livingapple/renetta', 'livingapple/sergente', 'livingapple/smith',
+  'livingapple/stark', 'livingapple-beach/braeburn',
+  'livingapple-beach/gala', 'livingapple-beach/rubens',
+];
+
+function coverUrlDirect(folder: string): string {
+  return `https://res.cloudinary.com/${CLOUD}/image/upload/w_600,h_400,c_fill,q_auto,f_auto/${folder}/1.jpg`;
+}
+
 // ─── Route handler ────────────────────────────────────────────────────────────
-// GET /api/cloudinary?folder=livingapple/fuji  → tutte le foto (usato dal lightbox)
-//
-// NB: il branch "covers" è stato rimosso — le cover ora usano URL diretti
-// costruiti da getCloudinaryUrl() in properties.ts (zero chiamate API Cloudinary).
+// GET /api/cloudinary?covers=true              → cover di ogni appartamento (URL diretto, zero Search API)
+// GET /api/cloudinary?folder=livingapple/fuji  → tutte le foto (lightbox, cachato su Redis)
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const folder = searchParams.get('folder');
+  const covers = searchParams.get('covers') === 'true';
+
+  // ── COVERS: zero chiamate API ─────────────────────────────────────────────
+  if (covers) {
+    const coverMap: Record<string, string> = {};
+    FOLDERS.forEach(f => { coverMap[f] = coverUrlDirect(f); });
+    return NextResponse.json({ covers: coverMap }, {
+      headers: { 'Cache-Control': 's-maxage=86400, stale-while-revalidate' },
+    });
+  }
 
   if (!folder) {
     return NextResponse.json({ error: 'Missing folder parameter' }, { status: 400 });
