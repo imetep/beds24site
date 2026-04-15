@@ -9,7 +9,7 @@ cloudinary.config({
 
 const TTL_SECONDS = 60 * 60; // 1 ora
 
-// ─── Redis helpers (stesso pattern di /api/offers) ────────────────────────────
+// ─── Redis helpers ────────────────────────────────────────────────────────────
 
 async function redisGet(key: string): Promise<string | null> {
   const url   = process.env.KV_REST_API_URL;
@@ -59,108 +59,57 @@ function makeUrl(publicId: string, width: number, height?: number): string {
 }
 
 // ─── Route handler ────────────────────────────────────────────────────────────
-// GET /api/cloudinary?covers=true              → prima foto di ogni appartamento
-// GET /api/cloudinary?folder=livingapple/fuji  → tutte le foto di una cartella
+// GET /api/cloudinary?folder=livingapple/fuji  → tutte le foto (usato dal lightbox)
+//
+// NB: il branch "covers" è stato rimosso — le cover ora usano URL diretti
+// costruiti da getCloudinaryUrl() in properties.ts (zero chiamate API Cloudinary).
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const folder = searchParams.get('folder');
-  const covers = searchParams.get('covers') === 'true';
+
+  if (!folder) {
+    return NextResponse.json({ error: 'Missing folder parameter' }, { status: 400 });
+  }
 
   try {
-    // ── COVERS ────────────────────────────────────────────────────────────────
-    if (covers) {
-      const redisKey = 'cloudinary:covers';
+    const redisKey = `cloudinary:folder:${folder}`;
 
-      // 1. Prova Redis
-      const cached = await redisGet(redisKey);
-      if (cached) {
-        try {
-          const coverMap = JSON.parse(cached) as Record<string, string | null>;
-          return NextResponse.json({ covers: coverMap, cached: true }, {
-            headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate' },
-          });
-        } catch {
-          // JSON corrotto → ricarica da Cloudinary
-        }
+    // 1. Prova Redis
+    const cached = await redisGet(redisKey);
+    if (cached) {
+      try {
+        const photos = JSON.parse(cached);
+        return NextResponse.json({ photos, cached: true }, {
+          headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate' },
+        });
+      } catch {
+        // JSON corrotto → ricarica da Cloudinary
       }
-
-      // 2. Fetch da Cloudinary
-      const folders = [
-        'livingapple/annurca', 'livingapple/delicious', 'livingapple/fuji',
-        'livingapple/idared', 'livingapple/kissabel', 'livingapple/pink-lady',
-        'livingapple/renetta', 'livingapple/sergente', 'livingapple/smith',
-        'livingapple/stark', 'livingapple-beach/braeburn',
-        'livingapple-beach/gala', 'livingapple-beach/rubens',
-      ];
-
-      const results = await Promise.all(
-        folders.map(async (f) => {
-          const res = await cloudinary.search
-            .expression(`folder:${f}`)
-            .sort_by('public_id', 'asc')
-            .max_results(1)
-            .execute();
-          const photo = res.resources[0];
-          return { folder: f, url: photo ? makeUrl(photo.public_id, 600, 400) : null };
-        })
-      );
-
-      const coverMap: Record<string, string | null> = {};
-      results.forEach(({ folder: f, url }) => { coverMap[f] = url; });
-
-      // 3. Salva su Redis (solo se ci sono dati)
-      if (Object.keys(coverMap).length > 0) {
-        await redisSet(redisKey, JSON.stringify(coverMap), TTL_SECONDS);
-      }
-
-      return NextResponse.json({ covers: coverMap }, {
-        headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate' },
-      });
     }
 
-    // ── FOLDER ────────────────────────────────────────────────────────────────
-    if (folder) {
-      const redisKey = `cloudinary:folder:${folder}`;
+    // 2. Fetch da Cloudinary (solo quando si apre il lightbox di un appartamento)
+    const result = await cloudinary.search
+      .expression(`folder:${folder}`)
+      .sort_by('public_id', 'asc')
+      .max_results(30)
+      .execute();
 
-      // 1. Prova Redis
-      const cached = await redisGet(redisKey);
-      if (cached) {
-        try {
-          const photos = JSON.parse(cached);
-          return NextResponse.json({ photos, cached: true }, {
-            headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate' },
-          });
-        } catch {
-          // JSON corrotto → ricarica da Cloudinary
-        }
-      }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const photos = result.resources.map((r: any) => ({
+      url:      makeUrl(r.public_id, 1200),
+      thumbUrl: makeUrl(r.public_id, 400, 300),
+      publicId: r.public_id,
+    }));
 
-      // 2. Fetch da Cloudinary
-      const result = await cloudinary.search
-        .expression(`folder:${folder}`)
-        .sort_by('public_id', 'asc')
-        .max_results(30)
-        .execute();
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const photos = result.resources.map((r: any) => ({
-        url:      makeUrl(r.public_id, 1200),
-        thumbUrl: makeUrl(r.public_id, 400, 300),
-        publicId: r.public_id,
-      }));
-
-      // 3. Salva su Redis (solo se ci sono foto)
-      if (photos.length > 0) {
-        await redisSet(redisKey, JSON.stringify(photos), TTL_SECONDS);
-      }
-
-      return NextResponse.json({ photos }, {
-        headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate' },
-      });
+    // 3. Salva su Redis (solo se ci sono foto)
+    if (photos.length > 0) {
+      await redisSet(redisKey, JSON.stringify(photos), TTL_SECONDS);
     }
 
-    return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
+    return NextResponse.json({ photos }, {
+      headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate' },
+    });
 
   } catch (err) {
     console.error('[cloudinary] error:', err);

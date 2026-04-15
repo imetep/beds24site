@@ -1,14 +1,7 @@
-import { v2 as cloudinary } from 'cloudinary';
-import { PROPERTIES } from '@/config/properties';
+import { PROPERTIES, getCloudinaryUrl } from '@/config/properties';
 import { locales, isValidLocale, type Locale } from '@/config/i18n';
 import { notFound } from 'next/navigation';
 import RoomCard from '@/components/residenze/RoomCard';
-
-cloudinary.config({
-  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
 interface Props {
   params: Promise<{ locale: Locale }>;
@@ -45,40 +38,11 @@ const LABELS: Record<string, Record<string, string>> = {
   },
 };
 
-// Recupera tutte le cover direttamente da Cloudinary (server-side)
-async function getAllCovers(): Promise<Record<string, string | null>> {
-  const folders = PROPERTIES.flatMap((p) => p.rooms.map((r) => r.cloudinaryFolder));
-
-  const results = await Promise.all(
-    folders.map(async (folder) => {
-      try {
-        const res = await cloudinary.search
-          .expression(`folder:${folder}`)
-          .sort_by('public_id', 'asc')
-          .max_results(1)
-          .execute();
-        const photo = res.resources[0];
-        const url = photo
-          ? cloudinary.url(photo.public_id, { width: 600, height: 400, crop: 'fill', quality: 'auto', fetch_format: 'auto' })
-          : null;
-        return { folder, url };
-      } catch {
-        return { folder, url: null };
-      }
-    })
-  );
-
-  const map: Record<string, string | null> = {};
-  results.forEach(({ folder, url }) => { map[folder] = url; });
-  return map;
-}
-
 export default async function ResidenzePage({ params }: Props) {
   const { locale } = await params;
   if (!isValidLocale(locale)) notFound();
 
   const t = LABELS[locale] ?? LABELS.it;
-  const covers = await getAllCovers();
 
   return (
     <main style={{ maxWidth: 1100, margin: '0 auto', padding: 'clamp(24px,4vw,40px) clamp(0px,2vw,16px)' }}>
@@ -98,7 +62,7 @@ export default async function ResidenzePage({ params }: Props) {
               key={room.roomId}
               room={room}
               locale={locale}
-              coverUrl={covers[room.cloudinaryFolder] ?? null}
+              coverUrl={getCloudinaryUrl(room, 1, 600)}
             />
           ))}
         </div>
@@ -112,7 +76,7 @@ export default async function ResidenzePage({ params }: Props) {
               key={room.roomId}
               room={room}
               locale={locale}
-              coverUrl={covers[room.cloudinaryFolder] ?? null}
+              coverUrl={getCloudinaryUrl(room, 1, 600)}
             />
           ))}
         </div>
