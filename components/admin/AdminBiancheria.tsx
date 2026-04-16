@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
-import type { ApartmentBedConfig, Bed, BedVariant } from '@/lib/bedConfig';
+import type { ApartmentBedConfig, Bed } from '@/lib/bedConfig';
 import { calcDefaultBedStates, calcLinenSetsFromBedStates } from '@/lib/bedConfig';
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
@@ -33,28 +33,6 @@ interface BiancheriaItem {
   config:    ApartmentBedConfig | null;
 }
 
-// ─── Stili ────────────────────────────────────────────────────────────────────
-
-const card: React.CSSProperties = {
-  background: '#fff', borderRadius: 12,
-  border: '0.5px solid #e5e7eb', padding: '16px 18px', marginBottom: 10,
-};
-const btnSec: React.CSSProperties = {
-  padding: '8px 14px', fontSize: 13,
-  background: 'none', color: '#6b7280',
-  border: '0.5px solid #d1d5db', borderRadius: 8, cursor: 'pointer',
-};
-const btnG: React.CSSProperties = {
-  padding: '8px 16px', fontSize: 13, fontWeight: 700,
-  background: '#16a34a', color: '#fff', border: 'none',
-  borderRadius: 8, cursor: 'pointer',
-};
-const btnBlue: React.CSSProperties = {
-  padding: '8px 16px', fontSize: 13, fontWeight: 600,
-  background: '#1E73BE', color: '#fff', border: 'none',
-  borderRadius: 8, cursor: 'pointer',
-};
-
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function fmtDate(d: string) {
@@ -63,17 +41,13 @@ function fmtDate(d: string) {
   });
 }
 
-// defaultBedStates → calcDefaultBedStates in lib/bedConfig.ts (guest-count aware)
-
-// ─── Helpers calendario ───────────────────────────────────────────────────────
-
 function toYMD(y: number, m: number, d: number): string {
   return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 }
 function parseYMD(ymd: string): Date { const [y,m,d] = ymd.split('-').map(Number); return new Date(y, m-1, d); }
 function addDays(ymd: string, n: number): string { const d = parseYMD(ymd); d.setDate(d.getDate()+n); return toYMD(d.getFullYear(), d.getMonth(), d.getDate()); }
 function addMonths(year: number, month: number, delta: number) {
-  let m = month + delta;
+  const m = month + delta;
   return { year: year + Math.floor(m / 12), month: ((m % 12) + 12) % 12 };
 }
 function buildCells(year: number, month: number): (number|null)[] {
@@ -86,11 +60,6 @@ function buildCells(year: number, month: number): (number|null)[] {
 
 const MONTHS_IT = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
 const DAYS_IT   = ['Lu','Ma','Me','Gi','Ve','Sa','Do'];
-const navBtn = (disabled: boolean): React.CSSProperties => ({
-  background: 'none', border: 'none', fontSize: 28, lineHeight: 1,
-  cursor: disabled ? 'default' : 'pointer',
-  color: disabled ? '#ddd' : '#333', padding: '0 8px', fontWeight: 300, flexShrink: 0,
-});
 
 // ─── RangeCalendar ────────────────────────────────────────────────────────────
 
@@ -124,7 +93,7 @@ function RangeCalendar({ from, to, onChange }: {
       if (ymd <= from) return;
       onChange(from, ymd);
       setPhase('from');
-      setOpen(false); // chiude automaticamente quando il range è completo
+      setOpen(false);
     }
   }
 
@@ -136,7 +105,7 @@ function RangeCalendar({ from, to, onChange }: {
       <div style={{ flex: 1, minWidth: 210 }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(28px, 1fr))', marginBottom: 4 }}>
           {DAYS_IT.map(d => (
-            <div key={d} style={{ textAlign: 'center', fontSize: 11, fontWeight: 600, color: '#bbb', paddingBottom: 4 }}>{d}</div>
+            <div key={d} className="text-center small fw-semibold text-muted pb-1">{d}</div>
           ))}
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(28px, 1fr))', gap: 2 }}>
@@ -191,57 +160,61 @@ function RangeCalendar({ from, to, onChange }: {
   const fmtPill = (ymd: string) =>
     new Date(ymd + 'T12:00:00').toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' });
 
+  const navBtnClass = (disabled: boolean) =>
+    `btn btn-link p-0 px-2 fs-4 fw-light ${disabled ? 'text-muted' : 'text-dark'}`;
+
   return (
     <div>
-      {/* Pill trigger — sempre visibile */}
+      {/* Pill trigger */}
       <button
         onClick={() => { setOpen(o => !o); setPhase('from'); }}
+        className={`btn d-inline-flex align-items-center gap-2 ${open ? 'border-primary' : 'border'}`}
         style={{
-          display: 'inline-flex', alignItems: 'center', gap: 10,
-          padding: '10px 16px', borderRadius: 10, cursor: 'pointer',
-          border: open ? '1.5px solid #1E73BE' : '1px solid #d1d5db',
           background: open ? '#EEF5FC' : '#fff',
           marginBottom: open ? 12 : 0,
-          fontSize: 14, fontWeight: 500, color: '#374151',
-          transition: 'border 0.15s, background 0.15s',
-        }}>
-        <span style={{ fontSize: 16 }}>📅</span>
+        }}
+      >
+        <i className="bi bi-calendar-event"></i>
         <span>
-          <span style={{ fontWeight: 700, color: '#1E73BE' }}>{fmtPill(from)}</span>
-          <span style={{ color: '#9ca3af', margin: '0 6px' }}>→</span>
-          <span style={{ fontWeight: 700, color: '#1E73BE' }}>{fmtPill(to)}</span>
+          <span className="fw-bold text-primary">{fmtPill(from)}</span>
+          <span className="text-muted mx-2">→</span>
+          <span className="fw-bold text-primary">{fmtPill(to)}</span>
         </span>
-        <span style={{
-          fontSize: 11, color: '#9ca3af',
-          transform: open ? 'rotate(180deg)' : 'none',
-          transition: 'transform 0.2s', marginLeft: 2,
-        }}>▼</span>
+        <span
+          className="small text-muted ms-1"
+          style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}
+        >▼</span>
       </button>
 
-      {/* Calendario — visibile solo se open */}
+      {/* Calendario */}
       {open && (
-        <div style={{ border: '1px solid #e5e7eb', borderRadius: 16, padding: isDesktop ? '20px 28px 24px' : '16px 12px 20px', background: '#fff', overflowX: 'auto' }}>
-          {/* Hint fase */}
-          <p style={{ margin: '0 0 10px', fontSize: 12, color: '#9ca3af' }}>
-            {phase === 'from' ? '📅 Seleziona la data di inizio' : '📅 Seleziona la data di fine'}
+        <div
+          className="border rounded-4 bg-white"
+          style={{ padding: isDesktop ? '20px 28px 24px' : '16px 12px 20px', overflowX: 'auto' }}
+        >
+          <p className="small text-muted mb-2">
+            {phase === 'from' ? (
+              <><i className="bi bi-calendar-event me-1"></i> Seleziona la data di inizio</>
+            ) : (
+              <><i className="bi bi-calendar-event me-1"></i> Seleziona la data di fine</>
+            )}
           </p>
-          {/* Navigazione + mesi — struttura unica allineata */}
           {isDesktop ? (
             <>
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
+              <div className="d-flex align-items-center mb-3">
                 <button onClick={() => { if (!isPrevDisabled) { const p = addMonths(viewYear, viewMonth, -1); setViewYear(p.year); setViewMonth(p.month); } }}
-                  disabled={isPrevDisabled} style={navBtn(isPrevDisabled)}>‹</button>
-                <div style={{ flex: 1, textAlign: 'center', fontWeight: 700, fontSize: 15, color: '#111' }}>
+                  disabled={isPrevDisabled} className={navBtnClass(isPrevDisabled)}>‹</button>
+                <div className="flex-fill text-center fw-bold">
                   {MONTHS_IT[viewMonth]} {viewYear}
                 </div>
-                <div style={{ width: 1, background: 'transparent', flexShrink: 0, margin: '0 20px' }} />
-                <div style={{ flex: 1, textAlign: 'center', fontWeight: 700, fontSize: 15, color: '#111' }}>
+                <div style={{ width: 1, flexShrink: 0, margin: '0 20px' }} />
+                <div className="flex-fill text-center fw-bold">
                   {MONTHS_IT[second.month]} {second.year}
                 </div>
                 <button onClick={() => { const n = addMonths(viewYear, viewMonth, 1); setViewYear(n.year); setViewMonth(n.month); }}
-                  style={navBtn(false)}>›</button>
+                  className={navBtnClass(false)}>›</button>
               </div>
-              <div style={{ display: 'flex', gap: 40 }}>
+              <div className="d-flex" style={{ gap: 40 }}>
                 {renderMonth(viewYear, viewMonth)}
                 <div style={{ width: 1, background: '#f0f0f0', flexShrink: 0 }} />
                 {renderMonth(second.year, second.month)}
@@ -249,12 +222,12 @@ function RangeCalendar({ from, to, onChange }: {
             </>
           ) : (
             <>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+              <div className="d-flex align-items-center justify-content-between mb-3">
                 <button onClick={() => { if (!isPrevDisabled) { const p = addMonths(viewYear, viewMonth, -1); setViewYear(p.year); setViewMonth(p.month); } }}
-                  disabled={isPrevDisabled} style={navBtn(isPrevDisabled)}>‹</button>
-                <span style={{ fontWeight: 700, fontSize: 15, color: '#111' }}>{MONTHS_IT[viewMonth]} {viewYear}</span>
+                  disabled={isPrevDisabled} className={navBtnClass(isPrevDisabled)}>‹</button>
+                <span className="fw-bold">{MONTHS_IT[viewMonth]} {viewYear}</span>
                 <button onClick={() => { const n = addMonths(viewYear, viewMonth, 1); setViewYear(n.year); setViewMonth(n.month); }}
-                  style={navBtn(false)}>›</button>
+                  className={navBtnClass(false)}>›</button>
               </div>
               {renderMonth(viewYear, viewMonth)}
             </>
@@ -269,17 +242,13 @@ function RangeCalendar({ from, to, onChange }: {
 
 function SourceBadge({ source }: { source: BiancheriaItem['source'] }) {
   const map = {
-    guest:   { bg: '#DCFCE7', color: '#15803d', label: '👤 Ospite' },
-    admin:   { bg: '#EEF5FC', color: '#1E73BE', label: '👑 Admin'  },
-    default: { bg: '#FEF9C3', color: '#713f12', label: '⚙️ Auto'  },
+    guest:   { cls: 'bg-success-subtle text-success-emphasis',   label: '👤 Ospite' },
+    admin:   { cls: 'bg-primary-subtle text-primary-emphasis',   label: '👑 Admin'  },
+    default: { cls: 'bg-warning-subtle text-warning-emphasis',   label: '⚙️ Auto'  },
   };
   const s = map[source];
   return (
-    <span style={{
-      background: s.bg, color: s.color,
-      fontSize: 11, fontWeight: 700,
-      padding: '2px 8px', borderRadius: 20, whiteSpace: 'nowrap',
-    }}>
+    <span className={`badge rounded-pill ${s.cls}`}>
       {s.label}
     </span>
   );
@@ -296,37 +265,27 @@ function LinenSummary({ linen }: { linen: LinenResult }) {
     { icon: '🟫', val: linen.scendibagno ?? 1, label: 'scendib.',  title: 'Scendibagno spugna' },
   ];
   return (
-    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 8 }}>
+    <div className="d-flex gap-2 flex-wrap mt-2">
       {items.map((item, i) => (
-        <span key={i} title={item.title} style={{
-          display: 'inline-flex', alignItems: 'center', gap: 3,
-          background: '#f3f4f6', borderRadius: 6, padding: '3px 8px',
-          fontSize: 13, color: '#111',
-        }}>
-          <span style={{ fontSize: 13 }}>{item.icon}</span>
-          <b style={{ fontWeight: 700 }}>{item.val}</b>
-          <span style={{ color: '#6b7280', fontSize: 12 }}>{item.label}</span>
+        <span
+          key={i}
+          title={item.title}
+          className="d-inline-flex align-items-center gap-1 bg-light rounded px-2 py-1 small"
+        >
+          <span>{item.icon}</span>
+          <b>{item.val}</b>
+          <span className="text-muted">{item.label}</span>
         </span>
       ))}
       {linen.culle > 0 && (
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, background: '#f3f4f6', borderRadius: 6, padding: '3px 8px', fontSize: 13, color: '#111' }}>
-          🚼 <b>{linen.culle}</b> <span style={{ color: '#6b7280', fontSize: 12 }}>culle</span>
+        <span className="d-inline-flex align-items-center gap-1 bg-light rounded px-2 py-1 small">
+          🚼 <b>{linen.culle}</b> <span className="text-muted">culle</span>
         </span>
       )}
     </div>
   );
 }
 
-/**
- * Riga per un singolo letto nel pannello di configurazione admin.
- *
- * Logica stati:
- *  - standard/castello/divano      → fisso, sempre A, non modificabile
- *  - poltrona (canConfigure false) → toggle semplice off ↔ A
- *  - estraibile (canConfigure true)→ toggle off ↔ A  (off=chiuso, A=aperto)
- *  - sommier/impilabile/pavimento  → toggle A ↔ B   (A=chiuso, B=aperto)
- *  - trasformabile (sommier+iconStates.A=singolo) → toggle A ↔ B
- */
 // ─── Componenti visivi letti (stesso stile portale ospiti) ───────────────────
 
 type IconVariant = 'singolo' | 'matrimoniale' | 'sommier_b' | 'impilabile_b' |
@@ -462,9 +421,9 @@ function AdminBedChip({ bed, displayState, isActive, label, slots, onClick, disa
     <button
       onClick={onClick}
       disabled={disabled}
+      className="btn d-flex flex-column align-items-center gap-1 p-2"
       style={{
-        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
-        padding: '10px 8px', minWidth: 88,
+        minWidth: 88,
         border: isActive ? '2px solid #1E73BE' : '1px solid #e5e7eb',
         borderRadius: 12,
         background: isActive ? '#DBEAFE' : disabled ? '#f9fafb' : '#fff',
@@ -475,28 +434,25 @@ function AdminBedChip({ bed, displayState, isActive, label, slots, onClick, disa
       }}
     >
       <AdminBedIcon variant={icon} active={isActive} />
-      <span style={{
-        fontSize: '0.72rem', fontWeight: isActive ? 700 : 400,
-        color: isActive ? '#1E73BE' : '#888888',
-        textAlign: 'center', lineHeight: 1.3, maxWidth: 100,
-      }}>
+      <span
+        className={`text-center ${isActive ? 'fw-bold text-primary' : 'text-muted'}`}
+        style={{ fontSize: '0.72rem', lineHeight: 1.3, maxWidth: 100 }}
+      >
         {label}
       </span>
       {isActive && slots > 0 && (
-        <span style={{
-          fontSize: '0.65rem', color: '#1E73BE',
-          background: '#fff', border: '1px solid #93C5FD',
-          borderRadius: 10, padding: '1px 6px',
-        }}>
+        <span
+          className="text-primary bg-white border border-primary-subtle rounded-pill px-2"
+          style={{ fontSize: '0.65rem' }}
+        >
           {slots === 1 ? '1p' : `${slots}p`}
         </span>
       )}
       {disabled && (
-        <span style={{
-          position: 'absolute', top: 4, right: 4,
-          fontSize: 10, background: '#f3f4f6', color: '#6b7280',
-          padding: '1px 5px', borderRadius: 4,
-        }}>fisso</span>
+        <span
+          className="position-absolute top-0 end-0 bg-light text-muted rounded px-1 m-1"
+          style={{ fontSize: 10 }}
+        >fisso</span>
       )}
     </button>
   );
@@ -521,26 +477,24 @@ function LoginForm({ onLogin }: { onLogin: () => void }) {
   }
 
   return (
-    <div style={{ maxWidth: 360, margin: '80px auto', padding: '0 20px' }}>
-      <div style={{ ...card, padding: '28px 24px' }}>
-        <p style={{ margin: '0 0 6px', fontSize: 20, fontWeight: 700, color: '#111' }}>🔒 Admin</p>
-        <p style={{ margin: '0 0 20px', fontSize: 14, color: '#6b7280' }}>Biancheria — LivingApple</p>
-        <input
-          type="password" placeholder="Password"
-          value={pwd} onChange={e => setPwd(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && login()}
-          style={{
-            width: '100%', padding: '10px 12px', fontSize: 15,
-            border: '1px solid #d1d5db', borderRadius: 8,
-            marginBottom: 10, boxSizing: 'border-box',
-          }}
-        />
-        {err && <p style={{ fontSize: 13, color: '#dc2626', marginBottom: 8 }}>{err}</p>}
-        <button
-          style={{ ...btnG, width: '100%', opacity: busy ? 0.6 : 1 }}
-          onClick={login} disabled={busy}>
-          {busy ? 'Accesso…' : 'Accedi'}
-        </button>
+    <div className="container" style={{ maxWidth: 360 }}>
+      <div className="card shadow-sm mt-5">
+        <div className="card-body p-4">
+          <p className="fs-4 fw-bold mb-1"><i className="bi bi-lock-fill me-1"></i> Admin</p>
+          <p className="text-muted small mb-3">Biancheria — LivingApple</p>
+          <input
+            type="password"
+            className="form-control mb-2"
+            placeholder="Password"
+            value={pwd}
+            onChange={e => setPwd(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && login()}
+          />
+          {err && <p className="small text-danger mb-2">{err}</p>}
+          <button className="btn btn-success fw-bold w-100" onClick={login} disabled={busy}>
+            {busy ? 'Accesso…' : 'Accedi'}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -585,7 +539,6 @@ export default function AdminBiancheria() {
     viso: 0, bidet: 0, telodoccia: 0, scendibagno: 0,
   });
 
-  // Verifica auth all'avvio
   useEffect(() => {
     fetch('/api/admin/checkin')
       .then(r => setAuthed(r.ok))
@@ -616,8 +569,6 @@ export default function AdminBiancheria() {
     setAuthed(false);
   }
 
-  // ── Gestione espansione card ────────────────────────────────────────────────
-
   function toggleExpand(item: BiancheriaItem) {
     if (expanded === item.bookId) {
       setExpanded(null);
@@ -625,7 +576,6 @@ export default function AdminBiancheria() {
     }
     setExpanded(item.bookId);
     setSaveMsg('');
-    // Inizializza edit solo se ha config
     if (item.config) {
       setEditStates({ ...item.bedStates });
       setEditCribs(item.cribs);
@@ -661,12 +611,10 @@ export default function AdminBiancheria() {
       if (!res.ok) { setSaveMsg('❌ Errore nel salvataggio'); return; }
       const data = await res.json();
 
-      // Correggi persone (asciugamani) = ospiti reali, non posti letto
       const correctedLinen = data.linen
         ? { ...data.linen, persone: item.numAdult + item.numChild }
         : null;
 
-      // Aggiorna la lista locale
       const updated = items.map(i =>
         i.bookId === item.bookId
           ? { ...i, bedStates: editStates, cribs: editCribs, linen: correctedLinen, source: 'admin' as const }
@@ -674,7 +622,6 @@ export default function AdminBiancheria() {
       );
       setItems(updated);
 
-      // Ricalcola totali
       const withConfig = updated.filter(i => i.hasConfig && i.linen);
       setTotals({
         lenzMatrimoniali: withConfig.reduce((s, i) => s + (i.linen?.lenzMatrimoniali ?? 0), 0),
@@ -692,8 +639,6 @@ export default function AdminBiancheria() {
     }
   }
 
-  // ── Export XLSX ────────────────────────────────────────────────────────────
-
   async function exportXlsx() {
     const XLSX = await import('xlsx');
 
@@ -703,10 +648,6 @@ export default function AdminBiancheria() {
     const dataRows: BiancheriaItem[] = items.filter(i => i.hasConfig && i.linen);
     const firstDataRow = 4;
     const lastDataRow  = firstDataRow + dataRows.length - 1;
-
-    // Colonne: A=arrivo B=nr persone C=casa D=prenotazione nr
-    //          E=lenz matrim F=lenz sing G=federe H=ascig viso
-    //          I=ascig bidet J=telo doccia K=scendibagno L=note
 
     const wsData: (string | number | Date | null)[][] = [
       ['importazione del', new Date()],
@@ -741,7 +682,6 @@ export default function AdminBiancheria() {
 
     const ws = XLSX.utils.aoa_to_sheet(wsData);
 
-    // ── Riga TOTALE ──────────────────────────────────────────────────────────
     const totRow = lastDataRow + 1;
     const cols   = ['E', 'F', 'G', 'H', 'I', 'J', 'K'];
 
@@ -750,8 +690,6 @@ export default function AdminBiancheria() {
       ws[`${col}${totRow}`] = { f: `SUM(${col}${firstDataRow}:${col}${lastDataRow})`, t: 'n' };
     }
 
-    // ── Sezione 2 — Magazzino e ordine ───────────────────────────────────────
-    // Intestazioni (2 righe di spazio)
     const hdrRow = totRow + 3;
     ws[`D${hdrRow}`] = { v: 'articolo',           t: 's' };
     ws[`E${hdrRow}`] = { v: 'tot necessario',      t: 's' };
@@ -760,7 +698,6 @@ export default function AdminBiancheria() {
     ws[`H${hdrRow}`] = { v: 'maggiorazione',       t: 's' };
     ws[`I${hdrRow}`] = { v: 'arrotonda e ordina',  t: 's' };
 
-    // Mappa colonne totale → chiave magazzino
     const colMap: Array<{ col: string; label: string; key: ArticoloKey }> = [
       { col: 'E', label: 'lenzuolo matrimoniale',    key: 'lenzMatrimoniali' },
       { col: 'F', label: 'LENZUOLO SINGOLO',         key: 'lenzSingoli'      },
@@ -785,18 +722,9 @@ export default function AdminBiancheria() {
     ws['!ref'] = `A1:L${lastSecRow}`;
 
     ws['!cols'] = [
-      { wch: 12 }, // A arrivo
-      { wch: 11 }, // B nr persone
-      { wch: 16 }, // C casa
-      { wch: 14 }, // D prenotazione nr
-      { wch: 22 }, // E lenzuolo matrimoniale
-      { wch: 18 }, // F lenzuolo singolo
-      { wch: 22 }, // G federa sacco
-      { wch: 20 }, // H asciugamano viso
-      { wch: 24 }, // I asciugamano bidet
-      { wch: 14 }, // J telo spugna
-      { wch: 20 }, // K scendibagno
-      { wch: 20 }, // L note
+      { wch: 12 }, { wch: 11 }, { wch: 16 }, { wch: 14 },
+      { wch: 22 }, { wch: 18 }, { wch: 22 },
+      { wch: 20 }, { wch: 24 }, { wch: 14 }, { wch: 20 }, { wch: 20 },
     ];
 
     const wb = XLSX.utils.book_new();
@@ -804,16 +732,12 @@ export default function AdminBiancheria() {
     XLSX.writeFile(wb, `biancheria_${from}_${to}.xlsx`);
   }
 
-  // ── Render guards ──────────────────────────────────────────────────────────
-
   if (authed === null) {
-    return <div style={{ padding: 40, textAlign: 'center', color: '#9ca3af' }}>Caricamento…</div>;
+    return <div className="text-center text-muted py-5">Caricamento…</div>;
   }
   if (!authed) {
     return <LoginForm onLogin={() => setAuthed(true)} />;
   }
-
-  // ── Raggruppa per data di arrivo ───────────────────────────────────────────
 
   const byDate: Record<string, BiancheriaItem[]> = {};
   for (const item of items) {
@@ -821,107 +745,107 @@ export default function AdminBiancheria() {
     byDate[item.arrival].push(item);
   }
 
-  // ── UI ─────────────────────────────────────────────────────────────────────
-
   return (
-    <div style={{ maxWidth: 1400, margin: '0 auto', padding: '20px 16px 80px' }}>
+    <div className="container py-4 pb-5" style={{ maxWidth: 1400 }}>
 
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+      <div className="d-flex justify-content-between align-items-center mb-3">
         <div>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: '#111' }}>🛏 Biancheria</h1>
-          <p style={{ margin: 0, fontSize: 13, color: '#9ca3af' }}>Calcolo per check-in nel periodo</p>
+          <h1 className="h4 fw-bold mb-0"><i className="bi bi-moon-stars-fill me-1"></i> Biancheria</h1>
+          <p className="small text-muted mb-0">Calcolo per check-in nel periodo</p>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <a href="/admin" style={{ ...btnSec, textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>← Admin</a>
-          <button style={btnSec} onClick={load} disabled={loading}>↻ Aggiorna</button>
+        <div className="d-flex gap-2 flex-wrap">
+          <a href="/admin" className="btn btn-outline-secondary btn-sm">← Admin</a>
+          <button className="btn btn-outline-secondary btn-sm" onClick={load} disabled={loading}>↻ Aggiorna</button>
           <button
-            style={{ ...btnG, opacity: items.length === 0 ? 0.4 : 1 }}
+            className="btn btn-success btn-sm fw-bold"
             onClick={exportXlsx}
             disabled={items.length === 0}
             title="Esporta lista biancheria in Excel">
             📥 XLSX
           </button>
-          <button style={btnSec} onClick={logout}>Esci</button>
+          <button className="btn btn-outline-secondary btn-sm" onClick={logout}>Esci</button>
         </div>
       </div>
 
       {/* Filtro date */}
-      <div style={{ ...card, marginBottom: 16, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
-        <RangeCalendar from={from} to={to} onChange={(f, t) => { setFrom(f); setTo(t); }} />
-        <button
-          style={{ ...btnBlue, opacity: loading ? 0.6 : 1, alignSelf: 'flex-start' }}
-          onClick={load} disabled={loading}>
-          {loading ? 'Caricamento…' : '🔍 Carica'}
-        </button>
+      <div className="card mb-3">
+        <div className="card-body p-3 d-flex align-items-start justify-content-between gap-3 flex-wrap">
+          <RangeCalendar from={from} to={to} onChange={(f, t) => { setFrom(f); setTo(t); }} />
+          <button
+            className="btn btn-primary align-self-start"
+            onClick={load} disabled={loading}>
+            {loading ? 'Caricamento…' : <><i className="bi bi-search me-1"></i> Carica</>}
+          </button>
+        </div>
       </div>
 
       {/* Totali aggregati */}
       {totals && items.length > 0 && (
-        <div style={{ ...card, background: '#f0f9ff', border: '0.5px solid #bae6fd', marginBottom: 20 }}>
-          <p style={{
-            margin: '0 0 8px', fontSize: 11, fontWeight: 700, color: '#0369a1',
-            textTransform: 'uppercase', letterSpacing: '0.06em',
-          }}>
-            Totale — {items.filter(i => i.hasConfig).length} appartamenti
-          </p>
-          <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', fontSize: 15, fontWeight: 700, color: '#0c4a6e' }}>
-            <span>🛏 {totals.lenzMatrimoniali} lenz.matr</span>
-            <span>🛌 {totals.lenzSingoli} lenz.sing</span>
-            <span>🪶 {totals.federe} federe</span>
-            <span>🧻 {totals.persone} viso</span>
-            <span>🧻 {totals.persone} bidet</span>
-            <span>🚿 {totals.persone} telo doccia</span>
-            {totals.culle > 0 && <span>🚼 {totals.culle} culle</span>}
+        <div className="card mb-3" style={{ background: '#f0f9ff', borderColor: '#bae6fd' }}>
+          <div className="card-body p-3">
+            <p className="small fw-bold text-uppercase mb-2" style={{ color: '#0369a1', letterSpacing: '0.06em' }}>
+              Totale — {items.filter(i => i.hasConfig).length} appartamenti
+            </p>
+            <div className="d-flex gap-4 flex-wrap fw-bold" style={{ color: '#0c4a6e' }}>
+              <span>🛏 {totals.lenzMatrimoniali} lenz.matr</span>
+              <span>🛌 {totals.lenzSingoli} lenz.sing</span>
+              <span>🪶 {totals.federe} federe</span>
+              <span>🧻 {totals.persone} viso</span>
+              <span>🧻 {totals.persone} bidet</span>
+              <span>🚿 {totals.persone} telo doccia</span>
+              {totals.culle > 0 && <span>🚼 {totals.culle} culle</span>}
+            </div>
           </div>
         </div>
       )}
 
-      {/* Magazzino — input prima dell'export */}
+      {/* Magazzino */}
       {items.length > 0 && (
-        <div style={{ ...card, marginBottom: 20 }}>
-          <p style={{
-            margin: '0 0 12px', fontSize: 11, fontWeight: 700, color: '#374151',
-            textTransform: 'uppercase', letterSpacing: '0.06em',
-          }}>
-            🏪 Magazzino disponibile
-          </p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 8 }}>
-            {ARTICOLI.map(key => (
-              <label key={key} style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                gap: 8, fontSize: 13, color: '#374151',
-                background: '#f9fafb', borderRadius: 8, padding: '6px 10px',
-              }}>
-                <span>{ARTICOLI_LABEL[key]}</span>
-                <input
-                  type="number" min={0} value={magazzino[key]}
-                  onChange={e => setMagazzino(prev => ({ ...prev, [key]: Math.max(0, parseInt(e.target.value) || 0) }))}
-                  style={{
-                    width: 60, padding: '4px 6px', fontSize: 13, textAlign: 'right',
-                    border: '1px solid #d1d5db', borderRadius: 6,
-                  }}
-                />
-              </label>
-            ))}
+        <div className="card mb-3">
+          <div className="card-body p-3">
+            <p className="small fw-bold text-uppercase text-secondary mb-3" style={{ letterSpacing: '0.06em' }}>
+              🏪 Magazzino disponibile
+            </p>
+            <div
+              className="d-grid gap-2"
+              style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}
+            >
+              {ARTICOLI.map(key => (
+                <label
+                  key={key}
+                  className="d-flex align-items-center justify-content-between gap-2 bg-light rounded px-2 py-1 small text-secondary"
+                >
+                  <span>{ARTICOLI_LABEL[key]}</span>
+                  <input
+                    type="number"
+                    min={0}
+                    value={magazzino[key]}
+                    onChange={e => setMagazzino(prev => ({ ...prev, [key]: Math.max(0, parseInt(e.target.value) || 0) }))}
+                    className="form-control form-control-sm text-end"
+                    style={{ width: 60 }}
+                  />
+                </label>
+              ))}
+            </div>
+            <p className="small text-muted fst-italic mt-2 mb-0">
+              I valori vengono sottratti dal totale nell'export XLSX. Si azzerano ad ogni ricaricamento della pagina.
+            </p>
           </div>
-          <p style={{ margin: '10px 0 0', fontSize: 11, color: '#9ca3af', fontStyle: 'italic' }}>
-            I valori vengono sottratti dal totale nell'export XLSX. Si azzerano ad ogni ricaricamento della pagina.
-          </p>
         </div>
       )}
 
       {/* Errore */}
       {error && (
-        <p style={{ fontSize: 13, color: '#dc2626', marginBottom: 12 }}>{error}</p>
+        <p className="small text-danger mb-2">{error}</p>
       )}
 
       {/* Empty state */}
       {!loading && items.length === 0 && !error && (
-        <div style={{ ...card, textAlign: 'center', padding: '40px 20px' }}>
-          <p style={{ margin: 0, fontSize: 14, color: '#9ca3af' }}>
-            Nessun check-in nel periodo selezionato
-          </p>
+        <div className="card">
+          <div className="card-body text-center py-5">
+            <p className="text-muted mb-0">Nessun check-in nel periodo selezionato</p>
+          </div>
         </div>
       )}
 
@@ -930,11 +854,11 @@ export default function AdminBiancheria() {
         <div key={date}>
 
           {/* Separatore data */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '20px 0 8px' }}>
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#374151', whiteSpace: 'nowrap' }}>
+          <div className="d-flex align-items-center gap-2 mt-4 mb-2">
+            <span className="small fw-bold text-secondary text-nowrap">
               📅 Check-in {fmtDate(date)}
             </span>
-            <div style={{ flex: 1, height: 1, background: '#e5e7eb' }} />
+            <div className="flex-fill border-top" />
           </div>
 
           {dayItems.map(item => (
@@ -943,267 +867,237 @@ export default function AdminBiancheria() {
               {/* Card prenotazione */}
               <div
                 onClick={() => toggleExpand(item)}
+                className="card shadow-sm"
                 style={{
-                  ...card,
                   cursor:     'pointer',
                   border:     expanded === item.bookId ? '1.5px solid #1E73BE' : '0.5px solid #e5e7eb',
                   background: expanded === item.bookId ? '#EEF5FC' : '#fff',
                   marginBottom: expanded === item.bookId ? 0 : 10,
-                  borderBottomLeftRadius:  expanded === item.bookId ? 0 : 12,
-                  borderBottomRightRadius: expanded === item.bookId ? 0 : 12,
-                  transition: 'box-shadow 0.15s',
+                  borderBottomLeftRadius:  expanded === item.bookId ? 0 : undefined,
+                  borderBottomRightRadius: expanded === item.bookId ? 0 : undefined,
                 }}
-                onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)'; }}
-                onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10 }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
-                      <span style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>{item.roomName}</span>
-                      <SourceBadge source={item.source} />
+                <div className="card-body p-3">
+                  <div className="d-flex justify-content-between align-items-start gap-2">
+                    <div className="flex-fill">
+                      <div className="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                        <span className="fs-6 fw-bold">{item.roomName}</span>
+                        <SourceBadge source={item.source} />
+                        {!item.hasConfig && (
+                          <span className="badge rounded-pill bg-danger-subtle text-danger-emphasis">Config N/D</span>
+                        )}
+                      </div>
+                      <p className="small text-muted mb-1">
+                        {item.guestName}
+                        {' · '}{item.numAdult} adult{item.numAdult === 1 ? 'o' : 'i'}
+                        {item.numChild > 0 ? ` + ${item.numChild} bambin${item.numChild === 1 ? 'o' : 'i'}` : ''}
+                        {' · '}fino al {fmtDate(item.departure)}
+                      </p>
+                      {item.linen && <LinenSummary linen={
+                        expanded === item.bookId && item.config
+                          ? {
+                              ...calcLinenSetsFromBedStates(item.roomId, editStates, editCribs),
+                              persone: item.numAdult + item.numChild,
+                            }
+                          : item.linen
+                      } />}
                       {!item.hasConfig && (
-                        <span style={{
-                          fontSize: 11, background: '#fee2e2', color: '#7f1d1d',
-                          padding: '2px 8px', borderRadius: 20,
-                        }}>Config N/D</span>
+                        <p className="small text-muted mb-0 mt-1">
+                          Appartamento senza configurazione letti
+                        </p>
                       )}
                     </div>
-                    <p style={{ margin: '0 0 2px', fontSize: 13, color: '#6b7280' }}>
-                      {item.guestName}
-                      {' · '}{item.numAdult} adult{item.numAdult === 1 ? 'o' : 'i'}
-                      {item.numChild > 0 ? ` + ${item.numChild} bambin${item.numChild === 1 ? 'o' : 'i'}` : ''}
-                      {' · '}fino al {fmtDate(item.departure)}
-                    </p>
-                    {item.linen && <LinenSummary linen={
-                      // Quando il pannello è aperto: ricalcola in tempo reale da editStates
-                      // Quando è chiuso: usa il linen salvato dall'API
-                      expanded === item.bookId && item.config
-                        ? {
-                            ...calcLinenSetsFromBedStates(item.roomId, editStates, editCribs),
-                            persone: item.numAdult + item.numChild,
-                          }
-                        : item.linen
-                    } />}
-                    {!item.hasConfig && (
-                      <p style={{ margin: '4px 0 0', fontSize: 12, color: '#9ca3af' }}>
-                        Appartamento senza configurazione letti
-                      </p>
-                    )}
+                    <span
+                      className={item.hasConfig ? 'text-muted' : 'text-light'}
+                      style={{
+                        fontSize: 18,
+                        transform: expanded === item.bookId ? 'rotate(180deg)' : 'none',
+                        transition: 'transform 0.2s',
+                      }}
+                    >▾</span>
                   </div>
-                  {item.hasConfig && (
-                    <span style={{
-                      fontSize: 18, color: '#9ca3af',
-                      transform: expanded === item.bookId ? 'rotate(180deg)' : 'none',
-                      transition: 'transform 0.2s',
-                      marginTop: 2,
-                    }}>▾</span>
-                  )}
-                  {!item.hasConfig && (
-                    <span style={{
-                      fontSize: 18, color: '#d1d5db',
-                      transform: expanded === item.bookId ? 'rotate(180deg)' : 'none',
-                      transition: 'transform 0.2s',
-                      marginTop: 2,
-                    }}>▾</span>
-                  )}
                 </div>
               </div>
 
               {/* Pannello espanso — Config N/D */}
               {expanded === item.bookId && !item.config && (
-                <div style={{
-                  ...card,
-                  background: '#fffbeb',
-                  border: '0.5px solid #fde68a',
-                  borderTop: 'none',
-                  borderTopLeftRadius: 0,
-                  borderTopRightRadius: 0,
-                  marginBottom: 10,
-                }}>
-                  <p style={{ margin: '0 0 6px', fontSize: 13, color: '#92400e', fontWeight: 600 }}>
-                    ⚠️ Configurazione letti non disponibile
-                  </p>
-                  <p style={{ margin: '0 0 4px', fontSize: 13, color: '#78350f' }}>
-                    Questo appartamento non è ancora censito in <code>lib/bedConfig.ts</code>. Il calcolo biancheria non è possibile.
-                  </p>
-                  <p style={{ margin: '8px 0 0', fontSize: 12, color: '#a16207' }}>
-                    Prenotazione #{item.bookId} · {item.numAdult} adult{item.numAdult === 1 ? 'o' : 'i'}
-                    {item.numChild > 0 ? ` + ${item.numChild} bambin${item.numChild === 1 ? 'o' : 'i'}` : ''}
-                    {' · '}{fmtDate(item.arrival)} → {fmtDate(item.departure)}
-                  </p>
+                <div
+                  className="card mb-2"
+                  style={{
+                    background: '#fffbeb',
+                    borderColor: '#fde68a',
+                    borderTop: 'none',
+                    borderTopLeftRadius: 0,
+                    borderTopRightRadius: 0,
+                  }}
+                >
+                  <div className="card-body p-3">
+                    <p className="fw-semibold mb-1" style={{ color: '#92400e' }}>
+                      ⚠️ Configurazione letti non disponibile
+                    </p>
+                    <p className="small mb-1" style={{ color: '#78350f' }}>
+                      Questo appartamento non è ancora censito in <code>lib/bedConfig.ts</code>. Il calcolo biancheria non è possibile.
+                    </p>
+                    <p className="small mt-2 mb-0" style={{ color: '#a16207' }}>
+                      Prenotazione #{item.bookId} · {item.numAdult} adult{item.numAdult === 1 ? 'o' : 'i'}
+                      {item.numChild > 0 ? ` + ${item.numChild} bambin${item.numChild === 1 ? 'o' : 'i'}` : ''}
+                      {' · '}{fmtDate(item.arrival)} → {fmtDate(item.departure)}
+                    </p>
+                  </div>
                 </div>
               )}
 
               {/* Pannello configurazione espanso */}
               {expanded === item.bookId && item.config && (
-                <div style={{
-                  ...card,
-                  background: '#f9fafb',
-                  borderTop: 'none',
-                  borderTopLeftRadius: 0,
-                  borderTopRightRadius: 0,
-                  marginBottom: 10,
-                }}>
+                <div
+                  className="card mb-2"
+                  style={{
+                    background: '#f9fafb',
+                    borderTop: 'none',
+                    borderTopLeftRadius: 0,
+                    borderTopRightRadius: 0,
+                  }}
+                >
+                  <div className="card-body p-3">
 
-                  {/* Stanze — box orizzontali scrollabili */}
-                  <div style={{
-                    display: 'flex',
-                    gap: 10,
-                    overflowX: 'auto',
-                    paddingBottom: 8,
-                    marginBottom: 12,
-                    scrollbarWidth: 'thin',
-                  }}>
-                    {item.config.rooms.map((room: any) => {
-                      let matrim = 0, singoli = 0, federe = 0;
-                      for (const bed of room.beds) {
-                        const isFixed = bed.variant === 'standard' || bed.variant === 'castello';
-                        const state = editStates[bed.id] ?? (isFixed ? 'A' : 'off');
-                        if (state === 'off') continue;
-                        const eff = (bed.variant === 'impilabile' && state === 'B') ? 'A' : state;
-                        if (bed.variant === 'sommier' && eff === 'B') { singoli += 4; federe += 2; }
-                        else if (bed.variant === 'sommier' && eff === 'A' && bed.iconStates?.A === 'singolo') { singoli += 2; federe += 1; }
-                        else if (bed.baseType === 'matrimoniale' || (bed.variant === 'divano' && bed.defaultLinenType === 'matrimoniale') || (bed.variant === 'sommier' && eff === 'A')) { matrim += 2; federe += 2; }
-                        else { singoli += 2; federe += 1; }
-                      }
-                      const hasLinen = matrim > 0 || singoli > 0;
-                      return (
-                        <div key={room.id} style={{
-                          minWidth: 160, maxWidth: 220, flexShrink: 0,
-                          background: '#fff', borderRadius: 10,
-                          border: '0.5px solid #e5e7eb',
-                          padding: '10px 12px',
-                          display: 'flex', flexDirection: 'column', gap: 6,
-                        }}>
-                          <p style={{
-                            margin: 0, fontSize: 11, fontWeight: 700, color: '#374151',
-                            textTransform: 'uppercase', letterSpacing: '0.06em',
-                          }}>{room.label.it}</p>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                            {room.beds.map((bed: Bed) => {
-                              const state = editStates[bed.id] ?? 'off';
-                              const isFixed = bed.variant === 'standard' || bed.variant === 'castello';
-                              const isTwoChips = bed.variant === 'sommier' || bed.variant === 'impilabile';
+                    {/* Stanze — box orizzontali scrollabili */}
+                    <div
+                      className="d-flex gap-2 pb-2 mb-3"
+                      style={{ overflowX: 'auto', scrollbarWidth: 'thin' }}
+                    >
+                      {item.config.rooms.map((room: any) => {
+                        let matrim = 0, singoli = 0, federe = 0;
+                        for (const bed of room.beds) {
+                          const isFixed = bed.variant === 'standard' || bed.variant === 'castello';
+                          const state = editStates[bed.id] ?? (isFixed ? 'A' : 'off');
+                          if (state === 'off') continue;
+                          const eff = (bed.variant === 'impilabile' && state === 'B') ? 'A' : state;
+                          if (bed.variant === 'sommier' && eff === 'B') { singoli += 4; federe += 2; }
+                          else if (bed.variant === 'sommier' && eff === 'A' && bed.iconStates?.A === 'singolo') { singoli += 2; federe += 1; }
+                          else if (bed.baseType === 'matrimoniale' || (bed.variant === 'divano' && bed.defaultLinenType === 'matrimoniale') || (bed.variant === 'sommier' && eff === 'A')) { matrim += 2; federe += 2; }
+                          else { singoli += 2; federe += 1; }
+                        }
+                        const hasLinen = matrim > 0 || singoli > 0;
+                        return (
+                          <div
+                            key={room.id}
+                            className="bg-white rounded-3 border p-2 d-flex flex-column gap-2 flex-shrink-0"
+                            style={{ minWidth: 160, maxWidth: 220 }}
+                          >
+                            <p className="small fw-bold text-uppercase text-secondary mb-0" style={{ letterSpacing: '0.06em' }}>
+                              {room.label.it}
+                            </p>
+                            <div className="d-flex flex-column gap-2">
+                              {room.beds.map((bed: Bed) => {
+                                const state = editStates[bed.id] ?? 'off';
+                                const isFixed = bed.variant === 'standard' || bed.variant === 'castello';
+                                const isTwoChips = bed.variant === 'sommier' || bed.variant === 'impilabile';
 
-                              // Calcola biancheria per questo singolo letto
-                              const bedLinenLabel = (st: 'A' | 'B' | 'off'): string => {
-                                if (st === 'off') return '';
-                                if (bed.variant === 'impilabile' && st === 'B') return '4 lenz. sing · 2 federe';
-                                const eff = st;
-                                if (bed.variant === 'sommier' && eff === 'B') return '4 lenz. sing · 2 federe';
-                                if (bed.variant === 'sommier' && eff === 'A' && bed.iconStates?.A === 'singolo') return '2 lenz. sing · 1 federa';
-                                if (bed.variant === 'pavimento') return '4 lenz. sing · 2 federe';
-                                if (bed.baseType === 'matrimoniale' || (bed.variant === 'divano' && bed.defaultLinenType === 'matrimoniale') || (bed.variant === 'sommier' && eff === 'A')) return '2 lenz. matrim · 2 federe';
-                                return '2 lenz. sing · 1 federa';
-                              };
+                                const bedLinenLabel = (st: 'A' | 'B' | 'off'): string => {
+                                  if (st === 'off') return '';
+                                  if (bed.variant === 'impilabile' && st === 'B') return '4 lenz. sing · 2 federe';
+                                  const eff = st;
+                                  if (bed.variant === 'sommier' && eff === 'B') return '4 lenz. sing · 2 federe';
+                                  if (bed.variant === 'sommier' && eff === 'A' && bed.iconStates?.A === 'singolo') return '2 lenz. sing · 1 federa';
+                                  if (bed.variant === 'pavimento') return '4 lenz. sing · 2 federe';
+                                  if (bed.baseType === 'matrimoniale' || (bed.variant === 'divano' && bed.defaultLinenType === 'matrimoniale') || (bed.variant === 'sommier' && eff === 'A')) return '2 lenz. matrim · 2 federe';
+                                  return '2 lenz. sing · 1 federa';
+                                };
 
-                              if (isTwoChips) {
-                                return (
-                                  <div key={bed.id} style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                                    {(['A', 'B'] as const).map(ds => {
-                                      const active = state === ds;
-                                      const ll = active ? bedLinenLabel(ds) : '';
-                                      return (
-                                        <div key={ds}>
-                                          <AdminBedChip bed={bed} displayState={ds}
-                                            isActive={active} label={bedChipLabel(bed, ds)}
-                                            slots={bedSlots(bed, ds)}
-                                            onClick={() => handleBedChange(bed.id, state === ds ? 'off' : ds)} />
-                                          {ll && <p style={{ margin: '2px 0 0', fontSize: 11, color: '#1E73BE', fontWeight: 600, textAlign: 'center' }}>{ll}</p>}
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
-                                );
-                              }
-                              if (isFixed) {
-                                const isOn = (editStates[bed.id] ?? 'A') !== 'off';
+                                if (isTwoChips) {
+                                  return (
+                                    <div key={bed.id} className="d-flex flex-column gap-1">
+                                      {(['A', 'B'] as const).map(ds => {
+                                        const active = state === ds;
+                                        const ll = active ? bedLinenLabel(ds) : '';
+                                        return (
+                                          <div key={ds}>
+                                            <AdminBedChip bed={bed} displayState={ds}
+                                              isActive={active} label={bedChipLabel(bed, ds)}
+                                              slots={bedSlots(bed, ds)}
+                                              onClick={() => handleBedChange(bed.id, state === ds ? 'off' : ds)} />
+                                            {ll && <p className="text-primary fw-semibold text-center mb-0 mt-1" style={{ fontSize: 11 }}>{ll}</p>}
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  );
+                                }
+                                if (isFixed) {
+                                  const isOn = (editStates[bed.id] ?? 'A') !== 'off';
+                                  const ll = isOn ? bedLinenLabel('A') : '';
+                                  return (
+                                    <div key={bed.id}>
+                                      <AdminBedChip bed={bed} displayState="A"
+                                        isActive={isOn} label={singleChipLabel(bed, isOn ? 'A' : 'off')}
+                                        slots={bedSlots(bed, 'A')}
+                                        onClick={() => handleBedChange(bed.id, isOn ? 'off' : 'A')} />
+                                      {ll && <p className="text-primary fw-semibold text-center mb-0 mt-1" style={{ fontSize: 11 }}>{ll}</p>}
+                                    </div>
+                                  );
+                                }
+                                const isOn = state === 'A';
                                 const ll = isOn ? bedLinenLabel('A') : '';
                                 return (
                                   <div key={bed.id}>
                                     <AdminBedChip bed={bed} displayState="A"
-                                      isActive={isOn} label={singleChipLabel(bed, isOn ? 'A' : 'off')}
+                                      isActive={isOn} label={singleChipLabel(bed, state)}
                                       slots={bedSlots(bed, 'A')}
                                       onClick={() => handleBedChange(bed.id, isOn ? 'off' : 'A')} />
-                                    {ll && <p style={{ margin: '2px 0 0', fontSize: 11, color: '#1E73BE', fontWeight: 600, textAlign: 'center' }}>{ll}</p>}
+                                    {ll && <p className="text-primary fw-semibold text-center mb-0 mt-1" style={{ fontSize: 11 }}>{ll}</p>}
                                   </div>
                                 );
-                              }
-                              const isOn = state === 'A';
-                              const ll = isOn ? bedLinenLabel('A') : '';
-                              return (
-                                <div key={bed.id}>
-                                  <AdminBedChip bed={bed} displayState="A"
-                                    isActive={isOn} label={singleChipLabel(bed, state)}
-                                    slots={bedSlots(bed, 'A')}
-                                    onClick={() => handleBedChange(bed.id, isOn ? 'off' : 'A')} />
-                                  {ll && <p style={{ margin: '2px 0 0', fontSize: 11, color: '#1E73BE', fontWeight: 600, textAlign: 'center' }}>{ll}</p>}
-                                </div>
-                              );
-                            })}
-                          </div>
-                          {hasLinen && (
-                            <div style={{
-                              marginTop: 4, paddingTop: 6,
-                              borderTop: '0.5px solid #e5e7eb',
-                              fontSize: 11, color: '#374151',
-                              display: 'flex', flexDirection: 'column', gap: 2,
-                            }}>
-                              {matrim > 0 && <span>🛏 {matrim/2} matr · 🪶 {federe} federe</span>}
-                              {singoli > 0 && <span>🛌 {singoli/2} sing</span>}
+                              })}
                             </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                                    {/* Culle */}
-                  <div style={{ paddingTop: 10, borderTop: '0.5px solid #e5e7eb', marginBottom: 14 }}>
-                    <p style={{
-                      margin: '0 0 8px', fontSize: 11, fontWeight: 700, color: '#6b7280',
-                      textTransform: 'uppercase', letterSpacing: '0.06em',
-                    }}>🚼 Culle</p>
-                    <div style={{ display: 'flex', gap: 6 }}>
-                      {[0, 1, 2].map(n => {
-                        const active = editCribs === n;
-                        return (
-                          <button
-                            key={n}
-                            onClick={() => { setEditCribs(n); setSaveMsg(''); }}
-                            style={{
-                              padding: '4px 16px', fontSize: 13, borderRadius: 6, cursor: 'pointer',
-                              border:      active ? '1.5px solid #1E73BE' : '1px solid #d1d5db',
-                              background:  active ? '#EEF5FC' : '#fff',
-                              color:       active ? '#1E73BE' : '#6b7280',
-                              fontWeight:  active ? 700 : 400,
-                            }}>
-                            {n}
-                          </button>
+                            {hasLinen && (
+                              <div className="border-top pt-2 small text-secondary d-flex flex-column gap-1">
+                                {matrim > 0 && <span>🛏 {matrim/2} matr · 🪶 {federe} federe</span>}
+                                {singoli > 0 && <span>🛌 {singoli/2} sing</span>}
+                              </div>
+                            )}
+                          </div>
                         );
                       })}
                     </div>
-                  </div>
 
-                  {/* Azioni */}
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-                    <button
-                      style={{ ...btnG, opacity: saving ? 0.6 : 1 }}
-                      onClick={() => saveOverride(item)}
-                      disabled={saving}>
-                      {saving ? 'Salvataggio…' : '💾 Salva configurazione'}
-                    </button>
-                    <button style={btnSec} onClick={() => resetToDefault(item)}>
-                      ↺ Ripristina default
-                    </button>
-                    {saveMsg && (
-                      <span style={{
-                        fontSize: 13,
-                        color: saveMsg.startsWith('✅') ? '#15803d' : '#dc2626',
-                      }}>
-                        {saveMsg}
-                      </span>
-                    )}
+                    {/* Culle */}
+                    <div className="pt-2 border-top mb-3">
+                      <p className="small fw-bold text-uppercase text-muted mb-2" style={{ letterSpacing: '0.06em' }}>
+                        🚼 Culle
+                      </p>
+                      <div className="d-flex gap-2">
+                        {[0, 1, 2].map(n => {
+                          const active = editCribs === n;
+                          return (
+                            <button
+                              key={n}
+                              onClick={() => { setEditCribs(n); setSaveMsg(''); }}
+                              className={`btn btn-sm ${active ? 'btn-primary' : 'btn-outline-secondary'}`}
+                            >
+                              {n}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Azioni */}
+                    <div className="d-flex gap-2 align-items-center flex-wrap">
+                      <button
+                        className="btn btn-success btn-sm fw-bold"
+                        onClick={() => saveOverride(item)}
+                        disabled={saving}>
+                        {saving ? 'Salvataggio…' : '💾 Salva configurazione'}
+                      </button>
+                      <button className="btn btn-outline-secondary btn-sm" onClick={() => resetToDefault(item)}>
+                        ↺ Ripristina default
+                      </button>
+                      {saveMsg && (
+                        <span className={`small ${saveMsg.startsWith('✅') ? 'text-success' : 'text-danger'}`}>
+                          {saveMsg}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
