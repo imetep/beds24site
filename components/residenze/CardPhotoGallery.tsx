@@ -87,7 +87,8 @@ export default function CardPhotoGallery({ cloudinaryFolder, coverUrl, roomName,
     return (
       <Link
         href={linkHref}
-        style={{ display: 'block', position: 'relative', height: 220, background: '#f0f0f0', overflow: 'hidden', cursor: 'pointer', textDecoration: 'none' }}
+        className="d-block position-relative overflow-hidden text-decoration-none"
+        style={{ height: 220, background: '#f0f0f0' }}
       >
         {photoContent}
       </Link>
@@ -100,13 +101,8 @@ export default function CardPhotoGallery({ cloudinaryFolder, coverUrl, roomName,
       {/* Foto cover cliccabile */}
       <div
         onClick={openGallery}
-        style={{
-          position: 'relative',
-          height: 220,
-          background: '#f0f0f0',
-          overflow: 'hidden',
-          cursor: 'pointer',
-        }}
+        className="position-relative overflow-hidden"
+        style={{ height: 220, background: '#f0f0f0', cursor: 'pointer' }}
       >
         {photoContent}
       </div>
