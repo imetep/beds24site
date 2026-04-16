@@ -219,21 +219,17 @@ export default async function CondizioniPage({ params }: Props) {
   const { h1, subtitle, sections } = getContent(locale);
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', padding: '3rem 1.5rem' }}>
-      <h1 style={h1Style}>{h1}</h1>
-      <p style={subtitleStyle}>{subtitle}</p>
+    <div className="container py-5" style={{ maxWidth: 800 }}>
+      <h1 className="fs-1 fw-bold mb-1">{h1}</h1>
+      <p className="text-muted mb-4">{subtitle}</p>
       {sections.map(({ title, body }) => (
-        <div key={title} style={{ marginBottom: '2rem' }}>
-          <h2 style={h2Style}>{title}</h2>
-          <div style={bodyStyle}>{body}</div>
+        <div key={title} className="mb-4">
+          <h2 className="fs-5 fw-bold text-primary border-bottom pb-2 mb-2">{title}</h2>
+          <div className="text-secondary" style={{ lineHeight: 1.7 }}>{body}</div>
         </div>
       ))}
     </div>
   );
 }
 
-const h1Style: React.CSSProperties = { fontSize: '2rem', fontWeight: 700, marginBottom: '0.5rem', color: '#1a1a1a' };
-const subtitleStyle: React.CSSProperties = { fontSize: '1rem', color: '#6b7280', marginBottom: '2.5rem' };
-const h2Style: React.CSSProperties = { fontSize: '1.1rem', fontWeight: 700, color: '#1E73BE', borderBottom: '2px solid #e5e7eb', paddingBottom: '0.5rem', marginBottom: '0.75rem' };
-const bodyStyle: React.CSSProperties = { fontSize: '0.95rem', color: '#374151', lineHeight: 1.7 };
 const ulStyle: React.CSSProperties = { paddingLeft: '1.5rem', margin: '0.5rem 0' };
