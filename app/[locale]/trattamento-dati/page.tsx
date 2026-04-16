@@ -107,29 +107,29 @@ export default async function TrattamentoDatiPage({ params }: Props) {
   const t = T[locale];
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', padding: '3rem 1.5rem' }}>
-      <h1 style={h1Style}>{t.h1}</h1>
-      <div style={infoBoxStyle}><strong>{t.infoBox}</strong></div>
-      <div style={bodyStyle}>
+    <div className="container py-5" style={{ maxWidth: 800 }}>
+      <h1 className="fs-1 fw-bold mb-3">{t.h1}</h1>
+      <div className="alert alert-primary"><strong>{t.infoBox}</strong></div>
+      <div className="text-secondary" style={{ lineHeight: 1.8 }}>
         <p>{t.intro}</p>
-        <ul style={ulStyle}>
+        <ul className="ps-4 my-2">
           <li><strong>{t.purposeA}</strong></li>
           <li><strong>{t.purposeB}</strong></li>
         </ul>
         <p>{t.conferimento}</p>
         <p>{t.baseGiuridica}</p>
-        <h2 style={h2Style}>{t.h2Storage}</h2>
+        <h2 className="fs-5 fw-bold text-primary border-bottom pb-2 mt-4 mb-2">{t.h2Storage}</h2>
         <p>{t.storage}</p>
-        <h2 style={h2Style}>{t.h2Communication}</h2>
+        <h2 className="fs-5 fw-bold text-primary border-bottom pb-2 mt-4 mb-2">{t.h2Communication}</h2>
         <p>{t.communication}</p>
-        <h2 style={h2Style}>{t.h2Rights}</h2>
+        <h2 className="fs-5 fw-bold text-primary border-bottom pb-2 mt-4 mb-2">{t.h2Rights}</h2>
         <p>{t.rightsIntro}</p>
-        <div style={emailBoxStyle}>
-          <a href="mailto:livingapple@gmail.com" style={{ color: '#1E73BE', fontWeight: 600 }}>
+        <div className="bg-light border rounded p-2 my-2">
+          <a href="mailto:livingapple@gmail.com" className="text-primary fw-semibold text-decoration-none">
             livingapple@gmail.com
           </a>
         </div>
-        <ul style={ulStyle}>
+        <ul className="ps-4 my-2">
           <li>{t.right1}</li>
           <li>{t.right2}</li>
           <li>{t.right3}</li>
@@ -140,10 +140,3 @@ export default async function TrattamentoDatiPage({ params }: Props) {
     </div>
   );
 }
-
-const h1Style: React.CSSProperties = { fontSize: '2rem', fontWeight: 700, marginBottom: '1rem', color: '#1a1a1a' };
-const infoBoxStyle: React.CSSProperties = { background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 8, padding: '1rem 1.25rem', fontSize: '0.9rem', color: '#1e40af', marginBottom: '2rem' };
-const h2Style: React.CSSProperties = { fontSize: '1.1rem', fontWeight: 700, color: '#1E73BE', borderBottom: '2px solid #e5e7eb', paddingBottom: '0.5rem', marginTop: '1.75rem', marginBottom: '0.75rem' };
-const bodyStyle: React.CSSProperties = { fontSize: '0.95rem', color: '#374151', lineHeight: 1.8 };
-const ulStyle: React.CSSProperties = { paddingLeft: '1.5rem', margin: '0.5rem 0' };
-const emailBoxStyle: React.CSSProperties = { background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 8, padding: '0.75rem 1.25rem', fontSize: '1rem', margin: '0.75rem 0' };
