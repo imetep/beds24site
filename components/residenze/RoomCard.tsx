@@ -8,7 +8,6 @@ interface Props {
   coverUrl: string | null;
 }
 
-// Etichette con supporto singolare/plurale per IT/EN/DE/PL
 const LABELS: Record<string, {
   bedroom: string; bedrooms: string;
   bathroom: string; bathrooms: string;
@@ -73,10 +72,10 @@ export default function RoomCard({ room, locale, coverUrl }: Props) {
   const roomHref   = `/${locale}/residenze/${room.slug}`;
 
   return (
-    <div style={cardStyle}>
+    <div className="card shadow-sm overflow-hidden">
 
       {/* Foto cliccabile → scheda appartamento */}
-      <div style={{ position: 'relative' }}>
+      <div className="position-relative">
         <CardPhotoGallery
           cloudinaryFolder={room.cloudinaryFolder}
           coverUrl={coverUrl}
@@ -84,58 +83,33 @@ export default function RoomCard({ room, locale, coverUrl }: Props) {
           noPhotoLabel={t.noPhoto}
           linkHref={roomHref}
         />
-        {/* Badge piano */}
-        <div style={badgeStyle}>{floorLabel}</div>
+        <div
+          className="position-absolute text-white small fw-semibold rounded-pill px-2 py-1"
+          style={{ top: 12, left: 12, background: 'rgba(0,0,0,0.55)', pointerEvents: 'none' }}
+        >
+          {floorLabel}
+        </div>
       </div>
 
       {/* Contenuto */}
-      <div style={{ padding: '14px 16px 16px' }}>
+      <div className="card-body">
+        <h3 className="fs-4 fw-bold text-primary mb-2">{room.name}</h3>
 
-        <h3 style={{ fontSize: 20, fontWeight: 700, color: '#1E73BE', margin: '0 0 10px' }}>
-          {room.name}
-        </h3>
-
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
-          <span style={chipStyle}>🛏️ {room.bedrooms} {pl(t, 'bedroom',  room.bedrooms)}</span>
-          <span style={chipStyle}>🚿 {room.bathrooms} {pl(t, 'bathroom', room.bathrooms)}</span>
-          <span style={chipStyle}>👥 {t.maxPeople} {room.maxPeople} {pl(t, 'person', room.maxPeople)}</span>
-          <span style={chipStyle}>📐 {room.sqm} {t.sqm}</span>
-          <span style={chipStyle}>{poolLabel}</span>
+        <div className="d-flex flex-wrap gap-1 mb-3">
+          <span className="badge bg-light text-secondary border">🛏️ {room.bedrooms} {pl(t, 'bedroom', room.bedrooms)}</span>
+          <span className="badge bg-light text-secondary border">🚿 {room.bathrooms} {pl(t, 'bathroom', room.bathrooms)}</span>
+          <span className="badge bg-light text-secondary border">👥 {t.maxPeople} {room.maxPeople} {pl(t, 'person', room.maxPeople)}</span>
+          <span className="badge bg-light text-secondary border">📐 {room.sqm} {t.sqm}</span>
+          <span className="badge bg-light text-secondary border">{poolLabel}</span>
         </div>
 
-        {/* Scopri e Prenota → scheda appartamento */}
-        <Link href={roomHref} style={btnPrimaryStyle}>
+        <Link
+          href={roomHref}
+          className="btn btn-warning fw-bold w-100 text-white"
+        >
           {t.prenota}
         </Link>
-
       </div>
     </div>
   );
 }
-
-const cardStyle: React.CSSProperties = {
-  borderRadius: 16, overflow: 'hidden',
-  border: '1px solid #e8e8e8', background: '#fff',
-  boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-};
-
-const badgeStyle: React.CSSProperties = {
-  position: 'absolute', top: 12, left: 12,
-  background: 'rgba(0,0,0,0.55)', color: '#fff',
-  fontSize: 12, fontWeight: 600,
-  padding: '4px 10px', borderRadius: 20,
-  pointerEvents: 'none',
-};
-
-const chipStyle: React.CSSProperties = {
-  fontSize: 12, color: '#555',
-  background: '#f5f5f5', borderRadius: 6, padding: '4px 8px',
-};
-
-const btnPrimaryStyle: React.CSSProperties = {
-  display: 'block', width: '100%', padding: '11px 0', borderRadius: 8,
-  background: '#FCAF1A', color: '#fff',
-  fontWeight: 700, fontSize: 15,
-  textAlign: 'center', textDecoration: 'none',
-  boxSizing: 'border-box',
-};

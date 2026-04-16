@@ -47,18 +47,21 @@ export default async function ResidenzePage({ params }: Props) {
   const covers = await getCovers();
 
   return (
-    <main style={{ maxWidth: 1100, margin: '0 auto', padding: 'clamp(24px,4vw,40px) clamp(0px,2vw,16px)' }}>
+    <main className="container py-4" style={{ maxWidth: 1100 }}>
 
-      <div style={{ textAlign: 'center', marginBottom: 40, padding: '0 12px' }}>
-        <h1 style={{ fontSize: 32, fontWeight: 800, color: '#1E73BE', marginBottom: 8 }}>
-          {t.title}
-        </h1>
-        <p style={{ fontSize: 16, color: '#666' }}>{t.subtitle}</p>
+      <div className="text-center mb-5 px-2">
+        <h1 className="display-5 fw-bold text-primary mb-2">{t.title}</h1>
+        <p className="fs-5 text-secondary mb-0">{t.subtitle}</p>
       </div>
 
-      <section style={{ marginBottom: 56 }}>
-        <h2 style={sectionTitleStyle}>🌿 {t.natura}</h2>
-        <div style={gridStyle}>
+      <section className="mb-5">
+        <h2 className="fs-5 fw-bold text-secondary pb-2 mb-3 border-bottom px-2" style={{ borderBottomWidth: 2 }}>
+          🌿 {t.natura}
+        </h2>
+        <div
+          className="d-grid gap-3"
+          style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))' }}
+        >
           {PROPERTIES[0].rooms.map((room) => (
             <RoomCard
               key={room.roomId}
@@ -71,8 +74,13 @@ export default async function ResidenzePage({ params }: Props) {
       </section>
 
       <section>
-        <h2 style={sectionTitleStyle}>🏖️ {t.mare}</h2>
-        <div style={gridStyle}>
+        <h2 className="fs-5 fw-bold text-secondary pb-2 mb-3 border-bottom px-2" style={{ borderBottomWidth: 2 }}>
+          🏖️ {t.mare}
+        </h2>
+        <div
+          className="d-grid gap-3"
+          style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))' }}
+        >
           {PROPERTIES[1].rooms.map((room) => (
             <RoomCard
               key={room.roomId}
@@ -87,16 +95,3 @@ export default async function ResidenzePage({ params }: Props) {
     </main>
   );
 }
-
-const sectionTitleStyle: React.CSSProperties = {
-  fontSize: 18, fontWeight: 700, color: '#444',
-  marginBottom: 20, paddingBottom: 10,
-  paddingLeft: 12, paddingRight: 12,
-  borderBottom: '2px solid #f0f0f0',
-};
-
-const gridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))',
-  gap: 20,
-};
