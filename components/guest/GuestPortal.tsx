@@ -122,6 +122,30 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
       {/* Contenuto */}
       <div style={{ maxWidth: '720px', margin: '0 auto', padding: '0.75rem 0.75rem 3rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
 
+        {/* UX 3.6 — Stato prenotazione (primo elemento visibile dopo login) */}
+        {checkin && (() => {
+          const statusMap: Record<string, { cls: string; icon: string; label: Record<string, string> }> = {
+            APPROVED: { cls: 'bg-success',        icon: 'bi-check-circle-fill',       label: { it: 'Approvato',   en: 'Approved',  de: 'Genehmigt',   pl: 'Zatwierdzone' } },
+            PENDING:  { cls: 'bg-warning text-dark', icon: 'bi-hourglass-split',       label: { it: 'In attesa',   en: 'Pending',   de: 'Ausstehend',  pl: 'Oczekujące' } },
+            REJECTED: { cls: 'bg-danger',         icon: 'bi-x-circle-fill',           label: { it: 'Rifiutato',   en: 'Rejected',  de: 'Abgelehnt',   pl: 'Odrzucone' } },
+          };
+          const s = statusMap[checkin.status];
+          if (!s) return null;
+          return (
+            <div className="card border-0 shadow-sm">
+              <div className="card-body d-flex justify-content-between align-items-center py-2">
+                <span className="small fw-semibold text-muted text-uppercase" style={{ letterSpacing: '0.07em' }}>
+                  {t.checkin?.title ?? 'Check-in'}
+                </span>
+                <span className={`badge rounded-pill fw-semibold ${s.cls}`}>
+                  <i className={`bi ${s.icon} me-1`}></i>
+                  {s.label[locale] ?? s.label.it}
+                </span>
+              </div>
+            </div>
+          );
+        })()}
+
         {/* 1. Info prenotazione */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
 
