@@ -39,26 +39,10 @@ interface OperativoData {
   lastUpdated:        string;
 }
 
-// ── Stili ─────────────────────────────────────────────────────────────────────
-const card: React.CSSProperties = {
-  background: '#fff', borderRadius: 12,
-  border: '0.5px solid #e5e7eb', padding: '16px 18px', marginBottom: 10,
-};
-const btnSec: React.CSSProperties = {
-  padding: '8px 14px', fontSize: 13,
-  background: 'none', color: '#6b7280',
-  border: '0.5px solid #d1d5db', borderRadius: 8, cursor: 'pointer',
-};
-const btnG: React.CSSProperties = {
-  padding: '10px 20px', fontSize: 14, fontWeight: 700,
-  background: '#16a34a', color: '#fff', border: 'none',
-  borderRadius: 8, cursor: 'pointer',
-};
-
 const RISCHIO_CONFIG = {
-  CRITICO: { bg: '#FEE2E2', color: '#7f1d1d', border: '#fca5a5', emoji: '🔴', label: 'CRITICO' },
-  ALTO:    { bg: '#FEF3C7', color: '#78350f', border: '#fcd34d', emoji: '🟠', label: 'ALTO'    },
-  NORMALE: { bg: '#F0FDF4', color: '#14532d', border: '#86efac', emoji: '🟢', label: 'NORMALE' },
+  CRITICO: { cardBg: '#FEE2E2', cardBorder: '#fca5a5', badge: 'bg-danger',  dot: '🔴', label: 'CRITICO', textColor: '#7f1d1d' },
+  ALTO:    { cardBg: '#FEF3C7', cardBorder: '#fcd34d', badge: 'bg-warning text-dark', dot: '🟠', label: 'ALTO',    textColor: '#78350f' },
+  NORMALE: { cardBg: '#F0FDF4', cardBorder: '#86efac', badge: 'bg-success', dot: '🟢', label: 'NORMALE', textColor: '#14532d' },
 };
 
 function fmtDate(iso: string): string {
@@ -73,7 +57,6 @@ function fmtMinuti(min: number): string {
   return m > 0 ? `${h}h ${m}min` : `${h}h`;
 }
 
-// ── Login ─────────────────────────────────────────────────────────────────────
 function LoginForm({ onLogin }: { onLogin: () => void }) {
   const [pwd, setPwd]   = useState('');
   const [err, setErr]   = useState('');
@@ -91,25 +74,24 @@ function LoginForm({ onLogin }: { onLogin: () => void }) {
   }
 
   return (
-    <div style={{ maxWidth: 360, margin: '80px auto', padding: '0 20px' }}>
-      <div style={{ ...card, padding: '28px 24px' }}>
-        <p style={{ margin: '0 0 6px', fontSize: 20, fontWeight: 700, color: '#111' }}>🔒 Admin</p>
-        <p style={{ margin: '0 0 20px', fontSize: 14, color: '#6b7280' }}>Pannello pulizie</p>
-        <input
-          type="password" placeholder="Password"
-          value={pwd} onChange={e => setPwd(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && login()}
-          style={{
-            width: '100%', padding: '10px 12px', fontSize: 15,
-            border: '1px solid #d1d5db', borderRadius: 8,
-            marginBottom: 10, boxSizing: 'border-box',
-          }}
-        />
-        {err && <p style={{ fontSize: 13, color: '#dc2626', marginBottom: 8 }}>{err}</p>}
-        <button style={{ ...btnG, width: '100%', opacity: busy ? 0.6 : 1 }}
-          onClick={login} disabled={busy}>
-          {busy ? 'Accesso…' : 'Accedi'}
-        </button>
+    <div className="container" style={{ maxWidth: 360 }}>
+      <div className="card shadow-sm mt-5">
+        <div className="card-body p-4">
+          <p className="fs-4 fw-bold mb-1"><i className="bi bi-lock-fill me-1"></i> Admin</p>
+          <p className="text-muted small mb-3">Pannello pulizie</p>
+          <input
+            type="password"
+            className="form-control mb-2"
+            placeholder="Password"
+            value={pwd}
+            onChange={e => setPwd(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && login()}
+          />
+          {err && <p className="small text-danger mb-2">{err}</p>}
+          <button className="btn btn-success fw-bold w-100" onClick={login} disabled={busy}>
+            {busy ? 'Accesso…' : 'Accedi'}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -140,8 +122,10 @@ function TabAlert({ pulizie }: { pulizie: PuliziaDay[] }) {
 
   if (pulizie.length === 0) {
     return (
-      <div style={{ ...card, textAlign: 'center', padding: '40px' }}>
-        <p style={{ margin: 0, fontSize: 13, color: '#9ca3af' }}>Nessuna partenza nei prossimi 12 mesi.</p>
+      <div className="card">
+        <div className="card-body text-center py-5">
+          <p className="small text-muted mb-0">Nessuna partenza nei prossimi 12 mesi.</p>
+        </div>
       </div>
     );
   }
@@ -152,124 +136,129 @@ function TabAlert({ pulizie }: { pulizie: PuliziaDay[] }) {
   return (
     <div>
       {/* Sommario rischi */}
-      <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap' }}>
+      <div className="d-flex gap-2 mb-3 flex-wrap">
         {[
-          { label: 'CRITICO', value: nCritico, bg: '#FEE2E2', color: '#7f1d1d' },
-          { label: 'ALTO',    value: nAlto,    bg: '#FEF3C7', color: '#78350f' },
-          { label: 'NORMALE', value: pulizie.length - nCritico - nAlto, bg: '#F0FDF4', color: '#14532d' },
+          { label: 'CRITICO', value: nCritico, bg: 'bg-danger-subtle',  tx: 'text-danger-emphasis' },
+          { label: 'ALTO',    value: nAlto,    bg: 'bg-warning-subtle', tx: 'text-warning-emphasis' },
+          { label: 'NORMALE', value: pulizie.length - nCritico - nAlto, bg: 'bg-success-subtle', tx: 'text-success-emphasis' },
         ].map(s => (
-          <div key={s.label} style={{ background: s.bg, borderRadius: 8, padding: '8px 16px' }}>
-            <p style={{ margin: 0, fontSize: 20, fontWeight: 700, color: s.color }}>{s.value}</p>
-            <p style={{ margin: 0, fontSize: 11, color: '#6b7280' }}>{s.label}</p>
+          <div key={s.label} className={`${s.bg} rounded px-3 py-2`}>
+            <p className={`fs-4 fw-bold mb-0 ${s.tx}`}>{s.value}</p>
+            <p className="small text-muted mb-0">{s.label}</p>
           </div>
         ))}
       </div>
 
       {/* Filtri */}
-      <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+      <div className="d-flex gap-2 mb-3 flex-wrap align-items-center">
         <select
+          className="form-select form-select-sm w-auto"
           value={filtroMese}
           onChange={e => setFiltroMese(e.target.value)}
-          style={{ padding: '7px 12px', fontSize: 13, border: '0.5px solid #d1d5db', borderRadius: 8, background: '#fff', cursor: 'pointer' }}
         >
           {mesi.map(m => <option key={m} value={m}>{mesiFmt[m]}</option>)}
         </select>
 
         <select
+          className="form-select form-select-sm w-auto"
           value={filtroRischio}
           onChange={e => setFiltroRischio(e.target.value as any)}
-          style={{ padding: '7px 12px', fontSize: 13, border: '0.5px solid #d1d5db', borderRadius: 8, background: '#fff', cursor: 'pointer' }}
         >
           <option value="Tutti">Tutti i livelli</option>
           <option value="CRITICO">Solo CRITICO</option>
           <option value="ALTO">Solo ALTO</option>
         </select>
 
-        <span style={{ fontSize: 12, color: '#9ca3af', marginLeft: 'auto' }}>
+        <span className="small text-muted ms-auto">
           {filtered.length} giorn{filtered.length === 1 ? 'o' : 'i'}
         </span>
       </div>
 
       {filtered.length === 0 && (
-        <div style={{ ...card, textAlign: 'center', padding: '30px' }}>
-          <p style={{ margin: 0, fontSize: 13, color: '#9ca3af' }}>Nessun giorno per il filtro selezionato.</p>
+        <div className="card">
+          <div className="card-body text-center py-4">
+            <p className="small text-muted mb-0">Nessun giorno per il filtro selezionato.</p>
+          </div>
         </div>
       )}
 
       {filtered.map((day, i) => {
         const cfg = RISCHIO_CONFIG[day.rischio];
         return (
-          <div key={i} style={{ ...card, border: `1px solid ${cfg.border}`, background: cfg.bg }}>
-            {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-              <p style={{ margin: 0, fontSize: 15, fontWeight: 700, color: '#111' }}>
-                {fmtDate(day.date)}
-              </p>
-              <span style={{
-                background: cfg.color, color: '#fff', fontSize: 11, fontWeight: 700,
-                padding: '3px 10px', borderRadius: 20,
-              }}>
-                {cfg.emoji} {cfg.label}
-              </span>
-            </div>
-
-            {/* Metriche */}
-            <div style={{ display: 'flex', gap: 12, marginBottom: 12, flexWrap: 'wrap' }}>
-              {[
-                { label: 'Partenze',    value: day.departures.length, emoji: '✈️' },
-                { label: 'Arrivi',      value: day.arrivals.length,   emoji: '🏠' },
-                { label: 'Ore lavoro',  value: fmtMinuti(day.minutiTotali), emoji: '⏱️' },
-              ].map(m => (
-                <div key={m.label} style={{
-                  background: 'rgba(255,255,255,0.7)', borderRadius: 8,
-                  padding: '8px 14px', minWidth: 90,
-                }}>
-                  <p style={{ margin: 0, fontSize: 18, fontWeight: 700, color: cfg.color }}>
-                    {m.emoji} {m.value}
-                  </p>
-                  <p style={{ margin: 0, fontSize: 11, color: '#6b7280' }}>{m.label}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Partenze */}
-            {day.departures.length > 0 && (
-              <div style={{ marginBottom: 6 }}>
-                <span style={{ fontSize: 11, fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                  Partenze
+          <div
+            key={i}
+            className="card mb-2"
+            style={{ background: cfg.cardBg, borderColor: cfg.cardBorder }}
+          >
+            <div className="card-body p-3">
+              {/* Header */}
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <p className="fw-bold fs-6 mb-0">{fmtDate(day.date)}</p>
+                <span className={`badge rounded-pill ${cfg.badge}`}>
+                  {cfg.dot} {cfg.label}
                 </span>
-                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 4 }}>
-                  {day.departures.map((r, j) => (
-                    <span key={j} style={{
-                      background: 'rgba(255,255,255,0.8)', border: `0.5px solid ${cfg.border}`,
-                      borderRadius: 6, padding: '3px 10px', fontSize: 12, color: '#111',
-                    }}>
-                      {r.roomName} <span style={{ color: '#9ca3af' }}>{fmtMinuti(r.minuti)}</span>
-                    </span>
-                  ))}
-                </div>
               </div>
-            )}
 
-            {/* Arrivi */}
-            {day.arrivals.length > 0 && (
-              <div>
-                <span style={{ fontSize: 11, fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                  Arrivi stesso giorno
-                </span>
-                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 4 }}>
-                  {day.arrivals.map((r, j) => (
-                    <span key={j} style={{
-                      background: 'rgba(255,255,255,0.5)', borderRadius: 6,
-                      padding: '3px 10px', fontSize: 12, color: '#4b5563',
-                      border: '0.5px solid #d1d5db',
-                    }}>
-                      {r.roomName}
-                    </span>
-                  ))}
-                </div>
+              {/* Metriche */}
+              <div className="d-flex gap-3 mb-3 flex-wrap">
+                {[
+                  { label: 'Partenze',    value: String(day.departures.length), emoji: '✈️' },
+                  { label: 'Arrivi',      value: String(day.arrivals.length),   emoji: '🏠' },
+                  { label: 'Ore lavoro',  value: fmtMinuti(day.minutiTotali),   emoji: '⏱️' },
+                ].map(m => (
+                  <div
+                    key={m.label}
+                    className="rounded px-3 py-2"
+                    style={{ background: 'rgba(255,255,255,0.7)', minWidth: 90 }}
+                  >
+                    <p className="fs-5 fw-bold mb-0" style={{ color: cfg.textColor }}>
+                      {m.emoji} {m.value}
+                    </p>
+                    <p className="small text-muted mb-0">{m.label}</p>
+                  </div>
+                ))}
               </div>
-            )}
+
+              {/* Partenze */}
+              {day.departures.length > 0 && (
+                <div className="mb-2">
+                  <span className="text-uppercase small text-muted fw-semibold">
+                    Partenze
+                  </span>
+                  <div className="d-flex gap-2 flex-wrap mt-1">
+                    {day.departures.map((r, j) => (
+                      <span
+                        key={j}
+                        className="badge border rounded px-2 py-1"
+                        style={{ background: 'rgba(255,255,255,0.8)', borderColor: cfg.cardBorder, color: '#111' }}
+                      >
+                        {r.roomName} <span className="text-muted ms-1">{fmtMinuti(r.minuti)}</span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Arrivi */}
+              {day.arrivals.length > 0 && (
+                <div>
+                  <span className="text-uppercase small text-muted fw-semibold">
+                    Arrivi stesso giorno
+                  </span>
+                  <div className="d-flex gap-2 flex-wrap mt-1">
+                    {day.arrivals.map((r, j) => (
+                      <span
+                        key={j}
+                        className="badge border rounded text-secondary px-2 py-1"
+                        style={{ background: 'rgba(255,255,255,0.5)' }}
+                      >
+                        {r.roomName}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         );
       })}
@@ -297,49 +286,52 @@ function TabMovimenti({ movimenti }: { movimenti: Movimento[] }) {
     return sortAsc ? (va as number) - (vb as number) : (vb as number) - (va as number);
   });
 
-  const thStyle = (key: SortKey): React.CSSProperties => ({
-    padding: '10px 12px', textAlign: 'left', fontWeight: 600,
-    color: sortKey === key ? '#1E73BE' : '#6b7280',
-    fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.04em',
-    borderBottom: '1px solid #e5e7eb', cursor: 'pointer',
-    userSelect: 'none', whiteSpace: 'nowrap',
-  });
+  const thClass = (key: SortKey) =>
+    `text-uppercase small ${sortKey === key ? 'text-primary' : 'text-muted'}`;
 
   const arrow = (key: SortKey) => sortKey === key ? (sortAsc ? ' ↑' : ' ↓') : '';
 
   if (movimenti.length === 0) {
     return (
-      <div style={{ ...card, textAlign: 'center', padding: '40px' }}>
-        <p style={{ margin: 0, fontSize: 13, color: '#9ca3af' }}>Nessun movimento nei prossimi 12 mesi.</p>
+      <div className="card">
+        <div className="card-body text-center py-5">
+          <p className="small text-muted mb-0">Nessun movimento nei prossimi 12 mesi.</p>
+        </div>
       </div>
     );
   }
 
+  const badgeClass = (n: number) => {
+    if (n >= 6) return 'bg-danger-subtle text-danger-emphasis';
+    if (n >= 3) return 'bg-warning-subtle text-warning-emphasis';
+    return 'bg-light text-dark';
+  };
+
   return (
     <div>
-      <p style={{ margin: '0 0 14px', fontSize: 13, color: '#6b7280' }}>
+      <p className="small text-secondary mb-3">
         {movimenti.length} giorni con movimenti · clicca le colonne per ordinare · passa il mouse su una riga per i dettagli
       </p>
-      <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-          <thead>
-            <tr style={{ background: '#f9fafb' }}>
-              <th style={thStyle('date')}     onClick={() => toggleSort('date')}>Data{arrow('date')}</th>
-              <th style={thStyle('partenze')} onClick={() => toggleSort('partenze')}>✈️ Partenze{arrow('partenze')}</th>
-              <th style={thStyle('arrivi')}   onClick={() => toggleSort('arrivi')}>🏠 Arrivi{arrow('arrivi')}</th>
-              <th style={thStyle('minuti')}   onClick={() => toggleSort('minuti')}>⏱️ Ore lavoro{arrow('minuti')}</th>
+      <div className="table-responsive">
+        <table className="table table-sm align-middle">
+          <thead className="table-light">
+            <tr>
+              <th className={thClass('date')}     style={{ cursor: 'pointer', userSelect: 'none' }} onClick={() => toggleSort('date')}>Data{arrow('date')}</th>
+              <th className={thClass('partenze')} style={{ cursor: 'pointer', userSelect: 'none' }} onClick={() => toggleSort('partenze')}>✈️ Partenze{arrow('partenze')}</th>
+              <th className={thClass('arrivi')}   style={{ cursor: 'pointer', userSelect: 'none' }} onClick={() => toggleSort('arrivi')}>🏠 Arrivi{arrow('arrivi')}</th>
+              <th className={thClass('minuti')}   style={{ cursor: 'pointer', userSelect: 'none' }} onClick={() => toggleSort('minuti')}>⏱️ Ore lavoro{arrow('minuti')}</th>
             </tr>
           </thead>
           <tbody>
             {sorted.map((m, i) => (
               <tr
                 key={i}
-                style={{ borderBottom: '0.5px solid #f3f4f6', position: 'relative', background: hoveredRow === i ? '#f0f9ff' : 'transparent' }}
+                className={hoveredRow === i ? 'table-primary' : ''}
                 onMouseEnter={() => setHoveredRow(i)}
                 onMouseLeave={() => setHoveredRow(null)}
               >
                 {/* Tooltip ancorato alla cella data */}
-                <td style={{ padding: '10px 12px', color: '#111', fontWeight: 500, position: 'relative' }}>
+                <td className="fw-medium position-relative">
                   {fmtDate(m.date)}
                   {hoveredRow === i && (() => {
                     const setPartenze  = new Set(m.casePartenze);
@@ -348,40 +340,37 @@ function TabMovimenti({ movimenti }: { movimenti: Movimento[] }) {
                     const soloPartenze = m.casePartenze.filter(c => !setArrivi.has(c));
                     const entrambe     = m.casePartenze.filter(c => setArrivi.has(c));
                     return (
-                      <div style={{
-                        position: 'absolute', left: 0, top: '110%',
-                        background: '#1f2937', color: '#fff', borderRadius: 10,
-                        padding: '10px 14px', zIndex: 100, minWidth: 200,
-                        boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
-                        pointerEvents: 'none',
-                      }}>
+                      <div
+                        className="position-absolute text-white rounded-3 shadow-lg p-3"
+                        style={{
+                          left: 0, top: '110%',
+                          background: '#1f2937', zIndex: 100,
+                          minWidth: 200, pointerEvents: 'none',
+                        }}
+                      >
                         {entrambe.length > 0 && (
-                          <div style={{ marginBottom: 10 }}>
-                            <p style={{ margin: '0 0 5px', fontSize: 10, fontWeight: 700, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                          <div className="mb-2">
+                            <p className="small fw-bold text-uppercase mb-1" style={{ color: '#fbbf24', letterSpacing: '0.05em' }}>
                               🔄 Arrivi e Partenze
                             </p>
                             {entrambe.map((c, j) => (
-                              <p key={j} style={{ margin: '2px 0', fontSize: 12, color: '#fbbf24' }}>{c}</p>
+                              <p key={j} className="mb-0 small" style={{ color: '#fbbf24' }}>{c}</p>
                             ))}
                           </div>
                         )}
                         {soloPartenze.length > 0 && (
-                          <div style={{ marginBottom: soloArrivi.length > 0 ? 10 : 0 }}>
-                            <p style={{ margin: '0 0 5px', fontSize: 10, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                              ✈️ Partenze
-                            </p>
+                          <div className={soloArrivi.length > 0 ? 'mb-2' : ''}>
+                            <p className="small fw-bold text-uppercase mb-1 text-muted">✈️ Partenze</p>
                             {soloPartenze.map((c, j) => (
-                              <p key={j} style={{ margin: '2px 0', fontSize: 12, color: '#fca5a5' }}>{c}</p>
+                              <p key={j} className="mb-0 small" style={{ color: '#fca5a5' }}>{c}</p>
                             ))}
                           </div>
                         )}
                         {soloArrivi.length > 0 && (
                           <div>
-                            <p style={{ margin: '0 0 5px', fontSize: 10, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                              🏠 Arrivi
-                            </p>
+                            <p className="small fw-bold text-uppercase mb-1 text-muted">🏠 Arrivi</p>
                             {soloArrivi.map((c, j) => (
-                              <p key={j} style={{ margin: '2px 0', fontSize: 12, color: '#86efac' }}>{c}</p>
+                              <p key={j} className="mb-0 small" style={{ color: '#86efac' }}>{c}</p>
                             ))}
                           </div>
                         )}
@@ -389,25 +378,17 @@ function TabMovimenti({ movimenti }: { movimenti: Movimento[] }) {
                     );
                   })()}
                 </td>
-                <td style={{ padding: '10px 12px' }}>
-                  <span style={{
-                    background: m.partenze >= 6 ? '#FEE2E2' : m.partenze >= 3 ? '#FEF3C7' : '#f3f4f6',
-                    color: m.partenze >= 6 ? '#7f1d1d' : m.partenze >= 3 ? '#78350f' : '#374151',
-                    fontWeight: 700, padding: '2px 10px', borderRadius: 20, fontSize: 12,
-                  }}>
+                <td>
+                  <span className={`badge rounded-pill ${badgeClass(m.partenze)}`}>
                     {m.partenze}
                   </span>
                 </td>
-                <td style={{ padding: '10px 12px' }}>
-                  <span style={{
-                    background: m.arrivi >= 6 ? '#FEE2E2' : m.arrivi >= 3 ? '#FEF3C7' : '#f3f4f6',
-                    color: m.arrivi >= 6 ? '#7f1d1d' : m.arrivi >= 3 ? '#78350f' : '#374151',
-                    fontWeight: 700, padding: '2px 10px', borderRadius: 20, fontSize: 12,
-                  }}>
+                <td>
+                  <span className={`badge rounded-pill ${badgeClass(m.arrivi)}`}>
                     {m.arrivi}
                   </span>
                 </td>
-                <td style={{ padding: '10px 12px', color: '#4b5563' }}>{fmtMinuti(m.minuti)}</td>
+                <td className="text-secondary">{fmtMinuti(m.minuti)}</td>
               </tr>
             ))}
           </tbody>
@@ -452,43 +433,45 @@ export default function AdminPulizie() {
     setAuthed(false);
   }
 
-  if (authed === null) return <div style={{ padding: 40, textAlign: 'center', color: '#9ca3af' }}>Caricamento…</div>;
+  if (authed === null) return <div className="text-center text-muted py-5">Caricamento…</div>;
   if (!authed) return <LoginForm onLogin={() => { setAuthed(true); refresh(); }} />;
 
   return (
-    <div style={{ maxWidth: 1400, margin: '0 auto', padding: '20px 16px 80px' }}>
+    <div className="container py-4 pb-5" style={{ maxWidth: 1400 }}>
 
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+      <div className="d-flex justify-content-between align-items-center mb-2">
         <div>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: '#111' }}>🧹 Pulizie</h1>
+          <h1 className="h4 fw-bold mb-0"><i className="bi bi-brush-fill me-1"></i> Pulizie</h1>
           {data && (
-            <p style={{ margin: '2px 0 0', fontSize: 12, color: '#9ca3af' }}>
+            <p className="small text-muted mb-0">
               {data.totalePrenotazioni} prenotazioni · aggiornato {new Date(data.lastUpdated).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
             </p>
           )}
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <a href="/admin" style={{ ...btnSec, textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>← Admin</a>
-          <button style={btnSec} onClick={refresh} disabled={loading}>{loading ? '…' : '↻ Aggiorna'}</button>
-          <button style={btnSec} onClick={logout}>Esci</button>
+        <div className="d-flex gap-2">
+          <a href="/admin" className="btn btn-outline-secondary btn-sm">← Admin</a>
+          <button className="btn btn-outline-secondary btn-sm" onClick={refresh} disabled={loading}>{loading ? '…' : '↻ Aggiorna'}</button>
+          <button className="btn btn-outline-secondary btn-sm" onClick={logout}>Esci</button>
         </div>
       </div>
 
       {error && (
-        <div style={{ background: '#FEE2E2', border: '0.5px solid #fca5a5', borderRadius: 8, padding: '10px 14px', margin: '12px 0', fontSize: 13, color: '#7f1d1d' }}>
-          ❌ {error}
+        <div className="alert alert-danger py-2 my-3 small">
+          <i className="bi bi-exclamation-circle-fill me-1"></i> {error}
         </div>
       )}
 
       {!data && !loading && !error && (
-        <div style={{ ...card, textAlign: 'center', padding: '40px', marginTop: 20 }}>
-          <p style={{ margin: 0, fontSize: 13, color: '#9ca3af' }}>Nessun dato. Clicca Aggiorna.</p>
+        <div className="card mt-4">
+          <div className="card-body text-center py-5">
+            <p className="small text-muted mb-0">Nessun dato. Clicca Aggiorna.</p>
+          </div>
         </div>
       )}
 
       {loading && (
-        <div style={{ padding: '40px', textAlign: 'center', color: '#9ca3af', fontSize: 13 }}>
+        <div className="text-center text-muted py-5 small">
           Caricamento prenotazioni da Beds24…
         </div>
       )}
@@ -496,25 +479,21 @@ export default function AdminPulizie() {
       {data && (
         <>
           {/* Tabs */}
-          <div style={{ display: 'flex', borderBottom: '1px solid #e5e7eb', margin: '16px 0 20px' }}>
+          <ul className="nav nav-tabs my-3">
             {([
               { key: 'alert',     label: `Alert (${data.pulizie.length})` },
               { key: 'movimenti', label: `Movimenti (${data.movimenti.length})` },
             ] as const).map(tab => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                style={{
-                  padding: '10px 20px', fontSize: 14, fontWeight: 600,
-                  background: 'none', border: 'none', cursor: 'pointer',
-                  borderBottom: activeTab === tab.key ? '2px solid #1E73BE' : '2px solid transparent',
-                  color: activeTab === tab.key ? '#1E73BE' : '#6b7280',
-                }}
-              >
-                {tab.label}
-              </button>
+              <li key={tab.key} className="nav-item">
+                <button
+                  className={`nav-link ${activeTab === tab.key ? 'active' : ''}`}
+                  onClick={() => setActiveTab(tab.key)}
+                >
+                  {tab.label}
+                </button>
+              </li>
             ))}
-          </div>
+          </ul>
 
           {activeTab === 'alert'     && <TabAlert     pulizie={data.pulizie} />}
           {activeTab === 'movimenti' && <TabMovimenti movimenti={data.movimenti} />}
