@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react';
 type Locale = 'it' | 'en' | 'de' | 'pl';
 type Tab = 'plane' | 'train' | 'car';
 
-// ─── Traduzioni ────────────────────────────────────────────────────────────────
 const T: Record<Locale, {
   hero_title: string;
   hero_sub: string;
@@ -26,12 +25,9 @@ const T: Record<Locale, {
   car_note_title: string;
   car_note: string;
   cta: string;
-  // labels mappa
   by_car: string;
   by_plane: string;
 }> = {
-
-  // ── ITALIANO ──────────────────────────────────────────────────────────────────
   it: {
     hero_title: 'Scauri, a metà strada tra Roma e Napoli',
     hero_sub: 'Dove il Lazio incontra il mare, tra natura, storia e sapori autentici del Sud.',
@@ -73,8 +69,6 @@ const T: Record<Locale, {
     by_car: 'in auto',
     by_plane: 'in aereo',
   },
-
-  // ── ENGLISH ───────────────────────────────────────────────────────────────────
   en: {
     hero_title: 'Scauri, halfway between Rome and Naples',
     hero_sub: 'Where Lazio meets the sea — nature, history and authentic southern Italian flavours.',
@@ -116,8 +110,6 @@ const T: Record<Locale, {
     by_car: 'by car',
     by_plane: 'by plane',
   },
-
-  // ── DEUTSCH ───────────────────────────────────────────────────────────────────
   de: {
     hero_title: 'Scauri, auf halbem Weg zwischen Rom und Neapel',
     hero_sub: 'Wo Latium das Meer trifft — Natur, Geschichte und authentische süditalienische Küche.',
@@ -159,8 +151,6 @@ const T: Record<Locale, {
     by_car: 'mit dem Auto',
     by_plane: 'per Flugzeug',
   },
-
-  // ── POLSKI ────────────────────────────────────────────────────────────────────
   pl: {
     hero_title: 'Scauri, w połowie drogi między Rzymem a Neapolem',
     hero_sub: 'Tam, gdzie Lacjum spotyka morze — natura, historia i autentyczne smaki południa Włoch.',
@@ -204,7 +194,6 @@ const T: Record<Locale, {
   },
 };
 
-// ─── Coordinate città sulla mappa (verificate da Luca) ─────────────────────
 const CITIES = [
   { id: 'roma',    x: 392, y: 506, label: 'Roma',    time: '~2h',      byPlane: false },
   { id: 'napoli',  x: 512, y: 633, label: 'Napoli',  time: '~1h 15min',byPlane: false },
@@ -215,7 +204,6 @@ const CITIES = [
   { id: 'bari',    x: 709, y: 569, label: 'Bari',    time: '~3h 45min',byPlane: false },
 ];
 
-// ─── Label placement ────────────────────────────────────────────────────────
 const LABEL_OFFSET: Record<string, { ax: number; ay: number; anchor: string }> = {
   roma:    { ax: -15, ay: -5,  anchor: 'end'    },
   napoli:  { ax: +15, ay: +4,  anchor: 'start'  },
@@ -226,7 +214,6 @@ const LABEL_OFFSET: Record<string, { ax: number; ay: number; anchor: string }> =
   bari:    { ax: +15, ay: +4,  anchor: 'start'  },
 };
 
-// ─── SVG Italy path (da EPS ufficiale, elaborato con potrace) ─────────────
 const ITALY_PATH = `M3320 9880 c-8 -5 -32 -10 -53 -10 -105 0 -178 -45 -221 -135 -14
 -30 -29 -55 -33 -55 -5 0 -27 14 -51 30 -55 37 -111 45 -223 32 -114 -12 -130
 -26 -166 -139 -22 -72 -29 -84 -52 -89 -99 -23 -136 -35 -157 -55 -27 -25 -54
@@ -332,7 +319,6 @@ M4414 3964 c-45 -10 -59 -40 -59 -125 0 -99 11 -113 91 -113 47 0 60 4 75 23
 -63 -149 -13 -215 l26 -34 92 0 c106 0 114 6 123 88 7 58 -13 119 -46 143 -30
 22 -143 33 -182 18z`;
 
-// ─── Componente mappa animata ───────────────────────────────────────────────
 function ItalyMap({ locale }: { locale: Locale }) {
   const t = T[locale];
   const animRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -351,7 +337,6 @@ function ItalyMap({ locale }: { locale: Locale }) {
       const showNext = () => {
         if (!running) return;
         if (step >= CITIES.length) {
-          // pausa poi riavvia
           animRef.current = setTimeout(() => {
             step = 0;
             animate();
@@ -382,21 +367,14 @@ function ItalyMap({ locale }: { locale: Locale }) {
   return (
     <svg
       viewBox="0 0 836 989"
-      style={{ width: '100%', maxWidth: 400, margin: '0 auto', display: 'block' }}
+      className="d-block mx-auto w-100"
+      style={{ maxWidth: 400 }}
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* Silhouette Italia */}
       <g transform="translate(0,989) scale(0.1,-0.1)">
-        <path
-          d={ITALY_PATH}
-          fill="var(--color-bg, #f0f0ec)"
-          stroke="#ccc"
-          strokeWidth="12"
-          strokeLinejoin="round"
-        />
+        <path d={ITALY_PATH} fill="var(--color-bg, #f0f0ec)" stroke="#ccc" strokeWidth="12" strokeLinejoin="round"/>
       </g>
 
-      {/* Linee animate */}
       {CITIES.map((city, i) => {
         const ll = lineLen(city);
         const isDrawing = drawingIndex === i;
@@ -412,15 +390,12 @@ function ItalyMap({ locale }: { locale: Locale }) {
             strokeDashoffset={isDrawing || isVisible ? 0 : ll}
             opacity={isDrawing || isVisible ? 1 : 0}
             style={{
-              transition: isDrawing
-                ? 'stroke-dashoffset 0.85s ease, opacity 0.1s'
-                : 'none',
+              transition: isDrawing ? 'stroke-dashoffset 0.85s ease, opacity 0.1s' : 'none',
             }}
           />
         );
       })}
 
-      {/* Dot e label città */}
       {CITIES.map((city, i) => {
         const lbl = LABEL_OFFSET[city.id];
         const isVisible = visibleCities.has(i);
@@ -429,19 +404,16 @@ function ItalyMap({ locale }: { locale: Locale }) {
           <g key={city.id} opacity={isVisible ? 1 : 0} style={{ transition: 'opacity 0.4s' }}>
             <circle cx={city.x} cy={city.y} r={6} fill="#1E73BE" />
             <text
-              x={city.x + lbl.ax}
-              y={city.y + lbl.ay - 9}
+              x={city.x + lbl.ax} y={city.y + lbl.ay - 9}
               textAnchor={lbl.anchor as 'start' | 'end' | 'middle'}
-              fontSize={18}
-              fontWeight={500}
+              fontSize={18} fontWeight={500}
               fill="var(--color-text, #111)"
               fontFamily="system-ui, sans-serif"
             >
               {city.label}
             </text>
             <text
-              x={city.x + lbl.ax}
-              y={city.y + lbl.ay + 8}
+              x={city.x + lbl.ax} y={city.y + lbl.ay + 8}
               textAnchor={lbl.anchor as 'start' | 'end' | 'middle'}
               fontSize={14}
               fill="#1E73BE"
@@ -453,7 +425,6 @@ function ItalyMap({ locale }: { locale: Locale }) {
         );
       })}
 
-      {/* Scauri — dot home */}
       <circle cx={480} cy={577} r={16} fill="none" stroke="#FCAF1A" strokeWidth={1.5} opacity={0.4} />
       <circle cx={480} cy={577} r={9} fill="#FCAF1A" stroke="white" strokeWidth={2.5} />
       <circle cx={480} cy={577} r={4} fill="white" />
@@ -464,7 +435,6 @@ function ItalyMap({ locale }: { locale: Locale }) {
   );
 }
 
-// ─── Componente principale ──────────────────────────────────────────────────
 export default function DoveSiamoClient({
   locale,
   bookHref,
@@ -476,193 +446,132 @@ export default function DoveSiamoClient({
   const [activeTab, setActiveTab] = useState<Tab>('car');
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto', padding: '0 1.25rem 4rem' }}>
+    <div className="container pb-5" style={{ maxWidth: 900 }}>
 
-      {/* ── Hero ──────────────────────────────────────────────────────────── */}
-      <section style={{ textAlign: 'center', padding: '3.5rem 0 2.5rem' }}>
-        <h1 style={{
-          fontSize: 'clamp(1.6rem, 4vw, 2.4rem)',
-          fontWeight: 700,
-          color: '#1E73BE',
-          marginBottom: '0.75rem',
-          lineHeight: 1.25,
-        }}>
+      {/* Hero */}
+      <section className="text-center py-5">
+        <h1
+          className="fw-bold text-primary mb-2"
+          style={{ fontSize: 'clamp(1.6rem, 4vw, 2.4rem)', lineHeight: 1.25 }}
+        >
           {t.hero_title}
         </h1>
-        <p style={{ fontSize: '1.1rem', color: '#6b7280', maxWidth: 580, margin: '0 auto' }}>
+        <p className="fs-5 text-secondary mx-auto mb-0" style={{ maxWidth: 580 }}>
           {t.hero_sub}
         </p>
       </section>
 
-      {/* ── Perché Scauri ─────────────────────────────────────────────────── */}
-      <section style={{ marginBottom: '3rem' }}>
-        <h2 style={h2Style}>{t.why_title}</h2>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '1rem',
-        }}>
+      {/* Perché Scauri */}
+      <section className="mb-5">
+        <h2 className="fw-bold text-primary fs-3 mb-3">{t.why_title}</h2>
+        <div
+          className="d-grid gap-3"
+          style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}
+        >
           {t.pills.map((pill, i) => (
-            <div key={i} style={pillStyle}>
-              <span style={{ fontSize: '1.8rem', display: 'block', marginBottom: '0.5rem' }}>
-                {pill.icon}
-              </span>
-              <strong style={{ display: 'block', color: '#1E73BE', marginBottom: '0.3rem', fontSize: '0.95rem' }}>
-                {pill.title}
-              </strong>
-              <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280', lineHeight: 1.5 }}>
-                {pill.text}
-              </p>
+            <div key={i} className="bg-light border rounded-3 p-3">
+              <span className="d-block mb-2" style={{ fontSize: '1.8rem' }}>{pill.icon}</span>
+              <strong className="d-block text-primary mb-1">{pill.title}</strong>
+              <p className="small text-secondary mb-0">{pill.text}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ── Mappa ─────────────────────────────────────────────────────────── */}
-      <section style={{ marginBottom: '3rem' }}>
-        <h2 style={h2Style}>{t.map_title}</h2>
-        <p style={{ color: '#6b7280', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
-          {t.map_sub}
-        </p>
+      {/* Mappa */}
+      <section className="mb-5">
+        <h2 className="fw-bold text-primary fs-3 mb-2">{t.map_title}</h2>
+        <p className="text-secondary mb-3">{t.map_sub}</p>
         <ItalyMap locale={locale} />
       </section>
 
-      {/* ── Come raggiungerci — tabs ───────────────────────────────────────── */}
-      <section style={{ marginBottom: '3rem' }}>
-        <h2 style={h2Style}>{t.how_title}</h2>
+      {/* Come raggiungerci */}
+      <section className="mb-5">
+        <h2 className="fw-bold text-primary fs-3 mb-3">{t.how_title}</h2>
 
-        {/* Tab buttons */}
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', borderBottom: '1px solid #e5e7eb', paddingBottom: '0' }}>
+        <ul className="nav nav-tabs mb-3">
           {(['plane', 'train', 'car'] as Tab[]).map((tab) => {
             const labels = { plane: t.tab_plane, train: t.tab_train, car: t.tab_car };
             const icons  = { plane: '✈️', train: '🚂', car: '🚗' };
-            const active = activeTab === tab;
             return (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                style={{
-                  padding: '0.6rem 1.1rem',
-                  fontSize: '0.9rem',
-                  fontWeight: active ? 600 : 400,
-                  color: active ? '#1E73BE' : '#6b7280',
-                  background: 'none',
-                  border: 'none',
-                  borderBottom: active ? '2.5px solid #1E73BE' : '2.5px solid transparent',
-                  cursor: 'pointer',
-                  marginBottom: '-1px',
-                  transition: 'color 0.15s',
-                }}
-              >
-                {icons[tab]} {labels[tab]}
-              </button>
+              <li key={tab} className="nav-item">
+                <button
+                  className={`nav-link ${activeTab === tab ? 'active' : ''}`}
+                  onClick={() => setActiveTab(tab)}
+                >
+                  {icons[tab]} {labels[tab]}
+                </button>
+              </li>
             );
           })}
-        </div>
+        </ul>
 
-        {/* Contenuto tab Aereo */}
         {activeTab === 'plane' && (
-          <div style={tabContentStyle}>
-            <p style={tabIntroStyle}>{t.plane_intro}</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1rem' }}>
+          <div>
+            <p className="text-secondary lh-base mb-3">{t.plane_intro}</p>
+            <div className="d-flex flex-column gap-2">
               {t.plane_airports.map((ap) => (
-                <div key={ap.code} style={airportRowStyle}>
-                  <span style={{ fontWeight: 700, color: '#1E73BE', minWidth: 36, fontSize: '0.85rem' }}>
-                    {ap.code}
-                  </span>
-                  <span style={{ flex: 1, color: '#374151', fontSize: '0.95rem' }}>{ap.name}</span>
-                  <span style={{ color: '#6b7280', fontSize: '0.875rem' }}>{ap.km}</span>
-                  <span style={{
-                    background: '#EBF4FF',
-                    color: '#1E73BE',
-                    padding: '0.2rem 0.6rem',
-                    borderRadius: 6,
-                    fontSize: '0.82rem',
-                    fontWeight: 500,
-                    whiteSpace: 'nowrap',
-                  }}>
-                    {ap.time}
-                  </span>
+                <div
+                  key={ap.code}
+                  className="d-flex align-items-center gap-3 bg-light border rounded p-2 flex-wrap"
+                >
+                  <span className="fw-bold text-primary small" style={{ minWidth: 36 }}>{ap.code}</span>
+                  <span className="flex-fill text-secondary">{ap.name}</span>
+                  <span className="small text-muted">{ap.km}</span>
+                  <span className="badge bg-primary-subtle text-primary-emphasis text-nowrap">{ap.time}</span>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* Contenuto tab Treno */}
         {activeTab === 'train' && (
-          <div style={tabContentStyle}>
-            <p style={tabIntroStyle}>{t.train_intro}</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', margin: '1rem 0' }}>
+          <div>
+            <p className="text-secondary lh-base mb-3">{t.train_intro}</p>
+            <div className="d-flex flex-column gap-2 mb-2">
               {t.train_routes.map((route, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem', background: '#f9fafb', borderRadius: 8, border: '1px solid #e5e7eb' }}>
-                  <span style={{ color: '#374151', fontSize: '0.95rem' }}>🚉 {route.label}</span>
-                  <span style={{ fontWeight: 600, color: '#1E73BE', fontSize: '1rem' }}>{route.time}</span>
+                <div
+                  key={i}
+                  className="d-flex justify-content-between align-items-center bg-light border rounded p-2"
+                >
+                  <span className="text-secondary">🚉 {route.label}</span>
+                  <span className="fw-semibold text-primary">{route.time}</span>
                 </div>
               ))}
             </div>
-            <p style={{ fontSize: '0.875rem', color: '#9ca3af', lineHeight: 1.5 }}>
-              ℹ️ {t.train_note}
-            </p>
+            <p className="small text-muted lh-base mb-0">ℹ️ {t.train_note}</p>
           </div>
         )}
 
-        {/* Contenuto tab Auto */}
         {activeTab === 'car' && (
-          <div style={tabContentStyle}>
-            <p style={tabIntroStyle}>{t.car_intro}</p>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-              gap: '0.75rem',
-              margin: '1rem 0',
-            }}>
+          <div>
+            <p className="text-secondary lh-base mb-3">{t.car_intro}</p>
+            <div
+              className="d-grid gap-2 mb-3"
+              style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}
+            >
               {t.car_from.map((item, i) => (
-                <div key={i} style={{ padding: '1rem', background: '#f9fafb', borderRadius: 8, border: '1px solid #e5e7eb', textAlign: 'center' }}>
-                  <p style={{ margin: '0 0 0.25rem', fontWeight: 700, fontSize: '1rem', color: '#111' }}>
-                    🚗 {item.city}
-                  </p>
-                  <p style={{ margin: '0 0 0.2rem', fontSize: '1.1rem', fontWeight: 600, color: '#1E73BE' }}>
-                    {item.time}
-                  </p>
-                  <p style={{ margin: 0, fontSize: '0.78rem', color: '#9ca3af' }}>{item.detail}</p>
+                <div key={i} className="bg-light border rounded p-3 text-center">
+                  <p className="fw-bold mb-1">🚗 {item.city}</p>
+                  <p className="fs-5 fw-semibold text-primary mb-1">{item.time}</p>
+                  <p className="small text-muted mb-0">{item.detail}</p>
                 </div>
               ))}
             </div>
-            {/* Nota auto obbligatoria */}
-            <div style={{
-              background: '#FFF8E7',
-              border: '1px solid #FCAF1A',
-              borderRadius: 10,
-              padding: '1rem 1.25rem',
-              marginTop: '1.25rem',
-            }}>
-              <strong style={{ display: 'block', color: '#92400e', marginBottom: '0.4rem', fontSize: '0.9rem' }}>
-                ⚠️ {t.car_note_title}
-              </strong>
-              <p style={{ margin: 0, fontSize: '0.875rem', color: '#78350f', lineHeight: 1.6 }}>
-                {t.car_note}
-              </p>
+            <div className="alert alert-warning border" style={{ background: '#FFF8E7', borderColor: '#FCAF1A' }}>
+              <strong className="d-block mb-1" style={{ color: '#92400e' }}>⚠️ {t.car_note_title}</strong>
+              <p className="small mb-0" style={{ color: '#78350f', lineHeight: 1.6 }}>{t.car_note}</p>
             </div>
           </div>
         )}
       </section>
 
-      {/* ── CTA ───────────────────────────────────────────────────────────── */}
-      <section style={{ textAlign: 'center', paddingTop: '1.5rem' }}>
+      {/* CTA */}
+      <section className="text-center pt-3">
         <a
           href={bookHref}
-          style={{
-            display: 'inline-block',
-            background: '#FCAF1A',
-            color: '#111',
-            fontWeight: 700,
-            fontSize: '1rem',
-            padding: '0.85rem 2.5rem',
-            borderRadius: 10,
-            textDecoration: 'none',
-            transition: 'opacity 0.15s',
-          }}
+          className="btn btn-warning btn-lg fw-bold"
+          style={{ color: '#111' }}
         >
           {t.cta}
         </a>
@@ -671,40 +580,3 @@ export default function DoveSiamoClient({
     </div>
   );
 }
-
-// ─── Stili condivisi ────────────────────────────────────────────────────────
-const h2Style: React.CSSProperties = {
-  fontSize: '1.35rem',
-  fontWeight: 700,
-  color: '#1E73BE',
-  marginBottom: '1rem',
-};
-
-const pillStyle: React.CSSProperties = {
-  background: '#f9fafb',
-  border: '1px solid #e5e7eb',
-  borderRadius: 10,
-  padding: '1.25rem',
-};
-
-const tabContentStyle: React.CSSProperties = {
-  animation: 'fadeIn 0.25s ease',
-};
-
-const tabIntroStyle: React.CSSProperties = {
-  color: '#374151',
-  lineHeight: 1.6,
-  fontSize: '0.95rem',
-  marginBottom: '0.5rem',
-};
-
-const airportRowStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '0.75rem',
-  padding: '0.75rem 1rem',
-  background: '#f9fafb',
-  borderRadius: 8,
-  border: '1px solid #e5e7eb',
-  flexWrap: 'wrap',
-};
