@@ -272,6 +272,19 @@ export default function SelfCheckinPage({ locale, wizardHref, contactHref }: Pro
         </p>
       </div>
 
+      {/* ── CTA sopra il fold — UX 3.5 (prima del contenuto informativo) ────── */}
+      <div className="bg-white px-3 pt-2 pb-3 mb-2 text-center">
+        <a
+          href={wizardHref}
+          className="btn btn-primary btn-lg fw-bold w-100 py-3"
+        >
+          {t.ctaBtn} →
+        </a>
+        <p className="small text-muted mt-2 mb-0">
+          <i className="bi bi-info-circle me-1"></i> {t.ctaNote}
+        </p>
+      </div>
+
       {/* ── Perché è obbligatorio ────────────────────────────────────────────── */}
       <div style={{ background: '#fff', padding: '20px 20px 22px', marginBottom: 8 }}>
         <h2 style={{ fontSize: 17, fontWeight: 700, color: '#111', margin: '0 0 10px' }}>
