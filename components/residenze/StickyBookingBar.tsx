@@ -125,65 +125,43 @@ export default function StickyBookingBar({ roomId, locale, roomName }: Props) {
   return (
     <div
       aria-hidden={!show}
+      className="position-fixed start-0 end-0 bottom-0 bg-white border-top shadow-lg"
       style={{
-        position:   'fixed',
-        bottom:     0,
-        left:       0,
-        right:      0,
-        zIndex:     200,
-        transform:  show ? 'translateY(0)' : 'translateY(100%)',
+        zIndex: 200,
+        transform: show ? 'translateY(0)' : 'translateY(100%)',
         transition: 'transform 0.25s ease',
         pointerEvents: show ? 'auto' : 'none',
-        background: '#fff',
-        borderTop:  '1px solid #e5e7eb',
-        boxShadow:  '0 -4px 24px rgba(0,0,0,0.10)',
       }}
     >
-      {/* Contenuto centrato, maxWidth coerente con il main */}
-      <div style={{
-        maxWidth:       1100,
-        margin:         '0 auto',
-        padding:        '12px 16px',
-        display:        'flex',
-        alignItems:     'center',
-        justifyContent: 'space-between',
-        gap:            12,
-      }}>
-
+      <div
+        className="container d-flex align-items-center justify-content-between gap-2 px-3 py-2"
+        style={{ maxWidth: 1100 }}
+      >
         {/* Sinistra: nome + prezzo */}
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{
-            fontSize:     13,
-            fontWeight:   700,
-            color:        '#111',
-            whiteSpace:   'nowrap',
-            overflow:     'hidden',
-            textOverflow: 'ellipsis',
-          }}>
+        <div className="flex-fill" style={{ minWidth: 0 }}>
+          <div className="fw-bold text-truncate" style={{ fontSize: 13 }}>
             {roomName}
           </div>
 
           {checkIn && checkOut && nights > 0 ? (
-            <div style={{ marginTop: 2 }}>
+            <div className="mt-1">
               {loadingPrice ? (
-                <span style={{ color: '#aaa', fontSize: 13 }}>…</span>
+                <span className="small text-muted">…</span>
               ) : lowestTotal ? (
                 <>
-                  <span style={{ fontWeight: 800, color: '#1E73BE', fontSize: 17 }}>
+                  <span className="fw-bold text-primary" style={{ fontSize: 17 }}>
                     {fmt(lowestTotal)}
                   </span>
-                  <span style={{ fontSize: 11, color: '#999', marginLeft: 4 }}>
-                    {t.totale}
-                  </span>
+                  <span className="ms-1 small text-muted">{t.totale}</span>
                 </>
               ) : (
-                <span style={{ fontSize: 12, color: '#aaa' }}>
+                <span className="small text-muted">
                   {nights} {nights === 1 ? t.notte : t.notti}
                 </span>
               )}
             </div>
           ) : (
-            <div style={{ fontSize: 12, color: '#aaa', marginTop: 2 }}>
+            <div className="small text-muted mt-1">
               {t.vediTariffe} →
             </div>
           )}
@@ -191,20 +169,9 @@ export default function StickyBookingBar({ roomId, locale, roomName }: Props) {
 
         {/* Destra: CTA */}
         <button
+          type="button"
           onClick={scrollToPanel}
-          style={{
-            flexShrink:   0,
-            padding:      '11px 22px',
-            borderRadius: 12,
-            border:       'none',
-            background:   '#FCAF1A',
-            color:        '#fff',
-            fontSize:     15,
-            fontWeight:   700,
-            cursor:       'pointer',
-            whiteSpace:   'nowrap',
-            boxShadow:    '0 2px 8px rgba(252,175,26,0.35)',
-          }}
+          className="btn btn-warning fw-bold text-white flex-shrink-0 px-4 text-nowrap"
         >
           {t.prenota}
         </button>
