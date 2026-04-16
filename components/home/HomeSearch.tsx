@@ -11,22 +11,30 @@ const UI: Record<string, Record<string, string>> = {
         checkin:'Check-in', checkout:'Check-out', done:'Fatto',
         adults:'Adulti', adultsAge:'18+', children:'Bambini', childrenAge:'0–17',
         nights:'notte', nightsP:'notti', hintCI:'Seleziona check-in',
-        hintCO:'Seleziona check-out', cancel:'Cancella', inspire:'Le nostre residenze', dintorni:'Dintorni' },
+        hintCO:'Seleziona check-out', cancel:'Cancella', inspire:'Le nostre residenze', dintorni:'Dintorni',
+        hero_title: "Scauri, come non l'hai mai vissuta",
+        hero_sub: 'Prenota direttamente con noi e risparmia le commissioni' },
   en: { dates:'Dates', guests:'Guests', search:'Search',
         checkin:'Check-in', checkout:'Check-out', done:'Done',
         adults:'Adults', adultsAge:'18+', children:'Children', childrenAge:'0–17',
         nights:'night', nightsP:'nights', hintCI:'Select check-in',
-        hintCO:'Select check-out', cancel:'Clear', inspire:'Our residences', dintorni:'Surroundings' },
+        hintCO:'Select check-out', cancel:'Clear', inspire:'Our residences', dintorni:'Surroundings',
+        hero_title: "Scauri, like you've never experienced it",
+        hero_sub: 'Book directly with us and save on commissions' },
   de: { dates:'Datum', guests:'Personen', search:'Suchen',
         checkin:'Check-in', checkout:'Check-out', done:'Fertig',
         adults:'Erwachsene', adultsAge:'18+', children:'Kinder', childrenAge:'0–17',
         nights:'Nacht', nightsP:'Nächte', hintCI:'Check-in wählen',
-        hintCO:'Check-out wählen', cancel:'Löschen', inspire:'Unsere Residenzen', dintorni:'Umgebung' },
+        hintCO:'Check-out wählen', cancel:'Löschen', inspire:'Unsere Residenzen', dintorni:'Umgebung',
+        hero_title: 'Scauri, wie du es noch nie erlebt hast',
+        hero_sub: 'Buchen Sie direkt bei uns und sparen Sie Provisionen' },
   pl: { dates:'Daty', guests:'Osoby', search:'Szukaj',
         checkin:'Zameldowanie', checkout:'Wymeldowanie', done:'Gotowe',
         adults:'Dorośli', adultsAge:'18+', children:'Dzieci', childrenAge:'0–17',
         nights:'noc', nightsP:'nocy', hintCI:'Wybierz zameldowanie',
-        hintCO:'Wybierz wymeldowanie', cancel:'Wyczyść', inspire:'Nasze rezydencje', dintorni:'Okolice' },
+        hintCO:'Wybierz wymeldowanie', cancel:'Wyczyść', inspire:'Nasze rezydencje', dintorni:'Okolice',
+        hero_title: 'Scauri, jakiego jeszcze nie znałeś',
+        hero_sub: 'Zarezerwuj bezpośrednio u nas i oszczędzaj na prowizjach' },
 };
 
 const MONTHS: Record<string, string[]> = {
@@ -432,9 +440,33 @@ export default function HomeSearch({ locale }: { locale: string }) {
     );
   }
 
+  // ── Hero BG — pick a generic photo if available else use gradient ─────────
+  const heroBg = dintorniPhotos.length > 0 ? dintorniPhotos[0] : null;
+
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div style={{ background: '#fff', minHeight: '100vh', boxSizing: 'border-box', width: '100%', overflowX: 'hidden' }}>
+
+      {/* ── Hero UX 3.2 ────────────────────────────────────────────────────── */}
+      <section
+        className="d-flex align-items-center justify-content-center text-white position-relative"
+        style={{
+          height: isDesk ? 320 : 220,
+          background: heroBg
+            ? `linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url(${heroBg}) center/cover no-repeat`
+            : 'linear-gradient(135deg, #1E73BE 0%, #0c447c 100%)',
+        }}
+      >
+        <div className="container text-center px-3" style={{ maxWidth: 900 }}>
+          <h1 className="fw-bold mb-2" style={{ fontSize: isDesk ? '2.6rem' : '1.6rem', lineHeight: 1.2, textShadow: '0 2px 10px rgba(0,0,0,0.3)' }}>
+            {ui.hero_title}
+          </h1>
+          <p className="fs-5 mb-0" style={{ opacity: 0.95, textShadow: '0 1px 6px rgba(0,0,0,0.35)' }}>
+            {ui.hero_sub}
+          </p>
+        </div>
+      </section>
+
       <div style={{ maxWidth: 1100, margin: '0 auto', width: '100%' }}>
 
       {/* ── Barra ricerca ─────────────────────────────────────────────────── */}
