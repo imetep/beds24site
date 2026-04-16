@@ -22,7 +22,7 @@ interface Props {
   params: Promise<{ locale: Locale; slug: string }>;
 }
 
-export const revalidate = 3600; // ISR: rigenera ogni ora, 0 chiamate Cloudinary tra un refresh e l'altro
+export const revalidate = 3600;
 
 export async function generateStaticParams() {
   const params = [];
@@ -36,43 +36,42 @@ export async function generateStaticParams() {
   return params;
 }
 
-// Feature codes → icona + label IT
+// Feature codes → Bootstrap icon + label (UX 3.4)
 const FEATURE_LABELS: Record<string, { icon: string; it: string; en: string; de: string; pl: string }> = {
-  WIFI:                { icon: '📶', it: 'WiFi gratuito',        en: 'Free WiFi',          de: 'Kostenloses WLAN',     pl: 'Bezpłatne WiFi' },
-  AIR_CONDITIONING:    { icon: '❄️', it: 'Aria condizionata',    en: 'Air conditioning',   de: 'Klimaanlage',          pl: 'Klimatyzacja' },
-  HEATING:             { icon: '🔥', it: 'Riscaldamento',        en: 'Heating',            de: 'Heizung',              pl: 'Ogrzewanie' },
-  PARKING_INCLUDED:    { icon: '🚗', it: 'Parcheggio incluso',   en: 'Free parking',       de: 'Kostenloser Parkplatz',pl: 'Bezpłatny parking' },
-  WASHER:              { icon: '🧺', it: 'Lavatrice',            en: 'Washer',             de: 'Waschmaschine',        pl: 'Pralka' },
-  DISHWASHER:          { icon: '🍽️', it: 'Lavastoviglie',        en: 'Dishwasher',         de: 'Geschirrspüler',       pl: 'Zmywarka' },
-  TV:                  { icon: '📺', it: 'TV',                   en: 'TV',                 de: 'Fernseher',            pl: 'Telewizor' },
-  HAIR_DRYER:          { icon: '💨', it: 'Asciugacapelli',       en: 'Hair dryer',         de: 'Haartrockner',         pl: 'Suszarka' },
-  KITCHEN:             { icon: '🍳', it: 'Cucina attrezzata',    en: 'Full kitchen',       de: 'Küche',                pl: 'Kuchnia' },
-  KITCHEN_DINING_ROOM: { icon: '🍳', it: 'Cucina con sala da pranzo', en: 'Kitchen & dining', de: 'Küche & Esszimmer', pl: 'Kuchnia i jadalnia' },
-  MICROWAVE:           { icon: '📡', it: 'Microonde',            en: 'Microwave',          de: 'Mikrowelle',           pl: 'Mikrofalówka' },
-  OVEN:                { icon: '🥘', it: 'Forno',                en: 'Oven',               de: 'Backofen',             pl: 'Piekarnik' },
-  COFFEE_MAKER:        { icon: '☕', it: 'Macchina del caffè',   en: 'Coffee maker',       de: 'Kaffeemaschine',       pl: 'Ekspres do kawy' },
-  FREEZER:             { icon: '🧊', it: 'Congelatore',          en: 'Freezer',            de: 'Gefrierschrank',       pl: 'Zamrażarka' },
-  REFRIGERATOR:        { icon: '🧊', it: 'Frigorifero',          en: 'Refrigerator',       de: 'Kühlschrank',          pl: 'Lodówka' },
-  STOVE:               { icon: '🔥', it: 'Fornelli',             en: 'Stove',              de: 'Herd',                 pl: 'Kuchenka' },
-  TOASTER:             { icon: '🍞', it: 'Tostapane',            en: 'Toaster',            de: 'Toaster',              pl: 'Toster' },
-  KETTLE:              { icon: '🫖', it: 'Bollitore',            en: 'Kettle',             de: 'Wasserkocher',         pl: 'Czajnik' },
-  DISHES_UTENSILS:     { icon: '🥄', it: 'Stoviglie e utensili',en: 'Dishes & utensils',  de: 'Geschirr & Utensilien',pl: 'Naczynia i przybory' },
-  HIGHCHAIR:           { icon: '👶', it: 'Seggiolone',           en: 'High chair',         de: 'Hochstuhl',            pl: 'Krzesełko' },
-  SWIMMING:            { icon: '🏊', it: 'Piscina',              en: 'Pool',               de: 'Schwimmbad',           pl: 'Basen' },
-  GARDEN:              { icon: '🌿', it: 'Giardino',             en: 'Garden',             de: 'Garten',               pl: 'Ogród' },
-  BEACH:               { icon: '🏖️', it: 'Vicino alla spiaggia', en: 'Near the beach',    de: 'Strandnähe',           pl: 'Blisko plaży' },
-  RURAL:               { icon: '🌾', it: 'Zona rurale',          en: 'Rural area',         de: 'Ländliche Lage',       pl: 'Obszar wiejski' },
-  MOUNTAIN_VIEW:       { icon: '⛰️', it: 'Vista montagna',       en: 'Mountain view',      de: 'Bergblick',            pl: 'Widok na góry' },
-  SITTING_AREA:        { icon: '🛋️', it: 'Area salotto',         en: 'Sitting area',       de: 'Sitzbereich',          pl: 'Strefa wypoczynku' },
-  LANAI_GAZEBO_COVERED:{ icon: '⛺', it: 'Gazebo coperto',       en: 'Covered gazebo',     de: 'Überdachte Terrasse',  pl: 'Altana' },
-  WHEELCHAIR_YES:      { icon: '♿', it: 'Accessibile',          en: 'Wheelchair accessible',de: 'Rollstuhlgerecht',   pl: 'Dostępny dla niepełnosprawnych' },
-  CHILDREN_WELCOME:    { icon: '👧', it: 'Bambini benvenuti',    en: 'Children welcome',   de: 'Kinder willkommen',    pl: 'Dzieci mile widziane' },
-  PETS_NOT_ALLOWED:    { icon: '🐾', it: 'Animali non ammessi',  en: 'No pets',            de: 'Keine Haustiere',      pl: 'Zakaz zwierząt' },
-  SMOKING_NOT_ALLOWED: { icon: '🚭', it: 'Non fumatori',         en: 'No smoking',         de: 'Nichtraucher',         pl: 'Zakaz palenia' },
-  LONG_TERM_RENTERS:   { icon: '📅', it: 'Soggiorni lunghi ok',  en: 'Long stays welcome', de: 'Langzeitmiete möglich',pl: 'Długie pobyty ok' },
+  WIFI:                { icon: 'bi-wifi',                 it: 'WiFi gratuito',        en: 'Free WiFi',          de: 'Kostenloses WLAN',     pl: 'Bezpłatne WiFi' },
+  AIR_CONDITIONING:    { icon: 'bi-thermometer-snow',     it: 'Aria condizionata',    en: 'Air conditioning',   de: 'Klimaanlage',          pl: 'Klimatyzacja' },
+  HEATING:             { icon: 'bi-fire',                 it: 'Riscaldamento',        en: 'Heating',            de: 'Heizung',              pl: 'Ogrzewanie' },
+  PARKING_INCLUDED:    { icon: 'bi-p-square-fill',        it: 'Parcheggio incluso',   en: 'Free parking',       de: 'Kostenloser Parkplatz',pl: 'Bezpłatny parking' },
+  WASHER:              { icon: 'bi-droplet-fill',         it: 'Lavatrice',            en: 'Washer',             de: 'Waschmaschine',        pl: 'Pralka' },
+  DISHWASHER:          { icon: 'bi-basket2-fill',         it: 'Lavastoviglie',        en: 'Dishwasher',         de: 'Geschirrspüler',       pl: 'Zmywarka' },
+  TV:                  { icon: 'bi-tv-fill',              it: 'TV',                   en: 'TV',                 de: 'Fernseher',            pl: 'Telewizor' },
+  HAIR_DRYER:          { icon: 'bi-wind',                 it: 'Asciugacapelli',       en: 'Hair dryer',         de: 'Haartrockner',         pl: 'Suszarka' },
+  KITCHEN:             { icon: 'bi-egg-fried',            it: 'Cucina attrezzata',    en: 'Full kitchen',       de: 'Küche',                pl: 'Kuchnia' },
+  KITCHEN_DINING_ROOM: { icon: 'bi-cup-hot-fill',         it: 'Cucina con sala da pranzo', en: 'Kitchen & dining', de: 'Küche & Esszimmer', pl: 'Kuchnia i jadalnia' },
+  MICROWAVE:           { icon: 'bi-broadcast',            it: 'Microonde',            en: 'Microwave',          de: 'Mikrowelle',           pl: 'Mikrofalówka' },
+  OVEN:                { icon: 'bi-oven',                 it: 'Forno',                en: 'Oven',               de: 'Backofen',             pl: 'Piekarnik' },
+  COFFEE_MAKER:        { icon: 'bi-cup-fill',             it: 'Macchina del caffè',   en: 'Coffee maker',       de: 'Kaffeemaschine',       pl: 'Ekspres do kawy' },
+  FREEZER:             { icon: 'bi-snow',                 it: 'Congelatore',          en: 'Freezer',            de: 'Gefrierschrank',       pl: 'Zamrażarka' },
+  REFRIGERATOR:        { icon: 'bi-box-fill',             it: 'Frigorifero',          en: 'Refrigerator',       de: 'Kühlschrank',          pl: 'Lodówka' },
+  STOVE:               { icon: 'bi-fire',                 it: 'Fornelli',             en: 'Stove',              de: 'Herd',                 pl: 'Kuchenka' },
+  TOASTER:             { icon: 'bi-bread-slice',          it: 'Tostapane',            en: 'Toaster',            de: 'Toaster',              pl: 'Toster' },
+  KETTLE:              { icon: 'bi-cup-straw',            it: 'Bollitore',            en: 'Kettle',             de: 'Wasserkocher',         pl: 'Czajnik' },
+  DISHES_UTENSILS:     { icon: 'bi-cup',                  it: 'Stoviglie e utensili', en: 'Dishes & utensils',  de: 'Geschirr & Utensilien',pl: 'Naczynia i przybory' },
+  HIGHCHAIR:           { icon: 'bi-person-arms-up',       it: 'Seggiolone',           en: 'High chair',         de: 'Hochstuhl',            pl: 'Krzesełko' },
+  SWIMMING:            { icon: 'bi-water',                it: 'Piscina',              en: 'Pool',               de: 'Schwimmbad',           pl: 'Basen' },
+  GARDEN:              { icon: 'bi-tree-fill',            it: 'Giardino',             en: 'Garden',             de: 'Garten',               pl: 'Ogród' },
+  BEACH:               { icon: 'bi-umbrella-fill',        it: 'Vicino alla spiaggia', en: 'Near the beach',     de: 'Strandnähe',           pl: 'Blisko plaży' },
+  RURAL:               { icon: 'bi-flower1',              it: 'Zona rurale',          en: 'Rural area',         de: 'Ländliche Lage',       pl: 'Obszar wiejski' },
+  MOUNTAIN_VIEW:       { icon: 'bi-triangle-fill',        it: 'Vista montagna',       en: 'Mountain view',      de: 'Bergblick',            pl: 'Widok na góry' },
+  SITTING_AREA:        { icon: 'bi-house-door-fill',      it: 'Area salotto',         en: 'Sitting area',       de: 'Sitzbereich',          pl: 'Strefa wypoczynku' },
+  LANAI_GAZEBO_COVERED:{ icon: 'bi-house-fill',           it: 'Gazebo coperto',       en: 'Covered gazebo',     de: 'Überdachte Terrasse',  pl: 'Altana' },
+  WHEELCHAIR_YES:      { icon: 'bi-universal-access',     it: 'Accessibile',          en: 'Wheelchair accessible',de: 'Rollstuhlgerecht',   pl: 'Dostępny' },
+  CHILDREN_WELCOME:    { icon: 'bi-emoji-smile',          it: 'Bambini benvenuti',    en: 'Children welcome',   de: 'Kinder willkommen',    pl: 'Dzieci mile widziane' },
+  PETS_NOT_ALLOWED:    { icon: 'bi-dash-circle',          it: 'Animali non ammessi',  en: 'No pets',            de: 'Keine Haustiere',      pl: 'Zakaz zwierząt' },
+  SMOKING_NOT_ALLOWED: { icon: 'bi-slash-circle',         it: 'Non fumatori',         en: 'No smoking',         de: 'Nichtraucher',         pl: 'Zakaz palenia' },
+  LONG_TERM_RENTERS:   { icon: 'bi-calendar-range',       it: 'Soggiorni lunghi ok',  en: 'Long stays welcome', de: 'Langzeitmiete möglich',pl: 'Długie pobyty ok' },
 };
 
-// Feature codes per property
 const PROPERTY_FEATURES: Record<number, string[]> = {
   46487: ['AIR_CONDITIONING','HEATING','HAIR_DRYER','WASHER','PARKING_INCLUDED','TV','WIFI','MICROWAVE','KITCHEN_DINING_ROOM','FREEZER','OVEN','STOVE','HIGHCHAIR','COFFEE_MAKER','SWIMMING','KETTLE','TOASTER','DISHES_UTENSILS','CHILDREN_WELCOME','PETS_NOT_ALLOWED','SMOKING_NOT_ALLOWED'],
   46871: ['PARKING_INCLUDED','WIFI','BEACH','AIR_CONDITIONING','HEATING','WASHER','DISHWASHER','MICROWAVE','TV','HAIR_DRYER','REFRIGERATOR','KITCHEN','DISHES_UTENSILS','PETS_NOT_ALLOWED','SMOKING_NOT_ALLOWED'],
@@ -111,17 +110,16 @@ async function getRoomDescription(propId: number, roomId: number, lang: string):
   }
 }
 
-// Etichette con singolare/plurale per IT
 const LABELS: Record<string, Record<string, string>> = {
   it: {
     bedroom: 'camera',  bedrooms: 'camere',
     bathroom: 'bagno',  bathrooms: 'bagni',
     guest: 'ospite',    maxPeople: 'ospiti', sqm: 'mq',
     floorGround: 'Piano terra', floor: 'Piano',
-    privatePool: '🏊 Piscina privata', sharedPool: '🌊 Piscina condivisa', noPool: '🏖️ 250m dal mare',
+    privatePool: 'Piscina privata', sharedPool: 'Piscina condivisa', noPool: '250m dal mare',
     services: 'Servizi', description: 'La residenza',
     checkIn: 'Check-in', checkOut: 'Check-out',
-    prenota: 'Prenota ora', back: '← Torna alle Residenze',
+    prenota: 'Prenota ora', back: 'Residenze', breadcrumbHome: 'Home',
     deposit: 'Deposito cauzionale', depositText: 'Richiesto al check-in con Carta di Credito (no Debit Card) · Rimborsato alla partenza',
   },
   en: {
@@ -129,10 +127,10 @@ const LABELS: Record<string, Record<string, string>> = {
     bathroom: 'bathroom', bathrooms: 'bathrooms',
     guest: 'guest',     maxPeople: 'guests', sqm: 'sqm',
     floorGround: 'Ground floor', floor: 'Floor',
-    privatePool: '🏊 Private pool', sharedPool: '🌊 Shared pool', noPool: '🏖️ 250m from sea',
+    privatePool: 'Private pool', sharedPool: 'Shared pool', noPool: '250m from sea',
     services: 'Amenities', description: 'The residence',
     checkIn: 'Check-in', checkOut: 'Check-out',
-    prenota: 'Book now', back: '← Back to Residences',
+    prenota: 'Book now', back: 'Residences', breadcrumbHome: 'Home',
     deposit: 'Security deposit', depositText: 'Required at check-in by Credit Card (no Debit Card) · Refunded at departure',
   },
   de: {
@@ -140,10 +138,10 @@ const LABELS: Record<string, Record<string, string>> = {
     bathroom: 'Bad',          bathrooms: 'Bäder',
     guest: 'Gast',            maxPeople: 'Gäste', sqm: 'qm',
     floorGround: 'Erdgeschoss', floor: 'Etage',
-    privatePool: '🏊 Privater Pool', sharedPool: '🌊 Gemeinschaftspool', noPool: '🏖️ 250m vom Meer',
+    privatePool: 'Privater Pool', sharedPool: 'Gemeinschaftspool', noPool: '250m vom Meer',
     services: 'Ausstattung', description: 'Die Residenz',
     checkIn: 'Check-in', checkOut: 'Check-out',
-    prenota: 'Jetzt buchen', back: '← Zurück zu den Residenzen',
+    prenota: 'Jetzt buchen', back: 'Residenzen', breadcrumbHome: 'Startseite',
     deposit: 'Kaution', depositText: 'Beim Check-in per Kreditkarte (keine Debitkarte) · Bei Abreise zurückerstattet',
   },
   pl: {
@@ -151,15 +149,14 @@ const LABELS: Record<string, Record<string, string>> = {
     bathroom: 'łazienka', bathrooms: 'łazienki',
     guest: 'osoba',       maxPeople: 'gości', sqm: 'mkw',
     floorGround: 'Parter', floor: 'Piętro',
-    privatePool: '🏊 Prywatny basen', sharedPool: '🌊 Wspólny basen', noPool: '🏖️ 250m od morza',
+    privatePool: 'Prywatny basen', sharedPool: 'Wspólny basen', noPool: '250m od morza',
     services: 'Udogodnienia', description: 'Rezydencja',
     checkIn: 'Check-in', checkOut: 'Check-out',
-    prenota: 'Zarezerwuj', back: '← Wróć do Rezydencji',
+    prenota: 'Zarezerwuj', back: 'Rezydencje', breadcrumbHome: 'Strona główna',
     deposit: 'Kaucja', depositText: 'Wymagana przy zameldowaniu kartą kredytową (bez kart debetowych) · Zwracana przy wyjeździe',
   },
 };
 
-// Helper: singolare o plurale
 function plLabel(t: Record<string, string>, singular: string, plural: string, count: number): string {
   return count === 1 ? (t[singular] ?? '') : (t[plural] ?? '');
 }
@@ -176,7 +173,6 @@ export default async function RoomPage({ params }: Props) {
 
   const t = LABELS[locale] ?? LABELS.it;
 
-  // Carica foto e descrizione in parallelo
   const [photos, description] = await Promise.all([
     getRoomPhotos(room.cloudinaryFolder),
     getRoomDescription(property.propertyId, room.roomId, locale),
@@ -184,58 +180,67 @@ export default async function RoomPage({ params }: Props) {
 
   const floorLabel = room.floor === 0 ? t.floorGround : `${t.floor} ${room.floor}`;
   const poolLabel = room.privatePool ? t.privatePool : room.sharedPool ? t.sharedPool : t.noPool;
+  const poolIcon = room.privatePool || room.sharedPool ? 'bi-water' : 'bi-umbrella-fill';
 
   const featureCodes = PROPERTY_FEATURES[property.propertyId] ?? [];
 
   return (
-    <main style={{ maxWidth: 1100, margin: '0 auto', padding: '20px 16px 120px' }}>
+    <main className="container pb-5" style={{ maxWidth: 1100, paddingTop: 20, paddingBottom: 120 }}>
 
-      {/* Back link */}
-      <Link href={`/${locale}/residenze`} style={{ color: '#1E73BE', fontSize: 14, textDecoration: 'none', display: 'inline-block', marginBottom: 12 }}>
-        {t.back}
-      </Link>
+      {/* Breadcrumb — UX 3.7 */}
+      <nav aria-label="breadcrumb" className="mb-3">
+        <ol className="breadcrumb small mb-0">
+          <li className="breadcrumb-item">
+            <Link href={`/${locale}`} className="text-decoration-none">{t.breadcrumbHome}</Link>
+          </li>
+          <li className="breadcrumb-item">
+            <Link href={`/${locale}/residenze`} className="text-decoration-none">{t.back}</Link>
+          </li>
+          <li className="breadcrumb-item active" aria-current="page">{room.name}</li>
+        </ol>
+      </nav>
 
       {/* Titolo */}
-      <h1 style={{ fontSize: 26, fontWeight: 800, color: '#222', margin: '0 0 4px' }}>
+      <h1 className="fw-bold mb-1" style={{ fontSize: 26, color: '#222' }}>
         {room.name}
       </h1>
-      <div style={{ fontSize: 14, color: '#888', marginBottom: 16 }}>
+      <div className="small text-muted mb-3">
         {property.distanceLabel} · {floorLabel}
       </div>
 
-      {/* Foto — edge-to-edge su mobile, normale su desktop */}
+      {/* Foto — edge-to-edge su mobile */}
       <div className="photo-carousel-wrapper">
         <PhotoCarousel photos={photos} roomName={room.name} slug={room.slug} locale={locale} />
       </div>
 
-      {/* Caratteristiche principali */}
-      <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', padding: '14px 0', borderTop: '1px solid #eee', borderBottom: '1px solid #eee', marginBottom: 20 }}>
-        <div style={statStyle}>
-          <span style={statNumStyle}>{room.bedrooms}</span>
-          <span style={statLabelStyle}>{plLabel(t, 'bedroom', 'bedrooms', room.bedrooms)}</span>
-        </div>
-        <div style={statStyle}>
-          <span style={statNumStyle}>{room.bathrooms}</span>
-          <span style={statLabelStyle}>{plLabel(t, 'bathroom', 'bathrooms', room.bathrooms)}</span>
-        </div>
-        <div style={statStyle}>
-          <span style={statNumStyle}>{room.maxPeople}</span>
-          <span style={statLabelStyle}>{plLabel(t, 'guest', 'maxPeople', room.maxPeople)}</span>
-        </div>
-        <div style={statStyle}>
-          <span style={statNumStyle}>{room.sqm}</span>
-          <span style={statLabelStyle}>{t.sqm}</span>
-        </div>
-        <div style={statStyle}>
-          <span style={{ fontSize: 16 }}>{poolLabel}</span>
-        </div>
+      {/* Caratteristiche principali — card row UX 3.7 */}
+      <div className="row g-2 mb-4">
+        {[
+          { icon: 'bi-door-closed-fill', num: room.bedrooms,  label: plLabel(t, 'bedroom',  'bedrooms',  room.bedrooms) },
+          { icon: 'bi-droplet-fill',     num: room.bathrooms, label: plLabel(t, 'bathroom', 'bathrooms', room.bathrooms) },
+          { icon: 'bi-people-fill',      num: room.maxPeople, label: plLabel(t, 'guest',    'maxPeople', room.maxPeople) },
+          { icon: 'bi-aspect-ratio',     num: room.sqm,       label: t.sqm },
+          { icon: poolIcon,              num: null,           label: poolLabel },
+        ].map((stat, i) => (
+          <div key={i} className="col-6 col-md">
+            <div className="card h-100 border-0 bg-light">
+              <div className="card-body text-center p-2">
+                <i className={`bi ${stat.icon} fs-3 text-primary d-block mb-1`}></i>
+                {stat.num !== null && (
+                  <div className="fw-bold text-primary" style={{ fontSize: 20 }}>{stat.num}</div>
+                )}
+                <div className="small text-muted">{stat.label}</div>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Descrizione */}
       {description && (
-        <div style={{ marginBottom: 20 }}>
-          <h2 style={sectionTitleStyle}>{t.description}</h2>
-          <p style={{ fontSize: 15, lineHeight: 1.7, color: '#444', whiteSpace: 'pre-line' }}>
+        <div className="mb-4">
+          <h2 className="fs-4 fw-bold mb-3">{t.description}</h2>
+          <p className="text-secondary" style={{ lineHeight: 1.7, whiteSpace: 'pre-line' }}>
             {description}
           </p>
         </div>
@@ -244,17 +249,17 @@ export default async function RoomPage({ params }: Props) {
       {/* Dove dormirete */}
       <BedConfigDisplay roomId={room.roomId} locale={locale} />
 
-      {/* Servizi */}
-      <div style={{ marginBottom: 20 }}>
-        <h2 style={sectionTitleStyle}>{t.services}</h2>
+      {/* Servizi — Bootstrap grid with bi-* icons UX 3.4 */}
+      <div className="mb-4">
+        <h2 className="fs-4 fw-bold mb-3">{t.services}</h2>
         <div className="services-grid">
           {featureCodes.map((code) => {
             const feature = FEATURE_LABELS[code];
             if (!feature) return null;
             return (
-              <div key={code} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, color: '#333', padding: '5px 0' }}>
-                <span style={{ fontSize: 20, flexShrink: 0 }}>{feature.icon}</span>
-                <span style={{ lineHeight: 1.3 }}>{feature[locale as keyof typeof feature] ?? feature.it}</span>
+              <div key={code} className="d-flex align-items-center gap-2 py-1" style={{ fontSize: 14 }}>
+                <i className={`bi ${feature.icon} text-primary flex-shrink-0`} style={{ fontSize: 18 }}></i>
+                <span className="lh-sm">{feature[locale as keyof typeof feature] ?? feature.it}</span>
               </div>
             );
           })}
@@ -262,7 +267,7 @@ export default async function RoomPage({ params }: Props) {
       </div>
 
       {/* Mappa */}
-      <div style={{ marginBottom: 20 }}>
+      <div className="mb-4">
         <PropertyMap
           latitude={property.latitude}
           longitude={property.longitude}
@@ -271,8 +276,8 @@ export default async function RoomPage({ params }: Props) {
         />
       </div>
 
-      {/* Cose da sapere */}
-      <div style={{ marginBottom: 20 }}>
+      {/* Cose da sapere — accordion UX 3.7 */}
+      <div className="mb-4">
         <ThingsToKnow
           locale={locale}
           checkInStart={property.propertyId === 46487 ? '16:00' : '16:00'}
@@ -282,7 +287,7 @@ export default async function RoomPage({ params }: Props) {
         />
       </div>
 
-      {/* Calendario disponibilità + BookingPanel — anchor per sticky */}
+      {/* Calendario + BookingPanel */}
       <div id="booking-panel">
         <AvailabilityCalendar
           roomId={room.roomId}
@@ -306,16 +311,3 @@ export default async function RoomPage({ params }: Props) {
     </main>
   );
 }
-
-const statStyle: React.CSSProperties = {
-  display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 52,
-};
-const statNumStyle: React.CSSProperties = {
-  fontSize: 20, fontWeight: 800, color: '#1E73BE',
-};
-const statLabelStyle: React.CSSProperties = {
-  fontSize: 11, color: '#888', marginTop: 2,
-};
-const sectionTitleStyle: React.CSSProperties = {
-  fontSize: 18, fontWeight: 700, color: '#222', marginBottom: 14,
-};
