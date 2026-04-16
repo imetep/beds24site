@@ -2,23 +2,18 @@
 
 type Locale = 'it' | 'en' | 'de' | 'pl';
 
-// ─── Traduzioni ────────────────────────────────────────────────────────────────
 const T: Record<Locale, {
   hero_title: string;
   hero_sub: string;
   legal_note: string;
-  // Sezione 1 — Quali animali
   s1_title: string;
   s1_items: string[];
-  // Sezione 2 — Comportamento e responsabilità
   s2_title: string;
   s2_items: string[];
-  // Sezione 3 — Deposito cauzionale
   s3_title: string;
   s3_text: string;
   s3_link: string;
   s3_href: string;
-  // Tariffe
   rates_title: string;
   rates_note: string;
   rate_1_3: string;
@@ -26,14 +21,10 @@ const T: Record<Locale, {
   rate_8plus: string;
   nights_label: string;
   price_label: string;
-  // Firma
   sign_title: string;
   sign_text: string;
-  // Numero massimo
   max_label: string;
 }> = {
-
-  // ── ITALIANO ──────────────────────────────────────────────────────────────────
   it: {
     hero_title: 'I vostri amici a 4 zampe sono benvenuti',
     hero_sub: 'Abbiamo pensato a tutto per rendere il soggiorno piacevole per voi e per loro. Leggi le regole qui sotto — ci eviteremo incomprensioni.',
@@ -70,8 +61,6 @@ const T: Record<Locale, {
     sign_text: 'Al momento del check-in sarà richiesta la firma del presente regolamento. La firma costituisce accettazione di tutte le condizioni indicate.',
     max_label: 'max 15 kg',
   },
-
-  // ── ENGLISH ───────────────────────────────────────────────────────────────────
   en: {
     hero_title: 'Your four-legged friends are welcome',
     hero_sub: 'We have thought of everything to make the stay enjoyable for you and your pet. Please read the rules below to avoid any misunderstandings.',
@@ -108,8 +97,6 @@ const T: Record<Locale, {
     sign_text: 'At check-in, guests will be asked to sign this policy. Signing constitutes acceptance of all the conditions set out herein.',
     max_label: 'max 15 kg',
   },
-
-  // ── DEUTSCH ───────────────────────────────────────────────────────────────────
   de: {
     hero_title: 'Ihre Vierbeiner sind herzlich willkommen',
     hero_sub: 'Wir haben an alles gedacht, um den Aufenthalt für Sie und Ihr Tier angenehm zu gestalten. Bitte lesen Sie die folgenden Regeln, um Missverständnisse zu vermeiden.',
@@ -146,8 +133,6 @@ const T: Record<Locale, {
     sign_text: 'Beim Check-in werden die Gäste gebeten, diese Hausordnung zu unterzeichnen. Die Unterzeichnung bedeutet die Akzeptanz aller darin aufgeführten Bedingungen.',
     max_label: 'max. 15 kg',
   },
-
-  // ── POLSKI ────────────────────────────────────────────────────────────────────
   pl: {
     hero_title: 'Wasze czworonożne przyjaciela są mile widziane',
     hero_sub: 'Zadbaliśmy o wszystko, aby pobyt był przyjemny zarówno dla Was, jak i dla zwierząt. Proszę zapoznać się z poniższym regulaminem, aby uniknąć nieporozumień.',
@@ -186,108 +171,101 @@ const T: Record<Locale, {
   },
 };
 
-// ─── Dati tariffe ──────────────────────────────────────────────────────────
 const RATES = (t: typeof T['it']) => [
   { nights: '1 – 3', price: t.rate_1_3 },
   { nights: '4 – 7', price: t.rate_4_7 },
   { nights: '8+',    price: t.rate_8plus },
 ];
 
-// ─── Componente principale ──────────────────────────────────────────────────
 export default function AnimaliClient({ locale }: { locale: Locale }) {
   const t = T[locale];
 
   return (
-    <div style={{ maxWidth: 820, margin: '0 auto', padding: '0 1.25rem 4rem' }}>
+    <div className="container pb-5" style={{ maxWidth: 820 }}>
 
-      {/* ── Hero ──────────────────────────────────────────────────────────── */}
-      <section style={{ textAlign: 'center', padding: '3.5rem 0 2.5rem' }}>
-        <div style={{ fontSize: '3rem', marginBottom: '0.75rem' }}>🐾</div>
-        <h1 style={{
-          fontSize: 'clamp(1.5rem, 4vw, 2.2rem)',
-          fontWeight: 700,
-          color: '#1E73BE',
-          marginBottom: '0.75rem',
-          lineHeight: 1.3,
-        }}>
+      {/* Hero */}
+      <section className="text-center py-5">
+        <div className="display-3 mb-2">🐾</div>
+        <h1 className="fw-bold text-primary mb-2" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.2rem)', lineHeight: 1.3 }}>
           {t.hero_title}
         </h1>
-        <p style={{ fontSize: '1rem', color: '#6b7280', maxWidth: 560, margin: '0 auto 1rem' }}>
+        <p className="text-secondary mx-auto mb-2" style={{ maxWidth: 560 }}>
           {t.hero_sub}
         </p>
-        <p style={{ fontSize: '0.78rem', color: '#9ca3af', maxWidth: 560, margin: '0 auto', fontStyle: 'italic' }}>
+        <p className="text-muted fst-italic mx-auto small" style={{ maxWidth: 560 }}>
           {t.legal_note}
         </p>
       </section>
 
-      {/* ── 3 Sezioni card ────────────────────────────────────────────────── */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '2.5rem' }}>
+      {/* 3 Sezioni card */}
+      <div className="d-flex flex-column gap-4 mb-5">
 
         {/* Card 1 — Quali animali */}
-        <div style={cardStyle}>
-          <h2 style={cardTitleStyle}>🐕 {t.s1_title}</h2>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-            <span style={{
-              background: '#FCAF1A',
-              color: '#111',
-              fontWeight: 700,
-              fontSize: '0.8rem',
-              padding: '0.25rem 0.75rem',
-              borderRadius: 20,
-            }}>
-              {t.max_label}
-            </span>
+        <div className="card">
+          <div className="card-body p-4">
+            <h2 className="fw-semibold text-primary fs-5 mb-3">🐕 {t.s1_title}</h2>
+            <div className="mb-2">
+              <span className="badge rounded-pill bg-warning text-dark fw-bold">{t.max_label}</span>
+            </div>
+            <ul className="ps-3 mb-0">
+              {t.s1_items.map((item, i) => (
+                <li key={i} className="mb-2 text-secondary lh-base">{item}</li>
+              ))}
+            </ul>
           </div>
-          <ul style={listStyle}>
-            {t.s1_items.map((item, i) => (
-              <li key={i} style={listItemStyle}>{item}</li>
-            ))}
-          </ul>
         </div>
 
         {/* Card 2 — Comportamento */}
-        <div style={cardStyle}>
-          <h2 style={cardTitleStyle}>📋 {t.s2_title}</h2>
-          <ul style={listStyle}>
-            {t.s2_items.map((item, i) => (
-              <li key={i} style={listItemStyle}>{item}</li>
-            ))}
-          </ul>
+        <div className="card">
+          <div className="card-body p-4">
+            <h2 className="fw-semibold text-primary fs-5 mb-3">📋 {t.s2_title}</h2>
+            <ul className="ps-3 mb-0">
+              {t.s2_items.map((item, i) => (
+                <li key={i} className="mb-2 text-secondary lh-base">{item}</li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         {/* Card 3 — Deposito */}
-        <div style={{ ...cardStyle, borderColor: '#1E73BE', borderWidth: 1.5 }}>
-          <h2 style={cardTitleStyle}>💳 {t.s3_title}</h2>
-          <p style={{ margin: 0, color: '#374151', lineHeight: 1.6, fontSize: '0.95rem' }}>
-            {t.s3_text}
-          </p>
-          <a href={t.s3_href} target="_blank" rel="noopener noreferrer"
-            style={{ display: 'inline-block', marginTop: 8, fontSize: '0.82rem', color: '#1E73BE', textDecoration: 'none', fontWeight: 600 }}>
-            {t.s3_link}
-          </a>
+        <div className="card border-primary" style={{ borderWidth: 1.5 }}>
+          <div className="card-body p-4">
+            <h2 className="fw-semibold text-primary fs-5 mb-3">💳 {t.s3_title}</h2>
+            <p className="text-secondary lh-base mb-2">
+              {t.s3_text}
+            </p>
+            <a
+              href={t.s3_href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="d-inline-block fw-semibold text-primary text-decoration-none small mt-2"
+            >
+              {t.s3_link}
+            </a>
+          </div>
         </div>
 
       </div>
 
-      {/* ── Tabella tariffe ────────────────────────────────────────────────── */}
-      <section style={{ marginBottom: '2.5rem' }}>
-        <h2 style={sectionTitleStyle}>{t.rates_title}</h2>
-        <p style={{ color: '#6b7280', marginBottom: '1rem', fontSize: '0.9rem' }}>
+      {/* Tabella tariffe */}
+      <section className="mb-5">
+        <h2 className="fw-bold text-primary fs-4 mb-2">{t.rates_title}</h2>
+        <p className="text-secondary mb-3">
           {t.rates_note}
         </p>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.95rem' }}>
+        <div className="table-responsive">
+          <table className="table">
             <thead>
               <tr>
-                <th style={thStyle}>{t.nights_label}</th>
-                <th style={thStyle}>{t.price_label}</th>
+                <th className="bg-primary text-white fw-semibold">{t.nights_label}</th>
+                <th className="bg-primary text-white fw-semibold">{t.price_label}</th>
               </tr>
             </thead>
             <tbody>
               {RATES(t).map((row, i) => (
-                <tr key={i} style={{ background: i % 2 === 0 ? '#f9fafb' : 'white' }}>
-                  <td style={tdStyle}>🌙 {row.nights} notti</td>
-                  <td style={{ ...tdStyle, fontWeight: 600, color: '#1E73BE' }}>{row.price}</td>
+                <tr key={i} className={i % 2 === 0 ? 'table-light' : ''}>
+                  <td className="text-secondary">🌙 {row.nights} notti</td>
+                  <td className="fw-semibold text-primary">{row.price}</td>
                 </tr>
               ))}
             </tbody>
@@ -295,35 +273,20 @@ export default function AnimaliClient({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      {/* ── Firma ─────────────────────────────────────────────────────────── */}
-      <section style={{
-        background: '#f9fafb',
-        border: '1px solid #e5e7eb',
-        borderRadius: 10,
-        padding: '1.25rem',
-        marginBottom: '2rem',
-      }}>
-        <h3 style={{ margin: '0 0 0.5rem', fontSize: '1rem', color: '#374151' }}>
-          ✍️ {t.sign_title}
-        </h3>
-        <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280', lineHeight: 1.6 }}>
+      {/* Firma */}
+      <section className="bg-light border rounded-3 p-4 mb-4">
+        <h3 className="fs-6 text-secondary mb-2">✍️ {t.sign_title}</h3>
+        <p className="small text-secondary lh-base mb-0">
           {t.sign_text}
         </p>
-        <div style={{
-          marginTop: '1.25rem',
-          borderTop: '1px solid #d1d5db',
-          paddingTop: '1rem',
-          display: 'flex',
-          alignItems: 'flex-end',
-          gap: '2rem',
-        }}>
-          <div style={{ flex: 1 }}>
-            <p style={{ margin: 0, fontSize: '0.78rem', color: '#9ca3af' }}>Data</p>
-            <div style={{ borderBottom: '1px solid #9ca3af', height: 24 }} />
+        <div className="d-flex gap-4 align-items-end border-top mt-4 pt-3">
+          <div className="flex-fill">
+            <p className="small text-muted mb-0">Data</p>
+            <div className="border-bottom" style={{ height: 24 }} />
           </div>
           <div style={{ flex: 2 }}>
-            <p style={{ margin: 0, fontSize: '0.78rem', color: '#9ca3af' }}>Firma</p>
-            <div style={{ borderBottom: '1px solid #9ca3af', height: 24 }} />
+            <p className="small text-muted mb-0">Firma</p>
+            <div className="border-bottom" style={{ height: 24 }} />
           </div>
         </div>
       </section>
@@ -331,52 +294,3 @@ export default function AnimaliClient({ locale }: { locale: Locale }) {
     </div>
   );
 }
-
-// ─── Stili ─────────────────────────────────────────────────────────────────
-const cardStyle: React.CSSProperties = {
-  background: 'white',
-  border: '1px solid #e5e7eb',
-  borderRadius: 10,
-  padding: '1.5rem',
-};
-
-const cardTitleStyle: React.CSSProperties = {
-  fontSize: '1.1rem',
-  fontWeight: 600,
-  color: '#1E73BE',
-  marginBottom: '1rem',
-};
-
-const sectionTitleStyle: React.CSSProperties = {
-  fontSize: '1.2rem',
-  fontWeight: 700,
-  color: '#1E73BE',
-  marginBottom: '0.5rem',
-};
-
-const listStyle: React.CSSProperties = {
-  margin: 0,
-  paddingLeft: '1.2rem',
-};
-
-const listItemStyle: React.CSSProperties = {
-  marginBottom: '0.5rem',
-  fontSize: '0.92rem',
-  color: '#374151',
-  lineHeight: 1.55,
-};
-
-const thStyle: React.CSSProperties = {
-  background: '#1E73BE',
-  color: 'white',
-  padding: '0.6rem 1rem',
-  textAlign: 'left',
-  fontWeight: 600,
-  fontSize: '0.875rem',
-};
-
-const tdStyle: React.CSSProperties = {
-  padding: '0.65rem 1rem',
-  color: '#374151',
-  borderBottom: '1px solid #e5e7eb',
-};
