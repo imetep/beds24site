@@ -1,6 +1,5 @@
 'use client';
 import { CIN, CIR } from '@/config/properties';
-
 import { useState } from 'react';
 
 interface Props {
@@ -30,8 +29,7 @@ const LABELS: Record<string, Record<string, string>> = {
     rulesTitle: 'Regole della casa',
     noPets: '🐾 Animali non ammessi',
     noSmoking: '🚭 Vietato fumare',
-    showMore: 'Mostra tutto ▼',
-    showLess: 'Chiudi ▲',
+    within: 'entro le',
   },
   en: {
     title: 'Info & important details',
@@ -51,8 +49,7 @@ const LABELS: Record<string, Record<string, string>> = {
     rulesTitle: 'House rules',
     noPets: '🐾 No pets allowed',
     noSmoking: '🚭 No smoking',
-    showMore: 'Show all ▼',
-    showLess: 'Close ▲',
+    within: 'by',
   },
   de: {
     title: 'Infos & wichtige Details',
@@ -72,8 +69,7 @@ const LABELS: Record<string, Record<string, string>> = {
     rulesTitle: 'Hausregeln',
     noPets: '🐾 Keine Haustiere',
     noSmoking: '🚭 Nichtraucher',
-    showMore: 'Alles anzeigen ▼',
-    showLess: 'Schließen ▲',
+    within: 'bis',
   },
   pl: {
     title: 'Informacje i ważne szczegóły',
@@ -93,8 +89,7 @@ const LABELS: Record<string, Record<string, string>> = {
     rulesTitle: 'Zasady domu',
     noPets: '🐾 Zakaz zwierząt',
     noSmoking: '🚭 Zakaz palenia',
-    showMore: 'Pokaż wszystko ▼',
-    showLess: 'Zamknij ▲',
+    within: 'do',
   },
 };
 
@@ -103,89 +98,76 @@ export default function ThingsToKnow({ locale, checkInStart, checkInEnd, checkOu
   const t = LABELS[locale] ?? LABELS.it;
 
   return (
-    <div style={{
-      border: '1px solid #e0e0e0',
-      borderRadius: 16,
-      overflow: 'hidden',
-      marginBottom: 32,
-    }}>
+    <div className="card overflow-hidden mb-4" style={{ borderRadius: 16 }}>
 
-      {/* Header — sempre visibile */}
+      {/* Header colored #1E73BE — UX 3.7 */}
       <button
+        type="button"
         onClick={() => setOpen(!open)}
-        style={{
-          width: '100%',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '18px 20px',
-          background: '#4A9FD4',
-          border: 'none',
-          cursor: 'pointer',
-          fontSize: 17,
-          fontWeight: 700,
-          color: '#fff',
-        }}
+        className="d-flex justify-content-between align-items-center w-100 fw-bold px-3 py-3 border-0 text-white"
+        style={{ background: '#1E73BE', fontSize: 17 }}
+        aria-expanded={open}
       >
-        <span>ℹ️ {t.title}</span>
-        <span style={{ fontSize: 13, color: '#fff', fontWeight: 600 }}>
-          {open ? t.showLess : t.showMore}
+        <span>
+          <i className="bi bi-info-circle-fill me-2"></i>{t.title}
         </span>
+        <i className={`bi ${open ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
       </button>
 
       {/* Contenuto espandibile */}
       {open && (
-        <div style={{ borderTop: '1px solid #f0f0f0', padding: '20px' }}>
+        <div className="p-3 border-top">
 
           {/* Check-in/out */}
-          <div style={sectionStyle}>
-            <div style={sectionTitleStyle}>🕐 {t.checkInTitle}</div>
-            <div style={rowStyle}>
-              <span style={labelStyle}>{t.checkIn}</span>
-              <span style={valueStyle}>{checkInStart} – {checkInEnd}</span>
+          <div className="pb-3 mb-3 border-bottom">
+            <div className="fw-bold mb-2"><i className="bi bi-clock me-1"></i> {t.checkInTitle}</div>
+            <div className="d-flex justify-content-between small mb-1">
+              <span className="text-muted">{t.checkIn}</span>
+              <span className="fw-semibold">{checkInStart} – {checkInEnd}</span>
             </div>
-            <div style={rowStyle}>
-              <span style={labelStyle}>{t.checkOut}</span>
-              <span style={valueStyle}>entro le {checkOutEnd}</span>
+            <div className="d-flex justify-content-between small">
+              <span className="text-muted">{t.checkOut}</span>
+              <span className="fw-semibold">{t.within} {checkOutEnd}</span>
             </div>
           </div>
 
           {/* Deposito */}
-          <div style={sectionStyle}>
-            <div style={sectionTitleStyle}>💳 {t.depositTitle}: €{securityDeposit}</div>
-            <p style={textStyle}>{t.depositText}</p>
-            <a href={t.depositHref} target="_blank" rel="noopener noreferrer" style={linkStyle}>{t.depositLink}</a>
+          <div className="pb-3 mb-3 border-bottom">
+            <div className="fw-bold mb-2">
+              <i className="bi bi-shield-lock-fill me-1"></i> {t.depositTitle}: €{securityDeposit}
+            </div>
+            <p className="small text-secondary mb-1" style={{ lineHeight: 1.6 }}>{t.depositText}</p>
+            <a href={t.depositHref} target="_blank" rel="noopener noreferrer" className="small text-primary text-decoration-none">{t.depositLink}</a>
           </div>
 
           {/* Consumi */}
-          <div style={sectionStyle}>
-            <div style={sectionTitleStyle}>⚡ {t.energyTitle}</div>
-            <p style={textStyle}>{t.energyText}</p>
-            <a href={t.energyHref} target="_blank" rel="noopener noreferrer" style={linkStyle}>{t.energyLink}</a>
+          <div className="pb-3 mb-3 border-bottom">
+            <div className="fw-bold mb-2">
+              <i className="bi bi-lightning-fill me-1"></i> {t.energyTitle}
+            </div>
+            <p className="small text-secondary mb-1" style={{ lineHeight: 1.6 }}>{t.energyText}</p>
+            <a href={t.energyHref} target="_blank" rel="noopener noreferrer" className="small text-primary text-decoration-none">{t.energyLink}</a>
           </div>
 
           {/* Imposta di soggiorno */}
-          <div style={sectionStyle}>
-            <div style={sectionTitleStyle}>🏛️ {t.taxTitle}</div>
-            <p style={textStyle}>{t.taxText}</p>
+          <div className="pb-3 mb-3 border-bottom">
+            <div className="fw-bold mb-2">
+              <i className="bi bi-bank2 me-1"></i> {t.taxTitle}
+            </div>
+            <p className="small text-secondary mb-0" style={{ lineHeight: 1.6 }}>{t.taxText}</p>
           </div>
 
           {/* Regole */}
-          <div style={sectionStyle}>
-            <div style={sectionTitleStyle}>📋 {t.rulesTitle}</div>
-            <div style={{ fontSize: 14, color: '#444', marginTop: 6 }}>{t.noPets}</div>
-            <div style={{ fontSize: 14, color: '#444', marginTop: 4 }}>{t.noSmoking}</div>
+          <div className="pb-3 mb-3 border-bottom">
+            <div className="fw-bold mb-2">
+              <i className="bi bi-card-list me-1"></i> {t.rulesTitle}
+            </div>
+            <div className="small text-secondary">{t.noPets}</div>
+            <div className="small text-secondary">{t.noSmoking}</div>
           </div>
 
           {/* CIN / CIR */}
-          <div style={{
-            fontSize: 12, fontWeight: 600,
-            color: '#555',
-            background: '#f5f5f5',
-            borderRadius: 8,
-            padding: '10px 14px',
-            letterSpacing: '0.2px',
-          }}>
+          <div className="bg-light rounded-3 px-3 py-2 small fw-semibold text-secondary">
             CIN {CIN} &nbsp;·&nbsp; CIR {CIR}
           </div>
 
@@ -194,36 +176,3 @@ export default function ThingsToKnow({ locale, checkInStart, checkInEnd, checkOu
     </div>
   );
 }
-
-const linkStyle: React.CSSProperties = { display: 'inline-block', marginTop: 4, fontSize: 12, color: '#1E73BE', textDecoration: 'none' };
-
-const sectionStyle: React.CSSProperties = {
-  paddingBottom: 16,
-  marginBottom: 16,
-  borderBottom: '1px solid #f5f5f5',
-};
-const sectionTitleStyle: React.CSSProperties = {
-  fontSize: 15,
-  fontWeight: 700,
-  color: '#222',
-  marginBottom: 8,
-};
-const rowStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  fontSize: 14,
-  marginBottom: 4,
-};
-const labelStyle: React.CSSProperties = {
-  color: '#888',
-};
-const valueStyle: React.CSSProperties = {
-  fontWeight: 600,
-  color: '#333',
-};
-const textStyle: React.CSSProperties = {
-  fontSize: 14,
-  color: '#555',
-  lineHeight: 1.6,
-  margin: 0,
-};
