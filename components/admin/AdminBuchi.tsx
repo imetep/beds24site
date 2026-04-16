@@ -16,25 +16,10 @@ interface OperativoData {
   lastUpdated:        string;
 }
 
-const card: React.CSSProperties = {
-  background: '#fff', borderRadius: 12,
-  border: '0.5px solid #e5e7eb', padding: '16px 18px', marginBottom: 10,
-};
-const btnSec: React.CSSProperties = {
-  padding: '8px 14px', fontSize: 13,
-  background: 'none', color: '#6b7280',
-  border: '0.5px solid #d1d5db', borderRadius: 8, cursor: 'pointer',
-};
-const btnG: React.CSSProperties = {
-  padding: '10px 20px', fontSize: 14, fontWeight: 700,
-  background: '#16a34a', color: '#fff', border: 'none',
-  borderRadius: 8, cursor: 'pointer',
-};
-
-function colorNotti(n: number): { bg: string; color: string } {
-  if (n <= 2) return { bg: '#FEE2E2', color: '#7f1d1d' };
-  if (n <= 4) return { bg: '#FEF3C7', color: '#78350f' };
-  return { bg: '#FEF9C3', color: '#713f12' };
+function colorNotti(n: number): string {
+  if (n <= 2) return 'bg-danger-subtle text-danger-emphasis';
+  if (n <= 4) return 'bg-warning-subtle text-warning-emphasis';
+  return 'bg-warning-subtle text-warning-emphasis';
 }
 
 function fmtDate(iso: string): string {
@@ -60,25 +45,24 @@ function LoginForm({ onLogin }: { onLogin: () => void }) {
   }
 
   return (
-    <div style={{ maxWidth: 360, margin: '80px auto', padding: '0 20px' }}>
-      <div style={{ ...card, padding: '28px 24px' }}>
-        <p style={{ margin: '0 0 6px', fontSize: 20, fontWeight: 700, color: '#111' }}>🔒 Admin</p>
-        <p style={{ margin: '0 0 20px', fontSize: 14, color: '#6b7280' }}>Pannello buchi</p>
-        <input
-          type="password" placeholder="Password"
-          value={pwd} onChange={e => setPwd(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && login()}
-          style={{
-            width: '100%', padding: '10px 12px', fontSize: 15,
-            border: '1px solid #d1d5db', borderRadius: 8,
-            marginBottom: 10, boxSizing: 'border-box',
-          }}
-        />
-        {err && <p style={{ fontSize: 13, color: '#dc2626', marginBottom: 8 }}>{err}</p>}
-        <button style={{ ...btnG, width: '100%', opacity: busy ? 0.6 : 1 }}
-          onClick={login} disabled={busy}>
-          {busy ? 'Accesso…' : 'Accedi'}
-        </button>
+    <div className="container" style={{ maxWidth: 360 }}>
+      <div className="card shadow-sm mt-5">
+        <div className="card-body p-4">
+          <p className="fs-4 fw-bold mb-1"><i className="bi bi-lock-fill me-1"></i> Admin</p>
+          <p className="text-muted small mb-3">Pannello buchi</p>
+          <input
+            type="password"
+            className="form-control mb-2"
+            placeholder="Password"
+            value={pwd}
+            onChange={e => setPwd(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && login()}
+          />
+          {err && <p className="small text-danger mb-2">{err}</p>}
+          <button className="btn btn-success fw-bold w-100" onClick={login} disabled={busy}>
+            {busy ? 'Accesso…' : 'Accedi'}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -123,7 +107,7 @@ export default function AdminBuchi() {
     setAuthed(false);
   }
 
-  if (authed === null) return <div style={{ padding: 40, textAlign: 'center', color: '#9ca3af' }}>Caricamento…</div>;
+  if (authed === null) return <div className="text-center text-muted py-5">Caricamento…</div>;
   if (!authed) return <LoginForm onLogin={() => { setAuthed(true); refresh(); }} />;
 
   const buchi = data?.buchi ?? [];
@@ -151,43 +135,34 @@ export default function AdminBuchi() {
     sortDir === 'asc' ? a.notti - b.notti : b.notti - a.notti
   );
 
-  const thStyle = (active: boolean): React.CSSProperties => ({
-    padding: '10px 12px', textAlign: 'left', fontWeight: 600,
-    color: active ? '#1E73BE' : '#6b7280',
-    fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.04em',
-    borderBottom: '1px solid #e5e7eb',
-    cursor: active ? 'pointer' : 'default',
-    userSelect: 'none', whiteSpace: 'nowrap',
-  });
-
   return (
-    <div style={{ maxWidth: 1400, margin: '0 auto', padding: '20px 16px 80px' }}>
+    <div className="container py-4 pb-5" style={{ maxWidth: 1400 }}>
 
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+      <div className="d-flex justify-content-between align-items-center mb-2">
         <div>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: '#111' }}>🕳️ Buchi</h1>
+          <h1 className="h4 fw-bold mb-0"><i className="bi bi-calendar-x-fill me-1"></i> Buchi</h1>
           {data && (
-            <p style={{ margin: '2px 0 0', fontSize: 12, color: '#9ca3af' }}>
+            <p className="small text-muted mb-0">
               {data.totalePrenotazioni} prenotazioni · aggiornato {new Date(data.lastUpdated).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
             </p>
           )}
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <a href="/admin" style={{ ...btnSec, textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>← Admin</a>
-          <button style={btnSec} onClick={refresh} disabled={loading}>{loading ? '…' : '↻ Aggiorna'}</button>
-          <button style={btnSec} onClick={logout}>Esci</button>
+        <div className="d-flex gap-2">
+          <a href="/admin" className="btn btn-outline-secondary btn-sm">← Admin</a>
+          <button className="btn btn-outline-secondary btn-sm" onClick={refresh} disabled={loading}>{loading ? '…' : '↻ Aggiorna'}</button>
+          <button className="btn btn-outline-secondary btn-sm" onClick={logout}>Esci</button>
         </div>
       </div>
 
       {error && (
-        <div style={{ background: '#FEE2E2', border: '0.5px solid #fca5a5', borderRadius: 8, padding: '10px 14px', margin: '12px 0', fontSize: 13, color: '#7f1d1d' }}>
-          ❌ {error}
+        <div className="alert alert-danger py-2 my-3 small">
+          <i className="bi bi-exclamation-circle-fill me-1"></i> {error}
         </div>
       )}
 
       {loading && (
-        <div style={{ padding: '40px', textAlign: 'center', color: '#9ca3af', fontSize: 13 }}>
+        <div className="text-center text-muted py-5 small">
           Caricamento prenotazioni da Beds24…
         </div>
       )}
@@ -195,43 +170,44 @@ export default function AdminBuchi() {
       {data && (
         <>
           {buchi.length === 0 ? (
-            <div style={{ ...card, textAlign: 'center', padding: '40px 20px', marginTop: 16 }}>
-              <p style={{ margin: 0, fontSize: 28 }}>✅</p>
-              <p style={{ margin: '8px 0 0', fontSize: 15, color: '#16a34a', fontWeight: 600 }}>
-                Nessun buco trovato
-              </p>
-              <p style={{ margin: '4px 0 0', fontSize: 13, color: '#9ca3af' }}>
-                Non ci sono finestre libere inferiori a 7 notti nei prossimi 12 mesi.
-              </p>
+            <div className="card mt-3">
+              <div className="card-body text-center py-5">
+                <p className="fs-1 mb-2"><i className="bi bi-check-circle-fill text-success"></i></p>
+                <p className="fs-6 text-success fw-semibold mb-1">Nessun buco trovato</p>
+                <p className="small text-muted mb-0">
+                  Non ci sono finestre libere inferiori a 7 notti nei prossimi 12 mesi.
+                </p>
+              </div>
             </div>
           ) : (
             <>
               {/* Filtri */}
-              <div style={{ display: 'flex', gap: 10, margin: '16px 0', flexWrap: 'wrap', alignItems: 'center' }}>
+              <div className="d-flex gap-2 my-3 flex-wrap align-items-center">
                 <select
+                  className="form-select form-select-sm w-auto"
                   value={filtroMese}
                   onChange={e => setFiltroMese(e.target.value)}
-                  style={{ padding: '7px 12px', fontSize: 13, border: '0.5px solid #d1d5db', borderRadius: 8, background: '#fff', cursor: 'pointer' }}
                 >
                   {mesi.map(m => <option key={m} value={m}>{mesiFmt[m]}</option>)}
                 </select>
 
-                <span style={{ fontSize: 12, color: '#9ca3af', marginLeft: 'auto' }}>
+                <span className="small text-muted ms-auto">
                   {sorted.length} buch{sorted.length === 1 ? 'o' : 'i'}
                 </span>
               </div>
 
               {/* Tabella */}
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                  <thead>
-                    <tr style={{ background: '#f9fafb' }}>
-                      <th style={thStyle(false)}>Property</th>
-                      <th style={thStyle(false)}>Stanza</th>
-                      <th style={thStyle(false)}>Libera dal</th>
-                      <th style={thStyle(false)}>Libera al</th>
+              <div className="table-responsive">
+                <table className="table table-sm align-middle">
+                  <thead className="table-light">
+                    <tr>
+                      <th className="text-uppercase small text-muted">Property</th>
+                      <th className="text-uppercase small text-muted">Stanza</th>
+                      <th className="text-uppercase small text-muted">Libera dal</th>
+                      <th className="text-uppercase small text-muted">Libera al</th>
                       <th
-                        style={thStyle(true)}
+                        className="text-uppercase small text-primary"
+                        style={{ cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap' }}
                         onClick={() => setSortDir(d => d === 'asc' ? 'desc' : 'asc')}
                       >
                         Notti {sortDir === 'asc' ? '↑' : '↓'}
@@ -239,25 +215,19 @@ export default function AdminBuchi() {
                     </tr>
                   </thead>
                   <tbody>
-                    {sorted.map((b, i) => {
-                      const { bg, color } = colorNotti(b.notti);
-                      return (
-                        <tr key={i} style={{ borderBottom: '0.5px solid #f3f4f6' }}>
-                          <td style={{ padding: '10px 12px', color: '#4b5563', fontSize: 12 }}>{b.property}</td>
-                          <td style={{ padding: '10px 12px', fontWeight: 600, color: '#111' }}>{b.roomName}</td>
-                          <td style={{ padding: '10px 12px', color: '#4b5563' }}>{fmtDate(b.liberaDal)}</td>
-                          <td style={{ padding: '10px 12px', color: '#4b5563' }}>{fmtDate(b.liberaAl)}</td>
-                          <td style={{ padding: '10px 12px' }}>
-                            <span style={{
-                              background: bg, color, fontWeight: 700,
-                              padding: '3px 10px', borderRadius: 20, fontSize: 12,
-                            }}>
-                              {b.notti} {b.notti === 1 ? 'notte' : 'notti'}
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                    {sorted.map((b, i) => (
+                      <tr key={i}>
+                        <td className="small text-secondary">{b.property}</td>
+                        <td className="fw-semibold">{b.roomName}</td>
+                        <td className="text-secondary">{fmtDate(b.liberaDal)}</td>
+                        <td className="text-secondary">{fmtDate(b.liberaAl)}</td>
+                        <td>
+                          <span className={`badge rounded-pill ${colorNotti(b.notti)}`}>
+                            {b.notti} {b.notti === 1 ? 'notte' : 'notti'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
