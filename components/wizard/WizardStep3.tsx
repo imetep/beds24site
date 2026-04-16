@@ -57,6 +57,7 @@ const UI: Record<string, Record<string, string>> = {
     perNight:      '/notte',
     voucher:       'Codice sconto',
     paypalLoading: 'Caricamento PayPal...',
+    securePayment: 'Pagamento sicuro',
   },
   en: {
     title:         'Booking summary',
@@ -92,6 +93,7 @@ const UI: Record<string, Record<string, string>> = {
     perNight:      '/night',
     voucher:       'Discount code',
     paypalLoading: 'Loading PayPal...',
+    securePayment: 'Secure payment',
   },
   de: {
     title:         'Buchungsübersicht',
@@ -127,6 +129,7 @@ const UI: Record<string, Record<string, string>> = {
     perNight:      '/Nacht',
     voucher:       'Rabattcode',
     paypalLoading: 'PayPal wird geladen...',
+    securePayment: 'Sichere Zahlung',
   },
   pl: {
     title:         'Podsumowanie rezerwacji',
@@ -162,6 +165,7 @@ const UI: Record<string, Record<string, string>> = {
     perNight:      '/noc',
     voucher:       'Kod rabatowy',
     paypalLoading: 'Ładowanie PayPal...',
+    securePayment: 'Bezpieczna płatność',
   },
 };
 
@@ -616,6 +620,15 @@ export default function WizardStep7({ locale = 'it' }: Props) {
           <p style={{ margin: '4px 0 0', fontSize: 13, color: '#888' }}>{error}</p>
         </div>
       )}
+
+      {/* ── Trust signal sopra la CTA — UX 3.3 (solo visuale) ── */}
+      <div className="alert alert-success d-flex align-items-center gap-2 mb-2 py-2">
+        <i className="bi bi-shield-lock-fill fs-5"></i>
+        <div>
+          <div className="fw-semibold">{t.securePayment}</div>
+          <div className="small text-muted">Stripe · PayPal</div>
+        </div>
+      </div>
 
       {/* ── CTA: Stripe o PayPal ── */}
       {paymentMethod === 'stripe' ? (
