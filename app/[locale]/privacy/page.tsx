@@ -114,36 +114,36 @@ export default async function PrivacyPage({ params }: Props) {
   const t = T[locale];
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', padding: '3rem 1.5rem' }}>
-      <h1 style={h1Style}>{t.h1}</h1>
-      <p style={subtitleStyle}>{t.subtitle}</p>
-      <div style={infoBoxStyle}><strong>{t.infoBox}</strong></div>
-      <div style={bodyStyle}>
+    <div className="container py-5" style={{ maxWidth: 800 }}>
+      <h1 className="fs-1 fw-bold mb-1">{t.h1}</h1>
+      <p className="text-muted mb-3">{t.subtitle}</p>
+      <div className="alert alert-primary"><strong>{t.infoBox}</strong></div>
+      <div className="text-secondary" style={{ lineHeight: 1.8 }}>
         <p>{t.p1}</p>
         <p>{t.p2}</p>
         <p>{t.p3}</p>
         <p>{t.p4}</p>
         <p>{t.p5}</p>
 
-        <h2 style={h2Style}>{t.h2Purposes}</h2>
-        <ol style={olStyle}>
+        <h2 className="fs-5 fw-bold text-primary border-bottom pb-2 mt-4 mb-2">{t.h2Purposes}</h2>
+        <ol className="ps-4 my-2">
           <li>{t.purpose1}</li>
           <li>{t.purpose2}</li>
           <li>{t.purpose3}</li>
         </ol>
 
-        <h2 style={h2Style}>{t.h2Rights}</h2>
+        <h2 className="fs-5 fw-bold text-primary border-bottom pb-2 mt-4 mb-2">{t.h2Rights}</h2>
         <p>{t.rightsIntro}</p>
-        <ul style={ulStyle}>
+        <ul className="ps-4 my-2">
           <li>{t.right1}</li>
           <li>{t.right2}</li>
           <li>{t.right3}</li>
           <li>{t.right4}</li>
         </ul>
 
-        <h2 style={h2Style}>{t.h2Contact}</h2>
+        <h2 className="fs-5 fw-bold text-primary border-bottom pb-2 mt-4 mb-2">{t.h2Contact}</h2>
         <p>{t.contactIntro}</p>
-        <div style={addressBoxStyle}>
+        <div className="bg-light border rounded p-3 mt-2" style={{ lineHeight: 1.8 }}>
           <strong>Livingapple S.r.l.</strong><br />
           Loc. LeTore, Traversa Carmen Rosati n. 2<br />
           04028 Scauri di Minturno (LT) — Italy
@@ -152,12 +152,3 @@ export default async function PrivacyPage({ params }: Props) {
     </div>
   );
 }
-
-const h1Style: React.CSSProperties = { fontSize: '2rem', fontWeight: 700, marginBottom: '0.5rem', color: '#1a1a1a' };
-const subtitleStyle: React.CSSProperties = { fontSize: '1rem', color: '#6b7280', marginBottom: '1.5rem' };
-const infoBoxStyle: React.CSSProperties = { background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 8, padding: '1rem 1.25rem', fontSize: '0.9rem', color: '#1e40af', marginBottom: '2rem' };
-const h2Style: React.CSSProperties = { fontSize: '1.1rem', fontWeight: 700, color: '#1E73BE', borderBottom: '2px solid #e5e7eb', paddingBottom: '0.5rem', marginTop: '1.75rem', marginBottom: '0.75rem' };
-const bodyStyle: React.CSSProperties = { fontSize: '0.95rem', color: '#374151', lineHeight: 1.8 };
-const ulStyle: React.CSSProperties = { paddingLeft: '1.5rem', margin: '0.5rem 0' };
-const olStyle: React.CSSProperties = { paddingLeft: '1.5rem', margin: '0.5rem 0' };
-const addressBoxStyle: React.CSSProperties = { background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 8, padding: '1rem 1.25rem', fontSize: '0.9rem', lineHeight: 1.8, marginTop: '0.75rem' };
