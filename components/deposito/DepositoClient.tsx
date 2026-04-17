@@ -10,7 +10,7 @@ function StepCard({ n, text }: { n: number; text: string }) {
     <div className="d-flex gap-3 py-3 border-bottom">
       <div
         className="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
-        style={{ width: 28, height: 28, background: '#1E73BE', fontSize: 13, marginTop: 2 }}
+        style={{ width: 28, height: 28, background: 'var(--color-primary)', fontSize: 13, marginTop: 2 }}
       >
         {n}
       </div>
@@ -96,14 +96,14 @@ export default function DepositoClient({ locale, contactHref, portalHref }: Prop
         </div>
 
         {/* Online */}
-        <div className="p-3 border-top border-2" style={{ background: '#EEF5FC', borderColor: '#1E73BE' }}>
+        <div className="p-3 border-top border-2" style={{ background: '#EEF5FC', borderColor: 'var(--color-primary)' }}>
           <div className="d-flex align-items-center gap-2 mb-2">
             <span style={{ fontSize: 20 }}>🔒</span>
             <h2 className="fs-6 fw-bold m-0" style={{ color: '#0C447C' }}>{t.onlineTitle}</h2>
           </div>
           <div
             className="d-inline-block mb-2 fw-bold text-white rounded-pill"
-            style={{ background: '#1E73BE', fontSize: 10, padding: '3px 8px' }}
+            style={{ background: 'var(--color-primary)', fontSize: 10, padding: '3px 8px' }}
           >
             {t.onlineBadge}
           </div>
@@ -130,7 +130,7 @@ export default function DepositoClient({ locale, contactHref, portalHref }: Prop
               className={`d-flex justify-content-between align-items-center py-2${i < t.amounts.length - 1 ? ' border-bottom' : ''}`}
             >
               <span className="small" style={{ color: '#374151' }}>{row.label}</span>
-              <span className="fw-bold" style={{ fontSize: 15, color: '#1E73BE' }}>{row.value}</span>
+              <span className="fw-bold" style={{ fontSize: 15, color: 'var(--color-primary)' }}>{row.value}</span>
             </div>
           ))}
         </div>
@@ -167,7 +167,7 @@ export default function DepositoClient({ locale, contactHref, portalHref }: Prop
       </div>
 
       {/* ── CTA ─────────────────────────────────────────────────────────────── */}
-      <div className="p-3 mb-2 border-top border-2" style={{ background: '#EEF5FC', borderColor: '#1E73BE' }}>
+      <div className="p-3 mb-2 border-top border-2" style={{ background: '#EEF5FC', borderColor: 'var(--color-primary)' }}>
         <h2 className="fs-5 fw-bold mb-2" style={{ color: '#0C447C' }}>
           {t.ctaTitle}
         </h2>
@@ -177,7 +177,7 @@ export default function DepositoClient({ locale, contactHref, portalHref }: Prop
         <a
           href={portalHref}
           className="d-inline-block text-white fw-bold text-decoration-none rounded-3 mb-2"
-          style={{ background: '#1E73BE', padding: '13px 24px', fontSize: 15 }}
+          style={{ background: 'var(--color-primary)', padding: '13px 24px', fontSize: 15 }}
         >
           {t.ctaBtn} →
         </a>
@@ -188,7 +188,7 @@ export default function DepositoClient({ locale, contactHref, portalHref }: Prop
 
       {/* ── Link contatti ────────────────────────────────────────────────────── */}
       <div className="p-3 text-center">
-        <a href={contactHref} className="small text-decoration-none" style={{ color: '#1E73BE' }}>
+        <a href={contactHref} className="small text-decoration-none" style={{ color: 'var(--color-primary)' }}>
           {t.questionsLink}
         </a>
       </div>
