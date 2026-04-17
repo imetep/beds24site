@@ -2,20 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useWizardStore } from '@/store/wizard-store';
-
-const UI: Record<string, {
-  prenota: string;
-  vediTariffe: string;
-  perNotte: string;
-  notti: string;
-  notte: string;
-  totale: string;
-}> = {
-  it: { prenota: 'Prenota ora', vediTariffe: 'Vedi tariffe', perNotte: '/notte', notti: 'notti', notte: 'notte', totale: 'totale'  },
-  en: { prenota: 'Book now',    vediTariffe: 'See rates',    perNotte: '/night', notti: 'nights', notte: 'night', totale: 'total'   },
-  de: { prenota: 'Jetzt buchen',vediTariffe: 'Tarife sehen', perNotte: '/Nacht', notti: 'Nächte', notte: 'Nacht', totale: 'gesamt'  },
-  pl: { prenota: 'Zarezerwuj',  vediTariffe: 'Zobacz taryfy',perNotte: '/noc',  notti: 'nocy',   notte: 'noc',   totale: 'łącznie' },
-};
+import { getTranslations } from '@/lib/i18n';
+import type { Locale } from '@/config/i18n';
 
 function fmt(n: number) {
   return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
@@ -32,7 +20,7 @@ interface Props {
 }
 
 export default function StickyBookingBar({ roomId, locale, roomName }: Props) {
-  const t = UI[locale] ?? UI.it;
+  const t = getTranslations(locale as Locale).components.stickyBookingBar;
 
   const { checkIn, checkOut, numAdult, numChild, childrenAges } = useWizardStore();
 

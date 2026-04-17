@@ -974,6 +974,14 @@
         "nov",
         "dec"
       ]
+    },
+    "stickyBookingBar": {
+      "prenota": "Book now",
+      "vediTariffe": "See rates",
+      "perNotte": "/night",
+      "notti": "nights",
+      "notte": "night",
+      "totale": "total"
     }
   }
 }

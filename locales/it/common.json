@@ -992,6 +992,14 @@
         "nov",
         "dic"
       ]
+    },
+    "stickyBookingBar": {
+      "prenota": "Prenota ora",
+      "vediTariffe": "Vedi tariffe",
+      "perNotte": "/notte",
+      "notti": "notti",
+      "notte": "notte",
+      "totale": "totale"
     }
   }
 }

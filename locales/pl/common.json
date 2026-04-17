@@ -974,6 +974,14 @@
         "lis",
         "gru"
       ]
+    },
+    "stickyBookingBar": {
+      "prenota": "Zarezerwuj",
+      "vediTariffe": "Zobacz taryfy",
+      "perNotte": "/noc",
+      "notti": "nocy",
+      "notte": "noc",
+      "totale": "łącznie"
     }
   }
 }
