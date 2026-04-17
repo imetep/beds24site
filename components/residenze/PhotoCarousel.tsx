@@ -221,7 +221,7 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
         onClick={() => openLightbox(0)}
         className="d-grid overflow-hidden mb-5 position-relative"
         style={{
-          gridTemplateColumns: '2fr 1fr',
+          gridTemplateColumns: '2fr 1fr 1fr',
           gridTemplateRows: '1fr 1fr',
           gap: 6, borderRadius: 20,
           height: 420,
