@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { v2 as cloudinary } from 'cloudinary';
+import { redisSet } from '@/lib/cloudinary-covers';
 import { getRoomBySlug, ALL_ROOMS, PROPERTIES } from '@/config/properties';
 import { locales, isValidLocale, type Locale } from '@/config/i18n';
 import FotoGalleryClient from '@/components/residenze/FotoGalleryClient';
@@ -28,22 +29,64 @@ export async function generateStaticParams() {
   return params;
 }
 
+const TTL_PHOTOS_SECONDS = 60 * 60; // 1 ora
+
+async function redisGet(key: string): Promise<string | null> {
+  const url   = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
+  if (!url || !token) return null;
+  try {
+    const res  = await fetch(`${url}/get/${encodeURIComponent(key)}`, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: 'no-store',
+    });
+    const data = await res.json();
+    return data.result ?? null;
+  } catch {
+    return null;
+  }
+}
+
 async function getRoomPhotos(folder: string): Promise<string[]> {
+  const redisKey = `cloudinary:foto-photos:${folder}`;
+
+  const cached = await redisGet(redisKey);
+  if (cached) {
+    try {
+      const arr = JSON.parse(cached);
+      if (Array.isArray(arr)) return arr as string[];
+    } catch { /* corrotto → ricarica */ }
+  }
+
   try {
     const result = await cloudinary.search
       .expression(`folder:${folder}`)
       .sort_by('public_id', 'asc')
       .max_results(50)
       .execute();
-    return result.resources.map((r: any) =>
+    const urls = result.resources.map((r: any) =>
       cloudinary.url(r.public_id, { width: 1200, crop: 'limit', quality: 'auto', fetch_format: 'auto' })
     );
+    if (urls.length > 0) {
+      await redisSet(redisKey, JSON.stringify(urls), TTL_PHOTOS_SECONDS);
+    }
+    return urls;
   } catch {
     return [];
   }
 }
 
 async function getCoverUrl(folder: string): Promise<string | null> {
+  const redisKey = `cloudinary:foto-cover:${folder}`;
+
+  const cached = await redisGet(redisKey);
+  if (cached !== null) {
+    try {
+      const v = JSON.parse(cached);
+      if (typeof v === 'string' || v === null) return v;
+    } catch { /* corrotto → ricarica */ }
+  }
+
   try {
     const result = await cloudinary.search
       .expression(`folder:${folder}`)
@@ -51,10 +94,15 @@ async function getCoverUrl(folder: string): Promise<string | null> {
       .max_results(1)
       .execute();
     const photo = result.resources[0];
-    if (!photo) return null;
-    return cloudinary.url(photo.public_id, {
+    if (!photo) {
+      await redisSet(redisKey, JSON.stringify(null), TTL_PHOTOS_SECONDS);
+      return null;
+    }
+    const url = cloudinary.url(photo.public_id, {
       width: 300, height: 200, crop: 'fill', quality: 'auto', fetch_format: 'auto',
     });
+    await redisSet(redisKey, JSON.stringify(url), TTL_PHOTOS_SECONDS);
+    return url;
   } catch {
     return null;
   }
