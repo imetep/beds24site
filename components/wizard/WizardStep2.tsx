@@ -269,7 +269,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
         <button
           onClick={handleApplyVoucher}
           disabled={!voucherInput.trim()}
-          style={{ padding: '8px 14px', minHeight: 'var(--touch-target)', borderRadius: 8, border: `1.5px solid ${voucherApplied ? '#16a34a' : '#1E73BE'}`, background: voucherApplied ? '#16a34a' : '#fff', color: voucherApplied ? '#fff' : '#1E73BE', fontSize: 13, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
+          style={{ padding: '8px 14px', minHeight: 'var(--touch-target)', borderRadius: 8, border: `1.5px solid ${voucherApplied ? '#16a34a' : 'var(--color-primary)'}`, background: voucherApplied ? '#16a34a' : '#fff', color: voucherApplied ? '#fff' : 'var(--color-primary)', fontSize: 13, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
         >
           {voucherApplied ? '✓ Applicato' : t.voucherApply}
         </button>
@@ -338,7 +338,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                 <div key={item.id} style={{
                   display: 'flex', alignItems: 'center', gap: 10,
                   padding: '10px 12px',
-                  border: `1.5px solid ${qty > 0 ? '#1E73BE' : '#e5e7eb'}`,
+                  border: `1.5px solid ${qty > 0 ? 'var(--color-primary)' : '#e5e7eb'}`,
                   borderRadius: 10,
                   background: qty > 0 ? '#EEF5FC' : '#fafafa',
                   transition: 'all 0.15s',
@@ -359,8 +359,8 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                       disabled={qty === 0}
                       style={{
                         width: 'var(--touch-target)', height: 'var(--touch-target)', borderRadius: '50%',
-                        border: `1.5px solid ${qty > 0 ? '#1E73BE' : '#d1d5db'}`,
-                        background: '#fff', color: qty > 0 ? '#1E73BE' : '#ccc',
+                        border: `1.5px solid ${qty > 0 ? 'var(--color-primary)' : '#d1d5db'}`,
+                        background: '#fff', color: qty > 0 ? 'var(--color-primary)' : '#ccc',
                         fontSize: 18, fontWeight: 700, cursor: qty > 0 ? 'pointer' : 'not-allowed',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         transition: 'all 0.15s', lineHeight: 1,
@@ -368,15 +368,15 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                     >−</button>
                     <span style={{
                       width: 32, textAlign: 'center', fontSize: 15, fontWeight: 700,
-                      color: qty > 0 ? '#1E73BE' : '#999',
+                      color: qty > 0 ? 'var(--color-primary)' : '#999',
                     }}>{qty}</span>
                     <button
                       onClick={() => setExtraQuantity(item, qty + 1)}
                       disabled={qty >= MAX_QTY}
                       style={{
                         width: 'var(--touch-target)', height: 'var(--touch-target)', borderRadius: '50%',
-                        border: `1.5px solid ${qty < MAX_QTY ? '#1E73BE' : '#d1d5db'}`,
-                        background: qty < MAX_QTY ? '#1E73BE' : '#f5f5f5',
+                        border: `1.5px solid ${qty < MAX_QTY ? 'var(--color-primary)' : '#d1d5db'}`,
+                        background: qty < MAX_QTY ? 'var(--color-primary)' : '#f5f5f5',
                         color: qty < MAX_QTY ? '#fff' : '#ccc',
                         fontSize: 18, fontWeight: 700, cursor: qty < MAX_QTY ? 'pointer' : 'not-allowed',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -385,7 +385,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                     >+</button>
                   </div>
                   {qty > 0 && (
-                    <span style={{ fontSize: 13, fontWeight: 800, color: '#1E73BE', flexShrink: 0, minWidth: 40, textAlign: 'right' }}>
+                    <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--color-primary)', flexShrink: 0, minWidth: 40, textAlign: 'right' }}>
                       {fmt(item.price * qty)}
                     </span>
                   )}
@@ -412,7 +412,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
               {fmt(offerPrice + touristTax + extrasTotal)}
             </span>
           )}
-          <span style={{ fontSize: 20, fontWeight: 800, color: '#1E73BE' }}>{fmt(totalDisplay)}</span>
+          <span style={{ fontSize: 20, fontWeight: 800, color: 'var(--color-primary)' }}>{fmt(totalDisplay)}</span>
         </div>
       </div>
       {touristTax > 0 && (
@@ -475,7 +475,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
             <div className="d-flex align-items-center gap-2 mb-3">
               <div
                 className="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                style={{ width: 28, height: 28, background: '#1E73BE' }}
+                style={{ width: 28, height: 28, background: 'var(--color-primary)' }}
               >
                 <span className="text-white fw-bolder" style={{ fontSize: 13 }}>1</span>
               </div>
@@ -526,7 +526,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
             <div className="d-flex align-items-center gap-2 mb-3">
               <div
                 className="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                style={{ width: 28, height: 28, background: '#1E73BE' }}
+                style={{ width: 28, height: 28, background: 'var(--color-primary)' }}
               >
                 <span className="text-white fw-bolder" style={{ fontSize: 13 }}>2</span>
               </div>
@@ -583,12 +583,12 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
           <p className="text-center mb-3" style={{ fontSize: 12, color: '#aaa' }}>
             {t.terms}{' '}
-            <a href={`/${locale}/condizioni`} style={{ color: '#1E73BE' }} target="_blank" rel="noopener noreferrer">{t.termsLink}</a>
+            <a href={`/${locale}/condizioni`} style={{ color: 'var(--color-primary)' }} target="_blank" rel="noopener noreferrer">{t.termsLink}</a>
           </p>
           <button
             onClick={handleBack}
             className="btn d-block p-0"
-            style={{ color: '#1E73BE', fontSize: 14, minHeight: 'var(--touch-target)' }}
+            style={{ color: 'var(--color-primary)', fontSize: 14, minHeight: 'var(--touch-target)' }}
           >
             {t.back}
           </button>
@@ -678,16 +678,16 @@ const inputStyle: React.CSSProperties = {
 const radioRow = (active: boolean): React.CSSProperties => ({
   display: 'flex', alignItems: 'flex-start', gap: 14,
   padding: '14px', marginBottom: 8, cursor: 'pointer',
-  border: `2px solid ${active ? '#1E73BE' : '#e5e7eb'}`,
+  border: `2px solid ${active ? 'var(--color-primary)' : '#e5e7eb'}`,
   borderRadius: 12, background: active ? '#EEF5FC' : '#fff',
   transition: 'all 0.15s',
 });
 const radioOuter = (active: boolean): React.CSSProperties => ({
   width: 20, height: 20, borderRadius: '50%', flexShrink: 0, marginTop: 2,
-  border: `2px solid ${active ? '#1E73BE' : '#ccc'}`,
+  border: `2px solid ${active ? 'var(--color-primary)' : '#ccc'}`,
   display: 'flex', alignItems: 'center', justifyContent: 'center',
   background: '#fff',
 });
 const radioInner: React.CSSProperties = {
-  width: 10, height: 10, borderRadius: '50%', background: '#1E73BE',
+  width: 10, height: 10, borderRadius: '50%', background: 'var(--color-primary)',
 };
