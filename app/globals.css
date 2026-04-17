@@ -14,7 +14,7 @@
   --color-primary-soft: #EEF5FC;
   --color-warning: #FCAF1A;
   --color-text: #111;
-  --color-text-muted: #9ca3af;
+  --color-text-muted: #6b7280;        /* WCAG AA conforme: 4.83:1 su bianco (era #9ca3af = 2.85:1, fallisce AA) */
   --color-text-label: #6b7280;
   --color-text-subtle: #4b5563;
   --color-border: #e5e7eb;
@@ -40,11 +40,37 @@
 
   /* Touch target — minimo Apple HIG / WCAG 2.1 AA */
   --touch-target: 44px;
+
+  /* Typography scale — riflette i font-size già in uso nel progetto */
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-md: 15px;
+  --text-lg: 18px;
+  --text-xl: 22px;
+
+  /* Breakpoints — riferimento documentale (le @media non possono usare custom properties).
+     Usa la costante BREAKPOINTS in lib/breakpoints.ts per JS. */
+  --bp-sm: 640px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+/* Accessibilità — rispetta preferenza utente per ridurre animazioni */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* ── BedConfigDisplay ── */
