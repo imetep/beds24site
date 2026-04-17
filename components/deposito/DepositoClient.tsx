@@ -365,16 +365,14 @@ const T: Record<Locale, {
 // ─── Componente step ────────────────────────────────────────────────────────
 function StepCard({ n, text }: { n: number; text: string }) {
   return (
-    <div style={{ display: 'flex', gap: 16, padding: '14px 0', borderBottom: '0.5px solid #f3f4f6' }}>
-      <div style={{
-        width: 28, height: 28, borderRadius: '50%',
-        background: '#1E73BE', color: '#fff',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: 13, fontWeight: 700, flexShrink: 0, marginTop: 2,
-      }}>
+    <div className="d-flex gap-3 py-3 border-bottom">
+      <div
+        className="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
+        style={{ width: 28, height: 28, background: '#1E73BE', fontSize: 13, marginTop: 2 }}
+      >
         {n}
       </div>
-      <p style={{ margin: 0, fontSize: 14, color: '#4b5563', lineHeight: 1.65 }}>{text}</p>
+      <p className="m-0 small text-secondary" style={{ lineHeight: 1.65 }}>{text}</p>
     </div>
   );
 }
@@ -383,24 +381,21 @@ function StepCard({ n, text }: { n: number; text: string }) {
 function FaqItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div style={{ borderBottom: '0.5px solid #f3f4f6' }}>
+    <div className="border-bottom">
       <button
         onClick={() => setOpen(!open)}
-        style={{
-          width: '100%', background: 'none', border: 'none',
-          padding: '14px 0', display: 'flex',
-          justifyContent: 'space-between', alignItems: 'center',
-          cursor: 'pointer', textAlign: 'left', gap: 12,
-        }}
+        className="btn w-100 d-flex justify-content-between align-items-center gap-2 py-3 px-0 text-start"
       >
-        <span style={{ fontSize: 14, fontWeight: 600, color: '#111', lineHeight: 1.4 }}>{q}</span>
+        <span className="small fw-semibold text-dark" style={{ lineHeight: 1.4 }}>{q}</span>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-          stroke="#9ca3af" strokeWidth="2.5" style={{ flexShrink: 0, transition: 'transform 200ms', transform: open ? 'rotate(180deg)' : 'none' }}>
+          stroke="#9ca3af" strokeWidth="2.5"
+          className="flex-shrink-0"
+          style={{ transition: 'transform 200ms', transform: open ? 'rotate(180deg)' : 'none' }}>
           <path d="M6 9l6 6 6-6"/>
         </svg>
       </button>
       {open && (
-        <p style={{ margin: '0 0 14px', fontSize: 14, color: '#4b5563', lineHeight: 1.65 }}>{a}</p>
+        <p className="small text-secondary mb-3" style={{ lineHeight: 1.65 }}>{a}</p>
       )}
     </div>
   );
@@ -413,69 +408,67 @@ export default function DepositoClient({ locale, contactHref, portalHref }: Prop
   const t = T[locale];
 
   return (
-    <div style={{ maxWidth: 720, margin: '0 auto', padding: '0 0 60px' }}>
+    <div className="mx-auto pb-5" style={{ maxWidth: 720 }}>
 
       {/* ── Hero ────────────────────────────────────────────────────────────── */}
-      <div style={{ background: '#fff', padding: '28px 20px 24px', borderBottom: '0.5px solid #f3f4f6', marginBottom: 8 }}>
-        <div style={{
-          display: 'inline-block', marginBottom: 12,
-          background: '#FFF8E7', color: '#92400e',
-          fontSize: 12, fontWeight: 700, padding: '4px 12px', borderRadius: 20,
-        }}>
+      <div className="bg-white px-3 pt-4 pb-3 border-bottom mb-2">
+        <div
+          className="d-inline-block mb-2 fw-bold rounded-pill"
+          style={{ background: '#FFF8E7', color: '#92400e', fontSize: 12, padding: '4px 12px' }}
+        >
           💳 {t.badge}
         </div>
-        <h1 style={{ fontSize: 28, fontWeight: 700, color: '#111', margin: '0 0 8px', lineHeight: 1.2 }}>
+        <h1 className="fs-2 fw-bold text-dark mb-2" style={{ lineHeight: 1.2 }}>
           {t.title}
         </h1>
-        <p style={{ margin: 0, fontSize: 15, color: '#6b7280', lineHeight: 1.55 }}>
+        <p className="m-0 text-secondary" style={{ fontSize: 15, lineHeight: 1.55 }}>
           {t.subtitle}
         </p>
       </div>
 
       {/* ── Perché ──────────────────────────────────────────────────────────── */}
-      <div style={{ background: '#fff', padding: '20px 20px 22px', marginBottom: 8 }}>
-        <h2 style={{ fontSize: 17, fontWeight: 700, color: '#111', margin: '0 0 10px' }}>
+      <div className="bg-white p-3 mb-2">
+        <h2 className="fs-6 fw-bold text-dark mb-2">
           {t.whyTitle}
         </h2>
-        <p style={{ margin: 0, fontSize: 14, color: '#4b5563', lineHeight: 1.7 }}>
+        <p className="m-0 small text-secondary" style={{ lineHeight: 1.7 }}>
           {t.whyText}
         </p>
       </div>
 
       {/* ── Due metodi ──────────────────────────────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 8, padding: '0 0 8px' }}>
+      <div className="d-grid gap-2 pb-2" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
 
         {/* Offline */}
-        <div style={{ background: '#fff', padding: '20px 20px 22px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+        <div className="bg-white p-3">
+          <div className="d-flex align-items-center gap-2 mb-3">
             <span style={{ fontSize: 20 }}>🏨</span>
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: '#111', margin: 0 }}>{t.offlineTitle}</h2>
+            <h2 className="fs-6 fw-bold text-dark m-0">{t.offlineTitle}</h2>
           </div>
           {t.offlineSteps.map((step, i) => (
             <StepCard key={i} n={i + 1} text={step} />
           ))}
-          <p style={{ margin: '12px 0 0', fontSize: 12, color: '#9ca3af', lineHeight: 1.5 }}>
+          <p className="mt-3 mb-0 text-muted" style={{ fontSize: 12, lineHeight: 1.5 }}>
             ℹ️ {t.offlineNote}
           </p>
         </div>
 
         {/* Online */}
-        <div style={{ background: '#EEF5FC', padding: '20px 20px 22px', borderTop: '2px solid #1E73BE' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+        <div className="p-3 border-top border-2" style={{ background: '#EEF5FC', borderColor: '#1E73BE' }}>
+          <div className="d-flex align-items-center gap-2 mb-2">
             <span style={{ fontSize: 20 }}>🔒</span>
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0C447C', margin: 0 }}>{t.onlineTitle}</h2>
+            <h2 className="fs-6 fw-bold m-0" style={{ color: '#0C447C' }}>{t.onlineTitle}</h2>
           </div>
-          <div style={{
-            display: 'inline-block', marginBottom: 12,
-            background: '#1E73BE', color: '#fff',
-            fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 10,
-          }}>
+          <div
+            className="d-inline-block mb-2 fw-bold text-white rounded-pill"
+            style={{ background: '#1E73BE', fontSize: 10, padding: '3px 8px' }}
+          >
             {t.onlineBadge}
           </div>
           {t.onlineSteps.map((step, i) => (
             <StepCard key={i} n={i + 1} text={step} />
           ))}
-          <p style={{ margin: '12px 0 0', fontSize: 12, color: '#185FA5', lineHeight: 1.5 }}>
+          <p className="mt-3 mb-0" style={{ fontSize: 12, color: '#185FA5', lineHeight: 1.5 }}>
             🔐 {t.onlineNote}
           </p>
         </div>
@@ -483,27 +476,27 @@ export default function DepositoClient({ locale, contactHref, portalHref }: Prop
       </div>
 
       {/* ── Importi ─────────────────────────────────────────────────────────── */}
-      <div style={{ background: '#fff', padding: '20px 20px 22px', marginBottom: 8 }}>
-        <h2 style={{ fontSize: 17, fontWeight: 700, color: '#111', margin: '0 0 6px' }}>
+      <div className="bg-white p-3 mb-2">
+        <h2 className="fs-6 fw-bold text-dark mb-2">
           {t.amountsTitle}
         </h2>
-        <p style={{ margin: '0 0 12px', fontSize: 13, color: '#9ca3af' }}>{t.amountsNote}</p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+        <p className="text-muted mb-3" style={{ fontSize: 13 }}>{t.amountsNote}</p>
+        <div className="d-flex flex-column">
           {t.amounts.map((row, i) => (
-            <div key={i} style={{
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              padding: '10px 0', borderBottom: i < t.amounts.length - 1 ? '0.5px solid #f3f4f6' : 'none',
-            }}>
-              <span style={{ fontSize: 14, color: '#374151' }}>{row.label}</span>
-              <span style={{ fontSize: 15, fontWeight: 700, color: '#1E73BE' }}>{row.value}</span>
+            <div
+              key={i}
+              className={`d-flex justify-content-between align-items-center py-2${i < t.amounts.length - 1 ? ' border-bottom' : ''}`}
+            >
+              <span className="small" style={{ color: '#374151' }}>{row.label}</span>
+              <span className="fw-bold" style={{ fontSize: 15, color: '#1E73BE' }}>{row.value}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* ── Restituzione ────────────────────────────────────────────────────── */}
-      <div style={{ background: '#fff', padding: '20px 20px 22px', marginBottom: 8 }}>
-        <h2 style={{ fontSize: 17, fontWeight: 700, color: '#111', margin: '0 0 4px' }}>
+      <div className="bg-white p-3 mb-2">
+        <h2 className="fs-6 fw-bold text-dark mb-1">
           {t.returnTitle}
         </h2>
         {t.returnSteps.map((step, i) => (
@@ -512,18 +505,18 @@ export default function DepositoClient({ locale, contactHref, portalHref }: Prop
       </div>
 
       {/* ── Danni ───────────────────────────────────────────────────────────── */}
-      <div style={{ background: '#FFF8E7', border: '0.5px solid #FDE68A', margin: '0 0 8px', padding: '20px 20px' }}>
-        <h2 style={{ fontSize: 16, fontWeight: 700, color: '#92400e', margin: '0 0 10px' }}>
+      <div className="border p-3 mb-2" style={{ background: '#FFF8E7', borderColor: '#FDE68A' }}>
+        <h2 className="fs-6 fw-bold mb-2" style={{ color: '#92400e' }}>
           ⚠️ {t.damagesTitle}
         </h2>
-        <p style={{ margin: 0, fontSize: 14, color: '#78350f', lineHeight: 1.7 }}>
+        <p className="m-0 small" style={{ color: '#78350f', lineHeight: 1.7 }}>
           {t.damagesText}
         </p>
       </div>
 
       {/* ── FAQ ─────────────────────────────────────────────────────────────── */}
-      <div style={{ background: '#fff', padding: '20px 20px 14px', marginBottom: 8 }}>
-        <h2 style={{ fontSize: 17, fontWeight: 700, color: '#111', margin: '0 0 4px' }}>
+      <div className="bg-white p-3 mb-2">
+        <h2 className="fs-6 fw-bold text-dark mb-1">
           {t.faqTitle}
         </h2>
         {t.faqs.map((f, i) => (
@@ -532,33 +525,28 @@ export default function DepositoClient({ locale, contactHref, portalHref }: Prop
       </div>
 
       {/* ── CTA ─────────────────────────────────────────────────────────────── */}
-      <div style={{ background: '#EEF5FC', margin: '0 0 8px', padding: '24px 20px', borderTop: '2px solid #1E73BE' }}>
-        <h2 style={{ fontSize: 18, fontWeight: 700, color: '#0C447C', margin: '0 0 8px' }}>
+      <div className="p-3 mb-2 border-top border-2" style={{ background: '#EEF5FC', borderColor: '#1E73BE' }}>
+        <h2 className="fs-5 fw-bold mb-2" style={{ color: '#0C447C' }}>
           {t.ctaTitle}
         </h2>
-        <p style={{ margin: '0 0 16px', fontSize: 14, color: '#185FA5', lineHeight: 1.6 }}>
+        <p className="small mb-3" style={{ color: '#185FA5', lineHeight: 1.6 }}>
           {t.ctaText}
         </p>
         <a
           href={portalHref}
-          style={{
-            display: 'inline-block',
-            background: '#1E73BE', color: '#fff',
-            borderRadius: 12, padding: '13px 24px',
-            fontSize: 15, fontWeight: 700, textDecoration: 'none',
-            marginBottom: 10,
-          }}
+          className="d-inline-block text-white fw-bold text-decoration-none rounded-3 mb-2"
+          style={{ background: '#1E73BE', padding: '13px 24px', fontSize: 15 }}
         >
           {t.ctaBtn} →
         </a>
-        <p style={{ margin: '8px 0 0', fontSize: 12, color: '#185FA5' }}>
+        <p className="mb-0" style={{ fontSize: 12, color: '#185FA5' }}>
           ℹ️ {t.ctaNote}
         </p>
       </div>
 
       {/* ── Link contatti ────────────────────────────────────────────────────── */}
-      <div style={{ padding: '16px 20px', textAlign: 'center' }}>
-        <a href={contactHref} style={{ fontSize: 14, color: '#1E73BE', textDecoration: 'none' }}>
+      <div className="p-3 text-center">
+        <a href={contactHref} className="small text-decoration-none" style={{ color: '#1E73BE' }}>
           Hai domande? Contattaci →
         </a>
       </div>
