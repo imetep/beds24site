@@ -148,7 +148,7 @@ export default function Wizard({ translations: t, locale }: Props) {
     <div style={{
       maxWidth: 1100,
       margin: '0 auto',
-      padding: isDesk ? '1.5rem 24px 3rem' : '1.25rem 16px 2rem',
+      padding: isDesk ? '1.5rem 24px 3rem' : '1.25rem 16px 1rem',
     }}>
       <div style={{ display: 'flex', gap: 32 }}>
 
