@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
 import { PROPERTIES } from '@/config/properties';
+import { fetchCoversCached, fetchFolderPhotosCached } from '@/lib/cloudinary-client-cache';
 
 // ─── Traduzioni ───────────────────────────────────────────────────────────────
 const UI: Record<string, Record<string, string>> = {
@@ -134,18 +135,18 @@ export default function HomeSearch({ locale }: { locale: string }) {
   }, [panel, isDesk]);
 
   useEffect(() => {
-    fetch('/api/cloudinary?covers=true')
-      .then(r => r.json())
-      .then(d => { if (d.covers) setCovers(d.covers); })
-      .catch(() => {});
-    fetch('/api/cloudinary?folder=generiche')
-      .then(r => r.json())
-      .then(d => {
-        const raw: any[] = d.photos ?? [];
-        const urls = raw.map((p: any) => p.url ?? p).filter(Boolean);
-        if (urls.length > 0) setDintorni(urls);
-      })
-      .catch(() => {});
+    fetchCoversCached().then(covers => {
+      if (!covers) return;
+      const filtered: Record<string, string> = {};
+      for (const k in covers) {
+        const v = covers[k];
+        if (v) filtered[k] = v;
+      }
+      setCovers(filtered);
+    });
+    fetchFolderPhotosCached('generiche').then(urls => {
+      if (urls && urls.length > 0) setDintorni(urls);
+    });
   }, []);
 
   const [selectingCheckout, setSelectingCheckout] = useState(false);
