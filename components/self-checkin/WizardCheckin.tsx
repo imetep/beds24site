@@ -446,7 +446,7 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
             <div key={idx} style={{ marginBottom: 16, padding: '16px 14px', background: '#f9fafb', borderRadius: 12, border: '1px solid #e5e7eb' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                 <span style={{ fontSize: 13, fontWeight: 700, color: '#1E73BE' }}>{t.guestN} {idx + 2}</span>
-                <button style={{ ...btnS, fontSize: 12, padding: '4px 10px', color: '#dc2626', borderColor: '#fca5a5' }}
+                <button style={{ ...btnS, fontSize: 12, padding: '4px 10px', minHeight: 'var(--touch-target)', minWidth: 'var(--touch-target)', color: '#dc2626', borderColor: '#fca5a5' }}
                   onClick={() => removeAltro(idx)}>{t.removeGuest}</button>
               </div>
               <div style={fw}>
