@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 const C = {
-  blue:        '#1E73BE',
+  blue:        'var(--color-primary)',
   blueLight:   '#EEF5FC',
   orange:      '#FCAF1A',
   text:        '#111111',
@@ -165,7 +165,7 @@ function SectionHeader({ icon, title, badge: b }: { icon: string; title: string;
     <div className="d-flex align-items-center gap-2 mb-3">
       <span style={{ fontSize: '1.1rem' }}>{icon}</span>
       <h3 className="m-0 fw-bold" style={{ fontSize: '1rem', color: '#111111' }}>{title}</h3>
-      {b && <span className="ms-auto fw-bolder" style={{ fontSize: '1.1rem', color: '#1E73BE' }}>{b}</span>}
+      {b && <span className="ms-auto fw-bolder" style={{ fontSize: '1.1rem', color: 'var(--color-primary)' }}>{b}</span>}
     </div>
   );
 }
@@ -175,7 +175,7 @@ function ChoiceCard({ icon, title, sub, onClick, highlight }: { icon: string; ti
     <button
       onClick={onClick}
       className="text-start"
-      style={{ background: highlight ? '#EEF5FC' : '#f9fafb', border: `2px solid ${highlight ? '#1E73BE' : '#e5e7eb'}`, borderRadius: 14, padding: '1.25rem', cursor: 'pointer' }}
+      style={{ background: highlight ? '#EEF5FC' : '#f9fafb', border: `2px solid ${highlight ? 'var(--color-primary)' : '#e5e7eb'}`, borderRadius: 14, padding: '1.25rem', cursor: 'pointer' }}
     >
       <div className="mb-2" style={{ fontSize: '1.75rem' }}>{icon}</div>
       <div className="fw-bold mb-1" style={{ color: '#111111', fontSize: '0.92rem' }}>{title}</div>
@@ -189,7 +189,7 @@ function BackBtn({ label, onClick }: { label: string; onClick: () => void }) {
     <button
       onClick={onClick}
       className="btn fw-semibold mb-3 p-0"
-      style={{ color: '#1E73BE', fontSize: '0.85rem' }}
+      style={{ color: 'var(--color-primary)', fontSize: '0.85rem' }}
     >
       ← {label}
     </button>
