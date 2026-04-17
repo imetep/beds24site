@@ -281,7 +281,8 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
             </div>
             <button
               onClick={onBack ?? prevStep}
-              className="btn p-0 d-flex align-items-center"
+              className="btn p-0 d-flex align-items-center justify-content-center"
+              style={{ minWidth: 'var(--touch-target)', minHeight: 'var(--touch-target)' }}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="1.8">
                 <path d="M11 4H4v7"/><path d="M4 4l7 7"/><path d="M20 20v-7h-7"/><path d="M20 20l-7-7"/>
@@ -309,6 +310,7 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
               style={{
                 gap: 7,
                 padding: '8px 16px',
+                minHeight: 'var(--touch-target)',
                 border: activeFiltersCount > 0 ? '1.5px solid #FCAF1A' : '1.5px solid #333',
                 background: activeFiltersCount > 0 ? '#FCAF1A' : '#fff',
                 color: activeFiltersCount > 0 ? '#fff' : '#111',
@@ -544,7 +546,7 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
             </div>
 
             {/* Footer fisso */}
-            <div className="flex-shrink-0 bg-white px-3 border-top" style={{ paddingTop: 14, paddingBottom: 28 }}>
+            <div className="flex-shrink-0 bg-white px-3 border-top" style={{ paddingTop: 12, paddingBottom: 16 }}>
               <button
                 onClick={() => setShowFilterPanel(false)}
                 className="w-100 fw-bold border-0"
@@ -686,7 +688,7 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                           {isDesk && ro.offers.length > 1 && !isRoomPicked && (
                             <button
                               onClick={() => setExpandedRoomId(expandedRoomId === room.roomId ? null : room.roomId)}
-                              style={{ width: '100%', background: 'none', border: 'none', color: '#1E73BE', fontSize: 12, fontWeight: 600, cursor: 'pointer', padding: '4px 0', textAlign: 'center' }}>
+                              style={{ width: '100%', background: 'none', border: 'none', color: '#1E73BE', fontSize: 12, fontWeight: 600, cursor: 'pointer', padding: '4px 0', minHeight: 'var(--touch-target)', textAlign: 'center' }}>
                               {isExpanded
                                 ? (locale === 'it' ? 'Meno tariffe ▴' : locale === 'de' ? 'Weniger ▴' : locale === 'pl' ? 'Mniej ▴' : 'Less ▴')
                                 : (locale === 'it' ? `Vedi tutte le tariffe (${ro.offers.length}) ▾` : locale === 'de' ? `Alle Tarife (${ro.offers.length}) ▾` : locale === 'pl' ? `Wszystkie taryfy (${ro.offers.length}) ▾` : `View all rates (${ro.offers.length}) ▾`)}
@@ -717,7 +719,7 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
       {/* CTA mobile sticky */}
       <div
         className="position-fixed bottom-0 start-0 end-0 bg-white border-top step1-cta-mobile"
-        style={{ paddingTop: 12, paddingLeft: 16, paddingRight: 16, paddingBottom: 28, zIndex: 50 }}
+        style={{ paddingTop: 12, paddingLeft: 16, paddingRight: 16, paddingBottom: 16, zIndex: 50 }}
       >
         <button
           onClick={handleContinua}
@@ -760,7 +762,7 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
 
 const chipActiveStyle: React.CSSProperties = {
   display: 'flex', alignItems: 'center', gap: 5,
-  padding: '6px 11px', borderRadius: 20, flexShrink: 0,
+  padding: '6px 11px', minHeight: 'var(--touch-target)', borderRadius: 20, flexShrink: 0,
   border: '1.5px solid #1E73BE', background: '#EEF5FC',
   color: '#1E73BE', fontSize: 12, fontWeight: 600, cursor: 'pointer',
 };
@@ -772,14 +774,16 @@ const sectionTitleStyle: React.CSSProperties = {
 };
 const radioRowStyle: React.CSSProperties = {
   display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-  width: '100%', padding: '9px 0', background: 'none', border: 'none',
+  width: '100%', padding: '9px 0', minHeight: 'var(--touch-target)',
+  background: 'none', border: 'none',
   borderBottom: '1px solid #f0f0f0', cursor: 'pointer', textAlign: 'left',
 };
 const dividerStyle: React.CSSProperties = {
   height: 1, background: '#e5e7eb',
 };
 const pillStyle = (active: boolean): React.CSSProperties => ({
-  padding: '7px 14px', borderRadius: 8, fontSize: 13, cursor: 'pointer', fontWeight: active ? 600 : 400,
+  padding: '7px 14px', minHeight: 'var(--touch-target)', borderRadius: 8,
+  fontSize: 13, cursor: 'pointer', fontWeight: active ? 600 : 400,
   border: `1.5px solid ${active ? '#1E73BE' : '#e5e7eb'}`,
   background: active ? '#EEF5FC' : '#f5f5f5',
   color: active ? '#1E73BE' : '#555',
