@@ -399,6 +399,36 @@
       "offline": "On arrival",
       "online": "Online (Stripe)",
       "questionsLink": "Have questions? Contact us →"
+    },
+    "statusCheckin": {
+      "pageTitle": "Track your request",
+      "pageSubtitle": "Enter your booking number to check the status and send messages.",
+      "bookingLabel": "Booking number",
+      "bookingPh": "e.g. 84750124",
+      "viewBtn": "View status",
+      "loading": "Loading…",
+      "notFound": "Request not found. Check your booking number.",
+      "connErr": "Connection error. Try again.",
+      "needHelp": "Need help?",
+      "booking": "Booking",
+      "details": "Booking details",
+      "property": "Property",
+      "change": "Change",
+      "messages": "Messages",
+      "noMessages": "No messages yet.",
+      "msgPh": "Write a message… (Enter to send)",
+      "send": "Send",
+      "sending": "…",
+      "msgErr": "Error sending message. Try again.",
+      "urgentHelp": "Need urgent help?",
+      "pendingNote": "We will review your documents within 24 hours.",
+      "approvedNote": "You will be contacted for the video verification on arrival.",
+      "rejectedReason": "Reason: ",
+      "statusPending": "Awaiting approval",
+      "statusApproved": "Approved",
+      "statusRejected": "Not approved",
+      "you": "You",
+      "dateLocale": "en-GB"
     }
   }
 }

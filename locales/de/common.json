@@ -399,6 +399,36 @@
       "offline": "Bei der Ankunft",
       "online": "Online (Stripe)",
       "questionsLink": "Haben Sie Fragen? Kontaktieren Sie uns →"
+    },
+    "statusCheckin": {
+      "pageTitle": "Anfrage verfolgen",
+      "pageSubtitle": "Geben Sie Ihre Buchungsnummer ein, um den Status zu prüfen und Nachrichten zu senden.",
+      "bookingLabel": "Buchungsnummer",
+      "bookingPh": "z.B. 84750124",
+      "viewBtn": "Status ansehen",
+      "loading": "Wird geladen…",
+      "notFound": "Anfrage nicht gefunden. Überprüfen Sie Ihre Buchungsnummer.",
+      "connErr": "Verbindungsfehler. Bitte versuchen Sie es erneut.",
+      "needHelp": "Brauchen Sie Hilfe?",
+      "booking": "Buchung",
+      "details": "Buchungsdetails",
+      "property": "Unterkunft",
+      "change": "Ändern",
+      "messages": "Nachrichten",
+      "noMessages": "Noch keine Nachrichten.",
+      "msgPh": "Nachricht schreiben… (Enter zum Senden)",
+      "send": "Senden",
+      "sending": "…",
+      "msgErr": "Fehler beim Senden. Bitte versuchen Sie es erneut.",
+      "urgentHelp": "Dringende Hilfe benötigt?",
+      "pendingNote": "Wir prüfen Ihre Dokumente innerhalb von 24 Stunden.",
+      "approvedNote": "Sie werden für die Video-Verifizierung bei der Ankunft kontaktiert.",
+      "rejectedReason": "Grund: ",
+      "statusPending": "Wartet auf Genehmigung",
+      "statusApproved": "Genehmigt",
+      "statusRejected": "Nicht genehmigt",
+      "you": "Sie",
+      "dateLocale": "de-DE"
     }
   }
 }

@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
+import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
 
 interface Message {
@@ -46,146 +47,9 @@ const card: React.CSSProperties = {
   borderRadius: 14, padding: 20,
 };
 
-// ─── Traduzioni ───────────────────────────────────────────────────────────────
-const T: Record<Locale, {
-  pageTitle: string; pageSubtitle: string;
-  bookingLabel: string; bookingPh: string;
-  viewBtn: string; loading: string;
-  notFound: string; connErr: string;
-  needHelp: string;
-  booking: string; details: string; property: string;
-  change: string; messages: string; noMessages: string;
-  msgPh: string; send: string; sending: string; msgErr: string;
-  urgentHelp: string;
-  pendingNote: string; approvedNote: string; rejectedReason: string;
-  statusPending: string; statusApproved: string; statusRejected: string;
-  you: string;
-  dateLocale: string;
-}> = {
-  it: {
-    pageTitle:     'Segui la tua richiesta',
-    pageSubtitle:  'Inserisci il numero di prenotazione per controllare lo stato e inviare messaggi.',
-    bookingLabel:  'Numero prenotazione',
-    bookingPh:     'es. 84750124',
-    viewBtn:       'Vedi stato',
-    loading:       'Caricamento…',
-    notFound:      'Richiesta non trovata. Verifica il numero di prenotazione.',
-    connErr:       'Errore di connessione. Riprova.',
-    needHelp:      'Hai bisogno di aiuto?',
-    booking:       'Prenotazione',
-    details:       'Dettagli prenotazione',
-    property:      'Struttura',
-    change:        'Cambia',
-    messages:      'Messaggi',
-    noMessages:    'Nessun messaggio ancora.',
-    msgPh:         'Scrivi un messaggio… (Invio per inviare)',
-    send:          'Invia',
-    sending:       '…',
-    msgErr:        'Errore invio messaggio. Riprova.',
-    urgentHelp:    'Hai bisogno di aiuto urgente?',
-    pendingNote:   'Verificheremo i tuoi documenti entro 24 ore.',
-    approvedNote:  'Sarai contattato per la videochiamata di verifica all\'arrivo.',
-    rejectedReason:'Motivo: ',
-    statusPending:  'In attesa di approvazione',
-    statusApproved: 'Approvata',
-    statusRejected: 'Non approvata',
-    you:           'Tu',
-    dateLocale:    'it-IT',
-  },
-  en: {
-    pageTitle:     'Track your request',
-    pageSubtitle:  'Enter your booking number to check the status and send messages.',
-    bookingLabel:  'Booking number',
-    bookingPh:     'e.g. 84750124',
-    viewBtn:       'View status',
-    loading:       'Loading…',
-    notFound:      'Request not found. Check your booking number.',
-    connErr:       'Connection error. Try again.',
-    needHelp:      'Need help?',
-    booking:       'Booking',
-    details:       'Booking details',
-    property:      'Property',
-    change:        'Change',
-    messages:      'Messages',
-    noMessages:    'No messages yet.',
-    msgPh:         'Write a message… (Enter to send)',
-    send:          'Send',
-    sending:       '…',
-    msgErr:        'Error sending message. Try again.',
-    urgentHelp:    'Need urgent help?',
-    pendingNote:   'We will review your documents within 24 hours.',
-    approvedNote:  'You will be contacted for the video verification on arrival.',
-    rejectedReason:'Reason: ',
-    statusPending:  'Awaiting approval',
-    statusApproved: 'Approved',
-    statusRejected: 'Not approved',
-    you:           'You',
-    dateLocale:    'en-GB',
-  },
-  de: {
-    pageTitle:     'Anfrage verfolgen',
-    pageSubtitle:  'Geben Sie Ihre Buchungsnummer ein, um den Status zu prüfen und Nachrichten zu senden.',
-    bookingLabel:  'Buchungsnummer',
-    bookingPh:     'z.B. 84750124',
-    viewBtn:       'Status ansehen',
-    loading:       'Wird geladen…',
-    notFound:      'Anfrage nicht gefunden. Überprüfen Sie Ihre Buchungsnummer.',
-    connErr:       'Verbindungsfehler. Bitte versuchen Sie es erneut.',
-    needHelp:      'Brauchen Sie Hilfe?',
-    booking:       'Buchung',
-    details:       'Buchungsdetails',
-    property:      'Unterkunft',
-    change:        'Ändern',
-    messages:      'Nachrichten',
-    noMessages:    'Noch keine Nachrichten.',
-    msgPh:         'Nachricht schreiben… (Enter zum Senden)',
-    send:          'Senden',
-    sending:       '…',
-    msgErr:        'Fehler beim Senden. Bitte versuchen Sie es erneut.',
-    urgentHelp:    'Dringende Hilfe benötigt?',
-    pendingNote:   'Wir prüfen Ihre Dokumente innerhalb von 24 Stunden.',
-    approvedNote:  'Sie werden für die Video-Verifizierung bei der Ankunft kontaktiert.',
-    rejectedReason:'Grund: ',
-    statusPending:  'Wartet auf Genehmigung',
-    statusApproved: 'Genehmigt',
-    statusRejected: 'Nicht genehmigt',
-    you:           'Sie',
-    dateLocale:    'de-DE',
-  },
-  pl: {
-    pageTitle:     'Śledź swoją prośbę',
-    pageSubtitle:  'Wpisz numer rezerwacji, aby sprawdzić status i wysyłać wiadomości.',
-    bookingLabel:  'Numer rezerwacji',
-    bookingPh:     'np. 84750124',
-    viewBtn:       'Sprawdź status',
-    loading:       'Ładowanie…',
-    notFound:      'Prośba nie znaleziona. Sprawdź numer rezerwacji.',
-    connErr:       'Błąd połączenia. Spróbuj ponownie.',
-    needHelp:      'Potrzebujesz pomocy?',
-    booking:       'Rezerwacja',
-    details:       'Szczegóły rezerwacji',
-    property:      'Obiekt',
-    change:        'Zmień',
-    messages:      'Wiadomości',
-    noMessages:    'Brak wiadomości.',
-    msgPh:         'Napisz wiadomość… (Enter aby wysłać)',
-    send:          'Wyślij',
-    sending:       '…',
-    msgErr:        'Błąd wysyłania wiadomości. Spróbuj ponownie.',
-    urgentHelp:    'Potrzebujesz pilnej pomocy?',
-    pendingNote:   'Sprawdzimy Twoje dokumenty w ciągu 24 godzin.',
-    approvedNote:  'Zostaniesz skontaktowany w sprawie weryfikacji wideo przy przyjeździe.',
-    rejectedReason:'Powód: ',
-    statusPending:  'Oczekuje na zatwierdzenie',
-    statusApproved: 'Zatwierdzona',
-    statusRejected: 'Niezatwierdzona',
-    you:           'Ty',
-    dateLocale:    'pl-PL',
-  },
-};
 
 export default function StatusCheckin({ locale }: { locale: Locale }) {
-  const t = T[locale] ?? T.it;
+  const t = getTranslations(locale).components.statusCheckin;
 
   const [bookIdInput, setBookIdInput] = useState('');
   const [data, setData]               = useState<StatusData | null>(null);

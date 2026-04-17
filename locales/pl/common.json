@@ -399,6 +399,36 @@
       "offline": "Przy zameldowaniu",
       "online": "Online (Stripe)",
       "questionsLink": "Masz pytania? Skontaktuj się z nami →"
+    },
+    "statusCheckin": {
+      "pageTitle": "Śledź swoją prośbę",
+      "pageSubtitle": "Wpisz numer rezerwacji, aby sprawdzić status i wysyłać wiadomości.",
+      "bookingLabel": "Numer rezerwacji",
+      "bookingPh": "np. 84750124",
+      "viewBtn": "Sprawdź status",
+      "loading": "Ładowanie…",
+      "notFound": "Prośba nie znaleziona. Sprawdź numer rezerwacji.",
+      "connErr": "Błąd połączenia. Spróbuj ponownie.",
+      "needHelp": "Potrzebujesz pomocy?",
+      "booking": "Rezerwacja",
+      "details": "Szczegóły rezerwacji",
+      "property": "Obiekt",
+      "change": "Zmień",
+      "messages": "Wiadomości",
+      "noMessages": "Brak wiadomości.",
+      "msgPh": "Napisz wiadomość… (Enter aby wysłać)",
+      "send": "Wyślij",
+      "sending": "…",
+      "msgErr": "Błąd wysyłania wiadomości. Spróbuj ponownie.",
+      "urgentHelp": "Potrzebujesz pilnej pomocy?",
+      "pendingNote": "Sprawdzimy Twoje dokumenty w ciągu 24 godzin.",
+      "approvedNote": "Zostaniesz skontaktowany w sprawie weryfikacji wideo przy przyjeździe.",
+      "rejectedReason": "Powód: ",
+      "statusPending": "Oczekuje na zatwierdzenie",
+      "statusApproved": "Zatwierdzona",
+      "statusRejected": "Niezatwierdzona",
+      "you": "Ty",
+      "dateLocale": "pl-PL"
     }
   }
 }

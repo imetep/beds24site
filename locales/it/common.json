@@ -399,6 +399,36 @@
       "offline": "All'arrivo",
       "online": "Online (Stripe)",
       "questionsLink": "Hai domande? Contattaci →"
+    },
+    "statusCheckin": {
+      "pageTitle": "Segui la tua richiesta",
+      "pageSubtitle": "Inserisci il numero di prenotazione per controllare lo stato e inviare messaggi.",
+      "bookingLabel": "Numero prenotazione",
+      "bookingPh": "es. 84750124",
+      "viewBtn": "Vedi stato",
+      "loading": "Caricamento…",
+      "notFound": "Richiesta non trovata. Verifica il numero di prenotazione.",
+      "connErr": "Errore di connessione. Riprova.",
+      "needHelp": "Hai bisogno di aiuto?",
+      "booking": "Prenotazione",
+      "details": "Dettagli prenotazione",
+      "property": "Struttura",
+      "change": "Cambia",
+      "messages": "Messaggi",
+      "noMessages": "Nessun messaggio ancora.",
+      "msgPh": "Scrivi un messaggio… (Invio per inviare)",
+      "send": "Invia",
+      "sending": "…",
+      "msgErr": "Errore invio messaggio. Riprova.",
+      "urgentHelp": "Hai bisogno di aiuto urgente?",
+      "pendingNote": "Verificheremo i tuoi documenti entro 24 ore.",
+      "approvedNote": "Sarai contattato per la videochiamata di verifica all'arrivo.",
+      "rejectedReason": "Motivo: ",
+      "statusPending": "In attesa di approvazione",
+      "statusApproved": "Approvata",
+      "statusRejected": "Non approvata",
+      "you": "Tu",
+      "dateLocale": "it-IT"
     }
   }
 }
