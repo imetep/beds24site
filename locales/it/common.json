@@ -501,6 +501,116 @@
       "successRef": "Riferimento prenotazione",
       "errorGeneric": "Si è verificato un errore. Riprova o contattaci via WhatsApp.",
       "docSection": "Documenti"
+    },
+    "contatti": {
+      "pageTitle": "Contatti",
+      "pageSubtitle": "Trova la risposta qui sotto, o scrivici direttamente.",
+      "faqTitle": "Domande frequenti",
+      "contactTitle": "Non hai trovato la risposta?",
+      "contactSubtitle": "Siamo disponibili tutti i giorni.",
+      "wa": "WhatsApp",
+      "waSub": "Risposta entro 1 ora",
+      "tel": "Telefono",
+      "telSub": "Lun–Dom, 9:00–21:00",
+      "mail": "Email",
+      "mailSub": "Risposta entro 24 ore",
+      "bookBanner": "Vuoi prenotare direttamente?",
+      "bookBtn": "Prenota ora",
+      "safeBannerText": "Vuoi sapere chi siamo prima di prenotare?",
+      "safeBannerBtn": "Prenotazione sicura →",
+      "faq": [
+        {
+          "icon": "🛡️",
+          "label": "Sicurezza e prenotazione",
+          "items": [
+            {
+              "q": "Posso venire a vedere la casa prima di prenotare?",
+              "a": "Non effettuiamo sopralluoghi prima della prenotazione.\nVedere fisicamente una casa non garantisce che chi la mostra abbia il diritto legale di affittarla: è uno dei meccanismi più comuni nelle truffe sugli affitti brevi.\nL'unica e vera garanzia è prenotare su una piattaforma certificata (Airbnb) con host verificato, recensioni reali e CIN esposto nell'annuncio.",
+              "link": { "label": "Leggi la guida alla prenotazione sicura →", "href": "/it/prenotazione-sicura" }
+            },
+            {
+              "q": "Ho chiamato ma non risponde nessuno. Come posso contattarvi?",
+              "a": "I nostri canali principali sono WhatsApp, email e telefono (tasto 4 del centralino).\nPer contatti rapidi scrivi su WhatsApp: rispondiamo di solito entro poche ore.\nNon effettuiamo assistenza telefonica diretta: WhatsApp ci permette di risponderti in modo più preciso e tracciabile."
+            }
+          ]
+        },
+        {
+          "icon": "🧸",
+          "label": "Bambini",
+          "items": [
+            { "q": "I bambini fino a 2 anni pagano?", "a": "I bambini fino a 2 anni non sono compresi nel prezzo ma vengono conteggiati ai fini della massima capienza della struttura e non pagano la tassa di soggiorno." },
+            { "q": "È disponibile una culla da campeggio?", "a": "Sì, per i bambini fino a 2 anni è disponibile su richiesta la culla da campeggio con seggiolone al costo di €40 a soggiorno. Va prenotata con almeno 72 ore di anticipo contattandoci via WhatsApp." },
+            { "q": "I bambini dai 3 agli 11 anni pagano?", "a": "I bambini dai 3 agli 11 anni pagano come gli adulti e non pagano la tassa di soggiorno." }
+          ]
+        },
+        {
+          "icon": "🗓️",
+          "label": "Arrivo e partenza",
+          "items": [
+            { "q": "Quali sono gli orari di check-in e check-out?", "a": "Check-in dalle 16:00 alle 19:00, check-out dalle 08:00 entro le 10:00." },
+            { "q": "Posso arrivare dopo le 19:00?", "a": "Sì. Se il tuo volo non ti consente di arrivare entro le 19:00, oppure vuoi essere libero dagli orari della reception, puoi richiedere il self check-in.", "link": { "label": "Scopri come funziona il self check-in →", "href": "/it/self-checkin" } },
+            { "q": "Posso fare il check-out prima delle 08:00?", "a": "Sì. Se devi partire prima delle 08:00, segnalacelo quando arrivi: organizzeremo insieme il check-out anticipato." },
+            { "q": "Posso richiedere il check-in anticipato?", "a": "No, nella quasi totalità dei casi l'ospite precedente lascia la struttura alle 10:00 e nelle sei ore successive prepariamo tutto per il tuo arrivo.\nIn casi eccezionali è possibile: contattaci qualche giorno prima per verificare la disponibilità." },
+            { "q": "Come funziona la consegna delle chiavi?", "a": "Siamo presenti ad accoglierti di persona." },
+            { "q": "Come funziona il self check-in?", "a": "Il self check-in non è automatico: va richiesto con almeno 72 ore di anticipo.\n• Richiedi il self check-in almeno 72 ore prima dell'arrivo\n• Invia i documenti di identità di tutti gli ospiti adulti (leggibili e completi)\n• Devi essere raggiungibile nelle 2 ore precedenti l'arrivo", "link": { "label": "Consulta la guida al self check-in →", "href": "/it/self-checkin" } },
+            { "q": "Come arrivo in treno? La stazione è vicina?", "a": "La stazione di Minturno-Scauri si trova al centro del paese.\nTempi di percorrenza: da Roma circa 1h40, da Napoli circa 60 minuti.\nVisita trenitalia.com per orari e biglietti.", "link": { "label": "Vedi la stazione su Maps →", "href": "https://maps.app.goo.gl/7m3S4mdEpvwaa1zB9" } },
+            { "q": "Dove si trova la reception per il check-in fisico?", "a": "Riceverai informazioni dettagliate per il check-in entro 7 giorni prima dell'arrivo." },
+            { "q": "C'è un numero WhatsApp per contatti diretti?", "a": "Sì, puoi contattarci via WhatsApp al contatto indicato in questa pagina. Lo usiamo per organizzare l'arrivo, il check-in e qualsiasi esigenza durante il soggiorno." }
+          ]
+        },
+        {
+          "icon": "🏊",
+          "label": "Piscina",
+          "items": [
+            { "q": "La piscina è aperta? In quale periodo dell'anno?", "a": "La piscina è disponibile indicativamente dal 30 maggio al 15 ottobre. Le date esatte dipendono dalla struttura e dalle condizioni meteo. Contattaci per conferma sul tuo periodo." },
+            { "q": "La piscina è privata (uso esclusivo) o condivisa?", "a": "Il tipo di piscina, ove presente, è indicato nella descrizione dell'abitazione (condivisa o esclusiva)." },
+            { "q": "La piscina è inclusa nel prezzo?", "a": "Sì, l'uso della piscina è completamente incluso nel prezzo di affitto. Non ci sono costi aggiuntivi." },
+            { "q": "La piscina è adatta ai bambini piccoli? È sicura?", "a": "I bambini possono accedere in piscina solo se accompagnati da un adulto. La piscina principale ha una profondità massima di 1,20 metri." },
+            { "q": "Le foto mostrano piscine diverse — quale è quella inclusa?", "a": "Il tipo di piscina (condivisa o esclusiva), ove disponibile, è indicato nelle caratteristiche della casa." }
+          ]
+        },
+        {
+          "icon": "🏠",
+          "label": "Struttura e servizi",
+          "items": [
+            { "q": "L'alloggio è interamente per noi? Non ci sono altri ospiti?", "a": "Sì, ogni unità abitativa è riservata esclusivamente agli ospiti che la prenotano. Spazi come parcheggio, piscina e area ombrelloni potrebbero essere condivisi con ospiti di altre unità all'interno dello stesso complesso." },
+            { "q": "Biancheria da letto e asciugamani sono inclusi?", "a": "Sì, lenzuola e asciugamani da bagno sono inclusi nel prezzo. Gli asciugamani da mare non sono forniti." },
+            { "q": "La pulizia finale è obbligatoria? Quanto costa?", "a": "Sì, le pulizie finali sono comprese nel prezzo salvo diversa indicazione durante la prenotazione. Le pulizie non includono il riassetto giornaliero delle camere." },
+            { "q": "I consumi energetici (luce, gas, acqua) sono inclusi nel prezzo?", "a": "No. I consumi energetici sono addebitati a parte, misurati tramite lettura dei contatori al check-in e al check-out. Paghi solo quello che hai consumato.\nIn inverno il costo dipende molto dalle abitudini di utilizzo del riscaldamento.", "link": { "label": "Scopri tariffe e consigli sui consumi →", "href": "/it/utenze" } },
+            { "q": "Il WiFi è disponibile? È veloce per smart working e videochiamate?", "a": "Sì, il WiFi è disponibile in tutte le strutture LivingApple. La connessione è sufficiente per smart working e videochiamate professionali, ma le prestazioni variano da struttura a struttura. Per la velocità esatta contattaci." },
+            { "q": "Il riscaldamento è garantito d'inverno?", "a": "Sì, tutte le strutture sono dotate di impianto di riscaldamento funzionante. In caso di problemi tecnici siamo reperibili tempestivamente.\nAttenzione: i consumi energetici (luce, gas, acqua) sono misurati a contatore e addebitati a parte al termine del soggiorno.", "link": { "label": "Scopri come funzionano le utenze →", "href": "/it/utenze" } },
+            { "q": "C'è il parcheggio privato? È gratuito?", "a": "Sì, ogni struttura dispone di parcheggio privato all'interno della proprietà o nelle immediate vicinanze. In alcuni casi potrebbe essere a pagamento: lo trovi indicato nella scheda della struttura." },
+            { "q": "A Scauri è facile parcheggiare?", "a": "Sì, non ci sono grossi problemi di parcheggio. Direttamente in struttura è possibile stipulare un abbonamento per le strisce blu al costo di 15,00 € a settimana, valido per Scauri e l'intero Comune di Minturno." },
+            { "q": "Come si affronta un problema tecnico durante il soggiorno?", "a": "In caso di problemi tecnici (acqua calda, riscaldamento, ecc.) contattaci immediatamente su WhatsApp. Per problemi urgenti la priorità è massima e interveniamo nel più breve tempo possibile." },
+            { "q": "È possibile avere un cambio asciugamani o una pulizia durante il soggiorno?", "a": "Sì, durante il soggiorno è possibile richiedere:\n• Cambio asciugamani: 4 € a set per persona\n• Pulizia intermedia della casa: costo e data da concordare al check-in\nPer soggiorni superiori a una settimana consigliamo di organizzarlo già all'arrivo." }
+          ]
+        },
+        {
+          "icon": "📍",
+          "label": "Posizione e dintorni",
+          "items": [
+            { "q": "Quanto dista il mare? Ci sono spiagge attrezzate?", "a": "LivingApple campagna dista circa 2-3 km dalla spiaggia di Scauri/Minturno. LivingApple mare è a soli 250 metri. Ci sono lidi attrezzati raggiungibili in auto o a piedi." },
+            { "q": "La struttura si trova a Scauri o a Minturno? Come la trovo?", "a": "Le strutture LivingApple si trovano tra Minturno e Scauri (LT), nel Lazio meridionale. Ti invieremo l'indirizzo esatto e il pin Google Maps nel messaggio di benvenuto." },
+            { "q": "Ci sono supermercati, ristoranti e negozi vicini?", "a": "Sì, a Scauri e Minturno trovi supermercati, bar, ristoranti, farmacie e negozi a pochi minuti in auto. I tempi variano a seconda della struttura scelta." },
+            { "q": "Quanto dista dall'aeroporto di Roma Fiumicino?", "a": "L'aeroporto di Roma Fiumicino (FCO) è a circa 165 km, raggiungibile in circa 1h40-2h00 in auto (A1). In alternativa: treno da Roma Termini fino alla stazione di Minturno-Scauri." },
+            { "q": "Quanto tempo da Roma e da Napoli in auto o in treno?", "a": "In auto: da Roma circa 1h40 (A1), da Napoli circa 1h (A1).\nIn treno: da Roma Termini circa 1h40, da Napoli Centrale circa 60 minuti.\nMinturno si trova a metà strada tra Roma e Napoli." },
+            { "q": "La strada per raggiungere la struttura è difficile?", "a": "Le strade principali di accesso sono percorribili normalmente. Per strutture collinari ti invieremo indicazioni dettagliate e il percorso consigliato nel messaggio di benvenuto." }
+          ]
+        },
+        {
+          "icon": "💶",
+          "label": "Prezzi e pagamenti",
+          "items": [
+            { "q": "La tassa di soggiorno è inclusa nel prezzo?", "a": "Sì, è compresa nel prezzo mostrato sul nostro sito.\nLe OTA (Airbnb e Booking) hanno difficoltà ad adattare il calcolo per ogni singola Municipalità: a Minturno la tassa è di 2 € a notte per adulto (massimo 10 notti). I bambini under 12 anni sono esenti." },
+            { "q": "Come funziona la politica di cancellazione?", "a": "Dipende dalla tariffa scelta al momento della prenotazione. I dettagli completi sono indicati nella scheda dell'offerta." },
+            { "q": "È previsto un deposito cauzionale?", "a": "Sì, verrà richiesto un deposito cauzionale all'arrivo. L'importo esatto varia da casa a casa ed è indicato sul nostro sito.\nAll'arrivo sarà richiesta una carta di credito (non Debit Card, non PostePay). Il deposito sarà restituito integralmente entro 48 ore dalla partenza in assenza di danni.", "link": { "label": "Come funziona il deposito cauzionale →", "href": "/it/deposito" } },
+            { "q": "È possibile trattare il prezzo per soggiorni lunghi o gruppi?", "a": "Per soggiorni di un mese o più è possibile concordare una tariffa personalizzata. Contattaci direttamente con le date esatte e il numero di ospiti." },
+            { "q": "Ho visto prezzi diversi su pagine diverse — quale è corretto?", "a": "Il prezzo corretto e definitivo è quello mostrato nella pagina di dettaglio dell'annuncio al momento della prenotazione. In nessun caso il prezzo è comprensivo dei consumi energetici." },
+            { "q": "È possibile avere una fattura per soggiorni aziendali?", "a": "Sì, per soggiorni aziendali è possibile emettere fattura. Contattaci prima di prenotare indicando ragione sociale, P.IVA e le date del soggiorno." },
+            { "q": "I consumi energetici (luce, gas, acqua) sono inclusi nel prezzo?", "a": "No. I consumi energetici sono addebitati a parte, misurati tramite lettura dei contatori al check-in e al check-out. Paghi solo quello che hai consumato.\nIn inverno il costo dipende molto dalle abitudini di utilizzo del riscaldamento.", "link": { "label": "Scopri tariffe e consigli sui consumi →", "href": "/it/utenze" } }
+          ]
+        }
+      ]
     }
   }
 }

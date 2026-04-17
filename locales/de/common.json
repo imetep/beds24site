@@ -501,6 +501,101 @@
       "successRef": "Buchungsreferenz",
       "errorGeneric": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie uns per WhatsApp.",
       "docSection": "Dokumente"
+    },
+    "contatti": {
+      "pageTitle": "Kontakt",
+      "pageSubtitle": "Finden Sie Ihre Antwort unten oder schreiben Sie uns direkt.",
+      "faqTitle": "Häufig gestellte Fragen",
+      "contactTitle": "Keine Antwort gefunden?",
+      "contactSubtitle": "Wir sind täglich für Sie da.",
+      "wa": "WhatsApp",
+      "waSub": "Antwort innerhalb 1 Stunde",
+      "tel": "Telefon",
+      "telSub": "Mo–So, 9:00–21:00",
+      "mail": "E-Mail",
+      "mailSub": "Antwort innerhalb 24 Stunden",
+      "bookBanner": "Möchten Sie direkt buchen?",
+      "bookBtn": "Jetzt buchen",
+      "safeBannerText": "Möchten Sie wissen, wer wir sind?",
+      "safeBannerBtn": "Sicheres Buchen →",
+      "faq": [
+        {
+          "icon": "🧸",
+          "label": "Kinder",
+          "items": [
+            { "q": "Zahlen Kinder bis 2 Jahre?", "a": "Kinder bis 2 Jahre sind nicht im Preis enthalten, werden jedoch für die maximale Kapazität der Unterkunft gezählt und zahlen keine Kurtaxe." },
+            { "q": "Ist ein Campingbettchen verfügbar?", "a": "Ja, für Kinder bis 2 Jahre ist auf Anfrage ein Campingbettchen mit Hochstuhl für €40 pro Aufenthalt verfügbar. Bitte mindestens 72 Stunden im Voraus über WhatsApp reservieren." },
+            { "q": "Zahlen Kinder von 3 bis 11 Jahren?", "a": "Kinder von 3 bis 11 Jahren zahlen denselben Tarif wie Erwachsene und zahlen keine Kurtaxe." }
+          ]
+        },
+        {
+          "icon": "🗓️",
+          "label": "Ankunft & Abreise",
+          "items": [
+            { "q": "Wann ist Check-in und Check-out?", "a": "Check-in von 16:00 bis 19:00 Uhr, Check-out von 08:00 bis spätestens 10:00 Uhr." },
+            { "q": "Kann ich nach 19:00 Uhr ankommen?", "a": "Ja. Wenn Ihr Flug keine Ankunft bis 19:00 Uhr ermöglicht oder Sie von den Rezeptionszeiten unabhängig sein möchten, können Sie Self-Check-in beantragen.", "link": { "label": "So funktioniert der Self-Check-in →", "href": "/de/self-checkin" } },
+            { "q": "Kann ich vor 08:00 Uhr abreisen?", "a": "Ja. Wenn Sie vor 08:00 Uhr abreisen müssen, teilen Sie uns dies bei der Ankunft mit — wir organisieren gemeinsam einen frühen Check-out." },
+            { "q": "Kann ich einen früheren Check-in beantragen?", "a": "In fast allen Fällen verlässt der vorherige Gast die Unterkunft um 10:00 Uhr, und wir nutzen die folgenden sechs Stunden, um alles für Ihre Ankunft vorzubereiten.\nIn Ausnahmefällen ist es möglich: Bitte kontaktieren Sie uns einige Tage vor der Ankunft." },
+            { "q": "Wie funktioniert die Schlüsselübergabe?", "a": "Wir empfangen Sie persönlich bei Ihrer Ankunft." },
+            { "q": "Wie funktioniert der Self-Check-in?", "a": "Self-Check-in ist nicht automatisch: Er muss mindestens 72 Stunden im Voraus beantragt werden.\n• Beantragen Sie den Self-Check-in mindestens 72 Stunden vor der Ankunft\n• Senden Sie die Ausweisdokumente aller erwachsenen Gäste (lesbar und vollständig)\n• Sie müssen in den 2 Stunden vor der Ankunft erreichbar sein", "link": { "label": "Self-Check-in-Anleitung lesen →", "href": "/de/self-checkin" } },
+            { "q": "Wie komme ich mit dem Zug an? Ist der Bahnhof in der Nähe?", "a": "Der Bahnhof Minturno-Scauri befindet sich im Ortskern.\nFahrtzeiten: ca. 1h40 ab Rom, ca. 60 Minuten ab Neapel.\nFahrpläne und Tickets finden Sie auf trenitalia.com.", "link": { "label": "Bahnhof auf Maps ansehen →", "href": "https://maps.app.goo.gl/7m3S4mdEpvwaa1zB9" } },
+            { "q": "Wo befindet sich die Rezeption für den persönlichen Check-in?", "a": "Sie erhalten detaillierte Check-in-Informationen spätestens 7 Tage vor Ihrer Ankunft." },
+            { "q": "Gibt es eine WhatsApp-Nummer für direkten Kontakt?", "a": "Ja, Sie können uns über WhatsApp unter der auf dieser Seite angegebenen Nummer erreichen. Wir nutzen es für Ankunft, Check-in und alle Bedürfnisse während des Aufenthalts." }
+          ]
+        },
+        {
+          "icon": "🏊",
+          "label": "Pool",
+          "items": [
+            { "q": "Ist der Pool geöffnet? Zu welcher Jahreszeit?", "a": "Der Pool ist in der Regel vom 30. Mai bis zum 15. Oktober verfügbar. Die genauen Daten hängen von der Unterkunft und den Wetterbedingungen ab. Bitte kontaktieren Sie uns zur Bestätigung." },
+            { "q": "Ist der Pool privat (Alleinnutzung) oder wird er geteilt?", "a": "Die Art des Pools, sofern vorhanden, ist in der Unterkunftsbeschreibung angegeben (geteilt oder exklusiv)." },
+            { "q": "Ist der Pool im Preis inbegriffen?", "a": "Ja, die Nutzung des Pools ist vollständig im Mietpreis enthalten. Es fallen keine zusätzlichen Kosten an." },
+            { "q": "Ist der Pool für Kleinkinder geeignet? Ist er sicher?", "a": "Kinder dürfen den Pool nur in Begleitung eines Erwachsenen nutzen. Der Hauptpool hat eine maximale Tiefe von 1,20 Metern." },
+            { "q": "Die Fotos zeigen verschiedene Pools — welcher ist inbegriffen?", "a": "Die Art des Pools (geteilt oder exklusiv), sofern vorhanden, ist in den Unterkunftsmerkmalen angegeben." }
+          ]
+        },
+        {
+          "icon": "🏠",
+          "label": "Unterkunft & Services",
+          "items": [
+            { "q": "Gehört die Unterkunft ganz uns? Gibt es keine anderen Gäste?", "a": "Ja, jede Wohneinheit ist ausschließlich für die buchenden Gäste reserviert. Bereiche wie Parkplatz, Pool und Liegewiese können mit Gästen anderer Einheiten im selben Komplex geteilt werden." },
+            { "q": "Sind Bettwäsche und Handtücher inbegriffen?", "a": "Ja, Bettwäsche und Badetücher sind im Preis enthalten. Strandtücher werden nicht gestellt." },
+            { "q": "Ist die Endreinigung obligatorisch? Was kostet sie?", "a": "Ja, die Endreinigung ist im Preis inbegriffen, sofern bei der Buchung nichts anderes angegeben ist. Die Reinigung umfasst kein tägliches Aufräumen der Zimmer." },
+            { "q": "Sind Energiekosten (Strom, Gas, Wasser) im Preis enthalten?", "a": "Nein. Energiekosten werden separat berechnet, gemessen durch Zählerablesung beim Check-in und Check-out. Sie zahlen nur, was Sie tatsächlich verbraucht haben.\nIm Winter hängen die Kosten stark vom Heizungsverbrauch ab.", "link": { "label": "Tarife und Energie-Tipps ansehen →", "href": "/de/energie" } },
+            { "q": "Ist WLAN verfügbar? Ist es schnell genug für Homeoffice und Videoanrufe?", "a": "Ja, WLAN ist in allen LivingApple-Unterkünften verfügbar. Die Verbindung reicht für Homeoffice und professionelle Videoanrufe aus, die Leistung variiert jedoch je nach Unterkunft. Für die genaue Geschwindigkeit kontaktieren Sie uns bitte." },
+            { "q": "Ist die Heizung im Winter garantiert?", "a": "Ja, alle Unterkünfte sind mit einer funktionierenden Heizungsanlage ausgestattet. Bei technischen Problemen sind wir umgehend erreichbar.\nHinweis: Energiekosten (Strom, Gas, Wasser) werden per Zähler gemessen und am Ende des Aufenthalts separat in Rechnung gestellt.", "link": { "label": "So funktionieren die Nebenkosten →", "href": "/de/energie" } },
+            { "q": "Gibt es einen Privatparkplatz? Ist er kostenlos?", "a": "Ja, jede Unterkunft verfügt über einen privaten Parkplatz auf dem Grundstück oder in unmittelbarer Nähe. In einigen Fällen kann er kostenpflichtig sein: Dies ist im Unterkunftsangebot angegeben." },
+            { "q": "Ist das Parken in Scauri einfach?", "a": "Ja, das Parken ist in der Regel kein Problem. Direkt in der Unterkunft können Sie eine Wochenkarte für die blaue Zone für 15,00 € erwerben, gültig in Scauri und der gesamten Gemeinde Minturno." },
+            { "q": "Wie gehe ich mit einem technischen Problem während des Aufenthalts um?", "a": "Bei technischen Problemen (Warmwasser, Heizung usw.) kontaktieren Sie uns sofort über WhatsApp. Bei dringenden Problemen hat unsere Reaktion höchste Priorität und wir greifen so schnell wie möglich ein." },
+            { "q": "Kann ich während des Aufenthalts einen Handtuchwechsel oder eine Reinigung bekommen?", "a": "Ja, während des Aufenthalts können Sie Folgendes beantragen:\n• Handtuchwechsel: 4 € pro Set pro Person\n• Zwischenreinigung: Kosten und Datum beim Check-in vereinbaren\nBei Aufenthalten von mehr als einer Woche empfehlen wir, dies bereits bei der Ankunft zu organisieren." }
+          ]
+        },
+        {
+          "icon": "📍",
+          "label": "Lage & Umgebung",
+          "items": [
+            { "q": "Wie weit ist das Meer entfernt? Gibt es ausgestattete Strände?", "a": "LivingApple Landhaus ist etwa 2-3 km vom Strand Scauri/Minturno entfernt. LivingApple Meer liegt nur 250 Meter entfernt. Es gibt ausgestattete Strandbäder, die mit dem Auto oder zu Fuß erreichbar sind." },
+            { "q": "Befindet sich die Unterkunft in Scauri oder Minturno? Wie finde ich sie?", "a": "Die LivingApple-Unterkünfte befinden sich zwischen Minturno und Scauri (LT) im südlichen Latium. Wir senden Ihnen die genaue Adresse und den Google Maps-Pin in der Willkommensnachricht." },
+            { "q": "Gibt es in der Nähe Supermärkte, Restaurants und Geschäfte?", "a": "Ja, in Scauri und Minturno finden Sie Supermärkte, Bars, Restaurants, Apotheken und Geschäfte, die nur wenige Minuten mit dem Auto entfernt sind. Die Fahrtzeiten variieren je nach gewählter Unterkunft." },
+            { "q": "Wie weit ist der Flughafen Rom-Fiumicino entfernt?", "a": "Der Flughafen Rom-Fiumicino (FCO) ist ca. 165 km entfernt und mit dem Auto (Autobahn A1) in etwa 1h40-2h00 erreichbar. Alternativ: Zug vom Bahnhof Roma Termini nach Minturno-Scauri." },
+            { "q": "Wie lange dauert es von Rom und Neapel mit dem Auto oder Zug?", "a": "Mit dem Auto: ab Rom ca. 1h40 (A1), ab Neapel ca. 1h (A1).\nMit dem Zug: ab Roma Termini ca. 1h40, ab Napoli Centrale ca. 60 Minuten.\nMinturno liegt auf halbem Weg zwischen Rom und Neapel." },
+            { "q": "Ist die Straße zur Unterkunft schwierig?", "a": "Die Hauptzufahrtsstraßen sind problemlos befahrbar. Für Unterkünfte in Hügellage senden wir Ihnen detaillierte Wegbeschreibungen und die empfohlene Route in der Willkommensnachricht." }
+          ]
+        },
+        {
+          "icon": "💶",
+          "label": "Preise & Zahlung",
+          "items": [
+            { "q": "Ist die Kurtaxe im Preis enthalten?", "a": "Ja, sie ist im auf unserer Website angezeigten Preis enthalten.\nOTA-Plattformen (Airbnb und Booking) haben Schwierigkeiten, die Berechnung für jede einzelne Gemeinde anzupassen: In Minturno beträgt die Kurtaxe 2 € pro Nacht und Erwachsenem (maximal 10 Nächte). Kinder unter 12 Jahren sind befreit." },
+            { "q": "Wie funktioniert die Stornierungsbedingung?", "a": "Dies hängt vom bei der Buchung gewählten Tarif ab. Die vollständigen Details sind auf der Angebotsseite angegeben." },
+            { "q": "Wird eine Kaution verlangt?", "a": "Ja, bei der Ankunft wird eine Kaution verlangt. Der genaue Betrag variiert je nach Unterkunft und ist auf unserer Website angegeben.\nBei der Ankunft wird eine Kreditkarte benötigt (keine Debitkarte, keine PostePay). Die Kaution wird innerhalb von 48 Stunden nach der Abreise vollständig zurückerstattet, sofern keine Schäden vorliegen.", "link": { "label": "So funktioniert die Kaution →", "href": "/de/deposito" } },
+            { "q": "Kann der Preis für Langzeitaufenthalte oder Gruppen verhandelt werden?", "a": "Für Aufenthalte von einem Monat oder länger kann ein individueller Tarif vereinbart werden. Kontaktieren Sie uns direkt mit den genauen Daten und der Anzahl der Gäste." },
+            { "q": "Ich habe auf verschiedenen Seiten unterschiedliche Preise gesehen — welcher ist korrekt?", "a": "Der korrekte und endgültige Preis ist der, der bei der Buchung auf der Detailseite des Angebots angezeigt wird. Der Preis schließt in keinem Fall die Energiekosten ein." },
+            { "q": "Ist es möglich, eine Rechnung für Geschäftsaufenthalte zu erhalten?", "a": "Ja, für Geschäftsaufenthalte können Rechnungen ausgestellt werden. Bitte kontaktieren Sie uns vor der Buchung und geben Sie Firmenname, USt-IdNr. und Aufenthaltsdaten an." },
+            { "q": "Sind Energiekosten (Strom, Gas, Wasser) im Preis enthalten?", "a": "Nein. Energiekosten werden separat berechnet, gemessen durch Zählerablesung beim Check-in und Check-out. Sie zahlen nur, was Sie tatsächlich verbraucht haben.\nIm Winter hängen die Kosten stark vom Heizungsverbrauch ab.", "link": { "label": "Tarife und Energie-Tipps ansehen →", "href": "/de/energie" } }
+          ]
+        }
+      ]
     }
   }
 }

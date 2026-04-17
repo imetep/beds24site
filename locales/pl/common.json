@@ -501,6 +501,101 @@
       "successRef": "Numer referencyjny rezerwacji",
       "errorGeneric": "Wystąpił błąd. Spróbuj ponownie lub skontaktuj się z nami przez WhatsApp.",
       "docSection": "Dokumenty"
+    },
+    "contatti": {
+      "pageTitle": "Kontakt",
+      "pageSubtitle": "Znajdź odpowiedź poniżej lub napisz do nas bezpośrednio.",
+      "faqTitle": "Często zadawane pytania",
+      "contactTitle": "Nie znalazłeś odpowiedzi?",
+      "contactSubtitle": "Jesteśmy dostępni każdego dnia.",
+      "wa": "WhatsApp",
+      "waSub": "Odpowiedź w ciągu 1 godziny",
+      "tel": "Telefon",
+      "telSub": "Pon–Nd, 9:00–21:00",
+      "mail": "Email",
+      "mailSub": "Odpowiedź w ciągu 24 godzin",
+      "bookBanner": "Chcesz zarezerwować bezpośrednio?",
+      "bookBtn": "Zarezerwuj",
+      "safeBannerText": "Chcesz wiedzieć, kim jesteśmy przed rezerwacją?",
+      "safeBannerBtn": "Bezpieczna rezerwacja →",
+      "faq": [
+        {
+          "icon": "🧸",
+          "label": "Dzieci",
+          "items": [
+            { "q": "Czy dzieci do 2 lat płacą?", "a": "Dzieci do 2 lat nie są wliczone w cenę, ale są liczone do maksymalnej pojemności obiektu i nie płacą podatku turystycznego." },
+            { "q": "Czy dostępne jest łóżeczko turystyczne?", "a": "Tak, dla dzieci do 2 lat na życzenie dostępne jest łóżeczko turystyczne z krzesełkiem do karmienia za €40 za pobyt. Prosimy o rezerwację co najmniej 72 godziny wcześniej przez WhatsApp." },
+            { "q": "Czy dzieci w wieku 3–11 lat płacą?", "a": "Dzieci w wieku od 3 do 11 lat płacą tyle samo co dorośli i nie płacą podatku turystycznego." }
+          ]
+        },
+        {
+          "icon": "🗓️",
+          "label": "Przyjazd i wyjazd",
+          "items": [
+            { "q": "Jakie są godziny zameldowania i wymeldowania?", "a": "Zameldowanie od 16:00 do 19:00, wymeldowanie od 08:00 do 10:00." },
+            { "q": "Czy mogę przyjechać po 19:00?", "a": "Tak. Jeśli Twój lot nie pozwala na przyjazd przed 19:00 lub chcesz być niezależny od godzin recepcji, możesz poprosić o self check-in.", "link": { "label": "Dowiedz się, jak działa self check-in →", "href": "/pl/self-checkin" } },
+            { "q": "Czy mogę wymeldować się przed 08:00?", "a": "Tak. Jeśli musisz wyjechać przed 08:00, poinformuj nas o tym przy przyjeździe — wspólnie zorganizujemy wcześniejsze wymeldowanie." },
+            { "q": "Czy mogę poprosić o wcześniejsze zameldowanie?", "a": "W prawie wszystkich przypadkach poprzedni gość opuszcza obiekt o 10:00, a w ciągu następnych sześciu godzin przygotowujemy wszystko na Twój przyjazd.\nW wyjątkowych przypadkach jest to możliwe: skontaktuj się z nami kilka dni przed przyjazdem." },
+            { "q": "Jak działa przekazanie kluczy?", "a": "Jesteśmy osobiście obecni, aby Cię przywitać." },
+            { "q": "Jak działa samodzielne zameldowanie?", "a": "Samodzielne zameldowanie nie jest automatyczne: należy je zgłosić co najmniej 72 godziny wcześniej.\n• Poproś o self check-in co najmniej 72 godziny przed przyjazdem\n• Prześlij dokumenty tożsamości wszystkich dorosłych gości (czytelne i kompletne)\n• Musisz być dostępny na 2 godziny przed przyjazdem", "link": { "label": "Przeczytaj przewodnik self check-in →", "href": "/pl/self-checkin" } },
+            { "q": "Jak dojechać pociągiem? Czy stacja jest blisko?", "a": "Stacja Minturno-Scauri znajduje się w centrum miejscowości.\nCzas przejazdu: ok. 1h40 z Rzymu, ok. 60 minut z Neapolu.\nRozkłady jazdy i bilety: trenitalia.com.", "link": { "label": "Zobacz stację na Maps →", "href": "https://maps.app.goo.gl/7m3S4mdEpvwaa1zB9" } },
+            { "q": "Gdzie znajduje się recepcja do osobistego zameldowania?", "a": "Szczegółowe informacje dotyczące zameldowania otrzymasz w ciągu 7 dni przed przyjazdem." },
+            { "q": "Czy jest numer WhatsApp do bezpośredniego kontaktu?", "a": "Tak, możesz skontaktować się z nami przez WhatsApp pod numerem podanym na tej stronie. Używamy go do organizacji przyjazdu, zameldowania i wszelkich potrzeb podczas pobytu." }
+          ]
+        },
+        {
+          "icon": "🏊",
+          "label": "Basen",
+          "items": [
+            { "q": "Czy basen jest otwarty? O jakiej porze roku?", "a": "Basen jest dostępny orientacyjnie od 30 maja do 15 października. Dokładne daty zależą od obiektu i warunków pogodowych. Skontaktuj się z nami w celu potwierdzenia." },
+            { "q": "Czy basen jest prywatny (do wyłącznego użytku) czy wspólny?", "a": "Rodzaj basenu, jeśli dostępny, jest podany w opisie nieruchomości (wspólny lub na wyłączność)." },
+            { "q": "Czy basen jest wliczony w cenę?", "a": "Tak, korzystanie z basenu jest w pełni wliczone w cenę wynajmu. Nie ma żadnych dodatkowych kosztów." },
+            { "q": "Czy basen jest odpowiedni dla małych dzieci? Czy jest bezpieczny?", "a": "Dzieci mogą korzystać z basenu wyłącznie pod opieką dorosłego. Główny basen ma maksymalną głębokość 1,20 metra." },
+            { "q": "Zdjęcia pokazują różne baseny — który jest wliczony?", "a": "Rodzaj basenu (wspólny lub na wyłączność), jeśli dostępny, jest podany w cechach nieruchomości." }
+          ]
+        },
+        {
+          "icon": "🏠",
+          "label": "Obiekt i usługi",
+          "items": [
+            { "q": "Czy zakwaterowanie jest tylko dla nas? Czy nie ma innych gości?", "a": "Tak, każda jednostka mieszkalna jest zarezerwowana wyłącznie dla gości, którzy ją rezerwują. Przestrzenie takie jak parking, basen i strefa leżaków mogą być współdzielone z gośćmi innych jednostek w tym samym kompleksie." },
+            { "q": "Czy pościel i ręczniki są wliczone?", "a": "Tak, pościel i ręczniki łazienkowe są wliczone w cenę. Ręczniki plażowe nie są zapewniane." },
+            { "q": "Czy sprzątanie końcowe jest obowiązkowe? Ile kosztuje?", "a": "Tak, sprzątanie końcowe jest wliczone w cenę, chyba że podczas rezerwacji zaznaczono inaczej. Sprzątanie nie obejmuje codziennego porządkowania pokoi." },
+            { "q": "Czy koszty energii (prąd, gaz, woda) są wliczone w cenę?", "a": "Nie. Koszty energii są naliczane osobno, mierzone odczytem liczników przy zameldowaniu i wymeldowaniu. Płacisz tylko za to, co faktycznie zużyłeś.\nZimą koszty zależą w dużej mierze od intensywności ogrzewania.", "link": { "label": "Zobacz taryfy i wskazówki dotyczące zużycia →", "href": "/pl/media" } },
+            { "q": "Czy WiFi jest dostępne? Czy jest wystarczająco szybkie do pracy zdalnej i rozmów wideo?", "a": "Tak, WiFi jest dostępne we wszystkich obiektach LivingApple. Połączenie wystarczy do pracy zdalnej i profesjonalnych rozmów wideo, choć prędkość różni się w zależności od obiektu. Skontaktuj się z nami po dokładne dane." },
+            { "q": "Czy ogrzewanie jest zapewnione zimą?", "a": "Tak, wszystkie obiekty są wyposażone w działający system ogrzewania. W przypadku problemów technicznych jesteśmy do dyspozycji.\nUwaga: koszty energii (prąd, gaz, woda) są mierzone licznikiem i naliczane osobno na koniec pobytu.", "link": { "label": "Jak działają media →", "href": "/pl/media" } },
+            { "q": "Czy jest prywatny parking? Czy jest bezpłatny?", "a": "Tak, każdy obiekt posiada prywatny parking na terenie posesji lub w bezpośrednim sąsiedztwie. W niektórych przypadkach może być płatny: informacja ta jest podana w opisie obiektu." },
+            { "q": "Czy łatwo zaparkować w Scauri?", "a": "Tak, parkowanie zazwyczaj nie stanowi problemu. Bezpośrednio w obiekcie można wykupić tygodniowy abonament na strefy niebieskie za 15,00 €, ważny w Scauri i całej gminie Minturno." },
+            { "q": "Jak postępować z problemem technicznym podczas pobytu?", "a": "W przypadku problemów technicznych (ciepła woda, ogrzewanie itp.) skontaktuj się z nami natychmiast przez WhatsApp. W pilnych przypadkach reagujemy priorytetowo i interweniujemy tak szybko, jak to możliwe." },
+            { "q": "Czy mogę otrzymać zmianę ręczników lub sprzątanie podczas pobytu?", "a": "Tak, podczas pobytu możesz zamówić:\n• Wymianę ręczników: 4 € za zestaw na osobę\n• Sprzątanie pośrednie: koszt i termin do uzgodnienia przy zameldowaniu\nW przypadku pobytów dłuższych niż tydzień zalecamy zaplanowanie tego już przy przyjeździe." }
+          ]
+        },
+        {
+          "icon": "📍",
+          "label": "Lokalizacja i okolice",
+          "items": [
+            { "q": "Jak daleko jest morze? Czy są plaże z udogodnieniami?", "a": "LivingApple campagna jest oddalona ok. 2-3 km od plaży Scauri/Minturno. LivingApple mare jest zaledwie 250 metrów dalej. W pobliżu znajdują się plaże z udogodnieniami, dostępne samochodem lub pieszo." },
+            { "q": "Czy obiekt znajduje się w Scauri czy Minturno? Jak go znaleźć?", "a": "Obiekty LivingApple znajdują się między Minturno a Scauri (LT) w południowym Lacjum. Dokładny adres i pin Google Maps wyślemy Ci w wiadomości powitalnej." },
+            { "q": "Czy w pobliżu są supermarkety, restauracje i sklepy?", "a": "Tak, w Scauri i Minturno znajdziesz supermarkety, bary, restauracje, apteki i sklepy w kilku minutach jazdy samochodem. Czas dojazdu zależy od wybranego obiektu." },
+            { "q": "Jak daleko jest lotnisko Rzym Fiumicino?", "a": "Lotnisko Rzym Fiumicino (FCO) jest odległe o ok. 165 km, osiągalne samochodem (autostrada A1) w ok. 1h40-2h00. Alternatywnie: pociąg z Roma Termini do stacji Minturno-Scauri." },
+            { "q": "Jak długo trwa podróż z Rzymu i Neapolu samochodem lub pociągiem?", "a": "Samochodem: z Rzymu ok. 1h40 (A1), z Neapolu ok. 1h (A1).\nPociągiem: z Roma Termini ok. 1h40, z Napoli Centrale ok. 60 minut.\nMinturno leży w połowie drogi między Rzymem a Neapolem." },
+            { "q": "Czy droga do obiektu jest trudna?", "a": "Główne drogi dojazdowe są łatwe do pokonania. W przypadku obiektów na wzgórzach wyślemy Ci szczegółowe wskazówki i zalecaną trasę w wiadomości powitalnej." }
+          ]
+        },
+        {
+          "icon": "💶",
+          "label": "Ceny i płatności",
+          "items": [
+            { "q": "Czy podatek turystyczny jest wliczony w cenę?", "a": "Tak, jest wliczony w cenę podaną na naszej stronie.\nPlatformy OTA (Airbnb i Booking) mają trudności z dostosowaniem obliczeń do każdej gminy: w Minturno podatek wynosi 2 € za noc na dorosłego (maksymalnie 10 nocy). Dzieci poniżej 12 lat są zwolnione." },
+            { "q": "Jak działa polityka anulowania?", "a": "Zależy od wybranej taryfy w momencie rezerwacji. Pełne szczegóły są podane na stronie oferty." },
+            { "q": "Czy wymagana jest kaucja?", "a": "Tak, przy przyjeździe wymagana jest kaucja. Dokładna kwota różni się w zależności od obiektu i jest podana na naszej stronie.\nPrzy przyjeździe wymagana jest karta kredytowa (nie karta debetowa, nie PostePay). Kaucja zostanie w pełni zwrócona w ciągu 48 godzin od wyjazdu, jeśli nie ma żadnych szkód.", "link": { "label": "Jak działa kaucja →", "href": "/pl/deposito" } },
+            { "q": "Czy cena jest negocjowalna dla długich pobytów lub grup?", "a": "W przypadku pobytów trwających miesiąc lub dłużej możliwe jest uzgodnienie indywidualnej stawki. Skontaktuj się z nami bezpośrednio, podając dokładne daty i liczbę gości." },
+            { "q": "Widziałem różne ceny na różnych stronach — która jest prawidłowa?", "a": "Prawidłowa i ostateczna cena to ta wyświetlana na stronie szczegółów oferty w momencie rezerwacji. Cena nigdy nie obejmuje zużycia energii." },
+            { "q": "Czy można otrzymać fakturę za pobyty służbowe?", "a": "Tak, dla pobytów służbowych możliwe jest wystawienie faktury. Skontaktuj się z nami przed rezerwacją, podając nazwę firmy, NIP i daty pobytu." },
+            { "q": "Czy koszty energii (prąd, gaz, woda) są wliczone w cenę?", "a": "Nie. Koszty energii są naliczane osobno, mierzone odczytem liczników przy zameldowaniu i wymeldowaniu. Płacisz tylko za to, co faktycznie zużyłeś.\nZimą koszty zależą w dużej mierze od intensywności ogrzewania.", "link": { "label": "Zobacz taryfy i wskazówki dotyczące zużycia →", "href": "/pl/media" } }
+          ]
+        }
+      ]
     }
   }
 }

@@ -501,6 +501,101 @@
       "successRef": "Booking reference",
       "errorGeneric": "An error occurred. Please try again or contact us via WhatsApp.",
       "docSection": "Documents"
+    },
+    "contatti": {
+      "pageTitle": "Contact Us",
+      "pageSubtitle": "Find your answer below, or write to us directly.",
+      "faqTitle": "Frequently asked questions",
+      "contactTitle": "Didn't find your answer?",
+      "contactSubtitle": "We're available every day.",
+      "wa": "WhatsApp",
+      "waSub": "Reply within 1 hour",
+      "tel": "Phone",
+      "telSub": "Mon–Sun, 9:00–21:00",
+      "mail": "Email",
+      "mailSub": "Reply within 24 hours",
+      "bookBanner": "Want to book directly?",
+      "bookBtn": "Book now",
+      "safeBannerText": "Want to know who we are before booking?",
+      "safeBannerBtn": "Safe booking →",
+      "faq": [
+        {
+          "icon": "🧸",
+          "label": "Children",
+          "items": [
+            { "q": "Do children up to 2 years old pay?", "a": "Children up to 2 years old are not included in the price but are counted towards the maximum capacity of the property and do not pay tourist tax." },
+            { "q": "Is a camping cot available?", "a": "Yes, for children up to 2 years old a camping cot with highchair is available on request at €40 per stay. Please book at least 72 hours in advance by contacting us via WhatsApp." },
+            { "q": "Do children aged 3 to 11 pay?", "a": "Children aged 3 to 11 pay the same rate as adults and do not pay tourist tax." }
+          ]
+        },
+        {
+          "icon": "🗓️",
+          "label": "Arrival & departure",
+          "items": [
+            { "q": "What are the check-in and check-out times?", "a": "Check-in from 4:00 PM to 7:00 PM, check-out from 8:00 AM by 10:00 AM." },
+            { "q": "Can I arrive after 7:00 PM?", "a": "Yes. If your flight does not allow you to arrive by 7:00 PM, or if you prefer to be free from reception hours, you can request self check-in.", "link": { "label": "Find out how self check-in works →", "href": "/en/self-checkin" } },
+            { "q": "Can I check out before 8:00 AM?", "a": "Yes. If you need to leave before 8:00 AM, let us know when you arrive and we will arrange an early check-out together." },
+            { "q": "Can I request an early check-in?", "a": "In almost all cases the previous guest leaves at 10:00 AM and we use the following six hours to prepare everything for your arrival.\nIn exceptional cases it may be possible: contact us a few days before arrival to check availability." },
+            { "q": "How does key handover work?", "a": "We are personally present to welcome you upon arrival." },
+            { "q": "How does self check-in work?", "a": "Self check-in is not automatic: it must be requested at least 72 hours in advance.\n• Request self check-in at least 72 hours before arrival\n• Send ID documents of all adult guests (legible and complete)\n• You must be reachable in the 2 hours before arrival", "link": { "label": "Read the self check-in guide →", "href": "/en/self-checkin" } },
+            { "q": "How do I get here by train? Is the station nearby?", "a": "Minturno-Scauri station is in the centre of town.\nJourney times: approximately 1h40 from Rome, 60 minutes from Naples.\nVisit trenitalia.com for timetables and tickets.", "link": { "label": "View station on Maps →", "href": "https://maps.app.goo.gl/7m3S4mdEpvwaa1zB9" } },
+            { "q": "Where is the reception for physical check-in?", "a": "You will receive detailed check-in information within 7 days before your arrival." },
+            { "q": "Is there a WhatsApp number for direct contact?", "a": "Yes, you can contact us via WhatsApp at the number shown on this page. We use it to organise arrival, check-in and any needs during your stay." }
+          ]
+        },
+        {
+          "icon": "🏊",
+          "label": "Pool",
+          "items": [
+            { "q": "Is the pool open? What time of year?", "a": "The pool is generally available from 30 May to 15 October. Exact dates depend on the property and weather conditions. Contact us to confirm for your specific dates." },
+            { "q": "Is the pool private (exclusive use) or shared?", "a": "The type of pool, where available, is indicated in the property description (shared or exclusive)." },
+            { "q": "Is the pool included in the price?", "a": "Yes, use of the pool is fully included in the rental price. There are no additional costs." },
+            { "q": "Is the pool suitable for young children? Is it safe?", "a": "Children may only use the pool when accompanied by an adult. The main pool has a maximum depth of 1.20 metres." },
+            { "q": "The photos show different pools — which one is included?", "a": "The type of pool (shared or exclusive), where available, is indicated in the property features." }
+          ]
+        },
+        {
+          "icon": "🏠",
+          "label": "Property & services",
+          "items": [
+            { "q": "Is the accommodation entirely ours? Are there no other guests?", "a": "Yes, each accommodation unit is reserved exclusively for the guests who book it. Spaces such as the car park, pool and sun terrace area may be shared with guests from other units within the same complex." },
+            { "q": "Are bed linen and towels included?", "a": "Yes, bed linen and bathroom towels are included in the price. Beach towels are not provided." },
+            { "q": "Is the final cleaning mandatory? How much does it cost?", "a": "Yes, the final cleaning is included in the price unless otherwise stated during booking. Cleaning does not include daily room tidying." },
+            { "q": "Are energy costs (electricity, gas, water) included in the price?", "a": "No. Energy costs are charged separately, measured by meter readings at check-in and check-out. You only pay for what you actually consume.\nIn winter, the cost depends heavily on how much you use the heating.", "link": { "label": "See rates and energy tips →", "href": "/en/utilities" } },
+            { "q": "Is WiFi available? Is it fast enough for remote working and video calls?", "a": "Yes, WiFi is available in all LivingApple properties. The connection is sufficient for remote working and professional video calls, though performance varies between properties. Contact us for the exact speed." },
+            { "q": "Is heating guaranteed in winter?", "a": "Yes, all properties are equipped with a working heating system. In the event of technical problems, we are available promptly.\nPlease note: energy costs (electricity, gas, water) are measured by meter and charged separately at the end of your stay.", "link": { "label": "See how utilities work →", "href": "/en/utilities" } },
+            { "q": "Is there private parking? Is it free?", "a": "Yes, each property has private parking on site or nearby. In some cases it may be chargeable: this is indicated on the property listing." },
+            { "q": "Is it easy to park in Scauri?", "a": "Yes, parking is generally not a problem. At the property itself you can purchase a weekly blue-zone permit for €15.00, valid in Scauri and the entire Municipality of Minturno." },
+            { "q": "How do I deal with a technical problem during my stay?", "a": "In case of technical problems (hot water, heating, etc.) contact us immediately on WhatsApp. For urgent issues, our response priority is maximum and we intervene as quickly as possible." },
+            { "q": "Can I get a towel change or cleaning during my stay?", "a": "Yes, during your stay you can request:\n• Towel change: €4 per set per person\n• Mid-stay cleaning: cost and date to be agreed at check-in\nFor stays of more than one week, we recommend arranging this at arrival." }
+          ]
+        },
+        {
+          "icon": "📍",
+          "label": "Location & surroundings",
+          "items": [
+            { "q": "How far is the sea? Are there equipped beaches?", "a": "LivingApple countryside is about 2-3 km from Scauri/Minturno beach. LivingApple sea is just 250 metres away. There are equipped beach clubs reachable by car or on foot." },
+            { "q": "Is the property in Scauri or Minturno? How do I find it?", "a": "LivingApple properties are located between Minturno and Scauri (LT), in southern Lazio. We will send you the exact address and Google Maps pin in the welcome message." },
+            { "q": "Are there supermarkets, restaurants and shops nearby?", "a": "Yes, in Scauri and Minturno you will find supermarkets, bars, restaurants, pharmacies and shops a few minutes away by car. Travel times vary depending on the property chosen." },
+            { "q": "How far is it from Rome Fiumicino Airport?", "a": "Rome Fiumicino Airport (FCO) is approximately 165 km away, reachable in about 1h40-2h00 by car (A1 motorway). Alternatively: train from Roma Termini to Minturno-Scauri station." },
+            { "q": "How long does it take from Rome and Naples by car or train?", "a": "By car: from Rome approx. 1h40 (A1 motorway), from Naples approx. 1h (A1).\nBy train: from Roma Termini approx. 1h40, from Napoli Centrale approx. 60 minutes.\nMinturno is halfway between Rome and Naples." },
+            { "q": "Is the road to the property difficult?", "a": "The main access roads are easy to navigate. For hillside properties we will send you detailed directions and the recommended route in the welcome message." }
+          ]
+        },
+        {
+          "icon": "💶",
+          "label": "Prices & payments",
+          "items": [
+            { "q": "Is the tourist tax included in the price?", "a": "Yes, it is included in the price shown on our website.\nOTA platforms (Airbnb and Booking) have difficulty adapting the calculation for each individual Municipality: in Minturno the tax is €2 per night per adult (maximum 10 nights). Children under 12 are exempt." },
+            { "q": "How does the cancellation policy work?", "a": "It depends on the rate chosen at the time of booking. Full details are shown on the offer page." },
+            { "q": "Is a security deposit required?", "a": "Yes, a security deposit will be required on arrival. The exact amount varies by property and is shown on our website.\nA credit card will be required on arrival (not Debit Card, not PostePay). The deposit will be fully refunded within 48 hours of departure if there is no damage.", "link": { "label": "How the security deposit works →", "href": "/en/deposito" } },
+            { "q": "Can the price be negotiated for long stays or groups?", "a": "For stays of one month or more, a personalised rate can be arranged. Contact us directly with the exact dates and number of guests." },
+            { "q": "I have seen different prices on different pages — which one is correct?", "a": "The correct and final price is the one shown on the listing detail page at the time of booking. The price never includes energy consumption." },
+            { "q": "Is it possible to get an invoice for business stays?", "a": "Yes, invoices can be issued for business stays. Contact us before booking, providing your company name, VAT number and stay dates." },
+            { "q": "Are energy costs (electricity, gas, water) included in the price?", "a": "No. Energy costs are charged separately, measured by meter readings at check-in and check-out. You only pay for what you actually consume.\nIn winter, the cost depends heavily on how much you use the heating.", "link": { "label": "See rates and energy tips →", "href": "/en/utilities" } }
+          ]
+        }
+      ]
     }
   }
 }
