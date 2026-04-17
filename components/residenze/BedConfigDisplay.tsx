@@ -272,77 +272,84 @@ function RoomCard({ room, locale, ui }: { room: Room; locale: Locale; ui: typeof
 
   return (
     <div
-      className="bed-card"
+      className="bed-card bg-white d-flex flex-column gap-2 flex-shrink-0 position-relative"
       style={{
-        background: 'white',
         border: hasSommier ? '2px solid #FCAF1A' : '0.5px solid #e5e7eb',
         borderRadius: 12,
         padding: '14px 14px 12px',
         width: 200,
         height: 220,
-        flexShrink: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 10,
-        position: 'relative',
         boxSizing: 'border-box',
       }}
     >
       {/* Badge */}
       {hasSommier && (
-        <div style={{
-          position: 'absolute', top: -1, right: 10,
-          background: '#FCAF1A', color: '#4a2f00',
-          fontSize: 10, fontWeight: 600, padding: '2px 8px',
-          borderRadius: '0 0 6px 6px', letterSpacing: '0.03em',
-        }}>
+        <div
+          className="position-absolute fw-semibold"
+          style={{
+            top: -1, right: 10,
+            background: '#FCAF1A', color: '#4a2f00',
+            fontSize: 10, padding: '2px 8px',
+            borderRadius: '0 0 6px 6px', letterSpacing: '0.03em',
+          }}
+        >
           {ui.configurabile}
         </div>
       )}
       {!hasSommier && (hasConfigurable || hasDivano) && (
-        <div style={{
-          position: 'absolute', top: -1, right: 10,
-          background: '#FFF8EC', color: '#B07820',
-          border: '0.5px solid #fcd87a', borderTop: 'none',
-          fontSize: 10, fontWeight: 500, padding: '2px 8px',
-          borderRadius: '0 0 6px 6px',
-        }}>
+        <div
+          className="position-absolute fw-medium"
+          style={{
+            top: -1, right: 10,
+            background: '#FFF8EC', color: '#B07820',
+            border: '0.5px solid #fcd87a', borderTop: 'none',
+            fontSize: 10, padding: '2px 8px',
+            borderRadius: '0 0 6px 6px',
+          }}
+        >
           + {ui.optional}
         </div>
       )}
 
       {/* Room label */}
-      <div style={{ fontSize: 11, fontWeight: 600, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+      <div
+        className="fw-semibold text-uppercase"
+        style={{ fontSize: 11, color: '#888', letterSpacing: '0.05em' }}
+      >
         {room.label[locale]}
       </div>
 
       {/* Beds */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div className="d-flex flex-column gap-2">
         {room.beds.map(bed => (
-          <div key={bed.id} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div key={bed.id} className="d-flex flex-column gap-1">
+            <div className="d-flex align-items-center gap-2">
               <BedIcon bed={bed} />
-              <span style={{ fontSize: 12, color: '#111', lineHeight: 1.3 }}>
+              <span className="text-dark" style={{ fontSize: 12, lineHeight: 1.3 }}>
                 {bedLabel(bed, locale)}
               </span>
             </div>
 
             {/* Sommier: due pill esclusivi */}
             {bed.variant === 'sommier' && bed.configOptions && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'flex-start', marginTop: 4 }}>
-                <span style={{
-                  background: '#EEF5FC', border: '0.5px solid #1E73BE',
-                  borderRadius: 20, padding: '2px 8px',
-                  fontSize: 10, color: '#1E73BE', fontWeight: 500,
-                }}>
+              <div className="d-flex flex-column align-items-start mt-1" style={{ gap: 3 }}>
+                <span
+                  className="fw-medium rounded-pill"
+                  style={{
+                    background: '#EEF5FC', border: '0.5px solid #1E73BE',
+                    padding: '2px 8px', fontSize: 10, color: '#1E73BE',
+                  }}
+                >
                   {shortLabel(bed.configOptions.closed.label[locale])}
                 </span>
-                <span style={{ fontSize: 10, color: '#aaa', paddingLeft: 4 }}>{ui.or}</span>
-                <span style={{
-                  background: '#f5f5f5', border: '0.5px solid #e5e7eb',
-                  borderRadius: 20, padding: '2px 8px',
-                  fontSize: 10, color: '#555',
-                }}>
+                <span className="ps-1" style={{ fontSize: 10, color: '#aaa' }}>{ui.or}</span>
+                <span
+                  className="rounded-pill"
+                  style={{
+                    background: '#f5f5f5', border: '0.5px solid #e5e7eb',
+                    padding: '2px 8px', fontSize: 10, color: '#555',
+                  }}
+                >
                   {shortLabel(bed.configOptions.open.label[locale])}
                 </span>
               </div>
@@ -350,20 +357,24 @@ function RoomCard({ room, locale, ui }: { room: Room; locale: Locale; ui: typeof
 
             {/* Impilabile: stessa logica pill */}
             {bed.variant === 'impilabile' && bed.configOptions && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'flex-start', marginTop: 4 }}>
-                <span style={{
-                  background: '#EEF5FC', border: '0.5px solid #1E73BE',
-                  borderRadius: 20, padding: '2px 8px',
-                  fontSize: 10, color: '#1E73BE', fontWeight: 500,
-                }}>
+              <div className="d-flex flex-column align-items-start mt-1" style={{ gap: 3 }}>
+                <span
+                  className="fw-medium rounded-pill"
+                  style={{
+                    background: '#EEF5FC', border: '0.5px solid #1E73BE',
+                    padding: '2px 8px', fontSize: 10, color: '#1E73BE',
+                  }}
+                >
                   {shortLabel(bed.configOptions.closed.label[locale])}
                 </span>
-                <span style={{ fontSize: 10, color: '#aaa', paddingLeft: 4 }}>{ui.or}</span>
-                <span style={{
-                  background: '#f5f5f5', border: '0.5px solid #e5e7eb',
-                  borderRadius: 20, padding: '2px 8px',
-                  fontSize: 10, color: '#555',
-                }}>
+                <span className="ps-1" style={{ fontSize: 10, color: '#aaa' }}>{ui.or}</span>
+                <span
+                  className="rounded-pill"
+                  style={{
+                    background: '#f5f5f5', border: '0.5px solid #e5e7eb',
+                    padding: '2px 8px', fontSize: 10, color: '#555',
+                  }}
+                >
                   {shortLabel(bed.configOptions.open.label[locale])}
                 </span>
               </div>
@@ -374,10 +385,13 @@ function RoomCard({ room, locale, ui }: { room: Room; locale: Locale; ui: typeof
 
       {/* Non oscurabile */}
       {hasNonOscurabile && (
-        <div style={{
-          fontSize: 10, color: '#B07820', background: '#fde8a0',
-          borderRadius: 20, padding: '2px 8px', width: 'fit-content',
-        }}>
+        <div
+          className="rounded-pill"
+          style={{
+            fontSize: 10, color: '#B07820', background: '#fde8a0',
+            padding: '2px 8px', width: 'fit-content',
+          }}
+        >
           {ui.nonOscurabile}
         </div>
       )}
@@ -415,24 +429,20 @@ export default function BedConfigDisplay({ roomId, locale }: Props) {
   if (!hasAnythingToShow) return null
 
   return (
-    <div style={{ marginBottom: 20 }}>
+    <div className="mb-4">
       {/* Section title — stesso stile degli altri h2 in page.tsx */}
-      <h2 style={{ fontSize: 20, fontWeight: 700, color: '#222', marginBottom: 16 }}>
+      <h2 className="fs-4 fw-bold mb-3" style={{ color: '#222' }}>
         {ui.sectionTitle}
       </h2>
 
       {/* Cards — grid uniforme su desktop, scroll orizzontale su mobile */}
-      <div style={{
-        display: 'flex',
-        flexWrap: 'nowrap',
-        alignItems: 'stretch',
-        gap: 10,
-        overflowX: 'auto',
-        WebkitOverflowScrolling: 'touch',
-        scrollbarWidth: 'none',
-        paddingBottom: 4,
-      }}
-        className="bed-config-scroll bed-scroll-container"
+      <div
+        className="bed-config-scroll bed-scroll-container d-flex flex-nowrap align-items-stretch gap-2 pb-1"
+        style={{
+          overflowX: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'none',
+        }}
       >
         {config.rooms.map(room => (
           <RoomCard key={room.id} room={room} locale={locale} ui={ui} />
@@ -445,17 +455,14 @@ export default function BedConfigDisplay({ roomId, locale }: Props) {
       </div>
 
       {/* Nota config portale */}
-      <div style={{
-        marginTop: 12,
-        background: '#EEF5FC',
-        border: '0.5px solid #b5d4f4',
-        borderRadius: 8,
-        padding: '10px 14px',
-        display: 'flex',
-        alignItems: 'flex-start',
-        gap: 8,
-      }}>
-        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" style={{ flexShrink: 0, marginTop: 1 }} aria-hidden="true">
+      <div
+        className="d-flex align-items-start gap-2 mt-3 px-3 py-2 rounded"
+        style={{
+          background: '#EEF5FC',
+          border: '0.5px solid #b5d4f4',
+        }}
+      >
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" className="flex-shrink-0" style={{ marginTop: 1 }} aria-hidden="true">
           <circle cx="7.5" cy="7.5" r="6.5" stroke="#1E73BE" strokeWidth="1" />
           <text x="7.5" y="11.5" textAnchor="middle" fontSize="8" fill="#1E73BE" fontWeight="600">i</text>
         </svg>
