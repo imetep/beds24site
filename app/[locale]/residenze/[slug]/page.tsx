@@ -78,7 +78,8 @@ const PROPERTY_FEATURES: Record<number, string[]> = {
   46871: ['PARKING_INCLUDED','WIFI','BEACH','AIR_CONDITIONING','HEATING','WASHER','DISHWASHER','MICROWAVE','TV','HAIR_DRYER','REFRIGERATOR','KITCHEN','DISHES_UTENSILS','PETS_NOT_ALLOWED','SMOKING_NOT_ALLOWED'],
 };
 
-const TTL_PHOTOS_SECONDS = 60 * 60; // 1 ora
+const TTL_PHOTOS_SECONDS   = 60 * 60 * 24; // 24h — disallineato da ISR (1h) per evitare rebuild → cloudinary
+const TTL_FALLBACK_SECONDS = 60 * 5;        // 5 min — risultati vuoti/errore (anti-storm)
 
 async function redisGet(key: string): Promise<string | null> {
   const url   = process.env.KV_REST_API_URL;
@@ -116,11 +117,14 @@ async function getRoomPhotos(folder: string): Promise<string[]> {
     const urls = result.resources.map((r: any) =>
       cloudinary.url(r.public_id, { width: 1200, crop: 'fill', quality: 'auto', fetch_format: 'auto' })
     );
-    if (urls.length > 0) {
-      await redisSet(redisKey, JSON.stringify(urls), TTL_PHOTOS_SECONDS);
-    }
+    await redisSet(
+      redisKey,
+      JSON.stringify(urls),
+      urls.length > 0 ? TTL_PHOTOS_SECONDS : TTL_FALLBACK_SECONDS,
+    );
     return urls;
   } catch {
+    await redisSet(redisKey, JSON.stringify([]), TTL_FALLBACK_SECONDS).catch(() => {});
     return [];
   }
 }
