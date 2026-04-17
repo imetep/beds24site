@@ -217,7 +217,7 @@ export default function PagaClient({ locale }: Props) {
   // ── Loading ────────────────────────────────────────────────────────────────
   if (loading) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', gap: 12, color: '#aaa' }}>
-      <div style={{ width: 22, height: 22, border: '2px solid #eee', borderTop: '2px solid #1E73BE', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+      <div style={{ width: 22, height: 22, border: '2px solid var(--color-border)', borderTop: '2px solid var(--color-primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
       {t.loading}
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
@@ -251,7 +251,7 @@ export default function PagaClient({ locale }: Props) {
   return (
     <div style={{ maxWidth: 640, margin: '0 auto', fontFamily: 'sans-serif', padding: '0 2px' }}>
 
-      <h2 style={{ fontSize: 24, fontWeight: 800, color: '#111', margin: '0 0 4px' }}>{t.title}</h2>
+      <h2 style={{ fontSize: 24, fontWeight: 800, color: 'var(--color-text)', margin: '0 0 4px' }}>{t.title}</h2>
       <p style={{ fontSize: 14, color: '#888', margin: '0 0 24px' }}>{t.subtitle}</p>
 
       {/* Card appartamento + date */}
@@ -273,11 +273,11 @@ export default function PagaClient({ locale }: Props) {
       <div style={card}>
         <p style={labelStyle}>{t.priceDetail}</p>
         <PriceRow label={`${nights} ${nights === 1 ? t.night : t.nights} × ${fmt(perNight)}/${nights === 1 ? t.night : t.nights}`} value={fmt(booking.price)} />
-        <div style={{ height: 1, background: '#e5e7eb', margin: '12px 0' }} />
+        <div style={{ height: 1, background: 'var(--color-border)', margin: '12px 0' }} />
         <PriceRow label={t.totalBooking} value={fmt(booking.price)} bold />
         {validPct < 100 && (
           <>
-            <div style={{ height: 1, background: '#e5e7eb', margin: '12px 0' }} />
+            <div style={{ height: 1, background: 'var(--color-border)', margin: '12px 0' }} />
             <PriceRow label={`${t.deposit} (${validPct}%)`} value={fmt(depositAmount)} highlight />
             <PriceRow label={t.remaining} value={fmt(remaining)} dimmed />
           </>
@@ -285,11 +285,11 @@ export default function PagaClient({ locale }: Props) {
       </div>
 
       {/* Info box */}
-      <div style={{ ...card, background: '#f9fafb', border: '1px solid #e5e7eb' }}>
+      <div style={{ ...card, background: 'var(--color-bg-muted)', border: '1px solid var(--color-border)' }}>
         <p style={{ margin: '0 0 4px', fontSize: 13, color: '#555' }}>{t.energy}</p>
-        <a href={t.energyHref} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginBottom: 8, fontSize: 11, color: '#1E73BE', textDecoration: 'none', fontWeight: 600 }}>{t.energyLink}</a>
+        <a href={t.energyHref} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginBottom: 8, fontSize: 11, color: 'var(--color-primary)', textDecoration: 'none', fontWeight: 600 }}>{t.energyLink}</a>
         <p style={{ margin: '0 0 4px', fontSize: 13, color: '#555' }}>{t.deposit_info}</p>
-        <a href={t.depositHref} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', fontSize: 11, color: '#1E73BE', textDecoration: 'none', fontWeight: 600 }}>{t.depositLink}</a>
+        <a href={t.depositHref} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', fontSize: 11, color: 'var(--color-primary)', textDecoration: 'none', fontWeight: 600 }}>{t.depositLink}</a>
       </div>
 
       {/* Metodo di pagamento */}
@@ -300,9 +300,9 @@ export default function PagaClient({ locale }: Props) {
             <button key={m} onClick={() => setPayMethod(m)}
               style={{
                 flex: 1, padding: '10px', borderRadius: 10, cursor: 'pointer',
-                border: `2px solid ${payMethod === m ? '#1E73BE' : '#e5e7eb'}`,
-                background: payMethod === m ? '#EEF5FC' : '#fff',
-                fontWeight: 600, fontSize: 14, color: payMethod === m ? '#1E73BE' : '#555',
+                border: `2px solid ${payMethod === m ? 'var(--color-primary)' : 'var(--color-border)'}`,
+                background: payMethod === m ? 'var(--color-primary-soft)' : 'var(--color-bg)',
+                fontWeight: 600, fontSize: 14, color: payMethod === m ? 'var(--color-primary)' : '#555',
               }}>
               {m === 'stripe' ? '💳 Carta' : '🅿️ PayPal'}
             </button>
@@ -323,8 +323,8 @@ export default function PagaClient({ locale }: Props) {
             style={{
               width: '100%', padding: '18px', borderRadius: 14, border: 'none',
               fontSize: 18, fontWeight: 900,
-              background: phase === 'paying' ? '#e0e0e0' : '#FCAF1A',
-              color: phase === 'paying' ? '#999' : '#fff',
+              background: phase === 'paying' ? '#e0e0e0' : 'var(--color-warning)',
+              color: phase === 'paying' ? '#999' : 'var(--color-on-dark)',
               cursor: phase === 'paying' ? 'not-allowed' : 'pointer',
               boxShadow: phase === 'paying' ? 'none' : '0 4px 14px rgba(252,175,26,0.4)',
             }}>
@@ -360,8 +360,8 @@ export default function PagaClient({ locale }: Props) {
 function Row({ label, value, dimmed }: { label: string; value: string; dimmed?: boolean }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10, gap: 12 }}>
-      {label ? <span style={{ fontSize: 13, color: '#6b7280', fontWeight: 600, flexShrink: 0, minWidth: 100 }}>{label}</span> : <span />}
-      <span style={{ fontSize: 13, color: dimmed ? '#9ca3af' : '#111', textAlign: 'right', lineHeight: 1.4 }}>{value}</span>
+      {label ? <span style={{ fontSize: 13, color: 'var(--color-text-label)', fontWeight: 600, flexShrink: 0, minWidth: 100 }}>{label}</span> : <span />}
+      <span style={{ fontSize: 13, color: dimmed ? 'var(--color-text-muted)' : 'var(--color-text)', textAlign: 'right', lineHeight: 1.4 }}>{value}</span>
     </div>
   );
 }
@@ -369,17 +369,17 @@ function Row({ label, value, dimmed }: { label: string; value: string; dimmed?: 
 function PriceRow({ label, value, bold, highlight, dimmed }: { label: string; value: string; bold?: boolean; highlight?: boolean; dimmed?: boolean }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-      <span style={{ fontSize: 14, color: dimmed ? '#9ca3af' : highlight ? '#1E73BE' : '#444', fontWeight: bold || highlight ? 700 : 400 }}>{label}</span>
-      <span style={{ fontSize: bold ? 18 : 14, fontWeight: bold || highlight ? 800 : 600, color: dimmed ? '#9ca3af' : highlight ? '#1E73BE' : '#111' }}>{value}</span>
+      <span style={{ fontSize: 14, color: dimmed ? 'var(--color-text-muted)' : highlight ? 'var(--color-primary)' : '#444', fontWeight: bold || highlight ? 700 : 400 }}>{label}</span>
+      <span style={{ fontSize: bold ? 18 : 14, fontWeight: bold || highlight ? 800 : 600, color: dimmed ? 'var(--color-text-muted)' : highlight ? 'var(--color-primary)' : 'var(--color-text)' }}>{value}</span>
     </div>
   );
 }
 
 const card: React.CSSProperties = {
-  border: '1px solid #e5e7eb', borderRadius: 16,
-  padding: '20px 22px', marginBottom: 16, background: '#fff',
+  border: '1px solid var(--color-border)', borderRadius: 16,
+  padding: '20px 22px', marginBottom: 16, background: 'var(--color-bg)',
 };
 const labelStyle: React.CSSProperties = {
-  fontSize: 11, fontWeight: 700, color: '#9ca3af',
+  fontSize: 11, fontWeight: 700, color: 'var(--color-text-muted)',
   textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 12px',
 };
