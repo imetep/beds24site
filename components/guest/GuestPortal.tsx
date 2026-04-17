@@ -8,7 +8,7 @@ import BedSection            from './BedSection';
 import ChangeRequestWizard   from './ChangeRequestWizard';
 
 const C = {
-  blue:        '#1E73BE',
+  blue:        'var(--color-primary)',
   blueLight:   '#EEF5FC',
   orange:      '#FCAF1A',
   text:        '#111111',
@@ -298,4 +298,4 @@ function PayRow({ label, value, color, small }: { label: string; value: string; 
 }
 
 const card: React.CSSProperties        = { background: '#fff', borderRadius: '14px', border: '1px solid #e5e7eb', padding: '1rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' };
-const supportLink: React.CSSProperties = { color: '#1E73BE', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 700 };
+const supportLink: React.CSSProperties = { color: 'var(--color-primary)', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 700 };
