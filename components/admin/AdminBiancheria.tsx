@@ -124,12 +124,12 @@ function RangeCalendar({ from, to, onChange }: {
             let borderRadius = '6px';
 
             if (isFrom || isTo) {
-              bg = '#1E73BE'; color = '#fff'; fontWeight = 700;
+              bg = 'var(--color-primary)'; color = 'var(--color-on-dark)'; fontWeight = 700;
               borderRadius = isFrom ? '6px 0 0 6px' : '0 6px 6px 0';
             } else if (inRange) {
-              bg = '#EEF5FC'; borderRadius = '0';
+              bg = 'var(--color-primary-soft)'; borderRadius = '0';
             } else if (hover === ymd && phase === 'to' && ymd > from) {
-              bg = '#f0f7ff';
+              bg = 'var(--color-primary-soft)';
             }
 
             return (
@@ -144,7 +144,7 @@ function RangeCalendar({ from, to, onChange }: {
                 }}>
                 {day}
                 {isToday && !isFrom && !isTo && (
-                  <span style={{ position: 'absolute', bottom: 3, left: '50%', transform: 'translateX(-50%)', width: 4, height: 4, borderRadius: '50%', background: '#1E73BE' }} />
+                  <span style={{ position: 'absolute', bottom: 3, left: '50%', transform: 'translateX(-50%)', width: 4, height: 4, borderRadius: '50%', background: 'var(--color-primary)' }} />
                 )}
               </div>
             );
@@ -170,7 +170,7 @@ function RangeCalendar({ from, to, onChange }: {
         onClick={() => { setOpen(o => !o); setPhase('from'); }}
         className={`btn d-inline-flex align-items-center gap-2 ${open ? 'border-primary' : 'border'}`}
         style={{
-          background: open ? '#EEF5FC' : '#fff',
+          background: open ? 'var(--color-primary-soft)' : 'var(--color-bg)',
           marginBottom: open ? 12 : 0,
         }}
       >
@@ -424,9 +424,9 @@ function AdminBedChip({ bed, displayState, isActive, label, slots, onClick, disa
       className="btn d-flex flex-column align-items-center gap-1 p-2"
       style={{
         minWidth: 88,
-        border: isActive ? '2px solid #1E73BE' : '1px solid #e5e7eb',
+        border: isActive ? '2px solid var(--color-primary)' : '1px solid var(--color-border)',
         borderRadius: 12,
-        background: isActive ? '#DBEAFE' : disabled ? '#f9fafb' : '#fff',
+        background: isActive ? '#DBEAFE' : disabled ? 'var(--color-bg-muted)' : 'var(--color-bg)',
         cursor: disabled ? 'default' : 'pointer',
         transition: 'all .15s',
         flex: isWide ? 1 : 'none',
@@ -870,8 +870,8 @@ export default function AdminBiancheria() {
                 className="card shadow-sm"
                 style={{
                   cursor:     'pointer',
-                  border:     expanded === item.bookId ? '1.5px solid #1E73BE' : '0.5px solid #e5e7eb',
-                  background: expanded === item.bookId ? '#EEF5FC' : '#fff',
+                  border:     expanded === item.bookId ? '1.5px solid var(--color-primary)' : '0.5px solid var(--color-border)',
+                  background: expanded === item.bookId ? 'var(--color-primary-soft)' : 'var(--color-bg)',
                   marginBottom: expanded === item.bookId ? 0 : 10,
                   borderBottomLeftRadius:  expanded === item.bookId ? 0 : undefined,
                   borderBottomRightRadius: expanded === item.bookId ? 0 : undefined,
@@ -952,7 +952,7 @@ export default function AdminBiancheria() {
                 <div
                   className="card mb-2"
                   style={{
-                    background: '#f9fafb',
+                    background: 'var(--color-bg-muted)',
                     borderTop: 'none',
                     borderTopLeftRadius: 0,
                     borderTopRightRadius: 0,
