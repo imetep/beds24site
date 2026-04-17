@@ -117,7 +117,7 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
                 borderRadius: 4,
                 background:   dark
                   ? (isActive ? '#FCAF1A' : 'rgba(255,255,255,0.50)')
-                  : (isActive ? '#1E73BE' : '#d1d5db'),
+                  : (isActive ? 'var(--color-primary)' : '#d1d5db'),
                 transition: 'all 0.2s',
               }} />
           );
