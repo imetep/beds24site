@@ -34,7 +34,7 @@ function FaqItem({ item }: { item: FaqItemData }) {
           className="flex-fill fw-semibold"
           style={{
             fontSize: 15,
-            color: open ? '#1E73BE' : '#1a1a2e',
+            color: open ? 'var(--color-primary)' : '#1a1a2e',
             lineHeight: 1.4,
           }}
         >
@@ -83,7 +83,7 @@ function FaqItem({ item }: { item: FaqItemData }) {
               className="d-inline-flex align-items-center gap-1 mt-3 text-white fw-semibold text-decoration-none rounded-pill"
               style={{
                 fontSize: 13,
-                background: '#1E73BE',
+                background: 'var(--color-primary)',
                 padding: '6px 14px',
               }}
             >
@@ -122,7 +122,7 @@ function ContactChannels({ t }: { t: ContactT }) {
     },
     {
       href: PHONE,
-      accent: '#1E73BE',
+      accent: 'var(--color-primary)',
       label: t.tel, sub: t.telSub,
       icon: (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
@@ -149,7 +149,7 @@ function ContactChannels({ t }: { t: ContactT }) {
       style={{ borderRadius: 16 }}
     >
       {/* Header sezione */}
-      <div className="d-flex align-items-center gap-2 px-3 py-3" style={{ background: '#1E73BE' }}>
+      <div className="d-flex align-items-center gap-2 px-3 py-3" style={{ background: 'var(--color-primary)' }}>
         <span style={{ fontSize: 18 }}>💬</span>
         <div>
           <p className="m-0 fw-bold text-white" style={{ fontSize: 14 }}>
@@ -232,7 +232,7 @@ export default function ContattiClient({ locale, bookHref }: Props) {
               style={{ borderRadius: 16 }}
             >
               {/* Header categoria — blu pieno */}
-              <div className="d-flex align-items-center gap-2 px-3 py-2" style={{ background: '#1E73BE' }}>
+              <div className="d-flex align-items-center gap-2 px-3 py-2" style={{ background: 'var(--color-primary)' }}>
                 <span style={{ fontSize: 20, lineHeight: 1 }}>{cat.icon}</span>
                 <span
                   className="fw-bold text-white"
@@ -275,7 +275,7 @@ export default function ContattiClient({ locale, bookHref }: Props) {
             </div>
             <span
               className="fw-bold text-nowrap flex-shrink-0"
-              style={{ fontSize: 13, color: '#1E73BE' }}
+              style={{ fontSize: 13, color: 'var(--color-primary)' }}
             >
               {t.safeBannerBtn}
             </span>
