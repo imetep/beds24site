@@ -15,6 +15,7 @@ export const FOLDERS = [
 ];
 
 export const TTL_COVERS_SECONDS = 60 * 60 * 24 * 7; // 7 giorni
+const TTL_FALLBACK_SECONDS = 60 * 5; // 5 min — cache corta per risultati vuoti/errore (anti-storm rate-limit)
 const REDIS_KEY = 'cloudinary:covers';
 
 async function redisGet(key: string): Promise<string | null> {
@@ -90,10 +91,13 @@ export async function getCovers(): Promise<Record<string, string | null>> {
   const coverMap: Record<string, string | null> = {};
   results.forEach(({ folder, url }) => { coverMap[folder] = url; });
 
-  // 3. Salva Redis 7 giorni
-  if (Object.values(coverMap).some(v => v !== null)) {
-    await redisSet(REDIS_KEY, JSON.stringify(coverMap), TTL_COVERS_SECONDS);
-  }
+  // 3. Salva Redis: 7gg se ha risultati, 5 min se tutti null (anti-storm)
+  const hasResults = Object.values(coverMap).some(v => v !== null);
+  await redisSet(
+    REDIS_KEY,
+    JSON.stringify(coverMap),
+    hasResults ? TTL_COVERS_SECONDS : TTL_FALLBACK_SECONDS,
+  );
 
   return coverMap;
 }
