@@ -7,147 +7,7 @@ import { getTranslations } from '@/lib/i18n';
 import type { Room } from '@/config/properties';
 import type { Locale } from '@/config/i18n';
 
-// ─── Traduzioni UI ────────────────────────────────────────────────────────────
-const UI: Record<string, Record<string, string>> = {
-  it: {
-    titleSingle:'Quale tariffa preferite?',
-    titleMulti: 'Scegli appartamento e tariffa',
-    loading: 'Ricerca prezzi e disponibilità...',
-    noResults: 'Nessun appartamento disponibile per le date selezionate.',
-    nightsSing: 'notte', nightsPlur: 'notti',
-    perNight: '/notte', total: 'totale',
-    continua: 'Continua →', indietro: '← Indietro',
-    errTitle: 'Errore caricamento prezzi', retry: 'Riprova',
-    camere: 'camere', maxPers: 'max', persone: 'pers.',
-    privPool: '🏊 Piscina privata', sharedPool: '🌊 Piscina condivisa', noPool: '🏖️ 250m dal mare',
-    nearSea: 'Vicino al mare', nature: 'Immerso nella natura',
-    nonDisp: 'Non disponibile', selezionata: '✓',
-    // Filtri
-    filterAll:        'Tutti',
-    filterPriceLow:   'Prezzo ↑',
-    filterPriceHigh:  'Prezzo ↓',
-    filterSize:       'Più grande',
-    filterSea:        '250m mare',
-    filterNature:     '2km mare',
-    // Desktop dropdown labels
-    filterAllLong:        'Predefinito',
-    filterPriceLowLong:   'Prezzo più basso',
-    filterPriceHighLong:  'Prezzo più alto',
-    filterSizeLong:       'Più grande (mq)',
-    filterSeaLong:        '250m dal mare',
-    filterNatureLong:     '2km dal mare',
-    filterAllClean: 'Tutti', filterPriceClean: 'Prezzo', filterSizeClean: 'Più grande', filterSeaClean: '250m dal mare', filterNatureClean: '2km dal mare',
-    poolAll: 'Piscina: tutte', poolPrivate: '🏊 Privata', poolShared: '🌊 Condivisa',
-    typeAll: 'Tipo: tutti', typeMono: 'Monolocale', typeAppart: 'Appartamento', typeVilla: 'Villa',
-    filtriBtn: 'Filtri', filtriTitle: 'Ordina e filtra', filtriApply: 'Applica', filtriClear: 'Cancella tutto',
-    sortSection: 'Ordina per', seaSection: 'Distanza dal mare', poolSection: 'Piscina', typeSection: 'Tipo di casa', bedsSection: 'Camere da letto',
-    sortDefault: 'Predefinito', sortPriceLow: 'Prezzo crescente', sortPriceHigh: 'Prezzo decrescente', sortBiggest: 'Più grande', sortSmallest: 'Più piccolo',
-    seaAll: 'Tutte le strutture', sea250: '250m dal mare', sea2km: 'Immerso nella natura',
-    bedsAny: 'Qualsiasi',
-  },
-  en: {
-    titleSingle:'Which rate do you prefer?',
-    titleMulti: 'Choose apartment and rate',
-    loading: 'Searching prices and availability...',
-    noResults: 'No apartments available for the selected dates.',
-    nightsSing: 'night', nightsPlur: 'nights',
-    perNight: '/night', total: 'total',
-    continua: 'Continue →', indietro: '← Back',
-    errTitle: 'Error loading prices', retry: 'Retry',
-    camere: 'bd', maxPers: 'max', persone: 'pax',
-    privPool: '🏊 Private pool', sharedPool: '🌊 Shared pool', noPool: '🏖️ 250m from sea',
-    nearSea: 'Near the sea', nature: 'In nature',
-    nonDisp: 'Unavailable', selezionata: '✓',
-    filterAll:        'All',
-    filterPriceLow:   'Price ↑',
-    filterPriceHigh:  'Price ↓',
-    filterSize:       'Largest',
-    filterSea:        '250m sea',
-    filterNature:     '2km sea',
-    filterAllLong:        'Default',
-    filterPriceLowLong:   'Lowest price',
-    filterPriceHighLong:  'Highest price',
-    filterSizeLong:       'Largest (sqm)',
-    filterSeaLong:        '250m from sea',
-    filterNatureLong:     '2km from sea',
-    filterAllClean: 'All', filterPriceClean: 'Price', filterSizeClean: 'Largest', filterSeaClean: '250m from sea', filterNatureClean: '2km from sea',
-    poolAll: 'Pool: all', poolPrivate: '🏊 Private', poolShared: '🌊 Shared',
-    typeAll: 'Type: all', typeMono: 'Studio', typeAppart: 'Apartment', typeVilla: 'Villa',
-    filtriBtn: 'Filters', filtriTitle: 'Sort and filter', filtriApply: 'Apply', filtriClear: 'Clear all',
-    sortSection: 'Sort by', seaSection: 'Distance from sea', poolSection: 'Pool', typeSection: 'Property type', bedsSection: 'Bedrooms',
-    sortDefault: 'Default', sortPriceLow: 'Price: low to high', sortPriceHigh: 'Price: high to low', sortBiggest: 'Largest', sortSmallest: 'Smallest',
-    seaAll: 'All properties', sea250: '250m from sea', sea2km: 'In nature',
-    bedsAny: 'Any',
-  },
-  de: {
-    titleSingle:'Welchen Tarif bevorzugen Sie?',
-    titleMulti: 'Unterkunft und Tarif wählen',
-    loading: 'Preise und Verfügbarkeit suchen...',
-    noResults: 'Keine Unterkünfte für die gewählten Daten verfügbar.',
-    nightsSing: 'Nacht', nightsPlur: 'Nächte',
-    perNight: '/Nacht', total: 'gesamt',
-    continua: 'Weiter →', indietro: '← Zurück',
-    errTitle: 'Fehler beim Laden', retry: 'Wiederholen',
-    camere: 'Zi.', maxPers: 'max', persone: 'Pers.',
-    privPool: '🏊 Privater Pool', sharedPool: '🌊 Gemeinsch.pool', noPool: '🏖️ 250m vom Meer',
-    nearSea: 'Meeresnähe', nature: 'In der Natur',
-    nonDisp: 'Nicht verfügbar', selezionata: '✓',
-    filterAll:        'Alle',
-    filterPriceLow:   'Preis ↑',
-    filterPriceHigh:  'Preis ↓',
-    filterSize:       'Größte',
-    filterSea:        '250m Meer',
-    filterNature:     '2km Meer',
-    filterAllLong:        'Standard',
-    filterPriceLowLong:   'Günstigster Preis',
-    filterPriceHighLong:  'Höchster Preis',
-    filterSizeLong:       'Größte (qm)',
-    filterSeaLong:        '250m vom Meer',
-    filterNatureLong:     '2km vom Meer',
-    filterAllClean: 'Alle', filterPriceClean: 'Preis', filterSizeClean: 'Größte', filterSeaClean: '250m vom Meer', filterNatureClean: '2km vom Meer',
-    poolAll: 'Pool: alle', poolPrivate: '🏊 Privat', poolShared: '🌊 Geteilt',
-    typeAll: 'Typ: alle', typeMono: 'Studio', typeAppart: 'Appartement', typeVilla: 'Villa',
-    filtriBtn: 'Filter', filtriTitle: 'Sortieren & filtern', filtriApply: 'Anwenden', filtriClear: 'Alles löschen',
-    sortSection: 'Sortieren nach', seaSection: 'Meeresentfernung', poolSection: 'Pool', typeSection: 'Unterkunftstyp', bedsSection: 'Schlafzimmer',
-    sortDefault: 'Standard', sortPriceLow: 'Preis aufsteigend', sortPriceHigh: 'Preis absteigend', sortBiggest: 'Größte', sortSmallest: 'Kleinste',
-    seaAll: 'Alle Unterkünfte', sea250: '250m vom Meer', sea2km: 'In der Natur',
-    bedsAny: 'Beliebig',
-  },
-  pl: {
-    titleSingle:'Którą taryfę preferujecie?',
-    titleMulti: 'Wybierz apartament i taryfę',
-    loading: 'Wyszukiwanie cen i dostępności...',
-    noResults: 'Brak dostępnych apartamentów dla wybranych dat.',
-    nightsSing: 'noc', nightsPlur: 'nocy',
-    perNight: '/noc', total: 'łącznie',
-    continua: 'Dalej →', indietro: '← Wstecz',
-    errTitle: 'Błąd ładowania cen', retry: 'Ponów',
-    camere: 'sypialnie', maxPers: 'maks', persone: 'os.',
-    privPool: '🏊 Prywatny basen', sharedPool: '🌊 Wspólny basen', noPool: '🏖️ 250m od morza',
-    nearSea: 'Blisko morza', nature: 'Wśród natury',
-    nonDisp: 'Niedostępne', selezionata: '✓',
-    filterAll:        'Wszystkie',
-    filterPriceLow:   'Cena ↑',
-    filterPriceHigh:  'Cena ↓',
-    filterSize:       'Największy',
-    filterSea:        '250m morze',
-    filterNature:     '2km morze',
-    filterAllLong:        'Domyślne',
-    filterPriceLowLong:   'Najniższa cena',
-    filterPriceHighLong:  'Najwyższa cena',
-    filterSizeLong:       'Największy (mkw)',
-    filterSeaLong:        '250m od morza',
-    filterNatureLong:     '2km od morza',
-    filterAllClean: 'Wszystkie', filterPriceClean: 'Cena', filterSizeClean: 'Największy', filterSeaClean: '250m od morza', filterNatureClean: '2km od morza',
-    poolAll: 'Basen: wszystkie', poolPrivate: '🏊 Prywatny', poolShared: '🌊 Wspólny',
-    typeAll: 'Typ: wszystkie', typeMono: 'Kawalerka', typeAppart: 'Apartament', typeVilla: 'Willa',
-    filtriBtn: 'Filtry', filtriTitle: 'Sortuj i filtruj', filtriApply: 'Zastosuj', filtriClear: 'Wyczyść wszystko',
-    sortSection: 'Sortuj według', seaSection: 'Odległość od morza', poolSection: 'Basen', typeSection: 'Typ nieruchomości', bedsSection: 'Sypialnie',
-    sortDefault: 'Domyślne', sortPriceLow: 'Cena rosnąco', sortPriceHigh: 'Cena malejąco', sortBiggest: 'Największy', sortSmallest: 'Najmniejszy',
-    seaAll: 'Wszystkie', sea250: '250m od morza', sea2km: 'Wśród natury',
-    bedsAny: 'Dowolna',
-  },
-};
+const SUPPORTED_LOCALES = ['it', 'en', 'de', 'pl'] as const;
 
 // ─── Tipi filtro ─────────────────────────────────────────────────────────────
 type FilterType = 'all' | 'priceLow' | 'priceHigh' | 'size' | 'sizeSmall';
@@ -163,10 +23,10 @@ function calcNights(ci: string, co: string) {
 function fmt(price: number) {
   return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(price);
 }
-function getPoolLabel(room: Room, ui: Record<string, string>) {
+function getPoolLabel(room: Room, ui: { privPool: string; sharedPool: string; noPool: string }) {
   return room.privatePool ? ui.privPool : room.sharedPool ? ui.sharedPool : ui.noPool;
 }
-function getLocationLabel(room: Room, ui: Record<string, string>) {
+function getLocationLabel(room: Room, ui: { nearSea: string; nature: string }) {
   const prop = getPropertyForRoom(room.roomId);
   return prop?.propertyId === 46871 ? ui.nearSea : ui.nature;
 }
@@ -196,8 +56,8 @@ function getMinPrice(ro: RoomOffers): number {
 interface Props { locale?: string; onBack?: () => void; }
 
 export default function WizardStep1({ locale = 'it', onBack }: Props) {
-  const t = UI[locale] ?? UI.it;
-  const loc = locale in UI ? locale : 'it';
+  const loc = (SUPPORTED_LOCALES as readonly string[]).includes(locale) ? locale : 'it';
+  const t = getTranslations(loc as Locale).components.wizardStep1;
   const sharedT = getTranslations(loc as Locale).shared;
   const OFFER_NAMES = sharedT.offerNames as Record<string, string>;
   const OFFER_DESC = sharedT.offerDescriptions as Record<string, string>;
