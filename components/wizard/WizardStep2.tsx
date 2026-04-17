@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
 import type { SelectedExtra } from '@/store/wizard-store';
 import { PROPERTIES, getPropertyForRoom } from '@/config/properties';
+import { getTranslations } from '@/lib/i18n';
+import type { Locale } from '@/config/i18n';
 
 // ─── Testi fissi 4 lingue ─────────────────────────────────────────────────────
 const ENERGY_BOX: Record<string, string> = {
@@ -18,15 +20,6 @@ const DEPOSIT_BOX: Record<string, (n: number) => string> = {
   en: (n) => `This accommodation requires a security deposit of €${n}. Payment will be collected separately by the host before arrival or at check-in.`,
   de: (n) => `Diese Unterkunft erfordert eine Kaution von €${n}. Die Zahlung wird separat vom Gastgeber vor der Ankunft oder beim Check-in erhoben.`,
   pl: (n) => `To zakwaterowanie wymaga kaucji w wysokości €${n}. Płatność zostanie pobrana oddzielnie przez gospodarza przed przyjazdem lub przy zameldowaniu.`,
-};
-
-const OFFER_NAMES: Record<number, Record<string,string>> = {
-  1: { it:'Non Rimborsabile',          en:'Non-Refundable',        de:'Nicht erstattungsfähig',  pl:'Bezzwrotna' },
-  2: { it:'Parzialmente Rimborsabile', en:'Partially Refundable',  de:'Teilw. erstattungsfähig', pl:'Częściowo zwrotna' },
-  3: { it:'Flessibile 60 gg',          en:'Flexible 60 days',      de:'Flexibel 60 Tage',        pl:'Elastyczna 60 dni' },
-  4: { it:'Flessibile 45 gg',          en:'Flexible 45 days',      de:'Flexibel 45 Tage',        pl:'Elastyczna 45 dni' },
-  5: { it:'Flessibile 30 gg',          en:'Flexible 30 days',      de:'Flexibel 30 Tage',        pl:'Elastyczna 30 dni' },
-  6: { it:'Flessibile 5 gg',           en:'Flexible 5 days',       de:'Flexibel 5 Tage',         pl:'Elastyczna 5 dni' },
 };
 
 const CANCEL_POLICY: Record<number, Record<string,string>> = {
@@ -226,6 +219,7 @@ interface Props { locale?: string; }
 export default function WizardStep2({ locale = 'it' }: Props) {
   const t   = UI[locale] ?? UI.it;
   const loc = locale in UI ? locale : 'it';
+  const OFFER_NAMES = getTranslations(loc as Locale).shared.offerNames as Record<string, string>;
   const router = useRouter();
   const searchParams = useSearchParams();
   const fromRoom = searchParams.get('from') === 'room';
@@ -268,7 +262,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
   const offer = roomOffers?.offers?.find((o: any) => o.offerId === selectedOfferId)
     ?? cachedOffers?.flatMap((ro: any) => ro.offers ?? []).find((o: any) => o.offerId === selectedOfferId);
   const offerPrice: number = offer?.price ?? 0;
-  const offerName = OFFER_NAMES[selectedOfferId ?? 0]?.[loc] ?? offer?.offerName ?? '';
+  const offerName = OFFER_NAMES[String(selectedOfferId ?? 0)] ?? offer?.offerName ?? '';
   const cancelPolicy = CANCEL_POLICY[selectedOfferId ?? 0]?.[loc] ?? '';
   const depositFromOffer = parseDeposit(offer?.offerDescription ?? offer?.description ?? '');
   const depositAmount = depositFromOffer ?? room?.securityDeposit ?? null;
