@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 const C = {
-  blue:       '#1E73BE',
+  blue:       'var(--color-primary)',
   blueLight:  '#EEF5FC',
   orange:     '#FCAF1A',
   text:       '#111111',
