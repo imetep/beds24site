@@ -157,7 +157,7 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
           <button
             onClick={handleSubmit} disabled={loading}
             className="w-100 fw-bold border-0"
-            style={{ padding: '0.85rem', background: loading ? '#e0e0e0' : C.orange, color: loading ? C.textMid : C.text, borderRadius: 10, fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer', marginTop: '0.25rem' }}
+            style={{ padding: '0.85rem', minHeight: 'var(--touch-target)', background: loading ? '#e0e0e0' : C.orange, color: loading ? C.textMid : C.text, borderRadius: 10, fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer', marginTop: '0.25rem' }}
           >
             {loading ? tL.loading : tL.btn}
           </button>
@@ -182,6 +182,6 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
 const wrap: React.CSSProperties = { minHeight: '70vh', background: '#f9fafb' };
 const card: React.CSSProperties = { borderRadius: 20, padding: '2.5rem', width: '100%', maxWidth: 420 };
 const labelStyle: React.CSSProperties = { display: 'block', fontSize: '0.82rem', fontWeight: 700, color: '#555555', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.04em' };
-const inputStyle: React.CSSProperties = { width: '100%', padding: '0.7rem 0.95rem', border: '1.5px solid #e5e7eb', borderRadius: 9, fontSize: '0.95rem', color: '#111', outline: 'none', boxSizing: 'border-box' };
-const selectStyle: React.CSSProperties = { width: '100%', padding: '0.7rem 0.5rem', border: '1.5px solid #e5e7eb', borderRadius: 9, fontSize: '0.92rem', color: '#111', outline: 'none', background: '#fff', cursor: 'pointer', appearance: 'auto' };
+const inputStyle: React.CSSProperties = { width: '100%', padding: '0.7rem 0.95rem', minHeight: 'var(--touch-target)', border: '1.5px solid #e5e7eb', borderRadius: 9, fontSize: '0.95rem', color: '#111', outline: 'none', boxSizing: 'border-box' };
+const selectStyle: React.CSSProperties = { width: '100%', padding: '0.7rem 0.5rem', minHeight: 'var(--touch-target)', border: '1.5px solid #e5e7eb', borderRadius: 9, fontSize: '0.92rem', color: '#111', outline: 'none', background: '#fff', cursor: 'pointer', appearance: 'auto' };
 const supportLink: React.CSSProperties = { color: '#1E73BE', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 600 };
