@@ -432,26 +432,28 @@ export default function BedSection({ locale, t, numGuests }: { locale: string; t
   const allConfirmed   = config !== null && confirmedCount === totalRooms;
   const currentSlots   = config ? config.rooms.flatMap((r: any) => r.beds).reduce((s: number, b: Bed) => s + slotsForState(b, bedStates[b.id] ?? 'off'), 0) : 0;
 
-  if (status === 'loading') return <div style={card}><p style={{ color: C.textMuted, fontSize: '0.84rem', margin: 0 }}>{t.loading}</p></div>;
+  if (status === 'loading') return <div className="bg-white border shadow-sm" style={card}><p className="m-0" style={{ color: C.textMuted, fontSize: '0.84rem' }}>{t.loading}</p></div>;
   if (!config) return null;
 
   return (
-    <div style={card}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.3rem' }}>
+    <div className="bg-white border shadow-sm" style={card}>
+      <div className="d-flex align-items-center gap-2 mb-1">
         <span style={{ fontSize: '1.1rem' }}>🛏</span>
-        <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: C.text }}>{t.title}</h3>
+        <h3 className="m-0 fw-bold" style={{ fontSize: '1rem', color: C.text }}>{t.title}</h3>
       </div>
-      <p style={{ margin: '0 0 1.25rem', fontSize: '0.84rem', color: C.textMid, lineHeight: 1.6 }}>{t.subtitle}</p>
+      <p className="mb-3" style={{ fontSize: '0.84rem', color: C.textMid, lineHeight: 1.6 }}>{t.subtitle}</p>
       <ProgressBar confirmed={confirmedCount} total={totalRooms} t={t} />
-      <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : 'repeat(2, 1fr)', gap: '0.75rem', marginBottom: '1rem' }}>
+      <div className="d-grid mb-3" style={{ gridTemplateColumns: mobile ? '1fr' : 'repeat(2, 1fr)', gap: '0.75rem' }}>
         {config.rooms.map((room: any) => (
           <RoomCard key={room.id} room={room} lc={lc} bedStates={bedStates} roomTouched={roomTouched[room.id] ?? false} onBedClick={handleBedClick} onCardClick={handleCardClick} t={t} />
         ))}
       </div>
       <PersonCounter current={currentSlots} total={numGuests} lc={lc} />
       <CribSection cribs={cribs} onChange={n => { setCribs(n); setStatus('idle'); }} t={t} />
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <button onClick={save} disabled={!allConfirmed || status === 'saving' || status === 'saved'} style={{ background: status === 'saved' ? C.success : allConfirmed ? C.blue : C.gray, color: '#fff', border: 'none', borderRadius: '10px', padding: '0.65rem 1.5rem', fontSize: '0.88rem', fontWeight: 700, cursor: !allConfirmed || status === 'saving' || status === 'saved' ? 'not-allowed' : 'pointer', transition: 'background .2s' }}>
+      <div className="d-flex align-items-center gap-3">
+        <button onClick={save} disabled={!allConfirmed || status === 'saving' || status === 'saved'}
+          className="text-white fw-bold border-0"
+          style={{ background: status === 'saved' ? C.success : allConfirmed ? C.blue : C.gray, borderRadius: 10, padding: '0.65rem 1.5rem', fontSize: '0.88rem', cursor: !allConfirmed || status === 'saving' || status === 'saved' ? 'not-allowed' : 'pointer', transition: 'background .2s' }}>
           {status === 'saving' ? t.saving : status === 'saved' ? `✓ ${t.saved}` : t.save}
         </button>
         {status === 'error' && <span style={{ fontSize: '0.82rem', color: '#dc2626' }}>{t.errorSave}</span>}
@@ -461,4 +463,4 @@ export default function BedSection({ locale, t, numGuests }: { locale: string; t
   );
 }
 
-const card: React.CSSProperties = { background: '#fff', borderRadius: '16px', border: '1px solid #e5e7eb', padding: '1.5rem', boxShadow: '0 1px 4px rgba(0,0,0,0.05)' };
+const card: React.CSSProperties = { borderRadius: 16, padding: '1.5rem' };
