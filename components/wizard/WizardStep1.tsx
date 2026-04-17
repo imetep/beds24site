@@ -418,18 +418,14 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
 
       {/* ── Box riassunto prenotazione stile Expedia ── */}
       {checkIn && checkOut && (
-        <div style={{
-          background: '#fff',
-          border: '1.5px solid #e5e7eb',
-          borderRadius: 14,
-          padding: '14px 16px',
-          marginBottom: 16,
-          boxShadow: '0 1px 6px rgba(0,0,0,0.06)',
-        }}>
+        <div
+          className="bg-white px-3 py-3 mb-3 shadow-sm"
+          style={{ border: '1.5px solid #e5e7eb', borderRadius: 14 }}
+        >
           {/* Date e modifica */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div className="d-flex justify-content-between align-items-start">
             <div>
-              <div style={{ fontWeight: 700, fontSize: 16, color: '#111' }}>
+              <div className="fw-bold text-dark" style={{ fontSize: 16 }}>
                 {fmtShort(checkIn, loc)} – {fmtShort(checkOut, loc)}
               </div>
               <div style={{ fontSize: 13, color: '#666', marginTop: 2 }}>
@@ -449,7 +445,8 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
             </div>
             <button
               onClick={onBack ?? prevStep}
-              style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+              className="btn p-0 d-flex align-items-center"
+            >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="1.8">
                 <path d="M11 4H4v7"/><path d="M4 4l7 7"/><path d="M20 20v-7h-7"/><path d="M20 20l-7-7"/>
               </svg>
@@ -458,39 +455,42 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
         </div>
       )}
 
-      <h2 style={{ color: '#1E73BE', fontSize: 21, fontWeight: 700, margin: '0 0 12px' }}>
+      <h2 className="fw-bold mb-3" style={{ color: '#1E73BE', fontSize: 21 }}>
         {isSingleRoom ? t.titleSingle : t.titleMulti}
       </h2>
 
       {/* ── Filtri ── */}
       {!isSingleRoom && !loading && !error && roomOffers.length > 0 && (
-        <div style={{ marginBottom: 16 }}>
+        <div className="mb-3">
 
           {/* Riga: bottone Filtri + chip filtri attivi */}
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center', overflowX: 'auto', scrollbarWidth: 'none' }}>
+          <div className="d-flex align-items-center gap-2" style={{ overflowX: 'auto', scrollbarWidth: 'none' }}>
 
             {/* Bottone Filtri */}
             <button
               onClick={() => setShowFilterPanel(true)}
+              className="d-flex align-items-center fw-semibold flex-shrink-0 rounded-pill"
               style={{
-                display: 'flex', alignItems: 'center', gap: 7,
-                padding: '8px 16px', borderRadius: 24, flexShrink: 0,
+                gap: 7,
+                padding: '8px 16px',
                 border: activeFiltersCount > 0 ? '1.5px solid #FCAF1A' : '1.5px solid #333',
                 background: activeFiltersCount > 0 ? '#FCAF1A' : '#fff',
                 color: activeFiltersCount > 0 ? '#fff' : '#111',
-                fontSize: 14, fontWeight: 600, cursor: 'pointer',
+                fontSize: 14, cursor: 'pointer',
               }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="20" y2="12"/><line x1="12" y1="18" x2="20" y2="18"/>
               </svg>
               {t.filtriBtn}
               {activeFiltersCount > 0 && (
-                <span style={{
-                  background: 'rgba(255,255,255,0.9)', color: '#B07820',
-                  borderRadius: '50%', width: 20, height: 20,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 11, fontWeight: 700, flexShrink: 0,
-                }}>
+                <span
+                  className="rounded-circle d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
+                  style={{
+                    background: 'rgba(255,255,255,0.9)', color: '#B07820',
+                    width: 20, height: 20,
+                    fontSize: 11,
+                  }}
+                >
                   {activeFiltersCount}
                 </span>
               )}
@@ -537,52 +537,51 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
           {/* Overlay */}
           <div
             onClick={() => setShowFilterPanel(false)}
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 300 }}
+            className="position-fixed"
+            style={{ inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 300 }}
           />
 
           {/* Contenitore: centrato su desktop, bottom sheet su mobile */}
-          <div style={{
-            position: 'fixed', zIndex: 301,
-            ...(isDesk ? {
-              top: '50%', left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: 560, maxWidth: '90vw',
-              borderRadius: 16,
-              maxHeight: '85vh',
-            } : {
-              bottom: 0, left: 0, right: 0,
-              borderRadius: '20px 20px 0 0',
-              height: '85vh',
-            }),
-            background: '#fff',
-            boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
-            display: 'flex', flexDirection: 'column',
-            overflow: 'hidden',
-          }}>
+          <div
+            className="position-fixed bg-white d-flex flex-column overflow-hidden"
+            style={{
+              zIndex: 301,
+              ...(isDesk ? {
+                top: '50%', left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 560, maxWidth: '90vw',
+                borderRadius: 16,
+                maxHeight: '85vh',
+              } : {
+                bottom: 0, left: 0, right: 0,
+                borderRadius: '20px 20px 0 0',
+                height: '85vh',
+              }),
+              boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
+            }}
+          >
 
             {/* Header fisso */}
-            <div style={{
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              padding: '16px 20px', borderBottom: '1px solid #f0f0f0', flexShrink: 0,
-            }}>
+            <div className="d-flex justify-content-between align-items-center px-3 py-3 border-bottom flex-shrink-0">
               <button
                 onClick={() => setShowFilterPanel(false)}
-                style={{ width: 32, height: 32, borderRadius: '50%', border: '1.5px solid #333',
-                  background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center',
-                  justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>
+                className="rounded-circle bg-white d-flex align-items-center justify-content-center flex-shrink-0"
+                style={{ width: 32, height: 32, border: '1.5px solid #333', fontSize: 18, cursor: 'pointer' }}
+              >
                 ×
               </button>
-              <span style={{ fontWeight: 700, fontSize: 16 }}>{t.filtriTitle}</span>
+              <span className="fw-bold" style={{ fontSize: 16 }}>{t.filtriTitle}</span>
               <button
                 onClick={resetAllFilters}
-                style={{ background: 'none', border: 'none', color: '#1E73BE', fontSize: 14,
-                  fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>
+                className="btn fw-semibold text-decoration-underline"
+                style={{ color: '#1E73BE', fontSize: 14 }}
+              >
                 {t.filtriClear}
               </button>
             </div>
 
             {/* Corpo scrollabile */}
-            <div style={{ flex: 1, overflowY: 'scroll', WebkitOverflowScrolling: 'touch', padding: '0 20px' }}>
+            <div className="flex-fill px-3" style={{ overflowY: 'scroll', WebkitOverflowScrolling: 'touch' }}>
 
               {/* ── 1. Ordina per ── */}
               <div style={sectionStyle}>
@@ -709,11 +708,12 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
             </div>
 
             {/* Footer fisso */}
-            <div style={{ flexShrink: 0, background: '#fff', padding: '14px 20px 28px', borderTop: '1px solid #f0f0f0' }}>
+            <div className="flex-shrink-0 bg-white px-3 border-top" style={{ paddingTop: 14, paddingBottom: 28 }}>
               <button
                 onClick={() => setShowFilterPanel(false)}
-                style={{ width: '100%', padding: '13px', borderRadius: 10,
-                  background: '#FCAF1A', color: '#fff', border: 'none', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>
+                className="w-100 fw-bold border-0"
+                style={{ padding: 13, borderRadius: 10, background: '#FCAF1A', color: '#fff', fontSize: 15, cursor: 'pointer' }}
+              >
                 {t.filtriApply}{activeFiltersCount > 0 ? ` (${activeFiltersCount})` : ''}
               </button>
             </div>
@@ -723,17 +723,17 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
 
       {/* Spinner */}
       {loading && (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, padding: '40px 0' }}>
-          <div style={{ width: 38, height: 38, border: '3px solid #eee', borderTop: '3px solid #1E73BE', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+        <div className="d-flex flex-column align-items-center gap-2 py-5">
+          <div className="rounded-circle" style={{ width: 38, height: 38, border: '3px solid #eee', borderTop: '3px solid #1E73BE', animation: 'spin 0.8s linear infinite' }} />
           <span style={{ color: '#888', fontSize: 13 }}>{t.loading}</span>
         </div>
       )}
 
       {/* Errore */}
       {!loading && error && (
-        <div style={{ background: '#fff5f5', border: '1px solid #f5c6cb', borderRadius: 12, padding: '20px', textAlign: 'center', marginBottom: 16 }}>
-          <p style={{ margin: '0 0 8px', fontWeight: 700, color: '#c0392b' }}>{t.errTitle}</p>
-          <p style={{ margin: '0 0 14px', fontSize: 13, color: '#888' }}>{error}</p>
+        <div className="text-center mb-3 px-3 py-4" style={{ background: '#fff5f5', border: '1px solid #f5c6cb', borderRadius: 12 }}>
+          <p className="fw-bold mb-2" style={{ color: '#c0392b' }}>{t.errTitle}</p>
+          <p className="mb-3" style={{ fontSize: 13, color: '#888' }}>{error}</p>
           {checkIn && checkOut && (
             <button onClick={fetchOffers} style={retryBtn}>{t.retry}</button>
           )}
@@ -742,14 +742,14 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
 
       {/* Nessun risultato */}
       {!loading && !error && filteredRoomOffers.length === 0 && (
-        <div style={{ background: '#f5f5f5', borderRadius: 12, padding: '24px', textAlign: 'center', marginBottom: 16 }}>
-          <p style={{ margin: 0, color: '#888', fontSize: 14 }}>{t.noResults}</p>
+        <div className="text-center mb-3 px-3 py-4" style={{ background: '#f5f5f5', borderRadius: 12 }}>
+          <p className="m-0" style={{ color: '#888', fontSize: 14 }}>{t.noResults}</p>
         </div>
       )}
 
       {/* Lista card rooms */}
       {!loading && !error && filteredRoomOffers.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 20 }}>
+        <div className="d-flex flex-column gap-3 mb-4">
           {filteredRoomOffers.map(ro => {
             const room = PROPERTIES.flatMap(p => p.rooms).find(r => r.roomId === ro.roomId);
             if (!room) return null;
@@ -870,23 +870,32 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
 
       {/* CTA mobile */}
       {/* ← Indietro */}
-      <button onClick={onBack ?? prevStep} style={{ background: 'none', border: 'none', color: '#1E73BE', fontSize: 14, cursor: 'pointer', padding: '12px 0 80px', display: 'block' }}>
+      <button
+        onClick={onBack ?? prevStep}
+        className="btn d-block"
+        style={{ color: '#1E73BE', fontSize: 14, padding: '12px 0 80px' }}
+      >
         {t.indietro}
       </button>
 
       {/* CTA mobile sticky */}
-      <div style={{
-        position: 'fixed', bottom: 0, left: 0, right: 0,
-        background: '#fff', borderTop: '1px solid #e5e7eb',
-        padding: '12px 16px 28px', zIndex: 50,
-      }} className="step1-cta-mobile">
-        <button onClick={handleContinua} disabled={!canContinue} style={{
-          width: '100%', padding: '15px', borderRadius: 12, border: 'none',
-          fontSize: 16, fontWeight: 700,
-          background: canContinue ? '#FCAF1A' : '#e0e0e0',
-          color: canContinue ? '#fff' : '#999',
-          cursor: canContinue ? 'pointer' : 'not-allowed',
-        }}>
+      <div
+        className="position-fixed bottom-0 start-0 end-0 bg-white border-top step1-cta-mobile"
+        style={{ paddingTop: 12, paddingLeft: 16, paddingRight: 16, paddingBottom: 28, zIndex: 50 }}
+      >
+        <button
+          onClick={handleContinua}
+          disabled={!canContinue}
+          className="w-100 fw-bold border-0"
+          style={{
+            padding: 15,
+            borderRadius: 12,
+            fontSize: 16,
+            background: canContinue ? '#FCAF1A' : '#e0e0e0',
+            color: canContinue ? '#fff' : '#999',
+            cursor: canContinue ? 'pointer' : 'not-allowed',
+          }}
+        >
           {t.continua}
         </button>
       </div>
