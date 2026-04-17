@@ -43,8 +43,7 @@ const btnS: React.CSSProperties = {
   border: '1.5px solid #e5e7eb', borderRadius: 10, cursor: 'pointer',
 };
 const card: React.CSSProperties = {
-  background: '#fff', border: '1px solid #e5e7eb',
-  borderRadius: 14, padding: '20px', marginBottom: 16,
+  borderRadius: 14, padding: 20,
 };
 
 // ─── Traduzioni ───────────────────────────────────────────────────────────────
@@ -253,16 +252,16 @@ export default function StatusCheckin({ locale }: { locale: Locale }) {
 
   // ── Form ricerca ─────────────────────────────────────────────────────────
   if (!data) return (
-    <div style={{ maxWidth: 500, margin: '0 auto', padding: '40px 20px' }}>
-      <div style={{ textAlign: 'center', marginBottom: 28 }}>
-        <div style={{ fontSize: 40, marginBottom: 12 }}>🔍</div>
-        <h1 style={{ fontSize: 22, fontWeight: 700, color: '#111', marginBottom: 6 }}>
+    <div className="mx-auto px-3 py-5" style={{ maxWidth: 500 }}>
+      <div className="text-center mb-4">
+        <div className="mb-2" style={{ fontSize: 40 }}>🔍</div>
+        <h1 className="fw-bold mb-1" style={{ fontSize: 22, color: '#111' }}>
           {t.pageTitle}
         </h1>
-        <p style={{ fontSize: 14, color: '#6b7280', lineHeight: 1.6 }}>{t.pageSubtitle}</p>
+        <p className="m-0" style={{ fontSize: 14, color: '#6b7280', lineHeight: 1.6 }}>{t.pageSubtitle}</p>
       </div>
-      <div style={card}>
-        <div style={{ marginBottom: 16 }}>
+      <div className="bg-white border mb-3" style={card}>
+        <div className="mb-3">
           <label style={lbl}>{t.bookingLabel}</label>
           <input style={inp} type="number" inputMode="numeric"
             placeholder={t.bookingPh}
@@ -270,13 +269,13 @@ export default function StatusCheckin({ locale }: { locale: Locale }) {
             onChange={e => { setBookIdInput(e.target.value); setErr(''); }}
             onKeyDown={e => e.key === 'Enter' && loadStatus()} />
         </div>
-        {err && <p style={{ fontSize: 13, color: '#dc2626', marginBottom: 12 }}>{err}</p>}
+        {err && <p className="mb-2" style={{ fontSize: 13, color: '#dc2626' }}>{err}</p>}
         <button style={{ ...btnP, opacity: (loading || !bookIdInput.trim()) ? 0.6 : 1 }}
           onClick={() => loadStatus()} disabled={loading || !bookIdInput.trim()}>
           {loading ? t.loading : t.viewBtn}
         </button>
       </div>
-      <p style={{ textAlign: 'center', fontSize: 13, color: '#9ca3af', marginTop: 16 }}>
+      <p className="text-center mt-3" style={{ fontSize: 13, color: '#9ca3af' }}>
         {t.needHelp}{' '}
         <a href="https://wa.me/393283131500" style={{ color: '#1E73BE' }}>WhatsApp</a>
         {' · '}
@@ -289,14 +288,14 @@ export default function StatusCheckin({ locale }: { locale: Locale }) {
   const sc = statusLabels[data.status] ?? statusLabels.PENDING;
 
   return (
-    <div style={{ maxWidth: 600, margin: '0 auto', padding: '24px 20px 80px' }}>
+    <div className="mx-auto px-3 pt-4 pb-5" style={{ maxWidth: 600 }}>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+      <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <p style={{ margin: '0 0 4px', fontSize: 13, color: '#9ca3af' }}>
+          <p className="mb-1" style={{ fontSize: 13, color: '#9ca3af' }}>
             {t.booking} #{data.bookId}
           </p>
-          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#111' }}>{data.guestName}</h1>
+          <h1 className="m-0 fw-bold" style={{ fontSize: 20, color: '#111' }}>{data.guestName}</h1>
         </div>
         <button style={{ ...btnS, fontSize: 13 }}
           onClick={() => { setData(null); setBookIdInput(''); }}>
@@ -304,50 +303,54 @@ export default function StatusCheckin({ locale }: { locale: Locale }) {
         </button>
       </div>
 
-      <div style={{ ...card, background: sc.bg, border: `1px solid ${sc.color}30` }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div className="mb-3" style={{ ...card, background: sc.bg, border: `1px solid ${sc.color}30` }}>
+        <div className="d-flex align-items-center gap-2">
           <span style={{ fontSize: 24 }}>{sc.icon}</span>
           <div>
-            <p style={{ margin: '0 0 2px', fontSize: 16, fontWeight: 700, color: sc.color }}>
+            <p className="fw-bold mb-1" style={{ fontSize: 16, color: sc.color }}>
               {sc.label}
             </p>
             {data.status === 'REJECTED' && data.rejectReason
-              ? <p style={{ margin: 0, fontSize: 13, color: sc.color, opacity: 0.8 }}>{t.rejectedReason}{data.rejectReason}</p>
+              ? <p className="m-0" style={{ fontSize: 13, color: sc.color, opacity: 0.8 }}>{t.rejectedReason}{data.rejectReason}</p>
               : sc.note
-                ? <p style={{ margin: 0, fontSize: 13, color: sc.color, opacity: 0.8 }}>{sc.note}</p>
+                ? <p className="m-0" style={{ fontSize: 13, color: sc.color, opacity: 0.8 }}>{sc.note}</p>
                 : null
             }
           </div>
         </div>
       </div>
 
-      <div style={card}>
-        <p style={{ margin: '0 0 10px', ...lbl }}>{t.details}</p>
-        <p style={{ margin: '0 0 4px', fontSize: 14, color: '#374151' }}>
+      <div className="bg-white border mb-3" style={card}>
+        <p className="mb-2" style={lbl}>{t.details}</p>
+        <p className="mb-1" style={{ fontSize: 14, color: '#374151' }}>
           <strong>{t.property}:</strong> {data.roomName}
         </p>
-        <p style={{ margin: '0 0 4px', fontSize: 14, color: '#374151' }}>
+        <p className="mb-1" style={{ fontSize: 14, color: '#374151' }}>
           <strong>Check-in:</strong> {data.checkIn}
         </p>
-        <p style={{ margin: 0, fontSize: 14, color: '#374151' }}>
+        <p className="m-0" style={{ fontSize: 14, color: '#374151' }}>
           <strong>Check-out:</strong> {data.checkOut}
         </p>
       </div>
 
-      <div style={card}>
-        <p style={{ margin: '0 0 14px', ...lbl }}>
+      <div className="bg-white border mb-3" style={card}>
+        <p className="mb-3" style={lbl}>
           {t.messages}
           {data.messages.length > 0 && (
-            <span style={{ marginLeft: 8, background: '#1E73BE', color: '#fff',
-              fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 20 }}>
+            <span
+              className="ms-2 fw-bold text-white rounded-pill"
+              style={{ background: '#1E73BE', fontSize: 10, padding: '2px 7px' }}
+            >
               {data.messages.length}
             </span>
           )}
         </p>
-        <div style={{ minHeight: 80, maxHeight: 300, overflowY: 'auto',
-          display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 14, padding: 4 }}>
+        <div
+          className="d-flex flex-column gap-2 mb-3 p-1"
+          style={{ minHeight: 80, maxHeight: 300, overflowY: 'auto' }}
+        >
           {data.messages.length === 0 && (
-            <p style={{ margin: 0, fontSize: 13, color: '#9ca3af', textAlign: 'center', padding: '20px 0' }}>
+            <p className="text-center m-0 py-3" style={{ fontSize: 13, color: '#9ca3af' }}>
               {t.noMessages}
             </p>
           )}
@@ -361,7 +364,7 @@ export default function StatusCheckin({ locale }: { locale: Locale }) {
               }}>
                 {m.text}
               </div>
-              <p style={{ margin: '3px 4px 0', fontSize: 11, color: '#9ca3af',
+              <p className="mb-0" style={{ marginTop: 3, marginLeft: 4, marginRight: 4, fontSize: 11, color: '#9ca3af',
                 textAlign: m.from === 'guest' ? 'right' : 'left' }}>
                 {m.from === 'guest' ? t.you : 'LivingApple'}
                 {' · '}
@@ -373,29 +376,31 @@ export default function StatusCheckin({ locale }: { locale: Locale }) {
           ))}
           <div ref={bottomRef} />
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div className="d-flex gap-2">
           <textarea
             value={msgText}
             onChange={e => setMsgText(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
             placeholder={t.msgPh}
             rows={2}
-            style={{ flex: 1, padding: '10px 12px', fontSize: 14,
+            className="flex-fill"
+            style={{ padding: '10px 12px', fontSize: 14,
               border: '1.5px solid #e5e7eb', borderRadius: 10,
               resize: 'none', boxSizing: 'border-box', fontFamily: 'inherit' }}
           />
           <button
-            style={{ ...btnS, background: '#1E73BE', color: '#fff', border: 'none',
-              alignSelf: 'flex-end', padding: '10px 16px',
+            className="align-self-end border-0 text-white"
+            style={{ ...btnS, background: '#1E73BE', color: '#fff',
+              padding: '10px 16px',
               opacity: (sending || !msgText.trim()) ? 0.6 : 1 }}
             onClick={sendMessage} disabled={sending || !msgText.trim()}>
             {sending ? t.sending : t.send}
           </button>
         </div>
-        {msgErr && <p style={{ margin: '6px 0 0', fontSize: 12, color: '#dc2626' }}>{msgErr}</p>}
+        {msgErr && <p className="mb-0" style={{ marginTop: 6, fontSize: 12, color: '#dc2626' }}>{msgErr}</p>}
       </div>
 
-      <p style={{ textAlign: 'center', fontSize: 13, color: '#9ca3af' }}>
+      <p className="text-center" style={{ fontSize: 13, color: '#9ca3af' }}>
         {t.urgentHelp}{' '}
         <a href="https://wa.me/393283131500" style={{ color: '#1E73BE' }}>WhatsApp</a>
         {' · '}
