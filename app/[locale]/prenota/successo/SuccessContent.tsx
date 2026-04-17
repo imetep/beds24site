@@ -175,7 +175,7 @@ export default function SuccessContent({ locale }: Props) {
 
       <h1 style={{
         fontSize: 28, fontWeight: 800,
-        color: '#1E73BE', margin: '0 0 12px',
+        color: 'var(--color-primary)', margin: '0 0 12px',
         lineHeight: 1.2,
       }}>
         {t.title}
@@ -198,10 +198,10 @@ export default function SuccessContent({ locale }: Props) {
           display: 'inline-block',
           marginBottom: 36,
         }}>
-          <p style={{ fontSize: 12, fontWeight: 700, color: '#1E73BE', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-primary)', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
             {t.bookNum}
           </p>
-          <span style={{ fontSize: 28, fontWeight: 900, color: '#1E73BE', letterSpacing: 3 }}>
+          <span style={{ fontSize: 28, fontWeight: 900, color: 'var(--color-primary)', letterSpacing: 3 }}>
             {displayBookingId}
           </span>
         </div>
@@ -214,7 +214,7 @@ export default function SuccessContent({ locale }: Props) {
         style={{
           display: 'inline-block',
           padding: '14px 36px',
-          background: '#1E73BE',
+          background: 'var(--color-primary)',
           color: '#fff',
           borderRadius: 12,
           fontWeight: 700,
