@@ -67,7 +67,7 @@ const fw: React.CSSProperties = { marginBottom: 14 };
 const half: React.CSSProperties = { flex: '1 1 200px', marginBottom: 14 };
 const btnP: React.CSSProperties = {
   width: '100%', padding: '14px 20px', fontSize: 16, fontWeight: 700,
-  background: '#1E73BE', color: '#fff', border: 'none', borderRadius: 12, cursor: 'pointer',
+  background: 'var(--color-primary)', color: '#fff', border: 'none', borderRadius: 12, cursor: 'pointer',
 };
 const btnS: React.CSSProperties = {
   padding: '12px 16px', fontSize: 14, background: '#fff', color: '#374151',
@@ -89,7 +89,7 @@ function SectionHeader({ label, icon }: { label: string; icon: string }) {
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '20px 0 14px', paddingTop: 4,
       borderTop: '1.5px solid #f3f4f6' }}>
       <span style={{ fontSize: 16 }}>{icon}</span>
-      <span style={{ fontSize: 13, fontWeight: 700, color: '#1E73BE', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+      <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-primary)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
         {label}
       </span>
     </div>
@@ -251,7 +251,7 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
         <span>Step {step} {t.stepOf} 4</span><span>{Math.round((step / 4) * 100)}%</span>
       </div>
       <div style={{ background: '#f3f4f6', borderRadius: 99, height: 4 }}>
-        <div style={{ background: '#1E73BE', borderRadius: 99, height: 4, width: `${(step / 4) * 100}%`, transition: 'width 0.3s ease' }} />
+        <div style={{ background: 'var(--color-primary)', borderRadius: 99, height: 4, width: `${(step / 4) * 100}%`, transition: 'width 0.3s ease' }} />
       </div>
     </div>
   );
@@ -309,7 +309,7 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
           <a
             href={statusUrl}
             className="d-block text-center text-white fw-bold text-decoration-none"
-            style={{ padding: '12px 20px', background: '#1E73BE', borderRadius: 10, fontSize: 14 }}
+            style={{ padding: '12px 20px', background: 'var(--color-primary)', borderRadius: 10, fontSize: 14 }}
           >
             {isEn ? 'Go to my request →' : 'Vai alla mia richiesta →'}
           </a>
@@ -445,7 +445,7 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
           {altri.map((a, idx) => (
             <div key={idx} style={{ marginBottom: 16, padding: '16px 14px', background: '#f9fafb', borderRadius: 12, border: '1px solid #e5e7eb' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <span style={{ fontSize: 13, fontWeight: 700, color: '#1E73BE' }}>{t.guestN} {idx + 2}</span>
+                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-primary)' }}>{t.guestN} {idx + 2}</span>
                 <button style={{ ...btnS, fontSize: 12, padding: '4px 10px', minHeight: 'var(--touch-target)', minWidth: 'var(--touch-target)', color: '#dc2626', borderColor: '#fca5a5' }}
                   onClick={() => removeAltro(idx)}>{t.removeGuest}</button>
               </div>
