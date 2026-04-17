@@ -701,8 +701,8 @@ function PriceRow({ label, value, green }: { label: string; value: string; green
 }
 
 const card: React.CSSProperties = {
-  border: '1px solid #e5e7eb', borderRadius: 16,
-  padding: '20px 22px', marginBottom: 16, background: '#fff',
+  border: '1px solid #e5e7eb', borderRadius: 'var(--radius-lg)',
+  padding: 'var(--space-base)', marginBottom: 'var(--space-base)', background: '#fff',
 };
 
 const labelStyle: React.CSSProperties = {
