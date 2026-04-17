@@ -187,20 +187,20 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
   function renderMonth(year: number, month: number, showTitle: boolean) {
     const cells = buildCells(year, month);
     return (
-      <div style={{ flex: 1, minWidth: 0 }}>
+      <div className="flex-fill min-w-0">
         {showTitle && (
-          <div style={{ textAlign: 'center', fontWeight: 700, fontSize: 15, marginBottom: 12, color: '#111' }}>
+          <div className="text-center fw-bold text-dark mb-3" style={{ fontSize: 15 }}>
             {months[month]} {year}
           </div>
         )}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', marginBottom: 4 }}>
+        <div className="d-grid mb-1" style={{ gridTemplateColumns: 'repeat(7, 1fr)' }}>
           {days.map(d => (
-            <div key={d} style={{ textAlign: 'center', fontSize: 11, fontWeight: 600, color: '#bbb', paddingBottom: 4 }}>
+            <div key={d} className="text-center fw-semibold pb-1" style={{ fontSize: 11, color: '#bbb' }}>
               {d}
             </div>
           ))}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
+        <div className="d-grid" style={{ gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
           {cells.map((day, i) => {
             if (!day) return <div key={i} style={{ height: 36 }} />;
 
@@ -237,12 +237,11 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
                 onClick={() => handleDayClick(ymd)}
                 onMouseEnter={() => interactive && setHoverDate(ymd)}
                 onMouseLeave={() => interactive && setHoverDate(null)}
+                className="d-flex align-items-center justify-content-center user-select-none position-relative"
                 style={{
                   height: 36,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 13,
                   fontWeight,
-                  userSelect: 'none',
                   cursor: canClick ? 'pointer' : 'default',
                   borderRadius,
                   color,
@@ -250,17 +249,19 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
                   background: bg,
                   opacity: isPast ? 0.4 : 1,
                   transition: 'background 0.1s',
-                  position: 'relative',
                 }}
               >
                 {day}
                 {isToday && !isCI && !isCO && (
-                  <span style={{
-                    position: 'absolute', bottom: 3, left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: 4, height: 4, borderRadius: '50%',
-                    background: '#1E73BE',
-                  }} />
+                  <span
+                    className="position-absolute rounded-circle"
+                    style={{
+                      bottom: 3, left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: 4, height: 4,
+                      background: '#1E73BE',
+                    }}
+                  />
                 )}
               </div>
             );
@@ -273,21 +274,28 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
   // ─── JSX principale ────────────────────────────────────────────────────────
 
   return (
-    <section style={{ marginTop: 48 }}>
+    <section className="mt-5">
 
       {/* Titolo + legenda */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
+      <div className="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
         <div>
-          <h2 style={{ fontSize: 22, fontWeight: 700, margin: '0 0 8px', color: '#111' }}>
+          <h2 className="fw-bold text-dark mb-2" style={{ fontSize: 22 }}>
             {ui.title}
           </h2>
-          <div style={{ display: 'flex', gap: 20 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#555' }}>
-              <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 24, height: 24, borderRadius: 6, background: 'transparent', border: '1px solid #e0e0e0', fontWeight: 600, fontSize: 12, color: '#222' }}>15</span>
+          <div className="d-flex" style={{ gap: 20 }}>
+            <div className="d-flex align-items-center" style={{ gap: 6, fontSize: 12, color: '#555' }}>
+              <span
+                className="d-inline-flex align-items-center justify-content-center fw-semibold border"
+                style={{
+                  width: 24, height: 24, borderRadius: 6,
+                  background: 'transparent',
+                  fontSize: 12, color: '#222',
+                }}
+              >15</span>
               {ui.legend_free}
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#999' }}>
-              <span style={{ fontWeight: 600, fontSize: 12, color: '#ccc', textDecoration: 'line-through' }}>15</span>
+            <div className="d-flex align-items-center" style={{ gap: 6, fontSize: 12, color: '#999' }}>
+              <span className="fw-semibold text-decoration-line-through" style={{ fontSize: 12, color: '#ccc' }}>15</span>
               {ui.legend_busy}
             </div>
           </div>
@@ -296,7 +304,7 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
 
       {/* Pill CHECK-IN / CHECK-OUT — cliccabili, stile card HomeSearch */}
       {interactive && (
-        <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
+        <div className="d-flex gap-2 mb-3">
 
           {/* Card CHECK-IN */}
           <button
@@ -304,28 +312,32 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
               // Click check-in: azzera ENTRAMBE le date → riparte da zero
               clearDates();
             }}
+            className="flex-fill d-flex align-items-center gap-2 px-3 py-3 text-start shadow-sm"
             style={{
-              flex: 1, display: 'flex', alignItems: 'center', gap: 12,
-              padding: '14px 16px', textAlign: 'left',
               border: `1.5px solid ${(checkIn) ? '#1E73BE' : '#e5e7eb'}`,
               borderRadius: 14,
               background: (checkIn) ? '#f0f7ff' : '#fff',
-              boxShadow: '0 1px 6px rgba(0,0,0,0.06)',
               cursor: 'pointer',
             }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="1.8" style={{ flexShrink: 0 }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="1.8" className="flex-shrink-0">
               <rect x="3" y="4" width="18" height="18" rx="3"/>
               <path d="M16 2v4M8 2v4M3 10h18"/>
             </svg>
-            <div style={{ minWidth: 0, flex: 1 }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 3 }}>
+            <div className="min-w-0 flex-fill">
+              <div
+                className="fw-bold text-uppercase mb-1 text-muted"
+                style={{ fontSize: 10, letterSpacing: '0.07em' }}
+              >
                 {ui.checkin}
               </div>
-              <div style={{ fontSize: 14, fontWeight: 600, color: checkIn ? '#111' : '#bbb', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div
+                className="fw-semibold text-truncate"
+                style={{ fontSize: 14, color: checkIn ? '#111' : '#bbb' }}
+              >
                 {checkIn ? fmtDate(checkIn, locale) : '—'}
               </div>
             </div>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bbb" strokeWidth="2" style={{ flexShrink: 0 }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bbb" strokeWidth="2" className="flex-shrink-0">
               <path d="M9 18l6-6-6-6"/>
             </svg>
           </button>
@@ -337,35 +349,43 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
               setCheckOut('');
               setSelectingCheckout(true);
             }}
+            className="flex-fill d-flex align-items-center gap-2 px-3 py-3 text-start shadow-sm"
             style={{
-              flex: 1, display: 'flex', alignItems: 'center', gap: 12,
-              padding: '14px 16px', textAlign: 'left',
               border: `1.5px solid ${(checkOut || phase === 'co') ? '#1E73BE' : '#e5e7eb'}`,
               borderRadius: 14,
               background: (checkOut || phase === 'co') ? '#f0f7ff' : '#fff',
-              boxShadow: '0 1px 6px rgba(0,0,0,0.06)',
               cursor: 'pointer',
             }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="1.8" style={{ flexShrink: 0 }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="1.8" className="flex-shrink-0">
               <rect x="3" y="4" width="18" height="18" rx="3"/>
               <path d="M16 2v4M8 2v4M3 10h18"/>
             </svg>
-            <div style={{ minWidth: 0, flex: 1 }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 3 }}>
+            <div className="min-w-0 flex-fill">
+              <div
+                className="fw-bold text-uppercase mb-1 text-muted"
+                style={{ fontSize: 10, letterSpacing: '0.07em' }}
+              >
                 {ui.checkout}
               </div>
-              <div style={{ fontSize: 14, fontWeight: 600, color: checkOut ? '#111' : '#bbb', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div
+                className="fw-semibold text-truncate"
+                style={{ fontSize: 14, color: checkOut ? '#111' : '#bbb' }}
+              >
                 {checkOut ? fmtDate(checkOut, locale) : '—'}
               </div>
             </div>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bbb" strokeWidth="2" style={{ flexShrink: 0 }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bbb" strokeWidth="2" className="flex-shrink-0">
               <path d="M9 18l6-6-6-6"/>
             </svg>
           </button>
 
           {/* Bottone cancella date */}
           {(checkIn || checkOut) && (
-            <button onClick={clearDates} style={{ background: 'none', border: 'none', color: '#9ca3af', fontSize: 16, cursor: 'pointer', padding: '0 4px', alignSelf: 'center' }}>
+            <button
+              onClick={clearDates}
+              className="btn align-self-center text-muted"
+              style={{ fontSize: 16, padding: '0 4px' }}
+            >
               ✕
             </button>
           )}
@@ -374,22 +394,24 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
 
       {/* Hint */}
       {interactive && (
-        <p style={{ fontSize: 13, color: '#9ca3af', margin: '0 0 8px' }}>
+        <p className="text-muted mb-2" style={{ fontSize: 13 }}>
           {phase === 'ci' ? ui.selectCheckin : ui.selectCheckout}
         </p>
       )}
 
       {/* Box soggiorno minimo */}
       {interactive && (
-        <div style={{
-          display: 'flex', gap: 10, alignItems: 'flex-start',
-          background: 'linear-gradient(135deg, #FFF8EC 0%, #FFF3DC 100%)',
-          border: '1px solid #F5C842', borderRadius: 10,
-          padding: '10px 14px', marginBottom: 12,
-        }}>
-          <span style={{ fontSize: 18, flexShrink: 0 }}>🌙</span>
+        <div
+          className="d-flex align-items-start gap-2 px-3 py-2 mb-3 border"
+          style={{
+            background: 'linear-gradient(135deg, #FFF8EC 0%, #FFF3DC 100%)',
+            borderColor: '#F5C842',
+            borderRadius: 10,
+          }}
+        >
+          <span className="flex-shrink-0" style={{ fontSize: 18 }}>🌙</span>
           <div>
-            <div style={{ fontSize: 12, fontWeight: 700, color: '#92610A' }}>{ui.minStay}</div>
+            <div className="fw-bold" style={{ fontSize: 12, color: '#92610A' }}>{ui.minStay}</div>
             <div style={{ fontSize: 11, color: '#B07820', marginTop: 2 }}>{ui.minSub}</div>
           </div>
         </div>
@@ -397,8 +419,8 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
 
       {/* Spinner */}
       {loading && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '20px 0', color: '#aaa', fontSize: 14 }}>
-          <div style={{ width: 20, height: 20, border: '2px solid #eee', borderTop: '2px solid #1E73BE', borderRadius: '50%', animation: 'spin 0.8s linear infinite', flexShrink: 0 }} />
+        <div className="d-flex align-items-center gap-2 py-3 text-muted" style={{ fontSize: 14 }}>
+          <div className="rounded-circle flex-shrink-0" style={{ width: 20, height: 20, border: '2px solid #eee', borderTop: '2px solid #1E73BE', animation: 'spin 0.8s linear infinite' }} />
           {ui.loading}
         </div>
       )}
@@ -406,10 +428,10 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
       {/* Calendario */}
       {!loading && (
         <div
+          className="bg-white border"
           style={{
-            border: '1px solid #e5e7eb', borderRadius: 16,
+            borderRadius: 16,
             padding: isDesktop ? '20px 28px 24px' : '16px 12px 20px',
-            background: '#fff',
           }}
           onTouchStart={e => setTouchStartX(e.touches[0].clientX)}
           onTouchEnd={e => {
@@ -423,43 +445,43 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
           }}
         >
           {/* ✅ FIX: navigazione corretta — mobile: 1 titolo centrato; desktop: frecce agli estremi + 2 titoli centrati */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <div className="d-flex align-items-center justify-content-between mb-3">
             {isDesktop ? (
               <>
                 {/* Freccia sinistra */}
-                <button onClick={goToPrev} disabled={isPrevDisabled} style={navBtnStyle(isPrevDisabled)}>‹</button>
+                <button onClick={goToPrev} disabled={isPrevDisabled} className="btn flex-shrink-0" style={navBtnStyle(isPrevDisabled)}>‹</button>
 
                 {/* 2 titoli mese — ognuno sopra al proprio mese */}
-                <div style={{ flex: 1, display: 'flex', justifyContent: 'space-around' }}>
-                  <span style={{ fontWeight: 700, fontSize: 15, color: '#111' }}>
+                <div className="flex-fill d-flex justify-content-around">
+                  <span className="fw-bold text-dark" style={{ fontSize: 15 }}>
                     {months[viewMonth]} {viewYear}
                   </span>
-                  <span style={{ fontWeight: 700, fontSize: 15, color: '#111' }}>
+                  <span className="fw-bold text-dark" style={{ fontSize: 15 }}>
                     {months[secondMonth.month]} {secondMonth.year}
                   </span>
                 </div>
 
                 {/* Freccia destra */}
-                <button onClick={goToNext} style={navBtnStyle(false)}>›</button>
+                <button onClick={goToNext} className="btn flex-shrink-0" style={navBtnStyle(false)}>›</button>
               </>
             ) : (
               <>
                 {/* Mobile: frecce ai lati + 1 titolo centrato */}
-                <button onClick={goToPrev} disabled={isPrevDisabled} style={navBtnStyle(isPrevDisabled)}>‹</button>
-                <span style={{ fontWeight: 700, fontSize: 15, color: '#111', flex: 1, textAlign: 'center' }}>
+                <button onClick={goToPrev} disabled={isPrevDisabled} className="btn flex-shrink-0" style={navBtnStyle(isPrevDisabled)}>‹</button>
+                <span className="fw-bold text-dark flex-fill text-center" style={{ fontSize: 15 }}>
                   {months[viewMonth]} {viewYear}
                 </span>
-                <button onClick={goToNext} style={navBtnStyle(false)}>›</button>
+                <button onClick={goToNext} className="btn flex-shrink-0" style={navBtnStyle(false)}>›</button>
               </>
             )}
           </div>
 
           {/* Mesi */}
-          <div style={{ display: 'flex', gap: isDesktop ? 40 : 0 }}>
+          <div className="d-flex" style={{ gap: isDesktop ? 40 : 0 }}>
             {renderMonth(viewYear, viewMonth, false)}
             {isDesktop && (
               <>
-                <div style={{ width: 1, background: '#f0f0f0', flexShrink: 0 }} />
+                <div className="flex-shrink-0" style={{ width: 1, background: '#f0f0f0' }} />
                 {renderMonth(secondMonth.year, secondMonth.month, false)}
               </>
             )}
@@ -477,5 +499,5 @@ const navBtnStyle = (disabled: boolean): React.CSSProperties => ({
   fontSize: 28, lineHeight: 1,
   cursor: disabled ? 'default' : 'pointer',
   color: disabled ? '#ddd' : '#333',
-  padding: '0 8px', fontWeight: 300, flexShrink: 0,
+  padding: '0 8px', fontWeight: 300,
 });
