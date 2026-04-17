@@ -216,7 +216,7 @@ function StepCard({ n, title, text }: { n: string; title: string; text: string }
     <div style={{ display: 'flex', gap: 16, padding: '16px 0', borderBottom: '0.5px solid #f3f4f6' }}>
       <div style={{
         width: 32, height: 32, borderRadius: '50%',
-        background: '#1E73BE', color: '#fff',
+        background: 'var(--color-primary)', color: '#fff',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontSize: 13, fontWeight: 700, flexShrink: 0, marginTop: 2,
       }}>
@@ -237,7 +237,7 @@ function FaqItem({ q, a, link }: { q: string; a: string; link?: { label: string;
       <p style={{ margin: 0, fontSize: 14, color: '#4b5563', lineHeight: 1.65 }}>{a}</p>
       {link && (
         <a href={link.href} target="_blank" rel="noopener noreferrer"
-          style={{ display: 'inline-block', marginTop: 6, fontSize: 12, color: '#1E73BE', textDecoration: 'none', fontWeight: 600 }}>
+          style={{ display: 'inline-block', marginTop: 6, fontSize: 12, color: 'var(--color-primary)', textDecoration: 'none', fontWeight: 600 }}>
           {link.label}
         </a>
       )}
@@ -259,7 +259,7 @@ export default function SelfCheckinPage({ locale, wizardHref, contactHref }: Pro
       <div style={{ background: '#fff', padding: '28px 20px 24px', borderBottom: '0.5px solid #f3f4f6', marginBottom: 8 }}>
         <div style={{
           display: 'inline-block', marginBottom: 12,
-          background: '#EEF5FC', color: '#1E73BE',
+          background: '#EEF5FC', color: 'var(--color-primary)',
           fontSize: 12, fontWeight: 700, padding: '4px 12px', borderRadius: 20,
         }}>
           {t.whyBadge}
@@ -336,7 +336,7 @@ export default function SelfCheckinPage({ locale, wizardHref, contactHref }: Pro
                   <li key={i} style={{ padding: '6px 0', borderBottom: '0.5px solid #f3f4f6', display: 'flex', gap: 8, alignItems: 'baseline', flexWrap: 'wrap' }}>
                     <span style={{ fontSize: 11, color: '#9ca3af', flexShrink: 0, minWidth: 130 }}>{s.outlet}</span>
                     <a href={s.url} target="_blank" rel="noopener noreferrer"
-                      style={{ fontSize: 13, color: '#1E73BE', textDecoration: 'none', lineHeight: 1.5 }}>
+                      style={{ fontSize: 13, color: 'var(--color-primary)', textDecoration: 'none', lineHeight: 1.5 }}>
                       {s.title} ↗
                     </a>
                   </li>
@@ -350,7 +350,7 @@ export default function SelfCheckinPage({ locale, wizardHref, contactHref }: Pro
                   <li key={i} style={{ padding: '6px 0', borderBottom: i < SOURCES_IT.length - 1 ? '0.5px solid #f3f4f6' : 'none', display: 'flex', gap: 8, alignItems: 'baseline', flexWrap: 'wrap' }}>
                     <span style={{ fontSize: 11, color: '#9ca3af', flexShrink: 0, minWidth: 130 }}>{s.outlet}</span>
                     <a href={s.url} target="_blank" rel="noopener noreferrer"
-                      style={{ fontSize: 13, color: '#1E73BE', textDecoration: 'none', lineHeight: 1.5 }}>
+                      style={{ fontSize: 13, color: 'var(--color-primary)', textDecoration: 'none', lineHeight: 1.5 }}>
                       {s.title} ↗
                     </a>
                   </li>
@@ -392,7 +392,7 @@ export default function SelfCheckinPage({ locale, wizardHref, contactHref }: Pro
               borderBottom: i < t.needs.length - 1 ? '0.5px solid #f3f4f6' : 'none',
               fontSize: 14, color: '#4b5563', lineHeight: 1.55,
             }}>
-              <span style={{ color: '#1E73BE', flexShrink: 0, fontWeight: 700 }}>✓</span>
+              <span style={{ color: 'var(--color-primary)', flexShrink: 0, fontWeight: 700 }}>✓</span>
               {need}
             </li>
           ))}
@@ -424,7 +424,7 @@ export default function SelfCheckinPage({ locale, wizardHref, contactHref }: Pro
           href={wizardHref}
           style={{
             display: 'inline-block',
-            background: '#1E73BE', color: '#fff',
+            background: 'var(--color-primary)', color: '#fff',
             borderRadius: 12, padding: '13px 24px',
             fontSize: 15, fontWeight: 700, textDecoration: 'none',
             marginBottom: 10,
@@ -439,7 +439,7 @@ export default function SelfCheckinPage({ locale, wizardHref, contactHref }: Pro
 
       {/* ── Link contatti secondario ─────────────────────────────────────────── */}
       <div style={{ padding: '16px 20px', textAlign: 'center' }}>
-        <a href={contactHref} style={{ fontSize: 14, color: '#1E73BE', textDecoration: 'none' }}>
+        <a href={contactHref} style={{ fontSize: 14, color: 'var(--color-primary)', textDecoration: 'none' }}>
           Hai domande? Contattaci →
         </a>
       </div>
