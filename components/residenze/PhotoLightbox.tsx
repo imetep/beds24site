@@ -105,7 +105,7 @@ export default function PhotoLightbox({ photos, roomName }: Props) {
                 borderRadius: 4,
                 background:   dark
                   ? (isActive ? '#FCAF1A' : 'rgba(255,255,255,0.45)')
-                  : (isActive ? '#1E73BE' : '#d1d5db'),
+                  : (isActive ? 'var(--color-primary)' : '#d1d5db'),
                 transition: 'all 0.2s',
               }} />
           );
