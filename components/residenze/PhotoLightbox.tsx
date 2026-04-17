@@ -124,7 +124,7 @@ export default function PhotoLightbox({ photos, roomName }: Props) {
             onClick={() => openAt(0)}
             className="position-relative w-100 overflow-hidden"
             style={{
-              aspectRatio: '16/9',
+              aspectRatio: '4/3',
               cursor: 'pointer',
               background: '#111',
             }}
