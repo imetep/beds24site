@@ -74,7 +74,7 @@ export default function AdminPage() {
       title: 'Check-in online',
       desc: 'Gestisci le richieste di self check-in degli ospiti. Approva, rifiuta, invia link deposito Stripe, messaggia con l\'ospite.',
       href: '/admin/checkin',
-      color: '#1E73BE',
+      color: 'var(--color-primary)',
     },
     {
       icon: 'bi-moon-stars-fill',
