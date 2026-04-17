@@ -279,5 +279,71 @@
       "sentSub": "Odpowiemy w ciągu 24 godzin.",
       "errorSend": "Błąd podczas wysyłania. Spróbuj ponownie lub skontaktuj się przez WhatsApp."
     }
+  },
+  "shared": {
+    "offerNames": {
+      "1": "Bezzwrotna",
+      "2": "Częściowo zwrotna",
+      "3": "Elastyczna 60 dni",
+      "4": "Elastyczna 45 dni",
+      "5": "Elastyczna 30 dni",
+      "6": "Elastyczna 5 dni"
+    },
+    "offerDescriptions": {
+      "1": "Płatność w całości w ciągu 48h.",
+      "2": "50% teraz, reszta przy przyjeździe.",
+      "3": "Bezpłatne anulowanie do 60 dni.",
+      "4": "Bezpłatne anulowanie do 45 dni.",
+      "5": "Bezpłatne anulowanie do 30 dni.",
+      "6": "Bezpłatne anulowanie do 5 dni."
+    },
+    "monthsLong": ["Styczeń","Luty","Marzec","Kwiecień","Maj","Czerwiec","Lipiec","Sierpień","Wrzesień","Październik","Listopad","Grudzień"],
+    "monthsShort": ["sty","lut","mar","kwi","maj","cze","lip","sie","wrz","paź","lis","gru"],
+    "daysShort": ["Pn","Wt","Śr","Cz","Pt","So","Nd"],
+    "floorLabels": { "ground": "Parter", "floor": "Piętro", "basement": "Piwnica" }
+  },
+  "components": {
+    "propertyMap": { "label": "Jak dojechać" },
+    "availabilityCalendar": {
+      "title": "Dostępność", "loading": "Ładowanie...",
+      "minStay": "Zalecany minimalny pobyt: 3 noce",
+      "minSub": "Krótsze pobyty są możliwe, ale rzadko dostępne",
+      "legendFree": "Dostępny", "legendBusy": "Zajęty",
+      "checkin": "Zameldowanie", "checkout": "Wymeldowanie", "clear": "Wyczyść daty",
+      "selectCheckin": "Wybierz zameldowanie", "selectCheckout": "Wybierz wymeldowanie"
+    },
+    "bookingPanel": {
+      "guests": "Goście", "adults": "Dorośli", "adultsAge": "18+",
+      "children": "Dzieci", "childrenAge": "0–17",
+      "nights": "noc", "nightsP": "nocy",
+      "offersTitle": "Dostępne taryfy",
+      "loading": "Wyszukiwanie...", "noOffers": "Brak taryf dla wybranych dat.",
+      "prenota": "Zarezerwuj", "perNight": "/noc", "total": "łącznie",
+      "selezionata": "✓ Wybrano", "nonDisp": "Niedostępne",
+      "selectDates": "Wybierz daty, aby zobaczyć dostępne taryfy."
+    },
+    "wizardSidebar": {
+      "title": "Twój pobyt", "checkin": "Zameldowanie", "checkout": "Wymeldowanie",
+      "guests": "Goście", "adults": "dorośli", "children": "dzieci",
+      "nights": "nocy", "night": "noc", "rate": "Taryfa",
+      "total": "Łącznie", "perNight": "/noc", "noRoom": "Wybierz apartament",
+      "continua": "Dalej →",
+      "energy": "Koszty energii według zużycia — liczniki w każdym lokalu",
+      "deposit": "Kaucja wymagana — zwracana przy wymeldowaniu",
+      "prof1": "Profesjonalizm nas wyróżnia",
+      "prof2": "Luksus w dobrej cenie",
+      "nature": "1,5 km od morza, otoczony naturą",
+      "beach": "250 metrów od morza",
+      "poolNote": "Zaledwie 250m od morza — basen może nie być potrzebny"
+    },
+    "bedConfigDisplay": {
+      "sectionTitle": "Gdzie będziecie spać",
+      "configNote": "Dokładna konfiguracja łóżek jest wybierana w portalu gości po rezerwacji.",
+      "nonOscurabile": "brak zaciemnienia",
+      "optional": "opcjonalne",
+      "configurabile": "konfigurowalne",
+      "or": "lub",
+      "scroll": "przewiń →"
+    }
   }
 }

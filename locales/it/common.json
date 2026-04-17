@@ -279,5 +279,71 @@
       "sentSub": "Ti risponderemo entro 24 ore.",
       "errorSend": "Errore durante l'invio. Riprova o contattaci su WhatsApp."
     }
+  },
+  "shared": {
+    "offerNames": {
+      "1": "Non Rimborsabile",
+      "2": "Parzialmente Rimborsabile",
+      "3": "Flessibile 60 gg",
+      "4": "Flessibile 45 gg",
+      "5": "Flessibile 30 gg",
+      "6": "Flessibile 5 gg"
+    },
+    "offerDescriptions": {
+      "1": "Paghi tutto entro 48h dalla prenotazione.",
+      "2": "Paghi 50% ora, il saldo all'arrivo.",
+      "3": "Cancellazione gratuita entro 60 gg dall'arrivo.",
+      "4": "Cancellazione gratuita entro 45 gg dall'arrivo.",
+      "5": "Cancellazione gratuita entro 30 gg dall'arrivo.",
+      "6": "Cancellazione gratuita entro 5 gg dall'arrivo."
+    },
+    "monthsLong": ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"],
+    "monthsShort": ["gen","feb","mar","apr","mag","giu","lug","ago","set","ott","nov","dic"],
+    "daysShort": ["Lu","Ma","Me","Gi","Ve","Sa","Do"],
+    "floorLabels": { "ground": "Piano terra", "floor": "Piano", "basement": "Seminterrato" }
+  },
+  "components": {
+    "propertyMap": { "label": "Come arrivare" },
+    "availabilityCalendar": {
+      "title": "Disponibilità", "loading": "Caricamento...",
+      "minStay": "Soggiorno minimo consigliato: 3 notti",
+      "minSub": "Puoi selezionare qualsiasi durata, ma potremmo avere poca disponibilità",
+      "legendFree": "Disponibile", "legendBusy": "Occupato",
+      "checkin": "Check-in", "checkout": "Check-out", "clear": "Cancella date",
+      "selectCheckin": "Seleziona la data di arrivo", "selectCheckout": "Seleziona la data di partenza"
+    },
+    "bookingPanel": {
+      "guests": "Ospiti", "adults": "Adulti", "adultsAge": "18+",
+      "children": "Bambini", "childrenAge": "0–17",
+      "nights": "notte", "nightsP": "notti",
+      "offersTitle": "Tariffe disponibili",
+      "loading": "Ricerca tariffe...", "noOffers": "Nessuna tariffa disponibile per le date selezionate.",
+      "prenota": "Prenota ora", "perNight": "/notte", "total": "totale",
+      "selezionata": "✓ Selezionata", "nonDisp": "Non disponibile",
+      "selectDates": "Seleziona le date per vedere le tariffe disponibili."
+    },
+    "wizardSidebar": {
+      "title": "Il tuo soggiorno", "checkin": "Check-in", "checkout": "Check-out",
+      "guests": "Ospiti", "adults": "adulti", "children": "bambini",
+      "nights": "notti", "night": "notte", "rate": "Tariffa",
+      "total": "Totale", "perNight": "/notte", "noRoom": "Scegli un appartamento",
+      "continua": "Continua →",
+      "energy": "Consumi energetici a consumo — contatori in ogni abitazione",
+      "deposit": "Deposito cauzionale richiesto — rimborsabile al check-out",
+      "prof1": "La professionalità ci rende diversi",
+      "prof2": "Lusso al giusto prezzo",
+      "nature": "A 1,5 km dal mare, immerso nella natura",
+      "beach": "A 250 metri dal mare",
+      "poolNote": "A 250 metri dal mare la piscina non è necessaria — il mare è a portata di mano"
+    },
+    "bedConfigDisplay": {
+      "sectionTitle": "Dove dormirete",
+      "configNote": "La configurazione esatta dei letti si sceglie dal portale ospiti dopo la prenotazione.",
+      "nonOscurabile": "area non oscurabile",
+      "optional": "opzionale",
+      "configurabile": "configurabile",
+      "or": "oppure",
+      "scroll": "scorri →"
+    }
   }
 }

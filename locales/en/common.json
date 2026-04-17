@@ -279,5 +279,71 @@
       "sentSub": "We will get back to you within 24 hours.",
       "errorSend": "Error sending the request. Please try again or contact us on WhatsApp."
     }
+  },
+  "shared": {
+    "offerNames": {
+      "1": "Non-Refundable",
+      "2": "Partially Refundable",
+      "3": "Flexible 60 days",
+      "4": "Flexible 45 days",
+      "5": "Flexible 30 days",
+      "6": "Flexible 5 days"
+    },
+    "offerDescriptions": {
+      "1": "Pay in full within 48h.",
+      "2": "Pay 50% now, balance at arrival.",
+      "3": "Free cancellation up to 60 days before.",
+      "4": "Free cancellation up to 45 days before.",
+      "5": "Free cancellation up to 30 days before.",
+      "6": "Free cancellation up to 5 days before."
+    },
+    "monthsLong": ["January","February","March","April","May","June","July","August","September","October","November","December"],
+    "monthsShort": ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"],
+    "daysShort": ["Mo","Tu","We","Th","Fr","Sa","Su"],
+    "floorLabels": { "ground": "Ground floor", "floor": "Floor", "basement": "Basement" }
+  },
+  "components": {
+    "propertyMap": { "label": "How to get there" },
+    "availabilityCalendar": {
+      "title": "Availability", "loading": "Loading...",
+      "minStay": "Recommended minimum stay: 3 nights",
+      "minSub": "Shorter stays are possible but rarely available",
+      "legendFree": "Available", "legendBusy": "Booked",
+      "checkin": "Check-in", "checkout": "Check-out", "clear": "Clear dates",
+      "selectCheckin": "Select check-in date", "selectCheckout": "Select check-out date"
+    },
+    "bookingPanel": {
+      "guests": "Guests", "adults": "Adults", "adultsAge": "18+",
+      "children": "Children", "childrenAge": "0–17",
+      "nights": "night", "nightsP": "nights",
+      "offersTitle": "Available rates",
+      "loading": "Searching rates...", "noOffers": "No rates available for the selected dates.",
+      "prenota": "Book now", "perNight": "/night", "total": "total",
+      "selezionata": "✓ Selected", "nonDisp": "Unavailable",
+      "selectDates": "Select dates to see available rates."
+    },
+    "wizardSidebar": {
+      "title": "Your stay", "checkin": "Check-in", "checkout": "Check-out",
+      "guests": "Guests", "adults": "adults", "children": "children",
+      "nights": "nights", "night": "night", "rate": "Rate",
+      "total": "Total", "perNight": "/night", "noRoom": "Choose an apartment",
+      "continua": "Continue →",
+      "energy": "Energy billed by actual usage — meters in each unit",
+      "deposit": "Security deposit required — refunded at check-out",
+      "prof1": "Professionalism sets us apart",
+      "prof2": "Luxury at the right price",
+      "nature": "1.5km from the sea, surrounded by nature",
+      "beach": "250 metres from the sea",
+      "poolNote": "Just 250m from the sea — you may not need a pool at all"
+    },
+    "bedConfigDisplay": {
+      "sectionTitle": "Where you'll sleep",
+      "configNote": "The exact bed configuration is selected in the guest portal after booking.",
+      "nonOscurabile": "no blackout blinds",
+      "optional": "optional",
+      "configurabile": "configurable",
+      "or": "or",
+      "scroll": "scroll →"
+    }
   }
 }

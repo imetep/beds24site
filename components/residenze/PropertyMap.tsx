@@ -1,3 +1,6 @@
+import { getTranslations } from '@/lib/i18n';
+import type { Locale } from '@/config/i18n';
+
 interface Props {
   latitude: number;
   longitude: number;
@@ -5,16 +8,10 @@ interface Props {
   locale?: string;
 }
 
-const LABELS: Record<string, string> = {
-  it: 'Come arrivare',
-  en: 'How to get there',
-  de: 'Anfahrt',
-  pl: 'Jak dojechać',
-};
-
 export default function PropertyMap({ latitude, longitude, name, locale = 'it' }: Props) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
-  const label = LABELS[locale] ?? LABELS.it;
+  const t = getTranslations((locale as Locale));
+  const label = t.components.propertyMap.label;
 
   if (!apiKey) return null;
 

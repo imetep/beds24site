@@ -17,13 +17,10 @@
  */
 
 import { getBedConfig } from '@/lib/bedConfig'
+import { getTranslations } from '@/lib/i18n'
 import type { Locale, Room, Bed } from '@/lib/bedConfig'
 
-// ─────────────────────────────────────────────────────────────────────────────
-// LABELS i18n
-// ─────────────────────────────────────────────────────────────────────────────
-
-const UI: Record<Locale, {
+type UIShape = {
   sectionTitle: string
   configNote: string
   nonOscurabile: string
@@ -31,43 +28,6 @@ const UI: Record<Locale, {
   configurabile: string
   or: string
   scroll: string
-}> = {
-  it: {
-    sectionTitle: 'Dove dormirete',
-    configNote: 'La configurazione esatta dei letti si sceglie dal portale ospiti dopo la prenotazione.',
-    nonOscurabile: 'area non oscurabile',
-    optional: 'opzionale',
-    configurabile: 'configurabile',
-    or: 'oppure',
-    scroll: 'scorri →',
-  },
-  en: {
-    sectionTitle: 'Where you\'ll sleep',
-    configNote: 'The exact bed configuration is selected in the guest portal after booking.',
-    nonOscurabile: 'no blackout blinds',
-    optional: 'optional',
-    configurabile: 'configurable',
-    or: 'or',
-    scroll: 'scroll →',
-  },
-  de: {
-    sectionTitle: 'Wo Sie schlafen',
-    configNote: 'Die genaue Bettkonfiguration wird nach der Buchung im Gästeportal festgelegt.',
-    nonOscurabile: 'nicht verdunkelbar',
-    optional: 'optional',
-    configurabile: 'konfigurierbar',
-    or: 'oder',
-    scroll: 'scrollen →',
-  },
-  pl: {
-    sectionTitle: 'Gdzie będziecie spać',
-    configNote: 'Dokładna konfiguracja łóżek jest wybierana w portalu gości po rezerwacji.',
-    nonOscurabile: 'brak zaciemnienia',
-    optional: 'opcjonalne',
-    configurabile: 'konfigurowalne',
-    or: 'lub',
-    scroll: 'przewiń →',
-  },
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -258,7 +218,7 @@ function BedIcon({ bed }: { bed: Bed }) {
 // ROOM CARD
 // ─────────────────────────────────────────────────────────────────────────────
 
-function RoomCard({ room, locale, ui }: { room: Room; locale: Locale; ui: typeof UI['it'] }) {
+function RoomCard({ room, locale, ui }: { room: Room; locale: Locale; ui: UIShape }) {
   // Una camera è configurabile se almeno un letto ha canConfigure o è un divano/poltrona
   const hasConfigurable = room.beds.some(
     b => b.canConfigure || b.variant === 'poltrona' || b.variant === 'divano'
@@ -410,7 +370,7 @@ interface Props {
 
 export default function BedConfigDisplay({ roomId, locale }: Props) {
   const config = getBedConfig(roomId)
-  const ui = UI[locale] ?? UI.it
+  const ui = getTranslations(locale).components.bedConfigDisplay
 
   // Se non c'è config per questa room, non renderizzare nulla
   if (!config) return null

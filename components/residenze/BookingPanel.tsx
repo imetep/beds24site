@@ -3,69 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
-
-// ─── Offer names ──────────────────────────────────────────────────────────────
-
-const OFFER_NAMES: Record<number, Record<string, string>> = {
-  1: { it:'Non Rimborsabile',          en:'Non-Refundable',         de:'Nicht erstattungsfähig',  pl:'Bezzwrotna' },
-  2: { it:'Parzialmente Rimborsabile', en:'Partially Refundable',   de:'Teilw. erstattungsfähig', pl:'Częściowo zwrotna' },
-  3: { it:'Flessibile 60 gg',          en:'Flexible 60 days',       de:'Flexibel 60 Tage',        pl:'Elastyczna 60 dni' },
-  4: { it:'Flessibile 45 gg',          en:'Flexible 45 days',       de:'Flexibel 45 Tage',        pl:'Elastyczna 45 dni' },
-  5: { it:'Flessibile 30 gg',          en:'Flexible 30 days',       de:'Flexibel 30 Tage',        pl:'Elastyczna 30 dni' },
-  6: { it:'Flessibile 5 gg',           en:'Flexible 5 days',        de:'Flexibel 5 Tage',         pl:'Elastyczna 5 dni' },
-};
-
-const OFFER_DESC: Record<number, Record<string, string>> = {
-  1: { it:'Paghi tutto entro 48h dalla prenotazione.',        en:'Pay in full within 48h.',               de:'Vollzahlung innerhalb 48h.',         pl:'Płatność w całości w ciągu 48h.' },
-  2: { it:"Paghi 50% ora, il saldo all'arrivo.",              en:'Pay 50% now, balance at arrival.',       de:'50% jetzt, Rest bei Ankunft.',       pl:'50% teraz, reszta przy przyjeździe.' },
-  3: { it:"Cancellazione gratuita entro 60 gg dall'arrivo.",  en:'Free cancellation up to 60 days before.',de:'Kostenlose Stornierung bis 60 Tage.', pl:'Bezpłatne anulowanie do 60 dni.' },
-  4: { it:"Cancellazione gratuita entro 45 gg dall'arrivo.",  en:'Free cancellation up to 45 days before.',de:'Kostenlose Stornierung bis 45 Tage.', pl:'Bezpłatne anulowanie do 45 dni.' },
-  5: { it:"Cancellazione gratuita entro 30 gg dall'arrivo.",  en:'Free cancellation up to 30 days before.',de:'Kostenlose Stornierung bis 30 Tage.', pl:'Bezpłatne anulowanie do 30 dni.' },
-  6: { it:"Cancellazione gratuita entro 5 gg dall'arrivo.",   en:'Free cancellation up to 5 days before.', de:'Kostenlose Stornierung bis 5 Tage.',  pl:'Bezpłatne anulowanie do 5 dni.' },
-};
-
-const UI: Record<string, Record<string, string>> = {
-  it: {
-    guests: 'Ospiti', adults: 'Adulti', adultsAge: '18+',
-    children: 'Bambini', childrenAge: '0–17',
-    nights: 'notte', nightsP: 'notti',
-    offersTitle: 'Tariffe disponibili',
-    loading: 'Ricerca tariffe...', noOffers: 'Nessuna tariffa disponibile per le date selezionate.',
-    prenota: 'Prenota ora', perNight: '/notte', total: 'totale',
-    selezionata: '✓ Selezionata', nonDisp: 'Non disponibile',
-    selectDates: 'Seleziona le date per vedere le tariffe disponibili.',
-  },
-  en: {
-    guests: 'Guests', adults: 'Adults', adultsAge: '18+',
-    children: 'Children', childrenAge: '0–17',
-    nights: 'night', nightsP: 'nights',
-    offersTitle: 'Available rates',
-    loading: 'Searching rates...', noOffers: 'No rates available for the selected dates.',
-    prenota: 'Book now', perNight: '/night', total: 'total',
-    selezionata: '✓ Selected', nonDisp: 'Unavailable',
-    selectDates: 'Select dates to see available rates.',
-  },
-  de: {
-    guests: 'Gäste', adults: 'Erwachsene', adultsAge: '18+',
-    children: 'Kinder', childrenAge: '0–17',
-    nights: 'Nacht', nightsP: 'Nächte',
-    offersTitle: 'Verfügbare Tarife',
-    loading: 'Tarife suchen...', noOffers: 'Keine Tarife für die gewählten Daten.',
-    prenota: 'Jetzt buchen', perNight: '/Nacht', total: 'gesamt',
-    selezionata: '✓ Ausgewählt', nonDisp: 'Nicht verfügbar',
-    selectDates: 'Wählen Sie Daten, um verfügbare Tarife zu sehen.',
-  },
-  pl: {
-    guests: 'Goście', adults: 'Dorośli', adultsAge: '18+',
-    children: 'Dzieci', childrenAge: '0–17',
-    nights: 'noc', nightsP: 'nocy',
-    offersTitle: 'Dostępne taryfy',
-    loading: 'Wyszukiwanie...', noOffers: 'Brak taryf dla wybranych dat.',
-    prenota: 'Zarezerwuj', perNight: '/noc', total: 'łącznie',
-    selezionata: '✓ Wybrano', nonDisp: 'Niedostępne',
-    selectDates: 'Wybierz daty, aby zobaczyć dostępne taryfy.',
-  },
-};
+import { getTranslations } from '@/lib/i18n';
+import type { Locale } from '@/config/i18n';
 
 function calcNights(ci: string, co: string) {
   return Math.round((new Date(co).getTime() - new Date(ci).getTime()) / 86_400_000);
@@ -84,7 +23,10 @@ interface Props {
 }
 
 export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props) {
-  const t = UI[locale] ?? UI.it;
+  const tr = getTranslations(locale as Locale);
+  const t = tr.components.bookingPanel;
+  const OFFER_NAMES = tr.shared.offerNames as Record<string, string>;
+  const OFFER_DESC = tr.shared.offerDescriptions as Record<string, string>;
   const router = useRouter();
 
   const {
@@ -231,8 +173,8 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
               const isPicked = pickedOffer === offer.offerId;
               const avail = offer.unitsAvailable > 0;
               const perNight = nights > 0 ? Math.round(offer.price / nights) : 0;
-              const name = OFFER_NAMES[offer.offerId]?.[locale] ?? offer.offerName;
-              const desc = OFFER_DESC[offer.offerId]?.[locale];
+              const name = OFFER_NAMES[String(offer.offerId)] ?? offer.offerName;
+              const desc = OFFER_DESC[String(offer.offerId)];
 
               return (
                 <button key={offer.offerId}

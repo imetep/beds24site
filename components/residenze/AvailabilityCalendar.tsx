@@ -2,45 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useWizardStore } from '@/store/wizard-store';
-
-// ─── Costanti ────────────────────────────────────────────────────────────────
-
-const MONTHS: Record<string, string[]> = {
-  it: ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
-  en: ['January','February','March','April','May','June','July','August','September','October','November','December'],
-  de: ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'],
-  pl: ['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'],
-};
-
-const DAYS: Record<string, string[]> = {
-  it: ['Lu','Ma','Me','Gi','Ve','Sa','Do'],
-  en: ['Mo','Tu','We','Th','Fr','Sa','Su'],
-  de: ['Mo','Di','Mi','Do','Fr','Sa','So'],
-  pl: ['Pn','Wt','Śr','Cz','Pt','So','Nd'],
-};
-
-const UI: Record<string, Record<string, string>> = {
-  it: { title: 'Disponibilità', loading: 'Caricamento...', prev: '‹', next: '›',
-        minStay: 'Soggiorno minimo consigliato: 3 notti', minSub: 'Puoi selezionare qualsiasi durata, ma potremmo avere poca disponibilità',
-        legend_free: 'Disponibile', legend_busy: 'Occupato',
-        checkin: 'Check-in', checkout: 'Check-out', clear: 'Cancella date',
-        selectCheckin: 'Seleziona la data di arrivo', selectCheckout: 'Seleziona la data di partenza' },
-  en: { title: 'Availability',  loading: 'Loading...',     prev: '‹', next: '›',
-        minStay: 'Recommended minimum stay: 3 nights', minSub: 'Shorter stays are possible but rarely available',
-        legend_free: 'Available', legend_busy: 'Booked',
-        checkin: 'Check-in', checkout: 'Check-out', clear: 'Clear dates',
-        selectCheckin: 'Select check-in date', selectCheckout: 'Select check-out date' },
-  de: { title: 'Verfügbarkeit', loading: 'Laden...',       prev: '‹', next: '›',
-        minStay: 'Empfohlener Mindestaufenthalt: 3 Nächte', minSub: 'Kürzere Aufenthalte sind möglich, aber selten verfügbar',
-        legend_free: 'Verfügbar', legend_busy: 'Belegt',
-        checkin: 'Check-in', checkout: 'Check-out', clear: 'Daten löschen',
-        selectCheckin: 'Check-in wählen', selectCheckout: 'Check-out wählen' },
-  pl: { title: 'Dostępność',    loading: 'Ładowanie...',   prev: '‹', next: '›',
-        minStay: 'Zalecany minimalny pobyt: 3 noce', minSub: 'Krótsze pobyty są możliwe, ale rzadko dostępne',
-        legend_free: 'Dostępny', legend_busy: 'Zajęty',
-        checkin: 'Zameldowanie', checkout: 'Wymeldowanie', clear: 'Wyczyść daty',
-        selectCheckin: 'Wybierz zameldowanie', selectCheckout: 'Wybierz wymeldowanie' },
-};
+import { getTranslations } from '@/lib/i18n';
+import type { Locale } from '@/config/i18n';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -99,9 +62,10 @@ interface Props {
 // ─── Componente ──────────────────────────────────────────────────────────────
 
 export default function AvailabilityCalendar({ roomId, locale = 'it', interactive = false }: Props) {
-  const ui     = UI[locale]     ?? UI.it;
-  const months = MONTHS[locale] ?? MONTHS.it;
-  const days   = DAYS[locale]   ?? DAYS.it;
+  const tr     = getTranslations(locale as Locale);
+  const ui     = tr.components.availabilityCalendar;
+  const months = tr.shared.monthsLong;
+  const days   = tr.shared.daysShort;
 
   const { checkIn, checkOut, setCheckIn, setCheckOut } = useWizardStore();
 
@@ -292,11 +256,11 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
                   fontSize: 12, color: '#222',
                 }}
               >15</span>
-              {ui.legend_free}
+              {ui.legendFree}
             </div>
             <div className="d-flex align-items-center" style={{ gap: 6, fontSize: 12, color: '#999' }}>
               <span className="fw-semibold text-decoration-line-through" style={{ fontSize: 12, color: '#ccc' }}>15</span>
-              {ui.legend_busy}
+              {ui.legendBusy}
             </div>
           </div>
         </div>

@@ -3,71 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useWizardStore } from '@/store/wizard-store';
 import { PROPERTIES } from '@/config/properties';
-
-// ─── Offer names ──────────────────────────────────────────────────────────────
-const OFFER_NAMES: Record<number, Record<string, string>> = {
-  1: { it:'Non Rimborsabile',          en:'Non-Refundable',        de:'Nicht erstattungsfähig',  pl:'Bezzwrotna' },
-  2: { it:'Parzialmente Rimborsabile', en:'Partially Refundable',  de:'Teilw. erstattungsfähig', pl:'Częściowo zwrotna' },
-  3: { it:'Flessibile 60 gg',          en:'Flexible 60 days',      de:'Flexibel 60 Tage',        pl:'Elastyczna 60 dni' },
-  4: { it:'Flessibile 45 gg',          en:'Flexible 45 days',      de:'Flexibel 45 Tage',        pl:'Elastyczna 45 dni' },
-  5: { it:'Flessibile 30 gg',          en:'Flexible 30 days',      de:'Flexibel 30 Tage',        pl:'Elastyczna 30 dni' },
-  6: { it:'Flessibile 5 gg',           en:'Flexible 5 days',       de:'Flexibel 5 Tage',         pl:'Elastyczna 5 dni' },
-};
-
-const UI: Record<string, Record<string, string>> = {
-  it: { title:'Il tuo soggiorno', checkin:'Check-in', checkout:'Check-out',
-        guests:'Ospiti', adults:'adulti', children:'bambini',
-        nights:'notti', night:'notte', rate:'Tariffa',
-        total:'Totale', perNight:'/notte', noRoom:'Scegli un appartamento',
-        continua:'Continua →',
-        energy:'Consumi energetici a consumo — contatori in ogni abitazione',
-        deposit:'Deposito cauzionale richiesto — rimborsabile al check-out',
-        prof1:'La professionalità ci rende diversi',
-        prof2:'Lusso al giusto prezzo',
-        nature:'A 1,5 km dal mare, immerso nella natura',
-        beach:'A 250 metri dal mare',
-        poolNote:'A 250 metri dal mare la piscina non è necessaria — il mare è a portata di mano',
-      },
-  en: { title:'Your stay', checkin:'Check-in', checkout:'Check-out',
-        guests:'Guests', adults:'adults', children:'children',
-        nights:'nights', night:'night', rate:'Rate',
-        total:'Total', perNight:'/night', noRoom:'Choose an apartment',
-        continua:'Continue →',
-        energy:'Energy billed by actual usage — meters in each unit',
-        deposit:'Security deposit required — refunded at check-out',
-        prof1:'Professionalism sets us apart',
-        prof2:'Luxury at the right price',
-        nature:'1.5km from the sea, surrounded by nature',
-        beach:'250 metres from the sea',
-        poolNote:'Just 250m from the sea — you may not need a pool at all',
-      },
-  de: { title:'Ihr Aufenthalt', checkin:'Check-in', checkout:'Check-out',
-        guests:'Gäste', adults:'Erwachsene', children:'Kinder',
-        nights:'Nächte', night:'Nacht', rate:'Tarif',
-        total:'Gesamt', perNight:'/Nacht', noRoom:'Unterkunft wählen',
-        continua:'Weiter →',
-        energy:'Energiekosten nach Verbrauch — Zähler in jeder Einheit',
-        deposit:'Kaution erforderlich — Rückgabe bei Check-out',
-        prof1:'Professionalität macht uns besonders',
-        prof2:'Luxus zum richtigen Preis',
-        nature:'1,5 km vom Meer, eingebettet in die Natur',
-        beach:'250 Meter vom Meer',
-        poolNote:'Nur 250m vom Meer — ein Pool ist vielleicht gar nicht nötig',
-      },
-  pl: { title:'Twój pobyt', checkin:'Zameldowanie', checkout:'Wymeldowanie',
-        guests:'Goście', adults:'dorośli', children:'dzieci',
-        nights:'nocy', night:'noc', rate:'Taryfa',
-        total:'Łącznie', perNight:'/noc', noRoom:'Wybierz apartament',
-        continua:'Dalej →',
-        energy:'Koszty energii według zużycia — liczniki w każdym lokalu',
-        deposit:'Kaucja wymagana — zwracana przy wymeldowaniu',
-        prof1:'Profesjonalizm nas wyróżnia',
-        prof2:'Luksus w dobrej cenie',
-        nature:'1,5 km od morza, otoczony naturą',
-        beach:'250 metrów od morza',
-        poolNote:'Zaledwie 250m od morza — basen może nie być potrzebny',
-      },
-};
+import { getTranslations } from '@/lib/i18n';
+import type { Locale } from '@/config/i18n';
 
 function calcNights(ci: string, co: string) {
   return Math.round((new Date(co).getTime() - new Date(ci).getTime()) / 86_400_000);
@@ -96,8 +33,10 @@ interface Props {
 }
 
 export default function WizardSidebar({ locale = 'it', step = 1, onContinua, canContinua }: Props) {
-  const t   = UI[locale] ?? UI.it;
-  const loc = locale in UI ? locale : 'it';
+  const tr  = getTranslations(locale as Locale);
+  const t   = tr.components.wizardSidebar;
+  const OFFER_NAMES = tr.shared.offerNames as Record<string, string>;
+  const loc = (['it','en','de','pl'] as const).includes(locale as Locale) ? locale : 'it';
 
   const { numAdult, numChild, childrenAges, checkIn, checkOut, selectedRoomId, selectedOfferId, cachedOffers, poolPreference, nextStep } = useWizardStore();
 
@@ -121,7 +60,7 @@ export default function WizardSidebar({ locale = 'it', step = 1, onContinua, can
   const roomOffers = cachedOffers?.find((ro: any) => ro.roomId === selectedRoomId);
   const offer = roomOffers?.offers?.find((o: any) => o.offerId === selectedOfferId)
     ?? cachedOffers?.flatMap((ro: any) => ro.offers ?? []).find((o: any) => o.offerId === selectedOfferId);
-  const offerName: string | null = offer ? (OFFER_NAMES[offer.offerId]?.[loc] ?? String(offer.offerName ?? '')) : null;
+  const offerName: string | null = offer ? (OFFER_NAMES[String(offer.offerId)] ?? String(offer.offerName ?? '')) : null;
   const offerPrice: number = offer?.price ?? 0;
   const nights  = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
   const childrenTaxable = (childrenAges ?? []).filter((a: number) => a >= 12).length;
