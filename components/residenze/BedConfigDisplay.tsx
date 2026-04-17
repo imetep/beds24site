@@ -110,7 +110,7 @@ function shortLabel(label: string): string {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function BedIcon({ bed }: { bed: Bed }) {
-  const blue = '#1E73BE'
+  const blue = 'var(--color-primary)'
   const blueFill = '#EEF5FC'
   const orange = '#FCAF1A'
   const orangeFill = '#FFF8EC'
@@ -297,7 +297,7 @@ function RoomCard({ room, locale, ui }: { room: Room; locale: Locale; ui: UIShap
                   className="fw-medium rounded-pill"
                   style={{
                     background: '#EEF5FC', border: '0.5px solid #1E73BE',
-                    padding: '2px 8px', fontSize: 10, color: '#1E73BE',
+                    padding: '2px 8px', fontSize: 10, color: 'var(--color-primary)',
                   }}
                 >
                   {shortLabel(bed.configOptions.closed.label[locale])}
@@ -322,7 +322,7 @@ function RoomCard({ room, locale, ui }: { room: Room; locale: Locale; ui: UIShap
                   className="fw-medium rounded-pill"
                   style={{
                     background: '#EEF5FC', border: '0.5px solid #1E73BE',
-                    padding: '2px 8px', fontSize: 10, color: '#1E73BE',
+                    padding: '2px 8px', fontSize: 10, color: 'var(--color-primary)',
                   }}
                 >
                   {shortLabel(bed.configOptions.closed.label[locale])}
@@ -411,7 +411,7 @@ export default function BedConfigDisplay({ roomId, locale }: Props) {
 
       {/* Scroll hint — visibile solo su mobile via CSS */}
       <div className="bed-scroll-hint-mobile">
-        <span style={{ fontSize: 11, color: '#1E73BE' }}>{ui.scroll}</span>
+        <span style={{ fontSize: 11, color: 'var(--color-primary)' }}>{ui.scroll}</span>
       </div>
 
       {/* Nota config portale */}
