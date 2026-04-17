@@ -249,13 +249,13 @@ function GuestRow({ label, sub, value, min, onDec, onInc }: {
       <div className="d-flex align-items-center gap-2">
         <button onClick={onDec} disabled={value <= min}
           className="rounded-circle border d-flex align-items-center justify-content-center"
-          style={{ width: 30, height: 30, background: value <= min ? '#f5f5f5' : '#fff', color: value <= min ? '#ccc' : '#333', fontSize: 18, cursor: value <= min ? 'not-allowed' : 'pointer' }}>
+          style={{ width: 'var(--touch-target)', height: 'var(--touch-target)', background: value <= min ? '#f5f5f5' : '#fff', color: value <= min ? '#ccc' : '#333', fontSize: 20, cursor: value <= min ? 'not-allowed' : 'pointer' }}>
           −
         </button>
-        <span className="fw-semibold text-center" style={{ fontSize: 15, minWidth: 20 }}>{value}</span>
+        <span className="fw-semibold text-center" style={{ fontSize: 15, minWidth: 24 }}>{value}</span>
         <button onClick={onInc}
           className="rounded-circle border bg-white d-flex align-items-center justify-content-center"
-          style={{ width: 30, height: 30, color: '#333', fontSize: 18, cursor: 'pointer' }}>
+          style={{ width: 'var(--touch-target)', height: 'var(--touch-target)', color: '#333', fontSize: 20, cursor: 'pointer' }}>
           +
         </button>
       </div>
