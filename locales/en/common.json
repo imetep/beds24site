@@ -101,7 +101,10 @@
     "contact": "Contacts",
     "data": "Data Processing",
     "location": "Where is Scauri",
-    "safe_booking": "Safe booking"
+    "safe_booking": "Safe booking",
+    "legal_data": "Legal info",
+    "useful_links": "Useful links",
+    "all_rights_reserved": "All rights reserved"
   },
   "meta": {
     "home_title": "LivingApple — Holiday Apartments in Scauri, Italy",

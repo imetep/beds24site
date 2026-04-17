@@ -85,7 +85,7 @@ export default async function LocaleLayout({ children, params }: Props) {
             {/* Colonna 2 — Fiscale e legale */}
             <div>
               <p style={{ fontWeight: 700, fontSize: '0.75rem', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 0.75rem' }}>
-                Dati legali
+                {t.footer.legal_data}
               </p>
               <p style={fLine}>{t.footer.vat}</p>
               <p style={fLine}>{t.footer.rea}</p>
@@ -96,7 +96,7 @@ export default async function LocaleLayout({ children, params }: Props) {
             {/* Colonna 3 — Link navigazione (nascosta su mobile — sono nell'hamburger) */}
             <div className="footer-links-col">
               <p style={{ fontWeight: 700, fontSize: '0.75rem', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 0.75rem' }}>
-                Link utili
+                {t.footer.useful_links}
               </p>
               {[
                 { href: `/${locale}/contatti`,           label: t.footer.contact },
@@ -116,7 +116,7 @@ export default async function LocaleLayout({ children, params }: Props) {
 
           {/* Bottom bar */}
           <p style={{ margin: '1.25rem 0 0', fontSize: '0.78rem', color: '#4b5563', textAlign: 'center' }}>
-            © {new Date().getFullYear()} {t.footer.company} · All rights reserved
+            © {new Date().getFullYear()} {t.footer.company} · {t.footer.all_rights_reserved}
           </p>
 
         </div>
