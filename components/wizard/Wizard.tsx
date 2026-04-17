@@ -137,7 +137,7 @@ export default function Wizard({ translations: t, locale }: Props) {
   if (isGuestLink && !ready) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '40vh', gap: 12, color: '#9ca3af', fontSize: 15 }}>
-        <div style={{ width: 22, height: 22, border: '2px solid #eee', borderTop: '2px solid #1E73BE', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+        <div style={{ width: 22, height: 22, border: '2px solid #eee', borderTop: '2px solid var(--color-primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
         Caricamento...
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
