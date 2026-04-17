@@ -322,7 +322,7 @@ M4414 3964 c-45 -10 -59 -40 -59 -125 0 -99 11 -113 91 -113 47 0 60 4 75 23
 function ItalyMap({ locale }: { locale: Locale }) {
   const t = T[locale];
   const animRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [visibleCities, setVisibleCities] = useState<Set<number>>(new Set());
+  const [visibleCount, setVisibleCount] = useState<number>(0);
   const [drawingIndex, setDrawingIndex] = useState<number>(-1);
 
   useEffect(() => {
@@ -331,7 +331,7 @@ function ItalyMap({ locale }: { locale: Locale }) {
 
     const animate = () => {
       if (!running) return;
-      setVisibleCities(new Set());
+      setVisibleCount(0);
       setDrawingIndex(-1);
 
       const showNext = () => {
@@ -343,10 +343,12 @@ function ItalyMap({ locale }: { locale: Locale }) {
           }, 2500);
           return;
         }
-        setDrawingIndex(step);
+        const current = step;
+        setDrawingIndex(current);
         animRef.current = setTimeout(() => {
-          setVisibleCities(prev => new Set([...prev, step]));
-          step++;
+          if (!running) return;
+          setVisibleCount(current + 1);
+          step = current + 1;
           animRef.current = setTimeout(showNext, 600);
         }, 900);
       };
@@ -378,7 +380,7 @@ function ItalyMap({ locale }: { locale: Locale }) {
       {CITIES.map((city, i) => {
         const ll = lineLen(city);
         const isDrawing = drawingIndex === i;
-        const isVisible = visibleCities.has(i);
+        const isVisible = i < visibleCount;
         return (
           <line
             key={city.id}
@@ -398,7 +400,7 @@ function ItalyMap({ locale }: { locale: Locale }) {
 
       {CITIES.map((city, i) => {
         const lbl = LABEL_OFFSET[city.id];
-        const isVisible = visibleCities.has(i);
+        const isVisible = i < visibleCount;
         const modeLabel = city.byPlane ? t.by_plane : t.by_car;
         return (
           <g key={city.id} opacity={isVisible ? 1 : 0} style={{ transition: 'opacity 0.4s' }}>
