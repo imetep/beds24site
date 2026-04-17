@@ -144,11 +144,11 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
   }
 
   return (
-    <section style={{ marginTop: 40 }}>
+    <section className="mt-5">
 
       {/* Ospiti */}
-      <div style={{ marginBottom: 24, padding: '16px', border: '1px solid #e5e7eb', borderRadius: 14, background: '#fff' }}>
-        <h3 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 14px', color: '#111' }}>{t.guests}</h3>
+      <div className="mb-4 p-3 border bg-white" style={{ borderRadius: 14 }}>
+        <h3 className="fs-6 fw-bold text-dark mb-3">{t.guests}</h3>
         <GuestRow
           label={t.adults} sub={t.adultsAge}
           value={numAdult} min={1}
@@ -163,27 +163,31 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
         />
         {/* Selezione età bambini */}
         {numChild > 0 && (
-          <div style={{ marginTop: 12, padding: '12px 14px', background: '#f9fafb', borderRadius: 10, border: '1px solid #e5e7eb' }}>
-            <p style={{ fontSize: 12, color: '#666', margin: '0 0 10px', lineHeight: 1.5 }}>
+          <div
+            className="mt-3 px-3 py-3 border"
+            style={{ background: '#f9fafb', borderRadius: 10 }}
+          >
+            <p className="mb-2" style={{ fontSize: 12, color: '#666', lineHeight: 1.5 }}>
               {locale === 'it' ? 'Per mostrarti i prezzi esatti, dobbiamo conoscere l’età dei bambini.'
                : locale === 'de' ? 'Für genaue Preise benötigen wir das Alter der Kinder.'
                : locale === 'pl' ? 'Potrzebujemy znać wiek dzieci, aby pokazać dokładne ceny.'
                : 'To show exact prices, we need to know the children’s ages.'}
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: numChild === 1 ? '1fr' : '1fr 1fr', gap: 10 }}>
+            <div className="d-grid gap-2" style={{ gridTemplateColumns: numChild === 1 ? '1fr' : '1fr 1fr' }}>
               {Array.from({ length: numChild }, (_, i) => (
                 <div key={i}>
-                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>
+                  <label className="d-block fw-semibold mb-1" style={{ fontSize: 11, color: '#6b7280' }}>
                     {locale === 'it' ? `Età bambino ${i + 1}` : locale === 'de' ? `Alter Kind ${i + 1}` : locale === 'pl' ? `Wiek dziecka ${i + 1}` : `Child ${i + 1} age`}
                   </label>
                   <select
                     value={childrenAges[i] ?? -1}
                     onChange={e => setChildAge(i, Number(e.target.value))}
+                    className="form-select"
                     style={{
-                      width: '100%', padding: '8px 10px', fontSize: 14,
-                      border: `1.5px solid ${(childrenAges[i] ?? -1) < 0 ? '#f97316' : '#e5e7eb'}`,
-                      borderRadius: 8, background: '#fff',
-                      color: (childrenAges[i] ?? -1) < 0 ? '#9ca3af' : '#111', outline: 'none',
+                      fontSize: 14,
+                      borderColor: (childrenAges[i] ?? -1) < 0 ? '#f97316' : undefined,
+                      borderWidth: 1.5,
+                      color: (childrenAges[i] ?? -1) < 0 ? '#9ca3af' : '#111',
                     }}>
                     <option value={-1}>{locale === 'it' ? 'Seleziona età' : locale === 'de' ? 'Alter wählen' : locale === 'pl' ? 'Wybierz wiek' : 'Select age'}</option>
                     {Array.from({ length: 18 }, (_, age) => (
@@ -201,7 +205,7 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
         )}
 
         {overCapacity && (
-          <p style={{ margin: '10px 0 0', fontSize: 13, color: '#e74c3c' }}>
+          <p className="mt-2 mb-0 text-danger" style={{ fontSize: 13 }}>
             ⚠️ Massimo {maxPeople} {maxPeople === 1 ? 'persona' : 'persone'} per questo appartamento.
           </p>
         )}
@@ -209,20 +213,20 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
 
       {/* Offerte */}
       {!checkIn || !checkOut ? (
-        <p style={{ fontSize: 14, color: '#9ca3af', textAlign: 'center', padding: '20px 0' }}>{t.selectDates}</p>
+        <p className="text-muted text-center py-3" style={{ fontSize: 14 }}>{t.selectDates}</p>
       ) : loading ? (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '20px 0', color: '#aaa', fontSize: 14 }}>
-          <div style={{ width: 20, height: 20, border: '2px solid #eee', borderTop: '2px solid #1E73BE', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+        <div className="d-flex align-items-center gap-2 py-3 text-muted" style={{ fontSize: 14 }}>
+          <div className="rounded-circle" style={{ width: 20, height: 20, border: '2px solid #eee', borderTop: '2px solid #1E73BE', animation: 'spin 0.8s linear infinite' }} />
           {t.loading}
         </div>
       ) : offers.length === 0 ? (
-        <p style={{ fontSize: 14, color: '#9ca3af', padding: '16px 0' }}>{t.noOffers}</p>
+        <p className="text-muted py-3" style={{ fontSize: 14 }}>{t.noOffers}</p>
       ) : (
         <div>
-          <h3 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 12px', color: '#111' }}>
+          <h3 className="fs-6 fw-bold text-dark mb-3">
             {t.offersTitle} — {nights} {nights === 1 ? t.nights : t.nightsP}
           </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div className="d-flex flex-column gap-2">
             {offers.map(offer => {
               const isPicked = pickedOffer === offer.offerId;
               const avail = offer.unitsAvailable > 0;
@@ -234,26 +238,32 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
                 <button key={offer.offerId}
                   onClick={() => avail && setPicked(offer.offerId)}
                   disabled={!avail}
+                  className="w-100 d-flex align-items-center justify-content-between text-start px-3 py-3"
                   style={{
-                    width: '100%', textAlign: 'left',
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    padding: '14px 16px', borderRadius: 12,
+                    borderRadius: 12,
                     border: `${isPicked ? '2px' : '1.5px'} solid ${isPicked ? '#1E73BE' : '#e5e7eb'}`,
                     background: isPicked ? '#EEF5FC' : '#fff',
                     cursor: avail ? 'pointer' : 'default',
                     opacity: avail ? 1 : 0.45,
                     transition: 'all 0.12s',
                   }}>
-                  <div style={{ flex: 1, marginRight: 12 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontSize: 14, fontWeight: 700, color: '#111' }}>{name}</span>
-                      {isPicked && <span style={{ fontSize: 11, color: '#1E73BE', fontWeight: 700, background: '#dbeafe', padding: '2px 8px', borderRadius: 10 }}>{t.selezionata}</span>}
-                      {!avail && <span style={{ fontSize: 11, color: '#e74c3c' }}>{t.nonDisp}</span>}
+                  <div className="flex-fill me-2">
+                    <div className="d-flex align-items-center gap-2">
+                      <span className="fw-bold text-dark" style={{ fontSize: 14 }}>{name}</span>
+                      {isPicked && (
+                        <span
+                          className="fw-bold rounded-pill"
+                          style={{ fontSize: 11, color: '#1E73BE', background: '#dbeafe', padding: '2px 8px' }}
+                        >
+                          {t.selezionata}
+                        </span>
+                      )}
+                      {!avail && <span className="text-danger" style={{ fontSize: 11 }}>{t.nonDisp}</span>}
                     </div>
-                    {desc && <p style={{ margin: '3px 0 0', fontSize: 12, color: '#666', lineHeight: 1.4 }}>{desc}</p>}
+                    {desc && <p className="mt-1 mb-0" style={{ fontSize: 12, color: '#666', lineHeight: 1.4 }}>{desc}</p>}
                   </div>
-                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    <div style={{ fontSize: 20, fontWeight: 800, color: '#1E73BE', lineHeight: 1 }}>{fmt(offer.price + touristTax)}</div>
+                  <div className="text-end flex-shrink-0">
+                    <div className="fw-bolder" style={{ fontSize: 20, color: '#1E73BE', lineHeight: 1 }}>{fmt(offer.price + touristTax)}</div>
                     {perNight > 0 && <div style={{ fontSize: 11, color: '#999', marginTop: 1 }}>{fmt(perNight)}{t.perNight}</div>}
                     <div style={{ fontSize: 10, color: '#bbb', marginTop: 1 }}>{t.total}</div>
                   </div>
@@ -266,9 +276,10 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
           <button
             onClick={handlePrenota}
             disabled={!pickedOffer}
+            className="w-100 mt-3 fw-bold border-0"
             style={{
-              width: '100%', marginTop: 16, padding: '16px',
-              borderRadius: 12, border: 'none', fontSize: 16, fontWeight: 700,
+              padding: 16,
+              borderRadius: 12, fontSize: 16,
               background: pickedOffer ? '#FCAF1A' : '#e0e0e0',
               color: pickedOffer ? '#fff' : '#999',
               cursor: pickedOffer ? 'pointer' : 'not-allowed',
@@ -288,19 +299,21 @@ function GuestRow({ label, sub, value, min, onDec, onInc }: {
   onDec: () => void; onInc: () => void;
 }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f0f0f0' }}>
+    <div className="d-flex align-items-center justify-content-between py-2 border-bottom">
       <div>
-        <div style={{ fontSize: 14, fontWeight: 500 }}>{label}</div>
-        <div style={{ fontSize: 12, color: '#9ca3af' }}>{sub}</div>
+        <div className="fw-medium" style={{ fontSize: 14 }}>{label}</div>
+        <div className="text-muted" style={{ fontSize: 12 }}>{sub}</div>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div className="d-flex align-items-center gap-2">
         <button onClick={onDec} disabled={value <= min}
-          style={{ width: 30, height: 30, borderRadius: '50%', border: '1px solid #ccc', background: value <= min ? '#f5f5f5' : '#fff', color: value <= min ? '#ccc' : '#333', fontSize: 18, cursor: value <= min ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          className="rounded-circle border d-flex align-items-center justify-content-center"
+          style={{ width: 30, height: 30, background: value <= min ? '#f5f5f5' : '#fff', color: value <= min ? '#ccc' : '#333', fontSize: 18, cursor: value <= min ? 'not-allowed' : 'pointer' }}>
           −
         </button>
-        <span style={{ fontSize: 15, fontWeight: 600, minWidth: 20, textAlign: 'center' }}>{value}</span>
+        <span className="fw-semibold text-center" style={{ fontSize: 15, minWidth: 20 }}>{value}</span>
         <button onClick={onInc}
-          style={{ width: 30, height: 30, borderRadius: '50%', border: '1px solid #ccc', background: '#fff', color: '#333', fontSize: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          className="rounded-circle border bg-white d-flex align-items-center justify-content-center"
+          style={{ width: 30, height: 30, color: '#333', fontSize: 18, cursor: 'pointer' }}>
           +
         </button>
       </div>
