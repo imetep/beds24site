@@ -21,21 +21,16 @@ export default function PropertyMap({ latitude, longitude, name, locale = 'it' }
   const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${latitude},${longitude}&zoom=15&language=${locale}`;
 
   return (
-    <div style={{ marginBottom: 32 }}>
-      <h2 style={{ fontSize: 20, fontWeight: 700, color: '#222', marginBottom: 16 }}>
+    <div className="mb-5">
+      <h2 className="fs-4 fw-bold mb-3" style={{ color: '#222' }}>
         📍 {label}
       </h2>
-      <div style={{
-        borderRadius: 16,
-        overflow: 'hidden',
-        border: '1px solid #e8e8e8',
-        boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-      }}>
+      <div className="overflow-hidden border shadow-sm" style={{ borderRadius: 16 }}>
         <iframe
           src={mapUrl}
           width="100%"
           height="380"
-          style={{ border: 0, display: 'block' }}
+          className="d-block border-0"
           allowFullScreen
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
