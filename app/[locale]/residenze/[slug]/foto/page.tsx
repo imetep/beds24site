@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { v2 as cloudinary } from 'cloudinary';
-import { redisSet } from '@/lib/cloudinary-covers';
+import { redisSet, getCovers } from '@/lib/cloudinary-covers';
 import { getRoomBySlug, ALL_ROOMS, PROPERTIES } from '@/config/properties';
 import { locales, isValidLocale, type Locale } from '@/config/i18n';
 import FotoGalleryClient from '@/components/residenze/FotoGalleryClient';
@@ -29,7 +29,8 @@ export async function generateStaticParams() {
   return params;
 }
 
-const TTL_PHOTOS_SECONDS = 60 * 60; // 1 ora
+const TTL_PHOTOS_SECONDS   = 60 * 60 * 24; // 24h — disallineato da ISR (1h) per evitare rebuild → cloudinary
+const TTL_FALLBACK_SECONDS = 60 * 5;        // 5 min — risultati vuoti/errore (anti-storm)
 
 async function redisGet(key: string): Promise<string | null> {
   const url   = process.env.KV_REST_API_URL;
@@ -67,44 +68,15 @@ async function getRoomPhotos(folder: string): Promise<string[]> {
     const urls = result.resources.map((r: any) =>
       cloudinary.url(r.public_id, { width: 1200, crop: 'limit', quality: 'auto', fetch_format: 'auto' })
     );
-    if (urls.length > 0) {
-      await redisSet(redisKey, JSON.stringify(urls), TTL_PHOTOS_SECONDS);
-    }
+    await redisSet(
+      redisKey,
+      JSON.stringify(urls),
+      urls.length > 0 ? TTL_PHOTOS_SECONDS : TTL_FALLBACK_SECONDS,
+    );
     return urls;
   } catch {
+    await redisSet(redisKey, JSON.stringify([]), TTL_FALLBACK_SECONDS).catch(() => {});
     return [];
-  }
-}
-
-async function getCoverUrl(folder: string): Promise<string | null> {
-  const redisKey = `cloudinary:foto-cover:${folder}`;
-
-  const cached = await redisGet(redisKey);
-  if (cached !== null) {
-    try {
-      const v = JSON.parse(cached);
-      if (typeof v === 'string' || v === null) return v;
-    } catch { /* corrotto → ricarica */ }
-  }
-
-  try {
-    const result = await cloudinary.search
-      .expression(`folder:${folder}`)
-      .sort_by('public_id', 'asc')
-      .max_results(1)
-      .execute();
-    const photo = result.resources[0];
-    if (!photo) {
-      await redisSet(redisKey, JSON.stringify(null), TTL_PHOTOS_SECONDS);
-      return null;
-    }
-    const url = cloudinary.url(photo.public_id, {
-      width: 300, height: 200, crop: 'fill', quality: 'auto', fetch_format: 'auto',
-    });
-    await redisSet(redisKey, JSON.stringify(url), TTL_PHOTOS_SECONDS);
-    return url;
-  } catch {
-    return null;
   }
 }
 
@@ -115,17 +87,17 @@ export default async function FotoPage({ params }: Props) {
   const room = getRoomBySlug(slug);
   if (!room) notFound();
 
-  // Fetch foto della casa + cover di tutte le case in parallelo
-  const [photos, ...covers] = await Promise.all([
+  // Fetch foto della casa + covers di tutte le case (1 chiamata aggregata invece di N)
+  const [photos, coversMap] = await Promise.all([
     getRoomPhotos(room.cloudinaryFolder),
-    ...ALL_ROOMS.map(r => getCoverUrl(r.cloudinaryFolder)),
+    getCovers(),
   ]);
 
   // Costruisce lista residenze con cover per il selettore
-  const rooms = ALL_ROOMS.map((r, i) => ({
+  const rooms = ALL_ROOMS.map((r) => ({
     slug:     r.slug,
     name:     r.name,
-    coverUrl: covers[i] ?? null,
+    coverUrl: coversMap[r.cloudinaryFolder] ?? null,
   }));
 
   const backLabel: Record<string, string> = {
