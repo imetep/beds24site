@@ -228,7 +228,7 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
           cursor: 'pointer',
         }}
       >
-        <div className="overflow-hidden" style={{ gridRow: '1 / 3' }}>
+        <div className="overflow-hidden h-100" style={{ gridRow: '1 / 3', background: '#1a1a1a' }}>
           {photos[0] && (
             <img src={photos[0]} alt={roomName}
               className="w-100 h-100 d-block"
