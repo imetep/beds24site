@@ -338,6 +338,14 @@
       "ground": "Parter",
       "floor": "Piętro",
       "basement": "Piwnica"
+    },
+    "cancelPolicy": {
+      "1": "Bezzwrotna płatność w ciągu 48h od rezerwacji.",
+      "2": "50% teraz, reszta przy przyjeździe. Częściowo zwrotna.",
+      "3": "Bezpłatne anulowanie do 60 dni przed przyjazdem.",
+      "4": "Bezpłatne anulowanie do 45 dni przed przyjazdem.",
+      "5": "Bezpłatne anulowanie do 30 dni przed prijazdem.",
+      "6": "Bezpłatne anulowanie do 5 dni przed prijazdem."
     }
   },
   "components": {

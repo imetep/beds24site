@@ -338,6 +338,14 @@
       "ground": "Erdgeschoss",
       "floor": "Etage",
       "basement": "Untergeschoss"
+    },
+    "cancelPolicy": {
+      "1": "Nicht erstattungsfähige Zahlung innerhalb 48h.",
+      "2": "50% jetzt, Rest bei Ankunft. Teilweise erstattungsfähig.",
+      "3": "Kostenlose Stornierung bis 60 Tage vor Ankunft.",
+      "4": "Kostenlose Stornierung bis 45 Tage vor Ankunft.",
+      "5": "Kostenlose Stornierung bis 30 Tage vor Ankunft.",
+      "6": "Kostenlose Stornierung bis 5 Tage vor Ankunft."
     }
   },
   "components": {

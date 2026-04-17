@@ -3,24 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useWizardStore } from '@/store/wizard-store';
 import { PROPERTIES } from '@/config/properties';
-
-const OFFER_NAMES: Record<number, Record<string, string>> = {
-  1: { it:'Non Rimborsabile',          en:'Non-Refundable',        de:'Nicht erstattungsfähig',  pl:'Bezzwrotna' },
-  2: { it:'Parzialmente Rimborsabile', en:'Partially Refundable',  de:'Teilw. erstattungsfähig', pl:'Częściowo zwrotna' },
-  3: { it:'Flessibile 60 gg',          en:'Flexible 60 days',      de:'Flexibel 60 Tage',        pl:'Elastyczna 60 dni' },
-  4: { it:'Flessibile 45 gg',          en:'Flexible 45 days',      de:'Flexibel 45 Tage',        pl:'Elastyczna 45 dni' },
-  5: { it:'Flessibile 30 gg',          en:'Flexible 30 days',      de:'Flexibel 30 Tage',        pl:'Elastyczna 30 dni' },
-  6: { it:'Flessibile 5 gg',           en:'Flexible 5 days',       de:'Flexibel 5 Tage',         pl:'Elastyczna 5 dni' },
-};
-
-const CANCEL_POLICY: Record<number, Record<string, string>> = {
-  1: { it:'Pagamento non rimborsabile entro 48h dalla prenotazione.',                   en:'Non-refundable payment within 48h of booking.',           de:'Nicht erstattungsfähige Zahlung innerhalb 48h.',          pl:'Bezzwrotna płatność w ciągu 48h od rezerwacji.' },
-  2: { it:'50% subito, saldo all\'arrivo. Cancellazione parzialmente rimborsabile.',    en:'50% now, balance at arrival. Partially refundable.',       de:'50% jetzt, Rest bei Ankunft. Teilweise erstattungsfähig.', pl:'50% teraz, reszta przy przyjeździe. Częściowo zwrotna.' },
-  3: { it:'Cancellazione gratuita fino a 60 giorni prima dell\'arrivo.',                en:'Free cancellation up to 60 days before arrival.',          de:'Kostenlose Stornierung bis 60 Tage vor Ankunft.',         pl:'Bezpłatne anulowanie do 60 dni przed przyjazdem.' },
-  4: { it:'Cancellazione gratuita fino a 45 giorni prima dell\'arrivo.',                en:'Free cancellation up to 45 days before arrival.',          de:'Kostenlose Stornierung bis 45 Tage vor Ankunft.',         pl:'Bezpłatne anulowanie do 45 dni przed przyjazdem.' },
-  5: { it:'Cancellazione gratuita fino a 30 giorni prima dell\'arrivo.',                en:'Free cancellation up to 30 days before arrival.',          de:'Kostenlose Stornierung bis 30 Tage vor Ankunft.',         pl:'Bezpłatne anulowanie do 30 dni przed przyjazdem.' },
-  6: { it:'Cancellazione gratuita fino a 5 giorni prima dell\'arrivo.',                 en:'Free cancellation up to 5 days before arrival.',           de:'Kostenlose Stornierung bis 5 Tage vor Ankunft.',          pl:'Bezpłatne anulowanie do 5 dni przed przyjazdem.' },
-};
+import { getTranslations } from '@/lib/i18n';
+import type { Locale } from '@/config/i18n';
 
 const UI: Record<string, Record<string, string>> = {
   it: {
@@ -198,6 +182,9 @@ interface Props { locale?: string; }
 export default function WizardStep7({ locale = 'it' }: Props) {
   const t   = UI[locale] ?? UI.it;
   const loc = locale in UI ? locale : 'it';
+  const tr  = getTranslations(loc as Locale);
+  const OFFER_NAMES    = tr.shared.offerNames as Record<string, string>;
+  const CANCEL_POLICY  = tr.shared.cancelPolicy as Record<string, string>;
 
   const {
     numAdult, numChild, childrenAges,
@@ -239,8 +226,8 @@ export default function WizardStep7({ locale = 'it' }: Props) {
   const taxableAdults   = numAdult + childrenTaxable;
   const touristTax      = taxableNights * taxableAdults * 2;
   const perNight        = nights > 0 && offerPrice > 0 ? Math.round(offerPrice / nights) : 0;
-  const offerName       = OFFER_NAMES[selectedOfferId ?? 0]?.[loc] ?? offer?.offerName ?? '';
-  const cancelPolicy    = CANCEL_POLICY[selectedOfferId ?? 0]?.[loc] ?? '';
+  const offerName       = OFFER_NAMES[String(selectedOfferId ?? 0)] ?? offer?.offerName ?? '';
+  const cancelPolicy    = CANCEL_POLICY[String(selectedOfferId ?? 0)] ?? '';
 
   const realPrice      = discountedPrice !== null ? discountedPrice : offerPrice;
   const hasDiscount    = discountedPrice !== null && discountedPrice < offerPrice;
