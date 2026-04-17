@@ -512,7 +512,7 @@ export default function WizardStep7({ locale = 'it' }: Props) {
         <p style={{ fontSize: 14, color: '#888', margin: '0 0 24px', lineHeight: 1.6 }}>{error}</p>
         <button
           onClick={handleBack}
-          style={{ padding: '12px 28px', borderRadius: 10, border: '1.5px solid #1E73BE', background: '#fff', color: '#1E73BE', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
+          style={{ padding: '12px 28px', borderRadius: 10, border: '1.5px solid #1E73BE', background: '#fff', color: 'var(--color-primary)', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
         >
           {t.errBack}
         </button>
@@ -579,7 +579,7 @@ export default function WizardStep7({ locale = 'it' }: Props) {
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#EEF5FC', borderRadius: 12, padding: '14px 16px', marginTop: 4 }}>
           <span style={{ fontSize: 16, fontWeight: 800, color: '#111' }}>{t.total}</span>
-          <span style={{ fontSize: 32, fontWeight: 900, color: '#1E73BE', letterSpacing: '-0.02em' }}>{fmt(total)}</span>
+          <span style={{ fontSize: 32, fontWeight: 900, color: 'var(--color-primary)', letterSpacing: '-0.02em' }}>{fmt(total)}</span>
         </div>
 
         {hasDiscount && (
@@ -669,7 +669,7 @@ export default function WizardStep7({ locale = 'it' }: Props) {
       <button
         onClick={handleBack}
         disabled={phase === 'paying'}
-        style={{ background: 'none', border: 'none', color: '#1E73BE', fontSize: 14, cursor: 'pointer', padding: 0 }}
+        style={{ background: 'none', border: 'none', color: 'var(--color-primary)', fontSize: 14, cursor: 'pointer', padding: 0 }}
       >
         {t.back}
       </button>
@@ -706,6 +706,6 @@ const card: React.CSSProperties = {
 };
 
 const labelStyle: React.CSSProperties = {
-  fontSize: 11, fontWeight: 700, color: '#1E73BE',
+  fontSize: 11, fontWeight: 700, color: 'var(--color-primary)',
   textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 12px',
 };
