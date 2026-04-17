@@ -36,7 +36,7 @@ const lbl: React.CSSProperties = {
 };
 const btnP: React.CSSProperties = {
   padding: '12px 20px', fontSize: 15, fontWeight: 700,
-  background: '#1E73BE', color: '#fff', border: 'none',
+  background: 'var(--color-primary)', color: '#fff', border: 'none',
   borderRadius: 10, cursor: 'pointer', width: '100%',
 };
 const btnS: React.CSSProperties = {
@@ -141,9 +141,9 @@ export default function StatusCheckin({ locale }: { locale: Locale }) {
       </div>
       <p className="text-center mt-3" style={{ fontSize: 13, color: '#9ca3af' }}>
         {t.needHelp}{' '}
-        <a href="https://wa.me/393283131500" style={{ color: '#1E73BE' }}>WhatsApp</a>
+        <a href="https://wa.me/393283131500" style={{ color: 'var(--color-primary)' }}>WhatsApp</a>
         {' · '}
-        <a href="mailto:contattolivingapple@gmail.com" style={{ color: '#1E73BE' }}>Email</a>
+        <a href="mailto:contattolivingapple@gmail.com" style={{ color: 'var(--color-primary)' }}>Email</a>
       </p>
     </div>
   );
@@ -203,7 +203,7 @@ export default function StatusCheckin({ locale }: { locale: Locale }) {
           {data.messages.length > 0 && (
             <span
               className="ms-2 fw-bold text-white rounded-pill"
-              style={{ background: '#1E73BE', fontSize: 10, padding: '2px 7px' }}
+              style={{ background: 'var(--color-primary)', fontSize: 10, padding: '2px 7px' }}
             >
               {data.messages.length}
             </span>
@@ -221,7 +221,7 @@ export default function StatusCheckin({ locale }: { locale: Locale }) {
           {data.messages.map((m, i) => (
             <div key={i} style={{ alignSelf: m.from === 'guest' ? 'flex-end' : 'flex-start', maxWidth: '85%' }}>
               <div style={{
-                background: m.from === 'guest' ? '#1E73BE' : '#f3f4f6',
+                background: m.from === 'guest' ? 'var(--color-primary)' : '#f3f4f6',
                 color: m.from === 'guest' ? '#fff' : '#111',
                 borderRadius: m.from === 'guest' ? '12px 12px 2px 12px' : '12px 12px 12px 2px',
                 padding: '10px 14px', fontSize: 14, lineHeight: 1.5,
@@ -254,7 +254,7 @@ export default function StatusCheckin({ locale }: { locale: Locale }) {
           />
           <button
             className="align-self-end border-0 text-white"
-            style={{ ...btnS, background: '#1E73BE', color: '#fff',
+            style={{ ...btnS, background: 'var(--color-primary)', color: '#fff',
               padding: '10px 16px',
               opacity: (sending || !msgText.trim()) ? 0.6 : 1 }}
             onClick={sendMessage} disabled={sending || !msgText.trim()}>
@@ -266,9 +266,9 @@ export default function StatusCheckin({ locale }: { locale: Locale }) {
 
       <p className="text-center" style={{ fontSize: 13, color: '#9ca3af' }}>
         {t.urgentHelp}{' '}
-        <a href="https://wa.me/393283131500" style={{ color: '#1E73BE' }}>WhatsApp</a>
+        <a href="https://wa.me/393283131500" style={{ color: 'var(--color-primary)' }}>WhatsApp</a>
         {' · '}
-        <a href="mailto:contattolivingapple@gmail.com" style={{ color: '#1E73BE' }}>Email</a>
+        <a href="mailto:contattolivingapple@gmail.com" style={{ color: 'var(--color-primary)' }}>Email</a>
       </p>
     </div>
   );
