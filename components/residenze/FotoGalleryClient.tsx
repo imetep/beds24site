@@ -345,7 +345,7 @@ export default function FotoGalleryClient({
       {isUnsupportedBrowser && !bannerDismissed && (
         <div
           className="position-sticky top-0 d-flex align-items-center justify-content-between gap-2 px-3 py-2"
-          style={{ zIndex: 200, background: '#1E73BE' }}
+          style={{ zIndex: 200, background: 'var(--color-primary)' }}
         >
           <div className="d-flex align-items-center gap-2 flex-fill min-w-0">
             <span className="flex-shrink-0" style={{ fontSize: 18 }}>📷</span>
@@ -358,7 +358,7 @@ export default function FotoGalleryClient({
               href={`safari-https://${typeof window !== 'undefined' ? window.location.host + window.location.pathname : ''}`}
               className="bg-white fw-bold text-decoration-none text-nowrap rounded-pill"
               style={{
-                color: '#1E73BE',
+                color: 'var(--color-primary)',
                 fontSize: 12,
                 padding: '6px 12px',
               }}
@@ -539,7 +539,7 @@ export default function FotoGalleryClient({
             className="d-inline-flex align-items-center gap-2 text-decoration-none rounded-pill fw-bold"
             style={{
               padding: '12px 28px',
-              border: '1.5px solid #1E73BE', color: '#1E73BE',
+              border: '1.5px solid #1E73BE', color: 'var(--color-primary)',
               fontSize: 14,
             }}
           >
