@@ -151,7 +151,7 @@ function MessageThread({ messages, bookId, onNewMessage }: {
             <div
               className="small"
               style={{
-                background: m.from === 'host' ? '#1E73BE' : '#fff',
+                background: m.from === 'host' ? 'var(--color-primary)' : '#fff',
                 color: m.from === 'host' ? '#fff' : '#111',
                 border: m.from === 'host' ? 'none' : '0.5px solid #e5e7eb',
                 borderRadius: m.from === 'host' ? '12px 12px 2px 12px' : '12px 12px 12px 2px',
