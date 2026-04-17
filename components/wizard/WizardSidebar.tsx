@@ -213,23 +213,27 @@ export default function WizardSidebar({ locale = 'it', step = 1, onContinua, can
   }
 
   return (
-    <div style={{
-      width: 250, flexShrink: 0, marginLeft: 32,
-      background: '#f9fafb',
-      border: '1px solid #e5e7eb',
-      borderRadius: 16,
-      padding: '20px 18px',
-      position: 'sticky', top: 90,
-      alignSelf: 'flex-start',
-    }}>
-      <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#9ca3af', margin: '0 0 14px' }}>
+    <div
+      className="flex-shrink-0 border position-sticky align-self-start"
+      style={{
+        width: 250, marginLeft: 32,
+        background: '#f9fafb',
+        borderRadius: 16,
+        padding: '20px 18px',
+        top: 90,
+      }}
+    >
+      <p
+        className="fw-bold text-uppercase text-muted mb-3"
+        style={{ fontSize: 11, letterSpacing: '0.07em' }}
+      >
         {t.title}
       </p>
 
       {/* Sezione superiore contestuale per step */}
       {renderTopSection()}
 
-      <div style={{ height: 1, background: '#e5e7eb', margin: '0 0 12px' }} />
+      <div className="mb-3" style={{ height: 1, background: '#e5e7eb' }} />
 
       {/* Riepilogo dati sempre visibili */}
       <Row label={t.checkin}  value={checkIn  ? formatDate(checkIn,  locale) : '—'} active={!!checkIn} />
@@ -245,20 +249,20 @@ export default function WizardSidebar({ locale = 'it', step = 1, onContinua, can
       {/* Tariffa selezionata (solo da step 5) */}
       {offerName && step >= 5 && (
         <>
-          <div style={{ height: 1, background: '#e5e7eb', margin: '10px 0' }} />
+          <div className="my-2" style={{ height: 1, background: '#e5e7eb' }} />
           <Row label={t.rate} value={offerName} active />
         </>
       )}
 
       {/* Prezzo (solo da step 5 in poi) */}
       {offerPrice > 0 && step >= 5 && (
-        <div style={{ borderTop: '1px solid #e5e7eb', marginTop: 12, paddingTop: 12 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-            <span style={{ fontSize: 12, color: '#9ca3af' }}>{t.total}</span>
-            <span style={{ fontSize: 22, fontWeight: 800, color: '#1E73BE' }}>{fmt(totalWithTax)}</span>
+        <div className="border-top mt-3 pt-3">
+          <div className="d-flex justify-content-between align-items-baseline">
+            <span className="text-muted" style={{ fontSize: 12 }}>{t.total}</span>
+            <span className="fw-bolder" style={{ fontSize: 22, color: '#1E73BE' }}>{fmt(totalWithTax)}</span>
           </div>
           {perNight > 0 && (
-            <p style={{ fontSize: 12, color: '#c4c4c4', margin: '2px 0 0', textAlign: 'right' }}>
+            <p className="text-end mb-0" style={{ fontSize: 12, color: '#c4c4c4', marginTop: 2 }}>
               {fmt(perNight)}{t.perNight}
             </p>
           )}
@@ -269,11 +273,13 @@ export default function WizardSidebar({ locale = 'it', step = 1, onContinua, can
       {showContinua && (
         <button
           onClick={handleContinua}
+          className="w-100 fw-bold text-white border-0 mt-3"
           style={{
-            width: '100%', padding: '11px 0',
-            marginTop: 16, borderRadius: 10, border: 'none',
-            background: '#FCAF1A', color: '#fff',
-            fontSize: 15, fontWeight: 700, cursor: 'pointer',
+            padding: '11px 0',
+            borderRadius: 10,
+            background: '#FCAF1A',
+            fontSize: 15,
+            cursor: 'pointer',
           }}
         >
           {t.continua}
@@ -285,10 +291,10 @@ export default function WizardSidebar({ locale = 'it', step = 1, onContinua, can
 
 // ─── Helper components ────────────────────────────────────────────────────────
 function MapFrame({ src }: { src: string }) {
-  if (!src) return <div style={{ height: 130, borderRadius: 10, background: '#e5e7eb', marginBottom: 10 }} />;
+  if (!src) return <div className="mb-2" style={{ height: 130, borderRadius: 10, background: '#e5e7eb' }} />;
   return (
-    <div style={{ height: 130, borderRadius: 10, overflow: 'hidden', marginBottom: 10 }}>
-      <iframe src={src} width="100%" height="130" style={{ border: 0, display: 'block' }}
+    <div className="overflow-hidden mb-2" style={{ height: 130, borderRadius: 10 }}>
+      <iframe src={src} width="100%" height="130" className="d-block border-0"
         loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Mappa" />
     </div>
   );
@@ -296,26 +302,32 @@ function MapFrame({ src }: { src: string }) {
 
 function PhotoFrame({ src, alt }: { src: string; alt: string }) {
   return (
-    <div style={{ height: 130, borderRadius: 10, overflow: 'hidden', marginBottom: 10 }}>
-      <img src={src} alt={alt} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} loading="lazy" />
+    <div className="overflow-hidden mb-2" style={{ height: 130, borderRadius: 10 }}>
+      <img src={src} alt={alt} className="w-100 h-100 d-block" style={{ objectFit: 'cover' }} loading="lazy" />
     </div>
   );
 }
 
 function NightsBadge({ nights, label }: { nights: number; label: string }) {
   return (
-    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#EEF5FC', border: '1.5px solid #1E73BE', borderRadius: 20, padding: '5px 14px', marginBottom: 10 }}>
-      <span style={{ fontSize: 18, fontWeight: 800, color: '#0f4c7a' }}>{nights}</span>
-      <span style={{ fontSize: 13, color: '#1E73BE', fontWeight: 600 }}>{label}</span>
+    <div
+      className="d-inline-flex align-items-center mb-2 rounded-pill"
+      style={{ gap: 6, background: '#EEF5FC', border: '1.5px solid #1E73BE', padding: '5px 14px' }}
+    >
+      <span className="fw-bolder" style={{ fontSize: 18, color: '#0f4c7a' }}>{nights}</span>
+      <span className="fw-semibold" style={{ fontSize: 13, color: '#1E73BE' }}>{label}</span>
     </div>
   );
 }
 
 function InfoItem({ children, icon, bold, italic }: { children: React.ReactNode; icon?: string; bold?: boolean; italic?: boolean }) {
   return (
-    <div style={{ display: 'flex', gap: 7, alignItems: 'flex-start', marginBottom: 8 }}>
-      {icon && <span style={{ fontSize: 13, flexShrink: 0, lineHeight: 1.5 }}>{icon}</span>}
-      <p style={{ fontSize: 12, color: '#555', margin: 0, lineHeight: 1.45, fontWeight: bold ? 700 : 400, fontStyle: italic ? 'italic' : 'normal' }}>
+    <div className="d-flex align-items-start mb-2" style={{ gap: 7 }}>
+      {icon && <span className="flex-shrink-0" style={{ fontSize: 13, lineHeight: 1.5 }}>{icon}</span>}
+      <p
+        className="m-0"
+        style={{ fontSize: 12, color: '#555', lineHeight: 1.45, fontWeight: bold ? 700 : 400, fontStyle: italic ? 'italic' : 'normal' }}
+      >
         {children}
       </p>
     </div>
@@ -324,8 +336,8 @@ function InfoItem({ children, icon, bold, italic }: { children: React.ReactNode;
 
 function Row({ label, value, active, muted }: { label: string; value: string; active?: boolean; muted?: boolean }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '3px 0' }}>
-      <span style={{ fontSize: 12, color: '#9ca3af' }}>{label}</span>
+    <div className="d-flex justify-content-between align-items-baseline" style={{ padding: '3px 0' }}>
+      <span className="text-muted" style={{ fontSize: 12 }}>{label}</span>
       <span style={{ fontSize: 13, fontWeight: active ? 600 : muted ? 500 : 400, color: active ? '#111' : muted ? '#555' : '#d4d4d4' }}>{value}</span>
     </div>
   );
