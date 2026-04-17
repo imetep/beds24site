@@ -184,7 +184,7 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
             let borderRadius = '6px';
 
             if (isCI || isCO) {
-              bg = '#1E73BE';
+              bg = 'var(--color-primary)';
               color = '#fff';
               fontWeight = 700;
               borderRadius = isCI ? '6px 0 0 6px' : '0 6px 6px 0';
@@ -223,7 +223,7 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
                       bottom: 3, left: '50%',
                       transform: 'translateX(-50%)',
                       width: 4, height: 4,
-                      background: '#1E73BE',
+                      background: 'var(--color-primary)',
                     }}
                   />
                 )}
@@ -278,7 +278,7 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
             }}
             className="flex-fill d-flex align-items-center gap-2 px-3 py-3 text-start shadow-sm"
             style={{
-              border: `1.5px solid ${(checkIn) ? '#1E73BE' : '#e5e7eb'}`,
+              border: `1.5px solid ${(checkIn) ? 'var(--color-primary)' : '#e5e7eb'}`,
               borderRadius: 14,
               background: (checkIn) ? '#f0f7ff' : '#fff',
               cursor: 'pointer',
@@ -315,7 +315,7 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
             }}
             className="flex-fill d-flex align-items-center gap-2 px-3 py-3 text-start shadow-sm"
             style={{
-              border: `1.5px solid ${(checkOut || phase === 'co') ? '#1E73BE' : '#e5e7eb'}`,
+              border: `1.5px solid ${(checkOut || phase === 'co') ? 'var(--color-primary)' : '#e5e7eb'}`,
               borderRadius: 14,
               background: (checkOut || phase === 'co') ? '#f0f7ff' : '#fff',
               cursor: 'pointer',
