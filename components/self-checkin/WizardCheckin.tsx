@@ -535,8 +535,8 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
 
   // ── Progress bar ──────────────────────────────────────────────────────────
   const Bar = () => (
-    <div style={{ background: '#fff', padding: '14px 20px 12px', borderBottom: '1px solid #f3f4f6', marginBottom: 0 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, fontSize: 12, color: '#9ca3af' }}>
+    <div className="bg-white border-bottom px-3 pt-3 pb-2">
+      <div className="d-flex justify-content-between mb-2 text-muted" style={{ fontSize: 12 }}>
         <span>Step {step} {t.stepOf} 4</span><span>{Math.round((step / 4) * 100)}%</span>
       </div>
       <div style={{ background: '#f3f4f6', borderRadius: 99, height: 4 }}>
@@ -559,44 +559,47 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
       { icon: '✅', title: 'Email di approvazione', text: "Riceverai una email con l'esito della tua richiesta." },
     ];
     return (
-      <div style={{ maxWidth: 600, margin: '0 auto', padding: '32px 20px 60px' }}>
-        <div style={{ textAlign: 'center', marginBottom: 28 }}>
-          <div style={{ fontSize: 52, marginBottom: 14 }}>✅</div>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: '#111', marginBottom: 8 }}>
+      <div className="mx-auto px-3 pt-4 pb-5" style={{ maxWidth: 600 }}>
+        <div className="text-center mb-4">
+          <div className="mb-3" style={{ fontSize: 52 }}>✅</div>
+          <h1 className="fw-bold mb-2" style={{ fontSize: 22, color: '#111' }}>
             {isEn ? 'Request submitted' : 'Richiesta inviata'}
           </h1>
-          <div style={{ display: 'inline-block', background: '#EEF5FC', borderRadius: 10, padding: '8px 18px' }}>
-            <p style={{ margin: 0, fontSize: 13, color: '#185FA5' }}>
+          <div className="d-inline-block" style={{ background: '#EEF5FC', borderRadius: 10, padding: '8px 18px' }}>
+            <p className="m-0" style={{ fontSize: 13, color: '#185FA5' }}>
               {isEn ? 'Booking reference' : 'Riferimento prenotazione'}: <strong>#{booking!.bookId}</strong>
             </p>
           </div>
         </div>
-        <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, padding: '20px', marginBottom: 20 }}>
-          <p style={{ margin: '0 0 16px', fontSize: 12, fontWeight: 700, color: '#6b7280', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+        <div className="bg-white border mb-3 p-3" style={{ borderRadius: 14 }}>
+          <p
+            className="fw-bold text-uppercase mb-3"
+            style={{ fontSize: 12, color: '#6b7280', letterSpacing: '0.05em' }}
+          >
             {isEn ? 'What happens next' : 'Cosa succede adesso'}
           </p>
           {steps.map((s, i) => (
-            <div key={i} style={{ display: 'flex', gap: 14, marginBottom: i < steps.length - 1 ? 16 : 0, alignItems: 'flex-start' }}>
-              <div style={{ fontSize: 20, flexShrink: 0, marginTop: 1 }}>{s.icon}</div>
+            <div key={i} className="d-flex align-items-start" style={{ gap: 14, marginBottom: i < steps.length - 1 ? 16 : 0 }}>
+              <div className="flex-shrink-0" style={{ fontSize: 20, marginTop: 1 }}>{s.icon}</div>
               <div>
-                <p style={{ margin: '0 0 2px', fontSize: 14, fontWeight: 700, color: '#111' }}>{s.title}</p>
-                <p style={{ margin: 0, fontSize: 13, color: '#6b7280', lineHeight: 1.6 }}>{s.text}</p>
+                <p className="fw-bold mb-1" style={{ fontSize: 14, color: '#111' }}>{s.title}</p>
+                <p className="m-0" style={{ fontSize: 13, color: '#6b7280', lineHeight: 1.6 }}>{s.text}</p>
               </div>
             </div>
           ))}
         </div>
-        <div style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 14, padding: '18px 20px' }}>
-          <p style={{ margin: '0 0 6px', fontSize: 14, fontWeight: 700, color: '#111' }}>
+        <div className="border" style={{ background: '#f9fafb', borderRadius: 14, padding: '18px 20px' }}>
+          <p className="fw-bold mb-1" style={{ fontSize: 14, color: '#111' }}>
             {isEn ? 'Track your request' : 'Segui la tua richiesta'}
           </p>
-          <p style={{ margin: '0 0 12px', fontSize: 13, color: '#6b7280', lineHeight: 1.6 }}>
+          <p className="mb-3" style={{ fontSize: 13, color: '#6b7280', lineHeight: 1.6 }}>
             {isEn ? 'Check the status and send us messages at any time:' : 'Controlla lo stato e scrivici in qualsiasi momento:'}
           </p>
-          <a href={statusUrl} style={{
-            display: 'block', textAlign: 'center', padding: '12px 20px',
-            background: '#1E73BE', color: '#fff', borderRadius: 10,
-            fontSize: 14, fontWeight: 700, textDecoration: 'none',
-          }}>
+          <a
+            href={statusUrl}
+            className="d-block text-center text-white fw-bold text-decoration-none"
+            style={{ padding: '12px 20px', background: '#1E73BE', borderRadius: 10, fontSize: 14 }}
+          >
             {isEn ? 'Go to my request →' : 'Vai alla mia richiesta →'}
           </a>
         </div>
@@ -605,7 +608,7 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
   }
 
   return (
-    <div style={{ maxWidth: 600, margin: '0 auto', padding: '0 0 80px' }}>
+    <div className="mx-auto pb-5" style={{ maxWidth: 600 }}>
 
       {/* ── STEP 1 ────────────────────────────────────────────────────────── */}
       {step === 1 && (<>
