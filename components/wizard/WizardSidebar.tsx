@@ -196,7 +196,7 @@ export default function WizardSidebar({ locale = 'it', step = 1, onContinua, can
         <div className="border-top mt-3 pt-3">
           <div className="d-flex justify-content-between align-items-baseline">
             <span className="text-muted" style={{ fontSize: 12 }}>{t.total}</span>
-            <span className="fw-bolder" style={{ fontSize: 22, color: '#1E73BE' }}>{fmt(totalWithTax)}</span>
+            <span className="fw-bolder" style={{ fontSize: 22, color: 'var(--color-primary)' }}>{fmt(totalWithTax)}</span>
           </div>
           {perNight > 0 && (
             <p className="text-end mb-0" style={{ fontSize: 12, color: '#c4c4c4', marginTop: 2 }}>
@@ -252,7 +252,7 @@ function NightsBadge({ nights, label }: { nights: number; label: string }) {
       style={{ gap: 6, background: '#EEF5FC', border: '1.5px solid #1E73BE', padding: '5px 14px' }}
     >
       <span className="fw-bolder" style={{ fontSize: 18, color: '#0f4c7a' }}>{nights}</span>
-      <span className="fw-semibold" style={{ fontSize: 13, color: '#1E73BE' }}>{label}</span>
+      <span className="fw-semibold" style={{ fontSize: 13, color: 'var(--color-primary)' }}>{label}</span>
     </div>
   );
 }
