@@ -103,22 +103,23 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
     if (end - start < maxDots) start = Math.max(0, end - maxDots);
 
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, padding: '10px 0' }}>
+      <div className="d-flex justify-content-center align-items-center py-2" style={{ gap: 6 }}>
         {Array.from({ length: end - start }, (_, i) => {
           const di       = start + i;
           const isActive = di === idx;
           const isEdge   = (i === 0 && start > 0) || (i === end - start - 1 && end < total);
           return (
-            <div key={di} style={{
-              width:        isActive ? 20 : isEdge ? 5 : 8,
-              height:       8,
-              borderRadius: 4,
-              flexShrink:   0,
-              background:   dark
-                ? (isActive ? '#FCAF1A' : 'rgba(255,255,255,0.50)')
-                : (isActive ? '#1E73BE' : '#d1d5db'),
-              transition: 'all 0.2s',
-            }} />
+            <div key={di}
+              className="flex-shrink-0"
+              style={{
+                width:        isActive ? 20 : isEdge ? 5 : 8,
+                height:       8,
+                borderRadius: 4,
+                background:   dark
+                  ? (isActive ? '#FCAF1A' : 'rgba(255,255,255,0.50)')
+                  : (isActive ? '#1E73BE' : '#d1d5db'),
+                transition: 'all 0.2s',
+              }} />
           );
         })}
       </div>
@@ -130,17 +131,15 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
   // ════════════════════════════════════════════════════════════════════════
   if (isTouch) {
     return (
-      <div style={{ marginBottom: 24 }}>
+      <div className="mb-4">
         {/* Foto carousel */}
         <div
+          className="position-relative w-100 overflow-hidden"
           style={{
-            position:   'relative',
-            width:      '100%',
             // aspect-ratio 4:3 in portrait (≈56%),
             // max-height: 60vh in landscape così la foto non scappa fuori schermo
             aspectRatio: '4/3',
             maxHeight:  '60vh',
-            overflow:   'hidden',
             background: '#111',
             cursor:     'pointer',
           }}
@@ -152,14 +151,8 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
             <img
               src={photos[current]}
               alt={`${roomName} ${current + 1}`}
-              style={{
-                position:  'absolute',
-                top: 0, left: 0,
-                width:     '100%',
-                height:    '100%',
-                objectFit: 'cover',
-                display:   'block',
-              }}
+              className="position-absolute top-0 start-0 w-100 h-100 d-block"
+              style={{ objectFit: 'cover' }}
             />
           )}
 
@@ -168,45 +161,46 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
             <>
               <div
                 onClick={e => { e.stopPropagation(); prev(); }}
-                style={{
-                  position: 'absolute', left: 0, top: 0, bottom: 0, width: 60,
-                  display: 'flex', alignItems: 'center', justifyContent: 'flex-start',
-                  paddingLeft: 10, zIndex: 2,
-                }}
+                className="position-absolute top-0 bottom-0 start-0 d-flex align-items-center justify-content-start"
+                style={{ width: 60, paddingLeft: 10, zIndex: 2 }}
               >
-                <div style={{
-                  width: 36, height: 36, borderRadius: '50%',
-                  background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: '#fff', fontSize: 20,
-                }}>‹</div>
+                <div
+                  className="rounded-circle d-flex align-items-center justify-content-center text-white"
+                  style={{
+                    width: 36, height: 36,
+                    background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)',
+                    fontSize: 20,
+                  }}
+                >‹</div>
               </div>
               <div
                 onClick={e => { e.stopPropagation(); next(); }}
-                style={{
-                  position: 'absolute', right: 0, top: 0, bottom: 0, width: 60,
-                  display: 'flex', alignItems: 'center', justifyContent: 'flex-end',
-                  paddingRight: 10, zIndex: 2,
-                }}
+                className="position-absolute top-0 bottom-0 end-0 d-flex align-items-center justify-content-end"
+                style={{ width: 60, paddingRight: 10, zIndex: 2 }}
               >
-                <div style={{
-                  width: 36, height: 36, borderRadius: '50%',
-                  background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: '#fff', fontSize: 20,
-                }}>›</div>
+                <div
+                  className="rounded-circle d-flex align-items-center justify-content-center text-white"
+                  style={{
+                    width: 36, height: 36,
+                    background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)',
+                    fontSize: 20,
+                  }}
+                >›</div>
               </div>
             </>
           )}
 
           {/* Badge foto in basso a destra */}
-          <div style={{
-            position: 'absolute', bottom: 12, right: 12, zIndex: 2,
-            background: 'rgba(0,0,0,0.60)', backdropFilter: 'blur(6px)',
-            color: '#fff', fontSize: 13, fontWeight: 600,
-            padding: '5px 13px', borderRadius: 24,
-            border: '1px solid rgba(255,255,255,0.18)',
-          }}>
+          <div
+            className="position-absolute text-white fw-semibold rounded-pill"
+            style={{
+              bottom: 12, right: 12, zIndex: 2,
+              background: 'rgba(0,0,0,0.60)', backdropFilter: 'blur(6px)',
+              fontSize: 13,
+              padding: '5px 13px',
+              border: '1px solid rgba(255,255,255,0.18)',
+            }}
+          >
             📷 {photos.length} foto
           </div>
         </div>
@@ -225,44 +219,49 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
       {/* Griglia desktop */}
       <div
         onClick={() => openLightbox(0)}
+        className="d-grid overflow-hidden mb-5 position-relative"
         style={{
-          display: 'grid',
           gridTemplateColumns: '2fr 1fr',
           gridTemplateRows: '1fr 1fr',
-          gap: 6, borderRadius: 20, overflow: 'hidden',
-          height: 420, marginBottom: 32,
-          cursor: 'pointer', position: 'relative',
+          gap: 6, borderRadius: 20,
+          height: 420,
+          cursor: 'pointer',
         }}
       >
-        <div style={{ gridRow: '1 / 3', overflow: 'hidden' }}>
+        <div className="overflow-hidden" style={{ gridRow: '1 / 3' }}>
           {photos[0] && (
             <img src={photos[0]} alt={roomName}
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.4s ease' }}
+              className="w-100 h-100 d-block"
+              style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }}
               onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.03)')}
               onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
             />
           )}
         </div>
         {[1, 2, 3, 4].map(i => (
-          <div key={i} style={{ overflow: 'hidden', background: '#1a1a1a' }}>
+          <div key={i} className="overflow-hidden" style={{ background: '#1a1a1a' }}>
             {photos[i] ? (
               <img src={photos[i]} alt={`${roomName} ${i + 1}`}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.4s ease' }}
+                className="w-100 h-100 d-block"
+                style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }}
                 onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.05)')}
                 onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
               />
             ) : (
-              <div style={{ width: '100%', height: '100%', background: '#2a2a2a' }} />
+              <div className="w-100 h-100" style={{ background: '#2a2a2a' }} />
             )}
           </div>
         ))}
-        <div style={{
-          position: 'absolute', bottom: 16, right: 16,
-          background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)',
-          color: '#fff', fontSize: 13, fontWeight: 600,
-          padding: '8px 16px', borderRadius: 30,
-          border: '1px solid rgba(255,255,255,0.2)',
-        }}>
+        <div
+          className="position-absolute text-white fw-semibold rounded-pill"
+          style={{
+            bottom: 16, right: 16,
+            background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)',
+            fontSize: 13,
+            padding: '8px 16px',
+            border: '1px solid rgba(255,255,255,0.2)',
+          }}
+        >
           📷 {photos.length} foto
         </div>
       </div>
@@ -270,84 +269,93 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
       {/* Lightbox desktop */}
       {open && (
         <div
-          style={{
-            position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-            zIndex: 9999, background: '#000', overflow: 'hidden',
-          }}
+          className="position-fixed top-0 start-0 w-100 h-100 overflow-hidden"
+          style={{ zIndex: 9999, background: '#000' }}
         >
           {/* Foto a pieno schermo */}
           <img
             key={lightboxIdx}
             src={photos[lightboxIdx]}
             alt={`${roomName} ${lightboxIdx + 1}`}
-            style={{
-              position: 'absolute', top: 0, left: 0,
-              width: '100%', height: '100%',
-              objectFit: 'contain', display: 'block',
-            }}
+            className="position-absolute top-0 start-0 w-100 h-100 d-block"
+            style={{ objectFit: 'contain' }}
           />
 
           {/* Top bar */}
-          <div style={{
-            position: 'absolute', top: 0, left: 0, right: 0, zIndex: 2,
-            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            padding: '20px 24px',
-            background: 'linear-gradient(to bottom, rgba(0,0,0,0.72), transparent)',
-          }}>
-            <span style={{ color: '#fff', fontSize: 15, fontWeight: 600 }}>{roomName}</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+          <div
+            className="position-absolute top-0 start-0 end-0 d-flex justify-content-between align-items-center px-3 py-3"
+            style={{
+              zIndex: 2,
+              background: 'linear-gradient(to bottom, rgba(0,0,0,0.72), transparent)',
+            }}
+          >
+            <span className="text-white fw-semibold" style={{ fontSize: 15 }}>{roomName}</span>
+            <div className="d-flex align-items-center gap-4">
               <span style={{ color: 'rgba(255,255,255,0.65)', fontSize: 14 }}>
                 {lightboxIdx + 1} / {photos.length}
               </span>
-              <button onClick={closeLightbox} style={{
-                background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)',
-                color: '#fff', width: 44, height: 44, borderRadius: '50%',
-                fontSize: 18, cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>✕</button>
+              <button
+                onClick={closeLightbox}
+                className="btn rounded-circle text-white d-flex align-items-center justify-content-center"
+                style={{
+                  background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)',
+                  width: 44, height: 44, fontSize: 18,
+                }}
+              >✕</button>
             </div>
           </div>
 
           {/* Frecce */}
           {photos.length > 1 && (
             <>
-              <button onClick={lbPrev} style={{
-                position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)',
-                background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)',
-                color: '#fff', width: 52, height: 52, borderRadius: '50%',
-                fontSize: 22, cursor: 'pointer', zIndex: 3,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                backdropFilter: 'blur(6px)',
-              }}>‹</button>
-              <button onClick={lbNext} style={{
-                position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)',
-                background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)',
-                color: '#fff', width: 52, height: 52, borderRadius: '50%',
-                fontSize: 22, cursor: 'pointer', zIndex: 3,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                backdropFilter: 'blur(6px)',
-              }}>›</button>
+              <button
+                onClick={lbPrev}
+                className="btn position-absolute rounded-circle text-white d-flex align-items-center justify-content-center"
+                style={{
+                  left: 16, top: '50%', transform: 'translateY(-50%)',
+                  background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)',
+                  width: 52, height: 52, fontSize: 22, zIndex: 3,
+                  backdropFilter: 'blur(6px)',
+                }}
+              >‹</button>
+              <button
+                onClick={lbNext}
+                className="btn position-absolute rounded-circle text-white d-flex align-items-center justify-content-center"
+                style={{
+                  right: 16, top: '50%', transform: 'translateY(-50%)',
+                  background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)',
+                  width: 52, height: 52, fontSize: 22, zIndex: 3,
+                  backdropFilter: 'blur(6px)',
+                }}
+              >›</button>
             </>
           )}
 
           {/* Thumbnails desktop in basso */}
-          <div style={{
-            position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 2,
-            padding: '16px 20px',
-            background: 'linear-gradient(to top, rgba(0,0,0,0.75), transparent)',
-            display: 'flex', gap: 8, overflowX: 'auto',
-            justifyContent: photos.length <= 10 ? 'center' : 'flex-start',
-          }}>
+          <div
+            className="position-absolute bottom-0 start-0 end-0 d-flex gap-2 px-3 py-3"
+            style={{
+              zIndex: 2,
+              background: 'linear-gradient(to top, rgba(0,0,0,0.75), transparent)',
+              overflowX: 'auto',
+              justifyContent: photos.length <= 10 ? 'center' : 'flex-start',
+            }}
+          >
             {photos.map((url, i) => (
-              <button key={i} onClick={() => setLbIdx(i)} style={{
-                flexShrink: 0, width: 56, height: 40,
-                borderRadius: 5, overflow: 'hidden',
-                border: i === lightboxIdx ? '2px solid #FCAF1A' : '2px solid transparent',
-                cursor: 'pointer', padding: 0,
-                opacity: i === lightboxIdx ? 1 : 0.5,
-                transition: 'opacity 0.2s',
-              }}>
-                <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              <button
+                key={i}
+                onClick={() => setLbIdx(i)}
+                className="flex-shrink-0 overflow-hidden p-0"
+                style={{
+                  width: 56, height: 40,
+                  borderRadius: 5,
+                  border: i === lightboxIdx ? '2px solid #FCAF1A' : '2px solid transparent',
+                  background: 'transparent',
+                  opacity: i === lightboxIdx ? 1 : 0.5,
+                  transition: 'opacity 0.2s',
+                }}
+              >
+                <img src={url} alt="" className="w-100 h-100 d-block" style={{ objectFit: 'cover' }} />
               </button>
             ))}
           </div>
