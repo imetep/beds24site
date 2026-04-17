@@ -14,10 +14,8 @@ const C = {
 };
 
 const card: React.CSSProperties = {
-  background: '#fff', borderRadius: '16px',
-  border: `1px solid ${C.border}`,
+  borderRadius: 16,
   padding: '1.5rem',
-  boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
 };
 
 type ChangeType = 'dates' | 'guests' | 'apartment';
@@ -88,13 +86,13 @@ export default function ChangeRequestWizard({ locale, t, booking }: Props) {
     return (
       <button
         onClick={() => { reset(); setOpen(true); }}
+        className="w-100 d-flex align-items-center justify-content-center gap-2 fw-semibold"
         style={{
-          width: '100%', padding: '0.75rem',
+          padding: '0.75rem',
           background: C.blueLight,
           border: `1px solid ${C.blue}`,
-          borderRadius: '12px', cursor: 'pointer',
-          fontSize: '0.88rem', color: C.blue, fontWeight: 600,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+          borderRadius: 12, cursor: 'pointer',
+          fontSize: '0.88rem', color: C.blue,
         }}>
         ✏️ {tC.btnOpen}
       </button>
@@ -102,13 +100,14 @@ export default function ChangeRequestWizard({ locale, t, booking }: Props) {
   }
 
   return (
-    <div style={card}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-        <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: C.text }}>
+    <div className="bg-white border shadow-sm" style={card}>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h3 className="m-0 fw-bold" style={{ fontSize: '1rem', color: C.text }}>
           ✏️ {tC.title}
         </h3>
         <button onClick={() => { setOpen(false); reset(); }}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: C.textMuted }}>✕</button>
+          className="btn p-0"
+          style={{ fontSize: '1.2rem', color: C.textMuted }}>✕</button>
       </div>
 
       {/* ── Step 1 — cosa vuoi modificare ────────────────────────────────── */}
@@ -274,11 +273,15 @@ export default function ChangeRequestWizard({ locale, t, booking }: Props) {
 
       {/* ── Conferma inviata ─────────────────────────────────────────────── */}
       {status === 'sent' && (
-        <div style={{ textAlign: 'center', padding: '1.5rem 0' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>✅</div>
-          <p style={{ margin: '0 0 0.4rem', fontWeight: 700, fontSize: '1rem', color: C.text }}>{tC.sentTitle}</p>
-          <p style={{ margin: '0 0 1.25rem', fontSize: '0.88rem', color: C.textMid }}>{tC.sentSub}</p>
-          <button onClick={() => { setOpen(false); reset(); }} style={{ padding: '0.6rem 1.5rem', background: C.blue, border: 'none', borderRadius: '10px', cursor: 'pointer', fontSize: '0.88rem', fontWeight: 700, color: '#fff' }}>
+        <div className="text-center py-4">
+          <div className="mb-2" style={{ fontSize: '2.5rem' }}>✅</div>
+          <p className="fw-bold mb-1" style={{ fontSize: '1rem', color: C.text }}>{tC.sentTitle}</p>
+          <p className="mb-3" style={{ fontSize: '0.88rem', color: C.textMid }}>{tC.sentSub}</p>
+          <button
+            onClick={() => { setOpen(false); reset(); }}
+            className="text-white fw-bold border-0"
+            style={{ padding: '0.6rem 1.5rem', background: C.blue, borderRadius: 10, cursor: 'pointer', fontSize: '0.88rem' }}
+          >
             {tC.btnClose}
           </button>
         </div>
