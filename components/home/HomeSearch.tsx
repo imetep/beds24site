@@ -14,7 +14,7 @@ const UI: Record<string, Record<string, string>> = {
         nights:'notte', nightsP:'notti', hintCI:'Seleziona check-in',
         hintCO:'Seleziona check-out', cancel:'Cancella', inspire:'Le nostre residenze', dintorni:'Dintorni',
         hero_title: "Scauri, come non l'hai mai vissuta",
-        hero_sub: 'Prenota direttamente con noi e risparmia le commissioni' },
+        hero_sub: 'Prenota direttamente con noi e risparmia' },
   en: { dates:'Dates', guests:'Guests', search:'Search',
         checkin:'Check-in', checkout:'Check-out', done:'Done',
         adults:'Adults', adultsAge:'18+', children:'Children', childrenAge:'0–17',
