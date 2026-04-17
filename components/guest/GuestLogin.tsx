@@ -65,12 +65,12 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
 
   if (rateLimited) {
     return (
-      <div style={wrap}>
-        <div style={card}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '1rem', textAlign: 'center' }}>⏱️</div>
-          <h2 style={{ margin: '0 0 0.75rem', fontSize: '1.2rem', color: C.text, textAlign: 'center' }}>{tL.rateLimited}</h2>
-          <p style={{ color: C.textMid, fontSize: '0.9rem', lineHeight: 1.6, textAlign: 'center', margin: '0 0 1.5rem' }}>{tL.rateLimitedMsg}</p>
-          <div style={{ textAlign: 'center' }}>
+      <div className="d-flex align-items-center justify-content-center px-3 py-4" style={wrap}>
+        <div className="bg-white shadow-lg" style={card}>
+          <div className="text-center mb-3" style={{ fontSize: '2.5rem' }}>⏱️</div>
+          <h2 className="text-center mb-2" style={{ fontSize: '1.2rem', color: C.text }}>{tL.rateLimited}</h2>
+          <p className="text-center mb-4" style={{ color: C.textMid, fontSize: '0.9rem', lineHeight: 1.6 }}>{tL.rateLimitedMsg}</p>
+          <div className="text-center">
             <a href="https://wa.me/393283131500" style={supportLink}>💬 WhatsApp</a>
           </div>
         </div>
@@ -79,23 +79,29 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
   }
 
   return (
-    <div style={wrap}>
-      <div style={card}>
+    <div className="d-flex align-items-center justify-content-center px-3 py-4" style={wrap}>
+      <div className="bg-white shadow-lg" style={card}>
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{ width: 56, height: 56, borderRadius: '50%', background: C.blueLight, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', fontSize: '1.6rem' }}>
+        <div className="text-center mb-4">
+          <div
+            className="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+            style={{ width: 56, height: 56, background: C.blueLight, fontSize: '1.6rem' }}
+          >
             🔐
           </div>
-          <h1 style={{ margin: '0 0 0.5rem', fontSize: '1.45rem', fontWeight: 800, color: C.text, letterSpacing: '-0.02em' }}>
+          <h1
+            className="fw-bolder mb-2"
+            style={{ fontSize: '1.45rem', color: C.text, letterSpacing: '-0.02em' }}
+          >
             {tL.title}
           </h1>
-          <p style={{ margin: 0, color: C.textMid, fontSize: '0.88rem', lineHeight: 1.6 }}>
+          <p className="m-0" style={{ color: C.textMid, fontSize: '0.88rem', lineHeight: 1.6 }}>
             {tL.subtitle}
           </p>
         </div>
 
         {/* Form */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div className="d-flex flex-column gap-3">
           <div>
             <label style={labelStyle}>{tL.bookingId}</label>
             <input
@@ -106,7 +112,7 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
           </div>
           <div>
             <label style={labelStyle}>{tL.arrival}</label>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 1.4fr', gap: '0.5rem' }}>
+            <div className="d-grid" style={{ gridTemplateColumns: '1fr 2fr 1.4fr', gap: '0.5rem' }}>
               <select
                 value={arrDay}
                 onChange={e => setArrDay(e.target.value)}
@@ -141,23 +147,29 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
           </div>
 
           {error && (
-            <div style={{ background: C.errorBg, border: `1px solid ${C.errorBorder}`, borderRadius: '8px', padding: '0.75rem 1rem', color: C.error, fontSize: '0.875rem', lineHeight: 1.5 }}>
+            <div
+              style={{ background: C.errorBg, border: `1px solid ${C.errorBorder}`, borderRadius: 8, padding: '0.75rem 1rem', color: C.error, fontSize: '0.875rem', lineHeight: 1.5 }}
+            >
               {error}
             </div>
           )}
 
           <button
             onClick={handleSubmit} disabled={loading}
-            style={{ width: '100%', padding: '0.85rem', background: loading ? '#e0e0e0' : C.orange, color: loading ? C.textMid : C.text, border: 'none', borderRadius: '10px', fontSize: '1rem', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', marginTop: '0.25rem' }}
+            className="w-100 fw-bold border-0"
+            style={{ padding: '0.85rem', background: loading ? '#e0e0e0' : C.orange, color: loading ? C.textMid : C.text, borderRadius: 10, fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer', marginTop: '0.25rem' }}
           >
             {loading ? tL.loading : tL.btn}
           </button>
         </div>
 
         {/* Supporto */}
-        <div style={{ marginTop: '2rem', paddingTop: '1.5rem', borderTop: `1px solid ${C.border}`, textAlign: 'center' }}>
-          <p style={{ margin: '0 0 0.6rem', fontSize: '0.82rem', color: C.textMuted }}>{tL.noBooking}</p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem' }}>
+        <div
+          className="text-center mt-4"
+          style={{ paddingTop: '1.5rem', borderTop: `1px solid ${C.border}` }}
+        >
+          <p className="mb-2" style={{ fontSize: '0.82rem', color: C.textMuted }}>{tL.noBooking}</p>
+          <div className="d-flex justify-content-center" style={{ gap: '1.5rem' }}>
             <a href="https://wa.me/393283131500" style={supportLink}>💬 WhatsApp</a>
             <a href="mailto:contattolivingapple@gmail.com" style={supportLink}>✉️ Email</a>
           </div>
@@ -167,9 +179,9 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
   );
 }
 
-const wrap: React.CSSProperties = { minHeight: '70vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1rem', background: '#f9fafb' };
-const card: React.CSSProperties = { background: '#fff', borderRadius: '20px', boxShadow: '0 4px 32px rgba(0,0,0,0.09)', padding: '2.5rem', width: '100%', maxWidth: '420px' };
+const wrap: React.CSSProperties = { minHeight: '70vh', background: '#f9fafb' };
+const card: React.CSSProperties = { borderRadius: 20, padding: '2.5rem', width: '100%', maxWidth: 420 };
 const labelStyle: React.CSSProperties = { display: 'block', fontSize: '0.82rem', fontWeight: 700, color: '#555555', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.04em' };
-const inputStyle: React.CSSProperties = { width: '100%', padding: '0.7rem 0.95rem', border: '1.5px solid #e5e7eb', borderRadius: '9px', fontSize: '0.95rem', color: '#111', outline: 'none', boxSizing: 'border-box' };
-const selectStyle: React.CSSProperties = { width: '100%', padding: '0.7rem 0.5rem', border: '1.5px solid #e5e7eb', borderRadius: '9px', fontSize: '0.92rem', color: '#111', outline: 'none', background: '#fff', cursor: 'pointer', appearance: 'auto' };
+const inputStyle: React.CSSProperties = { width: '100%', padding: '0.7rem 0.95rem', border: '1.5px solid #e5e7eb', borderRadius: 9, fontSize: '0.95rem', color: '#111', outline: 'none', boxSizing: 'border-box' };
+const selectStyle: React.CSSProperties = { width: '100%', padding: '0.7rem 0.5rem', border: '1.5px solid #e5e7eb', borderRadius: 9, fontSize: '0.92rem', color: '#111', outline: 'none', background: '#fff', cursor: 'pointer', appearance: 'auto' };
 const supportLink: React.CSSProperties = { color: '#1E73BE', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 600 };
