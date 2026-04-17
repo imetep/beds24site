@@ -8,7 +8,8 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const TTL_FOLDER_SECONDS = 60 * 60; // 1 ora — lightbox singola cartella
+const TTL_FOLDER_SECONDS = 60 * 60 * 24; // 24h — lightbox singola cartella
+const TTL_FALLBACK_SECONDS = 60 * 5;     // 5 min — risultati vuoti/errore (anti-storm)
 
 // ─── Redis helpers ────────────────────────────────────────────────────────────
 
@@ -91,10 +92,12 @@ export async function GET(req: NextRequest) {
       publicId: r.public_id,
     }));
 
-    // 3. Salva Redis 1 ora
-    if (photos.length > 0) {
-      await redisSet(redisKey, JSON.stringify(photos), TTL_FOLDER_SECONDS);
-    }
+    // 3. Salva Redis: 24h se ha risultati, 5min se vuoto (anti-storm rate-limit)
+    await redisSet(
+      redisKey,
+      JSON.stringify(photos),
+      photos.length > 0 ? TTL_FOLDER_SECONDS : TTL_FALLBACK_SECONDS,
+    );
 
     return NextResponse.json({ photos }, {
       headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate' },
@@ -102,6 +105,11 @@ export async function GET(req: NextRequest) {
 
   } catch (err) {
     console.error('[cloudinary] error:', err);
+    // Cacha errore per 5 min per evitare hammering durante rate-limit
+    try {
+      const redisKey = `cloudinary:folder:${folder}`;
+      await redisSet(redisKey, JSON.stringify([]), TTL_FALLBACK_SECONDS);
+    } catch { /* best-effort */ }
     return NextResponse.json({ error: String(err) }, { status: 500 });
   }
 }
