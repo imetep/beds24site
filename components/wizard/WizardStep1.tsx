@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
 import { getAvailableRooms, getPropertyForRoom, PROPERTIES } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
+import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import type { Room } from '@/config/properties';
 import type { Locale } from '@/config/i18n';
 
@@ -146,14 +147,13 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
   useEffect(() => {
     if (isSingleRoom || roomOffers.length === 0) return;
     (async () => {
-      const res = await fetch('/api/cloudinary?covers=true').catch(() => null);
-      if (!res?.ok) return;
-      const data = await res.json();
+      const data = await fetchCoversCached();
+      if (!data) return;
       const covers: Record<number, string> = {};
       for (const ro of roomOffers) {
         const room = PROPERTIES.flatMap(p => p.rooms).find(r => r.roomId === ro.roomId);
-        if (room && data.covers?.[room.cloudinaryFolder]) {
-          covers[ro.roomId] = data.covers[room.cloudinaryFolder];
+        if (room && data[room.cloudinaryFolder]) {
+          covers[ro.roomId] = data[room.cloudinaryFolder]!;
         }
       }
       setCoverUrls(covers);
