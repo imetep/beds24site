@@ -5,51 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
 import { PROPERTIES } from '@/config/properties';
 import { fetchCoversCached, fetchFolderPhotosCached } from '@/lib/cloudinary-client-cache';
+import { getTranslations } from '@/lib/i18n';
+import type { Locale } from '@/config/i18n';
 
-// ─── Traduzioni ───────────────────────────────────────────────────────────────
-const UI: Record<string, Record<string, string>> = {
-  it: { dates:'Date', guests:'Persone', search:'Cerca',
-        checkin:'Check-in', checkout:'Check-out', done:'Fatto',
-        adults:'Adulti', adultsAge:'18+', children:'Bambini', childrenAge:'0–17',
-        nights:'notte', nightsP:'notti', hintCI:'Seleziona check-in',
-        hintCO:'Seleziona check-out', cancel:'Cancella', inspire:'Le nostre residenze', dintorni:'Dintorni',
-        hero_title: "Scauri, come non l'hai mai vissuta",
-        hero_sub: 'Prenota direttamente con noi e risparmia' },
-  en: { dates:'Dates', guests:'Guests', search:'Search',
-        checkin:'Check-in', checkout:'Check-out', done:'Done',
-        adults:'Adults', adultsAge:'18+', children:'Children', childrenAge:'0–17',
-        nights:'night', nightsP:'nights', hintCI:'Select check-in',
-        hintCO:'Select check-out', cancel:'Clear', inspire:'Our residences', dintorni:'Surroundings',
-        hero_title: "Scauri, like you've never experienced it",
-        hero_sub: 'Book directly with us and save on commissions' },
-  de: { dates:'Datum', guests:'Personen', search:'Suchen',
-        checkin:'Check-in', checkout:'Check-out', done:'Fertig',
-        adults:'Erwachsene', adultsAge:'18+', children:'Kinder', childrenAge:'0–17',
-        nights:'Nacht', nightsP:'Nächte', hintCI:'Check-in wählen',
-        hintCO:'Check-out wählen', cancel:'Löschen', inspire:'Unsere Residenzen', dintorni:'Umgebung',
-        hero_title: 'Scauri, wie du es noch nie erlebt hast',
-        hero_sub: 'Buchen Sie direkt bei uns und sparen Sie Provisionen' },
-  pl: { dates:'Daty', guests:'Osoby', search:'Szukaj',
-        checkin:'Zameldowanie', checkout:'Wymeldowanie', done:'Gotowe',
-        adults:'Dorośli', adultsAge:'18+', children:'Dzieci', childrenAge:'0–17',
-        nights:'noc', nightsP:'nocy', hintCI:'Wybierz zameldowanie',
-        hintCO:'Wybierz wymeldowanie', cancel:'Wyczyść', inspire:'Nasze rezydencje', dintorni:'Okolice',
-        hero_title: 'Scauri, jakiego jeszcze nie znałeś',
-        hero_sub: 'Zarezerwuj bezpośrednio u nas i oszczędzaj na prowizjach' },
-};
-
-const MONTHS: Record<string, string[]> = {
-  it: ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
-  en: ['January','February','March','April','May','June','July','August','September','October','November','December'],
-  de: ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'],
-  pl: ['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'],
-};
-const DAYS: Record<string, string[]> = {
-  it: ['Lu','Ma','Me','Gi','Ve','Sa','Do'],
-  en: ['Mo','Tu','We','Th','Fr','Sa','Su'],
-  de: ['Mo','Di','Mi','Do','Fr','Sa','So'],
-  pl: ['Pn','Wt','Śr','Cz','Pt','So','Nd'],
-};
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function toYMD(y: number, m: number, d: number) {
@@ -82,24 +40,21 @@ const WEEKDAYS: Record<string, string[]> = {
   de: ['so','mo','di','mi','do','fr','sa'],
   pl: ['nd','pn','wt','śr','cz','pt','so'],
 };
-const MONTHS_SHORT: Record<string, string[]> = {
-  it: ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'],
-  en: ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'],
-  de: ['jan','feb','mär','apr','mai','jun','jul','aug','sep','okt','nov','dez'],
-  pl: ['sty','lut','mar','kwi','maj','cze','lip','sie','wrz','paź','lis','gru'],
-};
-function fmtDate(ymd: string, locale: string): string {
+function fmtDate(ymd: string, locale: string, monthsShort: string[]): string {
   const d = parseYMD(ymd);
   const wd  = (WEEKDAYS[locale]    ?? WEEKDAYS.it)[d.getDay()];
-  const mon = (MONTHS_SHORT[locale] ?? MONTHS_SHORT.it)[d.getMonth()];
+  const mon = monthsShort[d.getMonth()];
   return `${wd} ${d.getDate()} ${mon}`;
 }
 
 // ─── Componente ───────────────────────────────────────────────────────────────
 export default function HomeSearch({ locale }: { locale: string }) {
-  const ui   = UI[locale] ?? UI.it;
-  const mons = MONTHS[locale] ?? MONTHS.it;
-  const dys  = DAYS[locale]   ?? DAYS.it;
+  const tr = getTranslations(locale as Locale);
+  const hs = tr.components.homeSearch;
+  const ui   = hs.ui;
+  const mons = hs.months;
+  const dys  = hs.days;
+  const monthsShort = hs.monthsShort;
   const router = useRouter();
 
   const { checkIn, checkOut, numAdult, numChild, childrenAges,
@@ -210,8 +165,8 @@ export default function HomeSearch({ locale }: { locale: string }) {
   // ── Labels ─────────────────────────────────────────────────────────────────
   const nights = checkIn && checkOut ? diffNights(checkIn, checkOut) : 0;
   const datesLabel = checkIn && checkOut
-    ? `${fmtDate(checkIn, locale)} – ${fmtDate(checkOut, locale)}`
-    : checkIn ? fmtDate(checkIn, locale) : null;
+    ? `${fmtDate(checkIn, locale, monthsShort)} – ${fmtDate(checkOut, locale, monthsShort)}`
+    : checkIn ? fmtDate(checkIn, locale, monthsShort) : null;
   const nightsLabel = nights > 0 ? `${nights} ${nights === 1 ? ui.nights : ui.nightsP}` : null;
 
   const adultPart = locale === 'it' ? (numAdult === 1 ? '1 adulto' : `${numAdult} adulti`)
@@ -257,7 +212,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
                 background: v ? '#EBF4FC' : '#f9fafb',
               }}>
                 <div style={{ fontSize: 9, fontWeight: 700, color: '#888', textTransform: 'uppercase' }}>{l}</div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: v ? '#1E73BE' : '#aaa' }}>{v ? fmtDate(v, locale) : '—'}</div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: v ? '#1E73BE' : '#aaa' }}>{v ? fmtDate(v, locale, monthsShort) : '—'}</div>
               </div>
             ))}
           </div>
