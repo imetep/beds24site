@@ -591,19 +591,23 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div style={{ fontFamily: 'sans-serif', background: '#f9fafb', minHeight: '100vh', margin: '-24px -16px', padding: '24px 16px' }}>
-      <h2 style={{ fontSize: 22, fontWeight: 700, color: '#111', margin: '0 0 16px' }}>{t.title}</h2>
+    <div className="min-vh-100" style={{ fontFamily: 'sans-serif', background: '#f9fafb', margin: '-24px -16px', padding: '24px 16px' }}>
+      <h2 className="fw-bold text-dark mb-3" style={{ fontSize: 22 }}>{t.title}</h2>
 
-      <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start' }}>
+      <div className="d-flex align-items-start" style={{ gap: 32 }}>
 
         {/* ── Colonna sinistra: form ── */}
-        <div style={{ flex: 1, minWidth: 0, maxWidth: 560 }}>
+        <div className="flex-fill min-w-0" style={{ maxWidth: 560 }}>
 
           {/* Mobile: accordion riepilogo */}
-          <div className="step6-mobile-summary" style={{ display: 'none', border: '1px solid #e5e7eb', borderRadius: 14, marginBottom: 20, overflow: 'hidden' }}>
+          <div
+            className="step6-mobile-summary border mb-4 overflow-hidden"
+            style={{ display: 'none', borderRadius: 14 }}
+          >
             <button
               onClick={() => setSummaryOpen(o => !o)}
-              style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px', background: '#f9fafb', border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 600, color: '#111' }}
+              className="w-100 d-flex justify-content-between align-items-center px-3 py-3 fw-semibold text-dark border-0"
+              style={{ background: '#f9fafb', fontSize: 14, cursor: 'pointer' }}
             >
               <span>{t.summaryTitle} — {fmt(totalDisplay)}</span>
               <span style={{ fontSize: 18, transition: 'transform 0.2s', transform: summaryOpen ? 'rotate(180deg)' : 'none' }}>›</span>
@@ -617,9 +621,12 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
           {/* Sezione 1: Pagamento */}
           <div style={sectionCard}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-              <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#1E73BE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <span style={{ color: '#fff', fontSize: 13, fontWeight: 800 }}>1</span>
+            <div className="d-flex align-items-center gap-2 mb-3">
+              <div
+                className="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                style={{ width: 28, height: 28, background: '#1E73BE' }}
+              >
+                <span className="text-white fw-bolder" style={{ fontSize: 13 }}>1</span>
               </div>
               <p style={{ ...sectionTitle, margin: 0 }}>{t.sec1title.replace('1. ', '')}</p>
             </div>
@@ -629,8 +636,8 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                 {paymentMethod === 'stripe' && <div style={radioInner} />}
               </div>
               <div>
-                <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: '#111' }}>{t.payFull}</p>
-                <p style={{ margin: '2px 0 0', fontSize: 13, color: '#888' }}>{fmt(totalDisplay)}</p>
+                <p className="m-0 fw-semibold text-dark" style={{ fontSize: 15 }}>{t.payFull}</p>
+                <p className="mb-0" style={{ marginTop: 2, fontSize: 13, color: '#888' }}>{fmt(totalDisplay)}</p>
               </div>
             </label>
 
@@ -639,18 +646,24 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                 {paymentMethod === 'paypal' && <div style={radioInner} />}
               </div>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: '#111' }}>{t.payInstall}</p>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: '#003087', background: '#e8f0fb', padding: '2px 8px', borderRadius: 4 }}>PayPal</span>
+                <div className="d-flex align-items-center gap-2">
+                  <p className="m-0 fw-semibold text-dark" style={{ fontSize: 15 }}>{t.payInstall}</p>
+                  <span
+                    className="fw-bold"
+                    style={{ fontSize: 12, color: '#003087', background: '#e8f0fb', padding: '2px 8px', borderRadius: 4 }}
+                  >PayPal</span>
                 </div>
-                <p style={{ margin: '2px 0 0', fontSize: 13, color: '#888' }}>
+                <p className="mb-0" style={{ marginTop: 2, fontSize: 13, color: '#888' }}>
                   {PAY_INSTALL_NOTE[loc]?.(installment) ?? ''}
                 </p>
               </div>
             </label>
 
             {showPaypalFlexWarning && (
-              <div style={{ background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginTop: 4, fontSize: 13, color: '#92400e' }}>
+              <div
+                className="border"
+                style={{ background: '#fffbeb', borderColor: '#fcd34d', borderRadius: 8, padding: '10px 14px', marginTop: 4, fontSize: 13, color: '#92400e' }}
+              >
                 ⚠️ {t.paypalFlexNote}
               </div>
             )}
@@ -659,24 +672,27 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
           {/* Sezione 2: Dati ospite */}
           <div style={sectionCard}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-              <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#1E73BE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <span style={{ color: '#fff', fontSize: 13, fontWeight: 800 }}>2</span>
+            <div className="d-flex align-items-center gap-2 mb-3">
+              <div
+                className="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                style={{ width: 28, height: 28, background: '#1E73BE' }}
+              >
+                <span className="text-white fw-bolder" style={{ fontSize: 13 }}>2</span>
               </div>
               <p style={{ ...sectionTitle, margin: 0 }}>{t.sec3title.replace('2. ', '')}</p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+            <div className="d-grid mb-2" style={{ gridTemplateColumns: '1fr 1fr', gap: 10 }}>
               <Field label={t.firstName} value={guestFirstName} onChange={v => setGuestField('guestFirstName', v)} autoComplete="given-name" />
               <Field label={t.lastName}  value={guestLastName}  onChange={v => setGuestField('guestLastName', v)}  autoComplete="family-name" />
             </div>
             <Field label={t.email}   value={guestEmail}   onChange={v => setGuestField('guestEmail', v)}   type="email"   autoComplete="email" style={{ marginBottom: 10 }} />
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+            <div className="d-grid mb-2" style={{ gridTemplateColumns: '1fr 1fr', gap: 10 }}>
               <Field label={t.phone}   value={guestPhone}   onChange={v => setGuestField('guestPhone', v)}   type="tel" autoComplete="tel" />
               <Field label={t.country} value={guestCountry} onChange={v => setGuestField('guestCountry', v)} autoComplete="country-name" />
             </div>
             <Field label={t.arrivalTime} value={guestArrivalTime} onChange={v => setGuestField('guestArrivalTime', v)} type="time" style={{ marginBottom: 10 }} />
-            <div style={{ marginBottom: 0 }}>
+            <div className="mb-0">
               <label style={labelStyle}>{t.comments}</label>
               <textarea
                 value={guestComments}
@@ -688,9 +704,12 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
           {/* Errore */}
           {error && (
-            <div style={{ background: '#fff5f5', border: '1px solid #f5c6cb', borderRadius: 10, padding: '12px 16px', marginBottom: 14 }}>
-              <p style={{ margin: 0, color: '#c0392b', fontWeight: 600, fontSize: 14 }}>{t.errTitle}</p>
-              <p style={{ margin: '4px 0 0', fontSize: 13, color: '#888' }}>{error}</p>
+            <div
+              className="border mb-3"
+              style={{ background: '#fff5f5', borderColor: '#f5c6cb', borderRadius: 10, padding: '12px 16px' }}
+            >
+              <p className="m-0 fw-semibold" style={{ color: '#c0392b', fontSize: 14 }}>{t.errTitle}</p>
+              <p className="mb-0" style={{ marginTop: 4, fontSize: 13, color: '#888' }}>{error}</p>
             </div>
           )}
 
@@ -698,9 +717,10 @@ export default function WizardStep2({ locale = 'it' }: Props) {
           <button
             onClick={handleVediRiepilogo}
             disabled={!formValid}
+            className="w-100 fw-bolder border-0 mb-2"
             style={{
-              width: '100%', padding: '16px', borderRadius: 12, border: 'none',
-              fontSize: 17, fontWeight: 800, marginBottom: 10,
+              padding: 16, borderRadius: 12,
+              fontSize: 17,
               background: formValid ? '#FCAF1A' : '#e0e0e0',
               color: formValid ? '#fff' : '#999',
               cursor: formValid ? 'pointer' : 'not-allowed',
@@ -710,17 +730,24 @@ export default function WizardStep2({ locale = 'it' }: Props) {
             {`${t.vediRiepilogo} → ${fmt(totalDisplay)}`}
           </button>
 
-          <p style={{ fontSize: 12, color: '#aaa', textAlign: 'center', margin: '0 0 12px' }}>
+          <p className="text-center mb-3" style={{ fontSize: 12, color: '#aaa' }}>
             {t.terms}{' '}
             <a href={`/${locale}/condizioni`} style={{ color: '#1E73BE' }} target="_blank" rel="noopener noreferrer">{t.termsLink}</a>
           </p>
-          <button onClick={handleBack} style={{ background: 'none', border: 'none', color: '#1E73BE', fontSize: 14, cursor: 'pointer', padding: 0, display: 'block' }}>
+          <button
+            onClick={handleBack}
+            className="btn d-block p-0"
+            style={{ color: '#1E73BE', fontSize: 14 }}
+          >
             {t.back}
           </button>
         </div>
 
         {/* ── Sidebar destra (desktop) ── */}
-        <div className="step6-sidebar" style={{ width: 380, flexShrink: 0, border: '1px solid #e5e7eb', borderRadius: 16, padding: '22px 24px', position: 'sticky', top: 90, alignSelf: 'flex-start' }}>
+        <div
+          className="step6-sidebar flex-shrink-0 border position-sticky align-self-start"
+          style={{ width: 380, borderRadius: 16, padding: '22px 24px', top: 90 }}
+        >
           <SidebarContent />
         </div>
       </div>
