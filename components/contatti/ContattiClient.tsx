@@ -397,46 +397,37 @@ function FaqItem({ item }: { item: FaqItem }) {
   const lines = item.a.split('\n');
 
   return (
-    <div style={{
-      borderBottom: '1px solid #f0f4f8',
-    }}>
+    <div style={{ borderBottom: '1px solid #f0f4f8' }}>
       {/* Domanda */}
       <button
         onClick={() => setOpen(o => !o)}
         aria-expanded={open}
+        className="btn w-100 d-flex align-items-center justify-content-between gap-3 text-start px-3 py-3 border-0 rounded-0"
         style={{
-          width: '100%',
           background: open ? '#fffbf2' : '#fff',
-          border: 'none',
-          padding: '18px 20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 14,
-          cursor: 'pointer',
-          textAlign: 'left',
           minHeight: 58,
           transition: 'background 180ms',
           borderLeft: open ? '4px solid #FCAF1A' : '4px solid transparent',
         }}
       >
-        <span style={{
-          fontSize: 15,
-          fontWeight: 600,
-          color: open ? '#1E73BE' : '#1a1a2e',
-          lineHeight: 1.4,
-          flex: 1,
-        }}>
+        <span
+          className="flex-fill fw-semibold"
+          style={{
+            fontSize: 15,
+            color: open ? '#1E73BE' : '#1a1a2e',
+            lineHeight: 1.4,
+          }}
+        >
           {item.q}
         </span>
-        <div style={{
-          width: 28, height: 28,
-          borderRadius: '50%',
-          background: open ? '#FCAF1A' : '#f0f4f8',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          flexShrink: 0,
-          transition: 'background 180ms',
-        }}>
+        <div
+          className="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+          style={{
+            width: 28, height: 28,
+            background: open ? '#FCAF1A' : '#f0f4f8',
+            transition: 'background 180ms',
+          }}
+        >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
             stroke={open ? '#fff' : '#6b7280'} strokeWidth="2.5"
             style={{ transition: 'transform 220ms ease', transform: open ? 'rotate(180deg)' : 'none' }}>
@@ -447,14 +438,17 @@ function FaqItem({ item }: { item: FaqItem }) {
 
       {/* Risposta */}
       {open && (
-        <div style={{
-          padding: '0 20px 18px 24px',
-          fontSize: 14,
-          color: '#374151',
-          lineHeight: 1.7,
-          background: '#fffbf2',
-          borderLeft: '4px solid #FCAF1A',
-        }}>
+        <div
+          className="pb-3"
+          style={{
+            paddingLeft: 24, paddingRight: 20,
+            fontSize: 14,
+            color: '#374151',
+            lineHeight: 1.7,
+            background: '#fffbf2',
+            borderLeft: '4px solid #FCAF1A',
+          }}
+        >
           {lines.map((line, i) => (
             <span key={i}>
               {line}
@@ -466,18 +460,11 @@ function FaqItem({ item }: { item: FaqItem }) {
               href={item.link.href}
               target="_blank"
               rel="noopener noreferrer"
+              className="d-inline-flex align-items-center gap-1 mt-3 text-white fw-semibold text-decoration-none rounded-pill"
               style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                marginTop: 12,
                 fontSize: 13,
-                color: '#fff',
-                fontWeight: 600,
-                textDecoration: 'none',
                 background: '#1E73BE',
                 padding: '6px 14px',
-                borderRadius: 20,
               }}
             >
               {item.link.label}
@@ -533,27 +520,18 @@ function ContactChannels({ locale, t }: {
   ];
 
   return (
-    <div style={{
-      background: '#fff',
-      borderRadius: 16,
-      overflow: 'hidden',
-      border: '1px solid #e5e7eb',
-      boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-    }}>
+    <div
+      className="bg-white border overflow-hidden shadow-sm"
+      style={{ borderRadius: 16 }}
+    >
       {/* Header sezione */}
-      <div style={{
-        padding: '14px 20px',
-        background: '#1E73BE',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-      }}>
+      <div className="d-flex align-items-center gap-2 px-3 py-3" style={{ background: '#1E73BE' }}>
         <span style={{ fontSize: 18 }}>💬</span>
         <div>
-          <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: '#fff' }}>
+          <p className="m-0 fw-bold text-white" style={{ fontSize: 14 }}>
             {t.contactTitle}
           </p>
-          <p style={{ margin: '1px 0 0', fontSize: 12, color: 'rgba(255,255,255,0.75)' }}>
+          <p className="mb-0" style={{ marginTop: 1, fontSize: 12, color: 'rgba(255,255,255,0.75)' }}>
             {t.contactSubtitle}
           </p>
         </div>
@@ -565,30 +543,23 @@ function ContactChannels({ locale, t }: {
           href={ch.href}
           target={ch.href.startsWith('http') ? '_blank' : undefined}
           rel={ch.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 16,
-            padding: '16px 20px',
-            borderBottom: i < channels.length - 1 ? '1px solid #f3f4f6' : 'none',
-            textDecoration: 'none',
-            background: '#fff',
-            minHeight: 68,
-          }}
+          className={`d-flex align-items-center gap-3 px-3 py-3 text-decoration-none bg-white${i < channels.length - 1 ? ' border-bottom' : ''}`}
+          style={{ minHeight: 68 }}
         >
-          <div style={{
-            width: 46, height: 46,
-            borderRadius: 13,
-            background: ch.accent,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            flexShrink: 0,
-            boxShadow: `0 4px 12px ${ch.accent}40`,
-          }}>
+          <div
+            className="d-flex align-items-center justify-content-center flex-shrink-0"
+            style={{
+              width: 46, height: 46,
+              borderRadius: 13,
+              background: ch.accent,
+              boxShadow: `0 4px 12px ${ch.accent}40`,
+            }}
+          >
             {ch.icon}
           </div>
-          <div style={{ flex: 1 }}>
-            <p style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#111' }}>{ch.label}</p>
-            <p style={{ margin: '2px 0 0', fontSize: 12, color: '#9ca3af' }}>{ch.sub}</p>
+          <div className="flex-fill">
+            <p className="m-0 fw-bold text-dark" style={{ fontSize: 16 }}>{ch.label}</p>
+            <p className="text-muted mb-0" style={{ marginTop: 2, fontSize: 12 }}>{ch.sub}</p>
           </div>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" strokeWidth="2.5">
             <path d="M9 18l6-6-6-6"/>
@@ -607,53 +578,42 @@ export default function ContattiClient({ locale, bookHref }: Props) {
   const faqData = getFaqData(locale);
 
   return (
-    <div style={{ maxWidth: 720, margin: '0 auto', padding: '0 0 40px', background: '#f8fafc', minHeight: '100vh' }}>
+    <div className="mx-auto pb-4 min-vh-100" style={{ maxWidth: 720, background: '#f8fafc' }}>
 
       {/* ── Hero con sfondo brand ─────────────────────────────────────────── */}
-      <div style={{
-        background: 'linear-gradient(135deg, #1E73BE 0%, #1557a0 100%)',
-        padding: '32px 24px 28px',
-        marginBottom: 0,
-      }}>
-        <h1 style={{
-          fontSize: 30, fontWeight: 800, color: '#fff',
-          margin: '0 0 8px', lineHeight: 1.15,
-        }}>
+      <div
+        className="px-3 pt-4 pb-4"
+        style={{ background: 'linear-gradient(135deg, #1E73BE 0%, #1557a0 100%)' }}
+      >
+        <h1
+          className="fw-bolder text-white mb-2"
+          style={{ fontSize: 30, lineHeight: 1.15 }}
+        >
           {t.pageTitle}
         </h1>
-        <p style={{ margin: 0, fontSize: 15, color: 'rgba(255,255,255,0.82)', lineHeight: 1.5 }}>
+        <p className="m-0" style={{ fontSize: 15, color: 'rgba(255,255,255,0.82)', lineHeight: 1.5 }}>
           {t.pageSubtitle}
         </p>
       </div>
 
       {/* ── Contenuto principale ─────────────────────────────────────────── */}
-      <div style={{ padding: '16px 12px 0' }}>
+      <div className="px-2 pt-3">
 
         {/* ── FAQ ──────────────────────────────────────────────────────────── */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }}>
+        <div className="d-flex flex-column gap-3 mb-3">
           {faqData.map((cat, ci) => (
-            <div key={ci} style={{
-              background: '#fff',
-              borderRadius: 16,
-              overflow: 'hidden',
-              boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-              border: '1px solid #e5e7eb',
-            }}>
+            <div
+              key={ci}
+              className="bg-white overflow-hidden shadow-sm border"
+              style={{ borderRadius: 16 }}
+            >
               {/* Header categoria — blu pieno */}
-              <div style={{
-                padding: '13px 20px',
-                background: '#1E73BE',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10,
-              }}>
+              <div className="d-flex align-items-center gap-2 px-3 py-2" style={{ background: '#1E73BE' }}>
                 <span style={{ fontSize: 20, lineHeight: 1 }}>{cat.icon}</span>
-                <span style={{
-                  fontSize: 14,
-                  fontWeight: 700,
-                  color: '#fff',
-                  letterSpacing: '0.01em',
-                }}>
+                <span
+                  className="fw-bold text-white"
+                  style={{ fontSize: 14, letterSpacing: '0.01em' }}
+                >
                   {cat.label}
                 </span>
               </div>
@@ -667,73 +627,58 @@ export default function ContattiClient({ locale, bookHref }: Props) {
         </div>
 
         {/* ── Canali contatto ──────────────────────────────────────────────── */}
-        <div style={{ marginBottom: 12 }}>
+        <div className="mb-3">
           <ContactChannels locale={locale} t={t} />
         </div>
 
         {/* ── Banner prenotazione sicura ────────────────────────────────────── */}
-        <div style={{ marginBottom: 12 }}>
+        <div className="mb-3">
           <a
             href={`/${locale}/prenotazione-sicura`}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: 12,
-              background: '#fff',
-              border: '1px solid #e5e7eb',
-              borderRadius: 14,
-              padding: '16px 20px',
-              textDecoration: 'none',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-            }}
+            className="d-flex align-items-center justify-content-between gap-2 bg-white border text-decoration-none shadow-sm px-3 py-3"
+            style={{ borderRadius: 14 }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{
-                width: 40, height: 40,
-                borderRadius: 10,
-                background: '#EEF5FC',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexShrink: 0,
-              }}>
+            <div className="d-flex align-items-center gap-2">
+              <div
+                className="d-flex align-items-center justify-content-center flex-shrink-0"
+                style={{ width: 40, height: 40, borderRadius: 10, background: '#EEF5FC' }}
+              >
                 <span style={{ fontSize: 20 }}>🔍</span>
               </div>
-              <span style={{ fontSize: 14, color: '#374151', lineHeight: 1.4, fontWeight: 500 }}>
+              <span className="fw-medium" style={{ fontSize: 14, color: '#374151', lineHeight: 1.4 }}>
                 {t.safeBannerText}
               </span>
             </div>
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#1E73BE', whiteSpace: 'nowrap', flexShrink: 0 }}>
+            <span
+              className="fw-bold text-nowrap flex-shrink-0"
+              style={{ fontSize: 13, color: '#1E73BE' }}
+            >
               {t.safeBannerBtn}
             </span>
           </a>
         </div>
 
         {/* ── Banner prenota ────────────────────────────────────────────────── */}
-        <div style={{
-          background: 'linear-gradient(135deg, #FCAF1A 0%, #f59e0b 100%)',
-          borderRadius: 16,
-          padding: '20px 20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 16,
-          boxShadow: '0 4px 16px rgba(252,175,26,0.3)',
-        }}>
-          <p style={{ margin: 0, fontSize: 15, color: '#111', lineHeight: 1.4, fontWeight: 600 }}>
+        <div
+          className="d-flex align-items-center justify-content-between gap-3 p-3"
+          style={{
+            background: 'linear-gradient(135deg, #FCAF1A 0%, #f59e0b 100%)',
+            borderRadius: 16,
+            boxShadow: '0 4px 16px rgba(252,175,26,0.3)',
+          }}
+        >
+          <p className="m-0 fw-semibold text-dark" style={{ fontSize: 15, lineHeight: 1.4 }}>
             {t.bookBanner}
           </p>
           <a
             href={bookHref}
+            className="fw-bold text-decoration-none text-nowrap flex-shrink-0"
             style={{
               background: '#111',
               color: '#FCAF1A',
               borderRadius: 10,
               padding: '10px 18px',
               fontSize: 14,
-              fontWeight: 700,
-              textDecoration: 'none',
-              whiteSpace: 'nowrap',
-              flexShrink: 0,
             }}
           >
             {t.bookBtn}
