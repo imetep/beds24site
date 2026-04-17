@@ -269,7 +269,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
         <button
           onClick={handleApplyVoucher}
           disabled={!voucherInput.trim()}
-          style={{ padding: '8px 14px', borderRadius: 8, border: `1.5px solid ${voucherApplied ? '#16a34a' : '#1E73BE'}`, background: voucherApplied ? '#16a34a' : '#fff', color: voucherApplied ? '#fff' : '#1E73BE', fontSize: 13, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
+          style={{ padding: '8px 14px', minHeight: 'var(--touch-target)', borderRadius: 8, border: `1.5px solid ${voucherApplied ? '#16a34a' : '#1E73BE'}`, background: voucherApplied ? '#16a34a' : '#fff', color: voucherApplied ? '#fff' : '#1E73BE', fontSize: 13, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
         >
           {voucherApplied ? '✓ Applicato' : t.voucherApply}
         </button>
@@ -358,27 +358,27 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                       onClick={() => setExtraQuantity(item, qty - 1)}
                       disabled={qty === 0}
                       style={{
-                        width: 28, height: 28, borderRadius: '50%',
+                        width: 'var(--touch-target)', height: 'var(--touch-target)', borderRadius: '50%',
                         border: `1.5px solid ${qty > 0 ? '#1E73BE' : '#d1d5db'}`,
                         background: '#fff', color: qty > 0 ? '#1E73BE' : '#ccc',
-                        fontSize: 16, fontWeight: 700, cursor: qty > 0 ? 'pointer' : 'not-allowed',
+                        fontSize: 18, fontWeight: 700, cursor: qty > 0 ? 'pointer' : 'not-allowed',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         transition: 'all 0.15s', lineHeight: 1,
                       }}
                     >−</button>
                     <span style={{
-                      width: 28, textAlign: 'center', fontSize: 14, fontWeight: 700,
+                      width: 32, textAlign: 'center', fontSize: 15, fontWeight: 700,
                       color: qty > 0 ? '#1E73BE' : '#999',
                     }}>{qty}</span>
                     <button
                       onClick={() => setExtraQuantity(item, qty + 1)}
                       disabled={qty >= MAX_QTY}
                       style={{
-                        width: 28, height: 28, borderRadius: '50%',
+                        width: 'var(--touch-target)', height: 'var(--touch-target)', borderRadius: '50%',
                         border: `1.5px solid ${qty < MAX_QTY ? '#1E73BE' : '#d1d5db'}`,
                         background: qty < MAX_QTY ? '#1E73BE' : '#f5f5f5',
                         color: qty < MAX_QTY ? '#fff' : '#ccc',
-                        fontSize: 16, fontWeight: 700, cursor: qty < MAX_QTY ? 'pointer' : 'not-allowed',
+                        fontSize: 18, fontWeight: 700, cursor: qty < MAX_QTY ? 'pointer' : 'not-allowed',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         transition: 'all 0.15s', lineHeight: 1,
                       }}
@@ -588,7 +588,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
           <button
             onClick={handleBack}
             className="btn d-block p-0"
-            style={{ color: '#1E73BE', fontSize: 14 }}
+            style={{ color: '#1E73BE', fontSize: 14, minHeight: 'var(--touch-target)' }}
           >
             {t.back}
           </button>
@@ -623,7 +623,7 @@ function SideRow({ label, value, onEdit, editLabel }: { label: string; value: st
       </div>
       <button
         onClick={onEdit}
-        style={{ fontSize: 12, fontWeight: 600, color: '#111', background: 'none', border: '1px solid #ccc', borderRadius: 8, padding: '4px 10px', cursor: 'pointer', flexShrink: 0, marginLeft: 8, textDecoration: 'underline' }}
+        style={{ fontSize: 12, fontWeight: 600, color: '#111', background: 'none', border: '1px solid #ccc', borderRadius: 8, padding: '4px 10px', minHeight: 'var(--touch-target)', minWidth: 'var(--touch-target)', cursor: 'pointer', flexShrink: 0, marginLeft: 8, textDecoration: 'underline' }}
       >
         {editLabel}
       </button>
@@ -651,8 +651,8 @@ function Field({ label, value, onChange, type = 'text', autoComplete, style: ext
 
 // ─── Stili ────────────────────────────────────────────────────────────────────
 const sectionCard: React.CSSProperties = {
-  border: '1px solid #e5e7eb', borderRadius: 14,
-  padding: '20px', marginBottom: 16,
+  border: '1px solid #e5e7eb', borderRadius: 'var(--radius-lg)',
+  padding: 'var(--space-base)', marginBottom: 'var(--space-base)',
   background: '#fff',
   boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
 };
