@@ -344,6 +344,61 @@
       "configurabile": "configurable",
       "or": "or",
       "scroll": "scroll →"
+    },
+    "depositoClient": {
+      "title": "Security deposit",
+      "subtitle": "How it works, how much it is, and when it is refunded.",
+      "badge": "Required for all bookings",
+      "whyTitle": "Why is it required?",
+      "whyText": "The security deposit protects the property against accidental damage during your stay. It is not an extra charge: it is refunded in full within 48 hours of departure if there is no damage. You can pay it in two ways: in person on arrival with a credit card, or online in advance via Stripe.",
+      "offlineTitle": "Offline — credit card on arrival",
+      "offlineSteps": [
+        "Present yourself to reception with your Credit Card (no Debit Card, no PostePay).",
+        "The receptionist will fill in an authorisation form which you will sign.",
+        "The form is kept until your departure and then destroyed.",
+        "No pre-authorisation on your card: it is a paper guarantee only."
+      ],
+      "offlineNote": "You can change your mind and switch to the online payment method at any time from your Guest Area.",
+      "onlineTitle": "Online — Stripe pre-authorisation",
+      "onlineBadge": "PCI DSS Level 1 Certified",
+      "onlineSteps": [
+        "Log in to your Guest Area with your booking number and email.",
+        "Select \"Security deposit\" and choose the online method.",
+        "Stripe places a hold on your card — no actual charge is made.",
+        "You receive immediate confirmation by email."
+      ],
+      "onlineNote": "Your card details are never shared with us. Stripe is PCI DSS Level 1 certified — the same standard used by banks.",
+      "amountsTitle": "Amounts by property",
+      "amountsNote": "The exact amount is shown on each apartment listing. As a guide:",
+      "amounts": [
+        { "label": "Studio / One-bedroom", "value": "€ 200" },
+        { "label": "Two-bedroom", "value": "€ 300" },
+        { "label": "Villa / Large house", "value": "€ 500" }
+      ],
+      "returnTitle": "When is it refunded?",
+      "returnSteps": [
+        "Staff carry out a property inspection within 2 hours of check-out.",
+        "If there is no damage, the deposit is refunded within 48 hours of departure.",
+        "For the online method (Stripe), the pre-authorisation expires automatically in 7–30 days depending on the card network (Visa, Mastercard, Amex).",
+        "If there is damage, you will receive photographic documentation and a cost estimate before any deduction is made."
+      ],
+      "damagesTitle": "What happens if there is damage?",
+      "damagesText": "If damage is found, we will contact you within 24 hours of departure with photographic documentation and a cost breakdown. You will be able to dispute or agree on the amount before any deduction is made. Any deduction is always proportionate to the actual damage and never exceeds the deposit amount.",
+      "faqTitle": "Frequently asked questions",
+      "faqs": [
+        { "q": "Can I pay with a prepaid card or PostePay?", "a": "No. A real Credit Card is required (Visa, Mastercard, Amex). Debit cards and prepaid cards are not accepted for either the offline or online method." },
+        { "q": "Is the deposit charged immediately with the online method?", "a": "No. Stripe places a pre-authorisation: the amount is \"held\" on your card but not charged. If there is no damage, the hold expires automatically with no charge." },
+        { "q": "What if I forget to pay the deposit before arrival?", "a": "No problem. You can always pay in person on arrival with your credit card. We recommend you bring it with you." },
+        { "q": "Is the deposit the same for every apartment?", "a": "No. The amount varies based on the size and type of property. You will find it on the listing for the apartment you have booked." },
+        { "q": "Can I dispute a deduction?", "a": "Yes. Before any deduction we will send you photographic documentation and a cost breakdown. You can dispute the amount and agree on a solution. If there is a disagreement, your bank's chargeback procedure or PayPal's dispute process are available." }
+      ],
+      "ctaTitle": "Ready to pay the deposit online?",
+      "ctaText": "Log in to your Guest Area with your booking number and email to proceed.",
+      "ctaBtn": "Go to Guest Area",
+      "ctaNote": "You will need your booking number — it is in your confirmation email.",
+      "offline": "On arrival",
+      "online": "Online (Stripe)",
+      "questionsLink": "Have questions? Contact us →"
     }
   }
 }

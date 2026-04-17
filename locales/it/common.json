@@ -344,6 +344,61 @@
       "configurabile": "configurabile",
       "or": "oppure",
       "scroll": "scorri →"
+    },
+    "depositoClient": {
+      "title": "Deposito cauzionale",
+      "subtitle": "Come funziona, quanto è, quando viene restituito.",
+      "badge": "Obbligatorio per tutte le prenotazioni",
+      "whyTitle": "Perché viene richiesto?",
+      "whyText": "Il deposito cauzionale tutela la struttura da eventuali danni accidentali durante il soggiorno. Non è un costo aggiuntivo: viene restituito integralmente entro 48 ore dalla partenza se non ci sono danni. Puoi versarlo in due modi: in persona all'arrivo con carta di credito, oppure online in anticipo tramite Stripe.",
+      "offlineTitle": "Offline — carta di credito all'arrivo",
+      "offlineSteps": [
+        "Presentati alla receptionist con la tua Carta di Credito (no Debit Card, no PostePay).",
+        "La receptionist compila il modulo di autorizzazione che firmerai.",
+        "Il modulo viene conservato fino alla partenza e poi distrutto.",
+        "Nessuna pre-autorizzazione sulla tua carta: è solo una garanzia cartacea."
+      ],
+      "offlineNote": "Puoi cambiare idea e scegliere il pagamento online in qualsiasi momento dalla tua Area Ospiti.",
+      "onlineTitle": "Online — pre-autorizzazione Stripe",
+      "onlineBadge": "Certificazione PCI DSS Level 1",
+      "onlineSteps": [
+        "Accedi alla tua Area Ospiti con numero prenotazione ed email.",
+        "Seleziona \"Deposito cauzionale\" e scegli il metodo online.",
+        "Stripe blocca la cifra sulla tua carta in pre-autorizzazione — nessun addebito reale.",
+        "Ricevi conferma immediata via email."
+      ],
+      "onlineNote": "I tuoi dati carta non vengono mai condivisi con noi. Stripe è certificato PCI DSS Level 1, lo stesso standard delle banche.",
+      "amountsTitle": "Importi per struttura",
+      "amountsNote": "L'importo esatto è indicato nella scheda di ogni appartamento. A titolo indicativo:",
+      "amounts": [
+        { "label": "Monolocale / Bilocale", "value": "€ 200" },
+        { "label": "Trilocale", "value": "€ 300" },
+        { "label": "Villa / Casa grande", "value": "€ 500" }
+      ],
+      "returnTitle": "Quando viene restituito?",
+      "returnSteps": [
+        "Il personale effettua un controllo della struttura entro 2 ore dal check-out.",
+        "In assenza di danni, il deposito viene restituito entro 48 ore dalla partenza.",
+        "Per il metodo online (Stripe), la pre-autorizzazione decade automaticamente in 7–30 giorni a seconda del circuito (Visa, Mastercard, Amex).",
+        "In caso di danni, ti verrà inviata una documentazione fotografica e una stima dei costi prima di qualsiasi trattenuta."
+      ],
+      "damagesTitle": "Cosa succede in caso di danni?",
+      "damagesText": "Se vengono riscontrati danni, ti contatteremo entro 24 ore dalla partenza con documentazione fotografica e dettaglio dei costi. Potrai contestare o concordare l'importo prima che venga effettuata qualsiasi trattenuta. La trattenuta è sempre proporzionale al danno effettivo e mai superiore all'importo del deposito.",
+      "faqTitle": "Domande frequenti",
+      "faqs": [
+        { "q": "Posso pagare con carta prepagata o Postepay?", "a": "No. È richiesta una Carta di Credito vera (Visa, Mastercard, Amex). Le carte di debito e le prepagate non vengono accettate né per il metodo offline né per quello online." },
+        { "q": "Il deposito viene addebitato subito con il metodo online?", "a": "No. Stripe effettua una pre-autorizzazione: la cifra viene \"bloccata\" sulla tua carta ma non addebitata. Se non ci sono danni, il blocco decade automaticamente senza nessun addebito." },
+        { "q": "Cosa succede se dimentico di versare il deposito prima dell'arrivo?", "a": "Nessun problema. Puoi sempre versarlo in persona all'arrivo con la tua carta di credito. Ti consigliamo però di portarla con te." },
+        { "q": "Il deposito è lo stesso per ogni appartamento?", "a": "No. L'importo varia in base alla dimensione e al tipo di struttura. Lo trovi indicato nella scheda dell'appartamento che hai prenotato." },
+        { "q": "Posso contestare una trattenuta?", "a": "Sì. Prima di qualsiasi trattenuta ti inviamo documentazione fotografica e dettaglio dei costi. Puoi contestare l'importo e concordare una soluzione. In caso di disaccordo, sono disponibili le procedure di contestazione della tua banca o di PayPal." }
+      ],
+      "ctaTitle": "Pronto a versare il deposito online?",
+      "ctaText": "Accedi alla tua Area Ospiti con numero prenotazione ed email per procedere.",
+      "ctaBtn": "Vai all'Area Ospiti",
+      "ctaNote": "Ti serve il numero di prenotazione — lo trovi nell'email di conferma.",
+      "offline": "All'arrivo",
+      "online": "Online (Stripe)",
+      "questionsLink": "Hai domande? Contattaci →"
     }
   }
 }

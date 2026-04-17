@@ -344,6 +344,61 @@
       "configurabile": "konfigurowalne",
       "or": "lub",
       "scroll": "przewiń →"
+    },
+    "depositoClient": {
+      "title": "Kaucja",
+      "subtitle": "Jak działa, ile wynosi i kiedy jest zwracana.",
+      "badge": "Wymagana przy wszystkich rezerwacjach",
+      "whyTitle": "Dlaczego jest wymagana?",
+      "whyText": "Kaucja chroni obiekt przed ewentualnymi szkodami podczas pobytu. Nie jest to dodatkowy koszt: jest zwracana w całości w ciągu 48 godzin od wyjazdu, jeśli nie ma żadnych szkód. Możesz ją wpłacić na dwa sposoby: osobiście przy zameldowaniu kartą kredytową lub online z wyprzedzeniem przez Stripe.",
+      "offlineTitle": "Offline — karta kredytowa przy zameldowaniu",
+      "offlineSteps": [
+        "Zgłoś się do recepcji z kartą kredytową (nie debetową, nie przedpłaconą).",
+        "Recepcjonista wypełni formularz autoryzacji, który podpiszesz.",
+        "Formularz jest przechowywany do wymeldowania, a następnie niszczony.",
+        "Brak pre-autoryzacji na Twojej karcie — to tylko pisemna gwarancja."
+      ],
+      "offlineNote": "Możesz zmienić zdanie i wybrać płatność online w dowolnym momencie ze swojego Obszaru Gościa.",
+      "onlineTitle": "Online — pre-autoryzacja Stripe",
+      "onlineBadge": "Certyfikat PCI DSS Level 1",
+      "onlineSteps": [
+        "Zaloguj się do Obszaru Gościa numerem rezerwacji i adresem e-mail.",
+        "Wybierz „Kaucja\" i metodę online.",
+        "Stripe blokuje kwotę na Twojej karcie — bez rzeczywistego obciążenia.",
+        "Natychmiast otrzymujesz potwierdzenie e-mailem."
+      ],
+      "onlineNote": "Dane Twojej karty nigdy nie są udostępniane nam. Stripe jest certyfikowany PCI DSS Level 1 — ten sam standard co w bankach.",
+      "amountsTitle": "Kwoty według obiektu",
+      "amountsNote": "Dokładna kwota jest podana w opisie każdego apartamentu. Orientacyjnie:",
+      "amounts": [
+        { "label": "Kawalerka / Mieszkanie 1-pokojowe", "value": "€ 200" },
+        { "label": "Mieszkanie 2-pokojowe", "value": "€ 300" },
+        { "label": "Willa / Duży dom", "value": "€ 500" }
+      ],
+      "returnTitle": "Kiedy jest zwracana?",
+      "returnSteps": [
+        "Personel przeprowadza kontrolę obiektu w ciągu 2 godzin od wymeldowania.",
+        "W przypadku braku szkód kaucja jest zwracana w ciągu 48 godzin od wyjazdu.",
+        "W przypadku metody online (Stripe) pre-autoryzacja wygasa automatycznie w ciągu 7–30 dni, w zależności od sieci kartowej (Visa, Mastercard, Amex).",
+        "W przypadku szkód otrzymasz dokumentację fotograficzną i kosztorys przed jakimkolwiek potrąceniem."
+      ],
+      "damagesTitle": "Co się dzieje w przypadku szkód?",
+      "damagesText": "Jeśli zostaną stwierdzone szkody, skontaktujemy się z Tobą w ciągu 24 godzin od wyjazdu z dokumentacją fotograficzną i zestawieniem kosztów. Będziesz mógł zakwestionować lub uzgodnić kwotę przed dokonaniem jakiegokolwiek potrącenia. Każde potrącenie jest zawsze proporcjonalne do rzeczywistych szkód i nigdy nie przekracza kwoty kaucji.",
+      "faqTitle": "Często zadawane pytania",
+      "faqs": [
+        { "q": "Czy mogę zapłacić kartą przedpłaconą?", "a": "Nie. Wymagana jest prawdziwa karta kredytowa (Visa, Mastercard, Amex). Karty debetowe i przedpłacone nie są akceptowane ani w metodzie offline, ani online." },
+        { "q": "Czy kaucja jest pobierana natychmiast przy metodzie online?", "a": "Nie. Stripe dokonuje pre-autoryzacji: kwota jest „zablokowana\" na Twojej karcie, ale nie pobrana. Jeśli nie ma szkód, blokada automatycznie wygasa bez obciążenia." },
+        { "q": "Co jeśli zapomnę wpłacić kaucję przed przyjazdem?", "a": "Żaden problem. Zawsze możesz wpłacić ją osobiście przy zameldowaniu kartą kredytową. Zalecamy jednak jej zabranie." },
+        { "q": "Czy kaucja jest taka sama dla każdego apartamentu?", "a": "Nie. Kwota zależy od wielkości i rodzaju obiektu. Znajdziesz ją w opisie zarezerwowanego apartamentu." },
+        { "q": "Czy mogę zakwestionować potrącenie?", "a": "Tak. Przed jakimkolwiek potrąceniem przesyłamy Ci dokumentację fotograficzną i zestawienie kosztów. Możesz zakwestionować kwotę i uzgodnić rozwiązanie. W razie sporu dostępne są procedury chargeback Twojego banku lub procedura sporów PayPal." }
+      ],
+      "ctaTitle": "Gotowy wpłacić kaucję online?",
+      "ctaText": "Zaloguj się do Obszaru Gościa numerem rezerwacji i adresem e-mail.",
+      "ctaBtn": "Przejdź do Obszaru Gościa",
+      "ctaNote": "Będziesz potrzebować numeru rezerwacji — znajdziesz go w e-mailu potwierdzającym.",
+      "offline": "Przy zameldowaniu",
+      "online": "Online (Stripe)",
+      "questionsLink": "Masz pytania? Skontaktuj się z nami →"
     }
   }
 }

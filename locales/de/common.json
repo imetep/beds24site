@@ -344,6 +344,61 @@
       "configurabile": "konfigurierbar",
       "or": "oder",
       "scroll": "scrollen →"
+    },
+    "depositoClient": {
+      "title": "Kaution",
+      "subtitle": "Wie sie funktioniert, wie hoch sie ist und wann sie zurückerstattet wird.",
+      "badge": "Für alle Buchungen erforderlich",
+      "whyTitle": "Warum wird sie verlangt?",
+      "whyText": "Die Kaution schützt die Unterkunft vor eventuellen Schäden während des Aufenthalts. Sie ist kein zusätzlicher Kostenpunkt: Sie wird innerhalb von 48 Stunden nach der Abreise vollständig zurückerstattet, wenn keine Schäden vorliegen. Sie können sie auf zwei Arten hinterlegen: persönlich bei der Ankunft mit Kreditkarte oder online im Voraus über Stripe.",
+      "offlineTitle": "Offline — Kreditkarte bei der Ankunft",
+      "offlineSteps": [
+        "Erscheinen Sie an der Rezeption mit Ihrer Kreditkarte (keine Debitkarte, keine Prepaid-Karte).",
+        "Die Rezeptionistin füllt ein Autorisierungsformular aus, das Sie unterschreiben.",
+        "Das Formular wird bis zur Abreise aufbewahrt und dann vernichtet.",
+        "Keine Vorautorisierung auf Ihrer Karte: Es handelt sich nur um eine schriftliche Garantie."
+      ],
+      "offlineNote": "Sie können jederzeit auf die Online-Zahlung wechseln, und zwar über Ihren Gästebereich.",
+      "onlineTitle": "Online — Stripe-Vorautorisierung",
+      "onlineBadge": "PCI-DSS-Level-1-Zertifizierung",
+      "onlineSteps": [
+        "Melden Sie sich mit Buchungsnummer und E-Mail in Ihrem Gästebereich an.",
+        "Wählen Sie „Kaution\" und dann die Online-Methode.",
+        "Stripe sperrt den Betrag auf Ihrer Karte — kein tatsächlicher Abbuchung.",
+        "Sie erhalten sofort eine Bestätigung per E-Mail."
+      ],
+      "onlineNote": "Ihre Kartendaten werden niemals mit uns geteilt. Stripe ist PCI DSS Level 1 zertifiziert — derselbe Standard wie bei Banken.",
+      "amountsTitle": "Beträge nach Unterkunft",
+      "amountsNote": "Der genaue Betrag ist im Angebot jeder Wohnung angegeben. Als Richtwert:",
+      "amounts": [
+        { "label": "Studio / Einzimmerwohnung", "value": "€ 200" },
+        { "label": "Zweizimmerwohnung", "value": "€ 300" },
+        { "label": "Villa / Großes Haus", "value": "€ 500" }
+      ],
+      "returnTitle": "Wann wird sie zurückerstattet?",
+      "returnSteps": [
+        "Das Personal führt innerhalb von 2 Stunden nach dem Check-out eine Inspektion durch.",
+        "Bei keinen Schäden wird die Kaution innerhalb von 48 Stunden nach der Abreise zurückerstattet.",
+        "Bei der Online-Methode (Stripe) verfällt die Vorautorisierung je nach Kartennetz (Visa, Mastercard, Amex) automatisch in 7–30 Tagen.",
+        "Bei Schäden erhalten Sie Fotodokumentation und eine Kostenschätzung, bevor ein Abzug erfolgt."
+      ],
+      "damagesTitle": "Was passiert bei Schäden?",
+      "damagesText": "Wenn Schäden festgestellt werden, kontaktieren wir Sie innerhalb von 24 Stunden nach der Abreise mit Fotodokumentation und einer Kostenaufstellung. Sie können den Betrag anfechten oder vereinbaren, bevor ein Abzug vorgenommen wird. Jeder Abzug ist immer proportional zum tatsächlichen Schaden und übersteigt nie den Kautionsbetrag.",
+      "faqTitle": "Häufig gestellte Fragen",
+      "faqs": [
+        { "q": "Kann ich mit einer Prepaid-Karte bezahlen?", "a": "Nein. Es ist eine echte Kreditkarte erforderlich (Visa, Mastercard, Amex). Debit- und Prepaid-Karten werden weder für die Offline- noch für die Online-Methode akzeptiert." },
+        { "q": "Wird die Kaution bei der Online-Methode sofort abgebucht?", "a": "Nein. Stripe führt eine Vorautorisierung durch: Der Betrag wird auf Ihrer Karte „gesperrt\", aber nicht abgebucht. Bei keinen Schäden verfällt die Sperre automatisch ohne Abbuchung." },
+        { "q": "Was, wenn ich vergesse, die Kaution vor der Ankunft zu hinterlegen?", "a": "Kein Problem. Sie können sie immer persönlich bei der Ankunft mit Ihrer Kreditkarte hinterlegen. Wir empfehlen, sie mitzubringen." },
+        { "q": "Ist die Kaution für jede Wohnung gleich?", "a": "Nein. Der Betrag variiert je nach Größe und Art der Unterkunft. Sie finden ihn im Angebot der von Ihnen gebuchten Wohnung." },
+        { "q": "Kann ich einen Abzug anfechten?", "a": "Ja. Vor jedem Abzug senden wir Ihnen Fotodokumentation und eine Kostenaufstellung. Sie können den Betrag anfechten und eine Lösung vereinbaren. Bei Uneinigkeit stehen das Chargeback-Verfahren Ihrer Bank oder das Streitbeilegungsverfahren von PayPal zur Verfügung." }
+      ],
+      "ctaTitle": "Kaution online hinterlegen?",
+      "ctaText": "Melden Sie sich mit Buchungsnummer und E-Mail in Ihrem Gästebereich an.",
+      "ctaBtn": "Zum Gästebereich",
+      "ctaNote": "Sie benötigen Ihre Buchungsnummer — Sie finden sie in Ihrer Bestätigungs-E-Mail.",
+      "offline": "Bei der Ankunft",
+      "online": "Online (Stripe)",
+      "questionsLink": "Haben Sie Fragen? Kontaktieren Sie uns →"
     }
   }
 }
