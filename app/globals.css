@@ -23,6 +23,23 @@
   --color-bg-muted: #f9fafb;
   --color-bg-dark: #111;
   --color-on-dark: #fff;
+
+  /* Spacing scale — 4px base, multipli di 4 (8px grid friendly) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-base: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  /* Border radius scale */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* Touch target — minimo Apple HIG / WCAG 2.1 AA */
+  --touch-target: 44px;
 }
 
 body {
