@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { v2 as cloudinary } from 'cloudinary';
+import { redisSet } from '@/lib/cloudinary-covers';
 import { getRoomBySlug, getPropertyForRoom, PROPERTIES } from '@/config/properties';
 import { locales, isValidLocale, type Locale } from '@/config/i18n';
 import ThingsToKnow from '@/components/residenze/ThingsToKnow';
@@ -77,16 +78,48 @@ const PROPERTY_FEATURES: Record<number, string[]> = {
   46871: ['PARKING_INCLUDED','WIFI','BEACH','AIR_CONDITIONING','HEATING','WASHER','DISHWASHER','MICROWAVE','TV','HAIR_DRYER','REFRIGERATOR','KITCHEN','DISHES_UTENSILS','PETS_NOT_ALLOWED','SMOKING_NOT_ALLOWED'],
 };
 
+const TTL_PHOTOS_SECONDS = 60 * 60; // 1 ora
+
+async function redisGet(key: string): Promise<string | null> {
+  const url   = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
+  if (!url || !token) return null;
+  try {
+    const res  = await fetch(`${url}/get/${encodeURIComponent(key)}`, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: 'no-store',
+    });
+    const data = await res.json();
+    return data.result ?? null;
+  } catch {
+    return null;
+  }
+}
+
 async function getRoomPhotos(folder: string): Promise<string[]> {
+  const redisKey = `cloudinary:room-photos:${folder}`;
+
+  const cached = await redisGet(redisKey);
+  if (cached) {
+    try {
+      const arr = JSON.parse(cached);
+      if (Array.isArray(arr)) return arr as string[];
+    } catch { /* corrotto → ricarica */ }
+  }
+
   try {
     const result = await cloudinary.search
       .expression(`folder:${folder}`)
       .sort_by('public_id', 'asc')
       .max_results(20)
       .execute();
-    return result.resources.map((r: any) =>
+    const urls = result.resources.map((r: any) =>
       cloudinary.url(r.public_id, { width: 1200, crop: 'fill', quality: 'auto', fetch_format: 'auto' })
     );
+    if (urls.length > 0) {
+      await redisSet(redisKey, JSON.stringify(urls), TTL_PHOTOS_SECONDS);
+    }
+    return urls;
   } catch {
     return [];
   }
