@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
+import { fetchFolderPhotosCached } from '@/lib/cloudinary-client-cache';
 
 interface Props {
   cloudinaryFolder: string;
@@ -22,9 +23,7 @@ export default function CardPhotoGallery({ cloudinaryFolder, coverUrl, roomName,
     if (photos.length > 0) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/cloudinary?folder=${encodeURIComponent(cloudinaryFolder)}`);
-      const data = await res.json();
-      const urls = (data.photos ?? []).map((p: { url: string }) => p.url);
+      const urls = (await fetchFolderPhotosCached(cloudinaryFolder)) ?? [];
       setPhotos(urls.length > 0 ? urls : coverUrl ? [coverUrl] : []);
     } catch {
       setPhotos(coverUrl ? [coverUrl] : []);
