@@ -349,7 +349,7 @@ function singleChipLabel(bed: Bed, state: BedState): string {
 
 function AdminBedIcon({ variant, active }: { variant: IconVariant; active: boolean }) {
   const fill   = active ? '#DBEAFE' : '#E5E7EB';
-  const stroke = active ? '#1E73BE' : '#9CA3AF';
+  const stroke = active ? 'var(--color-primary)' : '#9CA3AF';
   const pil    = active ? '#93C5FD' : '#D1D5DB';
 
   if (variant === 'poltrona_off') return (
