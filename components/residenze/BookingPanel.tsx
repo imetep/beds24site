@@ -183,7 +183,7 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
                   className="w-100 d-flex align-items-center justify-content-between text-start px-3 py-3"
                   style={{
                     borderRadius: 12,
-                    border: `${isPicked ? '2px' : '1.5px'} solid ${isPicked ? '#1E73BE' : '#e5e7eb'}`,
+                    border: `${isPicked ? '2px' : '1.5px'} solid ${isPicked ? 'var(--color-primary)' : '#e5e7eb'}`,
                     background: isPicked ? '#EEF5FC' : '#fff',
                     cursor: avail ? 'pointer' : 'default',
                     opacity: avail ? 1 : 0.45,
@@ -195,7 +195,7 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
                       {isPicked && (
                         <span
                           className="fw-bold rounded-pill"
-                          style={{ fontSize: 11, color: '#1E73BE', background: '#dbeafe', padding: '2px 8px' }}
+                          style={{ fontSize: 11, color: 'var(--color-primary)', background: '#dbeafe', padding: '2px 8px' }}
                         >
                           {t.selezionata}
                         </span>
@@ -205,7 +205,7 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
                     {desc && <p className="mt-1 mb-0" style={{ fontSize: 12, color: '#666', lineHeight: 1.4 }}>{desc}</p>}
                   </div>
                   <div className="text-end flex-shrink-0">
-                    <div className="fw-bolder" style={{ fontSize: 20, color: '#1E73BE', lineHeight: 1 }}>{fmt(offer.price + touristTax)}</div>
+                    <div className="fw-bolder" style={{ fontSize: 20, color: 'var(--color-primary)', lineHeight: 1 }}>{fmt(offer.price + touristTax)}</div>
                     {perNight > 0 && <div style={{ fontSize: 11, color: '#999', marginTop: 1 }}>{fmt(perNight)}{t.perNight}</div>}
                     <div style={{ fontSize: 10, color: '#bbb', marginTop: 1 }}>{t.total}</div>
                   </div>
