@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useWizardStore } from '@/store/wizard-store';
 import { PROPERTIES } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
+import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import type { Locale } from '@/config/i18n';
 
 function calcNights(ci: string, co: string) {
@@ -49,10 +50,7 @@ export default function WizardSidebar({ locale = 'it', step = 1, onContinua, can
   // Fetch cover foto appartamento (solo quando selezionato)
   useEffect(() => {
     if (!room?.cloudinaryFolder) { setCoverUrl(null); return; }
-    fetch('/api/cloudinary?covers=true')
-      .then(r => r.ok ? r.json() : null)
-      .then(data => setCoverUrl(data?.covers?.[room.cloudinaryFolder] ?? null))
-      .catch(() => {});
+    fetchCoversCached().then(covers => setCoverUrl(covers?.[room.cloudinaryFolder] ?? null));
   }, [room?.cloudinaryFolder]);
 
   // ✅ FIX: cerca prima nella room selezionata, poi fallback globale
