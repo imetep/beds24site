@@ -105,7 +105,7 @@ export default function ThingsToKnow({ locale, checkInStart, checkInEnd, checkOu
         type="button"
         onClick={() => setOpen(!open)}
         className="d-flex justify-content-between align-items-center w-100 fw-bold px-3 py-3 border-0 text-white"
-        style={{ background: '#1E73BE', fontSize: 17 }}
+        style={{ background: 'var(--color-primary)', fontSize: 17 }}
         aria-expanded={open}
       >
         <span>
