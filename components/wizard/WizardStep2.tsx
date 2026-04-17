@@ -6,6 +6,7 @@ import { useWizardStore } from '@/store/wizard-store';
 import type { SelectedExtra } from '@/store/wizard-store';
 import { PROPERTIES, getPropertyForRoom } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
+import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import type { Locale } from '@/config/i18n';
 
 // ─── Testi fissi 4 lingue ─────────────────────────────────────────────────────
@@ -180,13 +181,10 @@ export default function WizardStep2({ locale = 'it' }: Props) {
   // ── Carica foto cover ────────────────────────────────────────────────────
   useEffect(() => {
     if (!room) return;
-    fetch('/api/cloudinary?covers=true')
-      .then(r => r.json())
-      .then(data => {
-        const url = data?.covers?.[room.cloudinaryFolder];
-        if (url) setCoverUrl(url);
-      })
-      .catch(() => {});
+    fetchCoversCached().then(covers => {
+      const url = covers?.[room.cloudinaryFolder];
+      if (url) setCoverUrl(url);
+    });
   }, [room?.cloudinaryFolder]);
 
   // ── Applica voucher ─────────────────────────────────────────────────────
