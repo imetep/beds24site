@@ -148,8 +148,8 @@ export default function HomeSearch({ locale }: { locale: string }) {
                 style={{
                   height: 36, width: '100%', border: 'none', outline: 'none',
                   borderRadius: (isStart || isEnd) ? '50%' : 0,
-                  background: (isStart || isEnd) ? '#1E73BE' : inRange ? '#EBF4FC' : 'transparent',
-                  color: (isStart || isEnd) ? '#fff' : isPast ? '#ccc' : '#111',
+                  background: (isStart || isEnd) ? 'var(--color-primary)' : inRange ? 'var(--color-primary-soft)' : 'transparent',
+                  color: (isStart || isEnd) ? 'var(--color-on-dark)' : isPast ? '#ccc' : 'var(--color-text)',
                   fontSize: 13, fontWeight: (isStart || isEnd) ? 700 : 400,
                   cursor: isPast ? 'default' : 'pointer',
                   textDecoration: isPast ? 'line-through' : 'none',
@@ -199,7 +199,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
 
     return (
       <div>
-        <div style={{ padding: isDesk ? '24px 24px 0' : '0 20px', position: 'sticky', top: 0, background: '#fff', zIndex: 10, paddingTop: isDesk ? 24 : 0 }}>
+        <div style={{ padding: isDesk ? '24px 24px 0' : '0 20px', position: 'sticky', top: 0, background: 'var(--color-bg)', zIndex: 10, paddingTop: isDesk ? 24 : 0 }}>
           {!isDesk && (
             <div style={{ width: 40, height: 4, borderRadius: 2, background: '#ddd', margin: '8px auto 16px' }} />
           )}
@@ -208,22 +208,22 @@ export default function HomeSearch({ locale }: { locale: string }) {
             {[{l: ui.checkin, v: checkIn}, {l: ui.checkout, v: checkOut}].map(({l, v}, i) => (
               <div key={i} style={{
                 flex: 1, padding: '8px 10px', borderRadius: 10,
-                border: `2px solid ${v ? '#1E73BE' : '#e5e7eb'}`,
-                background: v ? '#EBF4FC' : '#f9fafb',
+                border: `2px solid ${v ? 'var(--color-primary)' : 'var(--color-border)'}`,
+                background: v ? 'var(--color-primary-soft)' : 'var(--color-bg-muted)',
               }}>
                 <div style={{ fontSize: 9, fontWeight: 700, color: '#888', textTransform: 'uppercase' }}>{l}</div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: v ? '#1E73BE' : '#aaa' }}>{v ? fmtDate(v, locale, monthsShort) : '—'}</div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: v ? 'var(--color-primary)' : '#aaa' }}>{v ? fmtDate(v, locale, monthsShort) : '—'}</div>
               </div>
             ))}
           </div>
-          <p style={{ fontSize: 12, color: '#1E73BE', fontWeight: 500, margin: '0 0 8px' }}>
+          <p style={{ fontSize: 12, color: 'var(--color-primary)', fontWeight: 500, margin: '0 0 8px' }}>
             {phase === 'ci' ? ui.hintCI : ui.hintCO}
           </p>
           {phase === 'co' && (
             <div style={{
               display: 'flex', alignItems: 'center', gap: 10,
               background: 'linear-gradient(135deg, #FFF8EC 0%, #FFF3DC 100%)',
-              border: '1px solid #FCAF1A', borderLeft: '4px solid #FCAF1A',
+              border: '1px solid var(--color-warning)', borderLeft: '4px solid var(--color-warning)',
               borderRadius: 10, padding: '10px 14px', marginBottom: 12,
             }}>
               <span style={{ fontSize: 18, flexShrink: 0 }}>🌙</span>
@@ -257,10 +257,10 @@ export default function HomeSearch({ locale }: { locale: string }) {
                 ‹
               </button>
               <div style={{ flex: 1, display: 'flex' }}>
-                <span style={{ flex: 1, textAlign: 'center', fontWeight: 700, fontSize: 14, color: '#111' }}>
+                <span style={{ flex: 1, textAlign: 'center', fontWeight: 700, fontSize: 14, color: 'var(--color-text)' }}>
                   {mons[vm]} {vy}
                 </span>
-                <span style={{ flex: 1, textAlign: 'center', fontWeight: 700, fontSize: 14, color: '#111' }}>
+                <span style={{ flex: 1, textAlign: 'center', fontWeight: 700, fontSize: 14, color: 'var(--color-text)' }}>
                   {mons[sec.m]} {sec.y}
                 </span>
               </div>
@@ -282,7 +282,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
                 {ui.cancel}
               </button>
               <button onClick={() => setPanel('none')}
-                style={{ padding: '10px 24px', background: '#FCAF1A', color: '#fff', border: 'none', borderRadius: 50, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
+                style={{ padding: '10px 24px', background: 'var(--color-warning)', color: 'var(--color-on-dark)', border: 'none', borderRadius: 50, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
                 {ui.done}
               </button>
             </div>
@@ -293,7 +293,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
             <div style={{ padding: '0 20px', overflowY: 'auto', paddingBottom: 80 }}>
               {mobileMonths.map(({ y, m }, idx) => (
                 <div key={idx} style={{ marginBottom: 28 }}>
-                  <div style={{ fontWeight: 700, fontSize: 15, textAlign: 'center', marginBottom: 10, color: '#111' }}>
+                  <div style={{ fontWeight: 700, fontSize: 15, textAlign: 'center', marginBottom: 10, color: 'var(--color-text)' }}>
                     {mons[m]} {y}
                   </div>
                   {renderMonth(y, m)}
@@ -302,7 +302,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
             </div>
             <div style={{
               position: 'sticky', bottom: 0,
-              background: '#fff', padding: '10px 20px 24px',
+              background: 'var(--color-bg)', padding: '10px 20px 24px',
               borderTop: '1px solid #f0f0f0',
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
               zIndex: 10,
@@ -312,7 +312,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
                 {ui.cancel}
               </button>
               <button onClick={() => setPanel('none')}
-                style={{ padding: '10px 28px', background: '#FCAF1A', color: '#fff', border: 'none', borderRadius: 50, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
+                style={{ padding: '10px 28px', background: 'var(--color-warning)', color: 'var(--color-on-dark)', border: 'none', borderRadius: 50, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
                 {ui.done}
               </button>
             </div>
@@ -344,15 +344,15 @@ export default function HomeSearch({ locale }: { locale: string }) {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
               <button onClick={() => set(val - 1)} disabled={val <= min}
-                style={{ width: 34, height: 34, borderRadius: '50%', border: `1.5px solid ${val <= min ? '#e5e7eb' : '#1E73BE'}`,
-                  background: '#fff', color: val <= min ? '#ccc' : '#1E73BE', fontSize: 18, cursor: val <= min ? 'not-allowed' : 'pointer',
+                style={{ width: 34, height: 34, borderRadius: '50%', border: `1.5px solid ${val <= min ? 'var(--color-border)' : 'var(--color-primary)'}`,
+                  background: 'var(--color-bg)', color: val <= min ? '#ccc' : 'var(--color-primary)', fontSize: 18, cursor: val <= min ? 'not-allowed' : 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 −
               </button>
               <span style={{ fontSize: 16, fontWeight: 700, minWidth: 24, textAlign: 'center' }}>{val}</span>
               <button onClick={() => set(val + 1)}
-                style={{ width: 34, height: 34, borderRadius: '50%', border: '1.5px solid #1E73BE',
-                  background: '#fff', color: '#1E73BE', fontSize: 18, cursor: 'pointer',
+                style={{ width: 34, height: 34, borderRadius: '50%', border: '1.5px solid var(--color-primary)',
+                  background: 'var(--color-bg)', color: 'var(--color-primary)', fontSize: 18, cursor: 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 +
               </button>
@@ -361,11 +361,11 @@ export default function HomeSearch({ locale }: { locale: string }) {
         ))}
 
         {numChild > 0 && (
-          <div style={{ marginTop: 14, padding: 14, background: '#f9fafb', borderRadius: 12, border: '1px solid #e5e7eb' }}>
+          <div style={{ marginTop: 14, padding: 14, background: 'var(--color-bg-muted)', borderRadius: 12, border: '1px solid var(--color-border)' }}>
             <div style={{ display: 'grid', gridTemplateColumns: numChild === 1 ? '1fr' : '1fr 1fr', gap: 10 }}>
               {Array.from({ length: numChild }, (_, i) => (
                 <div key={i}>
-                  <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: '#6b7280', marginBottom: 4, textTransform: 'uppercase' }}>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--color-text-label)', marginBottom: 4, textTransform: 'uppercase' }}>
                     {ageLabel} {i + 1}
                   </label>
                   <select
@@ -373,8 +373,8 @@ export default function HomeSearch({ locale }: { locale: string }) {
                     onChange={e => setChildAge(i, Number(e.target.value))}
                     style={{
                       width: '100%', padding: '8px 10px', fontSize: 14, borderRadius: 8,
-                      border: `1.5px solid ${(childrenAges[i] ?? -1) < 0 ? '#f97316' : '#e5e7eb'}`,
-                      background: '#fff', appearance: 'auto',
+                      border: `1.5px solid ${(childrenAges[i] ?? -1) < 0 ? '#f97316' : 'var(--color-border)'}`,
+                      background: 'var(--color-bg)', appearance: 'auto',
                     }}
                   >
                     <option value={-1}>{agePlaceholder}</option>
@@ -389,7 +389,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
         )}
 
         <button onClick={() => setPanel('none')}
-          style={{ width: '100%', marginTop: 20, padding: '12px', background: '#FCAF1A', color: '#fff', border: 'none', borderRadius: 50, fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>
+          style={{ width: '100%', marginTop: 20, padding: '12px', background: 'var(--color-warning)', color: 'var(--color-on-dark)', border: 'none', borderRadius: 50, fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>
           {ui.done}
         </button>
       </div>
@@ -401,7 +401,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div style={{ background: '#fff', minHeight: '100vh', boxSizing: 'border-box', width: '100%', overflowX: 'hidden' }}>
+    <div style={{ background: 'var(--color-bg)', minHeight: '100vh', boxSizing: 'border-box', width: '100%', overflowX: 'hidden' }}>
 
       {/* ── Hero UX 3.2 ────────────────────────────────────────────────────── */}
       <section
@@ -410,7 +410,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
           height: isDesk ? 320 : 220,
           background: heroBg
             ? `linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url(${heroBg}) center/cover no-repeat`
-            : 'linear-gradient(135deg, #1E73BE 0%, #0c447c 100%)',
+            : 'linear-gradient(135deg, var(--color-primary) 0%, #0c447c 100%)',
         }}
       >
         <div className="container text-center px-3" style={{ maxWidth: 900 }}>
@@ -432,8 +432,8 @@ export default function HomeSearch({ locale }: { locale: string }) {
           // ── DESKTOP: una riga orizzontale ─────────────────────────────────
           <div style={{
             display: 'flex', alignItems: 'stretch',
-            border: '1.5px solid #e5e7eb', borderRadius: 50,
-            background: '#fff', boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
+            border: '1.5px solid var(--color-border)', borderRadius: 50,
+            background: 'var(--color-bg)', boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
             overflow: 'hidden',
           }}>
             {/* Date */}
@@ -441,20 +441,20 @@ export default function HomeSearch({ locale }: { locale: string }) {
               onClick={() => setPanel(p => p === 'dates' ? 'none' : 'dates')}
               style={{
                 flex: 1, display: 'flex', alignItems: 'center', gap: 12, padding: '14px 28px',
-                background: panel === 'dates' ? '#f0f7ff' : 'transparent',
-                border: 'none', borderRight: '1px solid #e5e7eb', cursor: 'pointer', textAlign: 'left',
+                background: panel === 'dates' ? 'var(--color-primary-soft)' : 'transparent',
+                border: 'none', borderRight: '1px solid var(--color-border)', cursor: 'pointer', textAlign: 'left',
               }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="2" style={{ flexShrink: 0 }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" style={{ flexShrink: 0 }}>
                 <rect x="3" y="4" width="18" height="18" rx="3"/>
                 <path d="M16 2v4M8 2v4M3 10h18"/>
               </svg>
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{ui.dates}</div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: datesLabel ? '#111' : '#aaa', marginTop: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: datesLabel ? 'var(--color-text)' : '#aaa', marginTop: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {datesLabel ?? `${ui.checkin} – ${ui.checkout}`}
                 </div>
                 {nightsLabel && (
-                  <div style={{ fontSize: 11, color: '#9ca3af', marginTop: 1 }}>{nightsLabel}</div>
+                  <div style={{ fontSize: 11, color: 'var(--color-text-muted)', marginTop: 1 }}>{nightsLabel}</div>
                 )}
               </div>
             </button>
@@ -464,19 +464,19 @@ export default function HomeSearch({ locale }: { locale: string }) {
               onClick={() => setPanel(p => p === 'guests' ? 'none' : 'guests')}
               style={{
                 flex: '0 0 260px', display: 'flex', alignItems: 'center', gap: 12, padding: '14px 24px',
-                background: panel === 'guests' ? '#f0f7ff' : 'transparent',
-                border: 'none', borderRight: '1px solid #e5e7eb', cursor: 'pointer', textAlign: 'left',
+                background: panel === 'guests' ? 'var(--color-primary-soft)' : 'transparent',
+                border: 'none', borderRight: '1px solid var(--color-border)', cursor: 'pointer', textAlign: 'left',
               }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="2" style={{ flexShrink: 0 }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" style={{ flexShrink: 0 }}>
                 <circle cx="12" cy="7" r="4"/>
                 <path d="M5.5 21c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" strokeLinecap="round"/>
               </svg>
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{ui.guests}</div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: '#111', marginTop: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text)', marginTop: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {guestsLabel ?? `${numAdult} ${locale === 'it' ? 'adulti' : 'adults'}`}
                 </div>
-                {agesLabel ? <div style={{ fontSize: 11, color: '#9ca3af', marginTop: 1 }}>età: {agesLabel}</div> : null}
+                {agesLabel ? <div style={{ fontSize: 11, color: 'var(--color-text-muted)', marginTop: 1 }}>età: {agesLabel}</div> : null}
               </div>
             </button>
 
@@ -484,7 +484,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
             <button
               onClick={handleCerca}
               style={{
-                padding: '0 32px', background: '#FCAF1A', color: '#fff', border: 'none',
+                padding: '0 32px', background: 'var(--color-warning)', color: 'var(--color-on-dark)', border: 'none',
                 cursor: 'pointer', fontWeight: 700, fontSize: 15,
                 display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap',
               }}>
@@ -505,14 +505,14 @@ export default function HomeSearch({ locale }: { locale: string }) {
               style={{
                 display: 'flex', alignItems: 'center', gap: 14,
                 padding: '16px 18px',
-                border: `1.5px solid ${panel === 'dates' ? '#1E73BE' : '#e5e7eb'}`,
+                border: `1.5px solid ${panel === 'dates' ? 'var(--color-primary)' : 'var(--color-border)'}`,
                 borderRadius: 16,
-                background: panel === 'dates' ? '#f0f7ff' : '#fff',
+                background: panel === 'dates' ? 'var(--color-primary-soft)' : 'var(--color-bg)',
                 cursor: 'pointer', textAlign: 'left', width: '100%',
                 boxSizing: 'border-box',
                 boxShadow: '0 1px 6px rgba(0,0,0,0.06)',
               }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="1.8" style={{ flexShrink: 0 }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="1.8" style={{ flexShrink: 0 }}>
                 <rect x="3" y="4" width="18" height="18" rx="3"/>
                 <path d="M16 2v4M8 2v4M3 10h18"/>
               </svg>
@@ -520,11 +520,11 @@ export default function HomeSearch({ locale }: { locale: string }) {
                 <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>
                   {ui.dates}
                 </div>
-                <div style={{ fontSize: 15, fontWeight: 600, color: datesLabel ? '#111' : '#bbb', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div style={{ fontSize: 15, fontWeight: 600, color: datesLabel ? 'var(--color-text)' : '#bbb', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {datesLabel ?? `${ui.checkin} – ${ui.checkout}`}
                 </div>
                 {nightsLabel && (
-                  <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 2 }}>{nightsLabel}</div>
+                  <div style={{ fontSize: 12, color: 'var(--color-text-muted)', marginTop: 2 }}>{nightsLabel}</div>
                 )}
               </div>
               {/* Chevron */}
@@ -539,14 +539,14 @@ export default function HomeSearch({ locale }: { locale: string }) {
               style={{
                 display: 'flex', alignItems: 'center', gap: 14,
                 padding: '16px 18px',
-                border: `1.5px solid ${panel === 'guests' ? '#1E73BE' : '#e5e7eb'}`,
+                border: `1.5px solid ${panel === 'guests' ? 'var(--color-primary)' : 'var(--color-border)'}`,
                 borderRadius: 16,
-                background: panel === 'guests' ? '#f0f7ff' : '#fff',
+                background: panel === 'guests' ? 'var(--color-primary-soft)' : 'var(--color-bg)',
                 cursor: 'pointer', textAlign: 'left', width: '100%',
                 boxSizing: 'border-box',
                 boxShadow: '0 1px 6px rgba(0,0,0,0.06)',
               }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="1.8" style={{ flexShrink: 0 }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="1.8" style={{ flexShrink: 0 }}>
                 <circle cx="12" cy="7" r="4"/>
                 <path d="M5.5 21c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" strokeLinecap="round"/>
               </svg>
@@ -554,10 +554,10 @@ export default function HomeSearch({ locale }: { locale: string }) {
                 <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>
                   {ui.guests}
                 </div>
-                <div style={{ fontSize: 15, fontWeight: 600, color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {guestsLabel ?? `${numAdult} ${locale === 'it' ? 'adulti' : 'adults'}`}
                 </div>
-                {agesLabel ? <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 2 }}>età: {agesLabel}</div> : null}
+                {agesLabel ? <div style={{ fontSize: 12, color: 'var(--color-text-muted)', marginTop: 2 }}>età: {agesLabel}</div> : null}
               </div>
               {/* Chevron */}
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bbb" strokeWidth="2" style={{ flexShrink: 0 }}>
@@ -572,7 +572,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
                 width: '100%', boxSizing: 'border-box',
                 padding: '16px',
                 borderRadius: 50,
-                background: '#FCAF1A', color: '#fff', border: 'none',
+                background: 'var(--color-warning)', color: 'var(--color-on-dark)', border: 'none',
                 fontWeight: 700, fontSize: 16, cursor: 'pointer',
                 boxShadow: '0 4px 14px rgba(252,175,26,0.35)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
@@ -589,7 +589,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
         {isDesk && panel === 'dates' && (
           <div style={{
             position: 'absolute', top: 'calc(100% + 8px)', left: 0, width: 580,
-            background: '#fff', borderRadius: 16,
+            background: 'var(--color-bg)', borderRadius: 16,
             boxShadow: '0 8px 32px rgba(0,0,0,0.15)', zIndex: 200, overflow: 'hidden',
           }}>
             <CalContent />
@@ -598,7 +598,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
         {isDesk && panel === 'guests' && (
           <div style={{
             position: 'absolute', top: 'calc(100% + 8px)', right: 0, width: 300,
-            background: '#fff', borderRadius: 16,
+            background: 'var(--color-bg)', borderRadius: 16,
             boxShadow: '0 8px 32px rgba(0,0,0,0.15)', zIndex: 200, overflow: 'hidden',
           }}>
             <GuestsContent />
@@ -615,7 +615,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
           />
           <div style={{
             position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 201,
-            background: '#fff', borderRadius: '20px 20px 0 0',
+            background: 'var(--color-bg)', borderRadius: '20px 20px 0 0',
             boxShadow: '0 -4px 24px rgba(0,0,0,0.15)',
             maxHeight: '88vh', overflowY: 'auto',
           }}>
@@ -627,7 +627,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
 
       {/* ── Slider residenze ───────────────────────────────────────────────── */}
       <div style={{ marginTop: '2rem' }}>
-        <h2 style={{ fontSize: isDesk ? '1.4rem' : '1.15rem', fontWeight: 700, margin: '0 0 0.75rem 16px', color: '#111' }}>
+        <h2 style={{ fontSize: isDesk ? '1.4rem' : '1.15rem', fontWeight: 700, margin: '0 0 0.75rem 16px', color: 'var(--color-text)' }}>
           {ui.inspire}
         </h2>
         <div style={{ position: 'relative' }}
@@ -635,7 +635,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
           onMouseLeave={() => isDesk && setShowResArr(false)}>
           {isDesk && showResArr && (
             <button onClick={() => { residenzeRef.current?.scrollBy({ left: -220, behavior: 'smooth' }); }}
-              style={{ position: 'absolute', left: 2, top: '40%', transform: 'translateY(-50%)', zIndex: 10, width: 36, height: 36, borderRadius: '50%', border: '1px solid #ddd', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
+              style={{ position: 'absolute', left: 2, top: '40%', transform: 'translateY(-50%)', zIndex: 10, width: 36, height: 36, borderRadius: '50%', border: '1px solid #ddd', background: 'var(--color-bg)', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
           )}
           <div ref={residenzeRef} style={{
             display: 'flex', gap: 10, overflowX: 'auto',
@@ -652,7 +652,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
                   onClick={() => router.push(`/${locale}/residenze/${room.slug}`)}
                   style={{
                     flexShrink: 0, width: cardW, scrollSnapAlign: 'start',
-                    border: 'none', padding: 0, background: '#e5e7eb',
+                    border: 'none', padding: 0, background: 'var(--color-border)',
                     cursor: 'pointer', borderRadius: 12, overflow: 'hidden',
                     boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
                     position: 'relative', aspectRatio: '2/3', display: 'block',
@@ -662,14 +662,14 @@ export default function HomeSearch({ locale }: { locale: string }) {
                     <img src={src} alt={room.name} loading="lazy"
                       style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                   ) : (
-                    <div style={{ width: '100%', height: '100%', background: '#e5e7eb' }} />
+                    <div style={{ width: '100%', height: '100%', background: 'var(--color-border)' }} />
                   )}
                   <div style={{
                     position: 'absolute', bottom: 0, left: 0, right: 0, height: '50%',
                     background: 'linear-gradient(to top, rgba(0,0,0,0.70) 0%, transparent 100%)',
                   }} />
                   <div style={{ position: 'absolute', bottom: 8, left: 8, right: 8, textAlign: 'left' }}>
-                    <div style={{ color: '#fff', fontSize: isDesk ? 14 : 12, fontWeight: 700, lineHeight: 1.2 }}>{room.name}</div>
+                    <div style={{ color: 'var(--color-on-dark)', fontSize: isDesk ? 14 : 12, fontWeight: 700, lineHeight: 1.2 }}>{room.name}</div>
                     <div style={{ color: 'rgba(255,255,255,0.82)', fontSize: 10, marginTop: 2 }}>
                       max {room.maxPeople} · {room.sqm} m²
                     </div>
@@ -680,7 +680,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
           </div>
           {isDesk && showResArr && (
             <button onClick={() => { residenzeRef.current?.scrollBy({ left: 220, behavior: 'smooth' }); }}
-              style={{ position: 'absolute', right: 2, top: '40%', transform: 'translateY(-50%)', zIndex: 10, width: 36, height: 36, borderRadius: '50%', border: '1px solid #ddd', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
+              style={{ position: 'absolute', right: 2, top: '40%', transform: 'translateY(-50%)', zIndex: 10, width: 36, height: 36, borderRadius: '50%', border: '1px solid #ddd', background: 'var(--color-bg)', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
           )}
         </div>
       </div>
@@ -688,7 +688,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
       {/* ── Slider dintorni — solo desktop ─────────────────────────────────── */}
       {isDesk && dintorniPhotos.length > 0 && (
         <div style={{ marginTop: '1.5rem', paddingBottom: 32 }}>
-          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, margin: '0 0 0.75rem 16px', color: '#111' }}>
+          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, margin: '0 0 0.75rem 16px', color: 'var(--color-text)' }}>
             {ui.dintorni}
           </h2>
           <div style={{ position: 'relative' }}
@@ -696,7 +696,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
             onMouseLeave={() => setShowDintArr(false)}>
             {showDintArr && (
               <button onClick={() => { dintorniRef.current?.scrollBy({ left: -200, behavior: 'smooth' }); }}
-                style={{ position: 'absolute', left: 2, top: '40%', transform: 'translateY(-50%)', zIndex: 10, width: 36, height: 36, borderRadius: '50%', border: '1px solid #ddd', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
+                style={{ position: 'absolute', left: 2, top: '40%', transform: 'translateY(-50%)', zIndex: 10, width: 36, height: 36, borderRadius: '50%', border: '1px solid #ddd', background: 'var(--color-bg)', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
             )}
             <div ref={dintorniRef} style={{
               display: 'flex', gap: 10, overflowX: 'auto', padding: '4px 16px 20px',
@@ -705,14 +705,14 @@ export default function HomeSearch({ locale }: { locale: string }) {
             }}>
               {dintorniPhotos.map((src, idx) => (
                 <button key={idx} onClick={() => setLightbox(src)}
-                  style={{ flexShrink: 0, width: 240, aspectRatio: '2/3', scrollSnapAlign: 'start', border: 'none', padding: 0, background: '#e5e7eb', cursor: 'pointer', borderRadius: 14, overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+                  style={{ flexShrink: 0, width: 240, aspectRatio: '2/3', scrollSnapAlign: 'start', border: 'none', padding: 0, background: 'var(--color-border)', cursor: 'pointer', borderRadius: 14, overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
                   <img src={src} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 </button>
               ))}
             </div>
             {showDintArr && (
               <button onClick={() => { dintorniRef.current?.scrollBy({ left: 200, behavior: 'smooth' }); }}
-                style={{ position: 'absolute', right: 2, top: '40%', transform: 'translateY(-50%)', zIndex: 10, width: 36, height: 36, borderRadius: '50%', border: '1px solid #ddd', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
+                style={{ position: 'absolute', right: 2, top: '40%', transform: 'translateY(-50%)', zIndex: 10, width: 36, height: 36, borderRadius: '50%', border: '1px solid #ddd', background: 'var(--color-bg)', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
             )}
           </div>
           {lightbox && (
