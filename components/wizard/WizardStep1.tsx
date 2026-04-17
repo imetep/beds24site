@@ -292,7 +292,7 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
         </div>
       )}
 
-      <h2 className="fw-bold mb-3" style={{ color: '#1E73BE', fontSize: 21 }}>
+      <h2 className="fw-bold mb-3" style={{ color: 'var(--color-primary)', fontSize: 21 }}>
         {isSingleRoom ? t.titleSingle : t.titleMulti}
       </h2>
 
@@ -412,7 +412,7 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
               <button
                 onClick={resetAllFilters}
                 className="btn fw-semibold text-decoration-underline"
-                style={{ color: '#1E73BE', fontSize: 14 }}
+                style={{ color: 'var(--color-primary)', fontSize: 14 }}
               >
                 {t.filtriClear}
               </button>
@@ -433,11 +433,11 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                     { key: 'sizeSmall' as FilterType, label: t.sortSmallest },
                   ]).map(({ key, label }) => (
                     <button key={key} onClick={() => setActiveFilter(key)} style={radioRowStyle}>
-                      <span style={{ fontSize: 15, color: activeFilter === key ? '#1E73BE' : '#111', fontWeight: activeFilter === key ? 600 : 400 }}>{label}</span>
+                      <span style={{ fontSize: 15, color: activeFilter === key ? 'var(--color-primary)' : '#111', fontWeight: activeFilter === key ? 600 : 400 }}>{label}</span>
                       <div style={{
                         width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
-                        border: `2px solid ${activeFilter === key ? '#1E73BE' : '#ccc'}`,
-                        background: activeFilter === key ? '#1E73BE' : '#fff',
+                        border: `2px solid ${activeFilter === key ? 'var(--color-primary)' : '#ccc'}`,
+                        background: activeFilter === key ? 'var(--color-primary)' : '#fff',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                       }}>
                         {activeFilter === key && <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#fff' }} />}
@@ -596,7 +596,7 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
 
             return (
               <div key={room.roomId} style={{
-                border: `2px solid ${isRoomPicked ? '#1E73BE' : '#e5e7eb'}`,
+                border: `2px solid ${isRoomPicked ? 'var(--color-primary)' : '#e5e7eb'}`,
                 borderRadius: 16, overflow: 'hidden', background: '#fff',
                 boxShadow: isRoomPicked ? '0 0 0 3px rgba(30,115,190,0.12)' : '0 1px 4px rgba(0,0,0,0.06)',
                 transition: 'all 0.15s',
@@ -626,7 +626,7 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
 
                   {/* COL 2: Nome + dettagli */}
                   <div className="s5-card-details" style={{ flex: 1, minWidth: 0, padding: '16px', borderBottom: '1px solid #f0f0f0' }}>
-                    <div style={{ fontSize: 18, fontWeight: 700, color: '#1E73BE', marginBottom: 8 }}>{room.name}</div>
+                    <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--color-primary)', marginBottom: 8 }}>{room.name}</div>
                     {isSingleRoom && <span style={{ fontSize: 11, color: '#888', background: '#f0f0f0', borderRadius: 6, padding: '2px 8px', marginBottom: 8, display: 'inline-block' }}>{room.type}</span>}
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                       <span style={chip}>🛏️ {room.bedrooms} {t.camere}</span>
@@ -671,13 +671,13 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                                 <div style={{ flex: 1, marginRight: 10, minWidth: 0 }}>
                                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                                     <span style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>{name}</span>
-                                    {isPicked && <span style={{ fontSize: 11, color: '#1E73BE', fontWeight: 700 }}>{t.selezionata}</span>}
+                                    {isPicked && <span style={{ fontSize: 11, color: 'var(--color-primary)', fontWeight: 700 }}>{t.selezionata}</span>}
                                   </div>
                                   {desc && <p style={{ margin: '2px 0 0', fontSize: 11, color: '#666', lineHeight: 1.3 }}>{desc}</p>}
                                   {!avail && <span style={{ fontSize: 11, color: '#e74c3c', display: 'block', marginTop: 2 }}>{t.nonDisp}</span>}
                                 </div>
                                 <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                                  <div style={{ fontSize: 19, fontWeight: 800, color: '#1E73BE', lineHeight: 1 }}>{fmt(offer.price + touristTax)}</div>
+                                  <div style={{ fontSize: 19, fontWeight: 800, color: 'var(--color-primary)', lineHeight: 1 }}>{fmt(offer.price + touristTax)}</div>
                                   {perNight > 0 && <div style={{ fontSize: 11, color: '#999', marginTop: 1 }}>{fmt(perNight)}{t.perNight}</div>}
                                   <div style={{ fontSize: 10, color: '#bbb', marginTop: 1 }}>{t.total}</div>
                                 </div>
@@ -688,7 +688,7 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                           {isDesk && ro.offers.length > 1 && !isRoomPicked && (
                             <button
                               onClick={() => setExpandedRoomId(expandedRoomId === room.roomId ? null : room.roomId)}
-                              style={{ width: '100%', background: 'none', border: 'none', color: '#1E73BE', fontSize: 12, fontWeight: 600, cursor: 'pointer', padding: '4px 0', minHeight: 'var(--touch-target)', textAlign: 'center' }}>
+                              style={{ width: '100%', background: 'none', border: 'none', color: 'var(--color-primary)', fontSize: 12, fontWeight: 600, cursor: 'pointer', padding: '4px 0', minHeight: 'var(--touch-target)', textAlign: 'center' }}>
                               {isExpanded
                                 ? (locale === 'it' ? 'Meno tariffe ▴' : locale === 'de' ? 'Weniger ▴' : locale === 'pl' ? 'Mniej ▴' : 'Less ▴')
                                 : (locale === 'it' ? `Vedi tutte le tariffe (${ro.offers.length}) ▾` : locale === 'de' ? `Alle Tarife (${ro.offers.length}) ▾` : locale === 'pl' ? `Wszystkie taryfy (${ro.offers.length}) ▾` : `View all rates (${ro.offers.length}) ▾`)}
@@ -711,7 +711,7 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
       <button
         onClick={onBack ?? prevStep}
         className="btn d-block"
-        style={{ color: '#1E73BE', fontSize: 14, padding: '12px 0 80px' }}
+        style={{ color: 'var(--color-primary)', fontSize: 14, padding: '12px 0 80px' }}
       >
         {t.indietro}
       </button>
@@ -764,7 +764,7 @@ const chipActiveStyle: React.CSSProperties = {
   display: 'flex', alignItems: 'center', gap: 5,
   padding: '6px 11px', minHeight: 'var(--touch-target)', borderRadius: 20, flexShrink: 0,
   border: '1.5px solid #1E73BE', background: '#EEF5FC',
-  color: '#1E73BE', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+  color: 'var(--color-primary)', fontSize: 12, fontWeight: 600, cursor: 'pointer',
 };
 const sectionStyle: React.CSSProperties = {
   paddingTop: 14, paddingBottom: 10,
@@ -784,9 +784,9 @@ const dividerStyle: React.CSSProperties = {
 const pillStyle = (active: boolean): React.CSSProperties => ({
   padding: '7px 14px', minHeight: 'var(--touch-target)', borderRadius: 8,
   fontSize: 13, cursor: 'pointer', fontWeight: active ? 600 : 400,
-  border: `1.5px solid ${active ? '#1E73BE' : '#e5e7eb'}`,
+  border: `1.5px solid ${active ? 'var(--color-primary)' : '#e5e7eb'}`,
   background: active ? '#EEF5FC' : '#f5f5f5',
-  color: active ? '#1E73BE' : '#555',
+  color: active ? 'var(--color-primary)' : '#555',
 });
 
 const chip: React.CSSProperties = {
@@ -794,5 +794,5 @@ const chip: React.CSSProperties = {
 };
 const retryBtn: React.CSSProperties = {
   padding: '8px 20px', borderRadius: 8, border: '1px solid #1E73BE',
-  background: '#fff', color: '#1E73BE', fontSize: 14, cursor: 'pointer',
+  background: '#fff', color: 'var(--color-primary)', fontSize: 14, cursor: 'pointer',
 };
