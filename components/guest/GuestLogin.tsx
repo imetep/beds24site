@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 const C = {
-  blue:        '#1E73BE',
+  blue:        'var(--color-primary)',
   blueLight:   '#EEF5FC',
   orange:      '#FCAF1A',
   text:        '#111111',
@@ -184,4 +184,4 @@ const card: React.CSSProperties = { borderRadius: 20, padding: '2.5rem', width: 
 const labelStyle: React.CSSProperties = { display: 'block', fontSize: '0.82rem', fontWeight: 700, color: '#555555', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.04em' };
 const inputStyle: React.CSSProperties = { width: '100%', padding: '0.7rem 0.95rem', minHeight: 'var(--touch-target)', border: '1.5px solid #e5e7eb', borderRadius: 9, fontSize: '0.95rem', color: '#111', outline: 'none', boxSizing: 'border-box' };
 const selectStyle: React.CSSProperties = { width: '100%', padding: '0.7rem 0.5rem', minHeight: 'var(--touch-target)', border: '1.5px solid #e5e7eb', borderRadius: 9, fontSize: '0.92rem', color: '#111', outline: 'none', background: '#fff', cursor: 'pointer', appearance: 'auto' };
-const supportLink: React.CSSProperties = { color: '#1E73BE', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 600 };
+const supportLink: React.CSSProperties = { color: 'var(--color-primary)', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 600 };
