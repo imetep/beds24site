@@ -24,7 +24,6 @@ type UIShape = {
   sectionTitle: string
   configNote: string
   nonOscurabile: string
-  optional: string
   configurabile: string
   or: string
   scroll: string
