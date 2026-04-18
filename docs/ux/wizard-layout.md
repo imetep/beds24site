@@ -1,9 +1,11 @@
 # Wizard Layout Spec — ratifica direzione
 
 **Data:** 2026-04-18
-**Stato:** 🟢 ratificato 2026-04-18 — pronto per implementazione
+**Stato:** 🟠 parzialmente rivisto 2026-04-18 — vedi §14 (rollback D2/D3/D4)
 **Riferimento:** [`docs/ux-audit.md §4`](../ux-audit.md)
 **Scope:** layout **contenitore** dei 2 wizard multi-step dell'app. Non tocca il contenuto dei form.
+
+> ⚠️ **Leggere prima §14.** La proposta originale "sidebar esterna sempre visibile" è stata implementata e poi ritirata nella stessa giornata dopo aver confrontato la proposta con il codice reale degli step. Lo Stepper resta. Le decisioni D2/D3/D4 sono state revisate. Il resto del documento è preservato come storico del ragionamento.
 
 ## Principio guida (decisione utente, 2026-04-18)
 
@@ -300,7 +302,7 @@ Nessuna API change; niente modifiche al wizard-store; nessun rischio di regressi
 
 ---
 
-## 13. Prossimo passo
+## 13. Prossimo passo (storico — pre-revisione §14)
 
 Spec ratificato. Implementazione:
 1. Primitivo `Stepper` (`components/ui/Stepper.tsx`) — applica D1.
@@ -308,3 +310,65 @@ Spec ratificato. Implementazione:
 3. Refactor `Wizard.tsx` con il layout unificato — applica D3.
 4. Sticky bar mobile (`components/wizard/WizardMobileBar.tsx`) — applica D4.
 5. Replica su self-checkin wizard.
+
+---
+
+## 14. Revisione post-implementazione (2026-04-18)
+
+### 14.1 Cosa è successo
+
+Dopo aver implementato D1–D4 e pushato su Vercel, lo screenshot del risultato
+su `/prenota?from=room&...` step 2 ha mostrato **tre colonne** sul desktop:
+
+```
+[ Form conferma+paga ]   [ Sidebar interna step2 ]   [ Sidebar esterna mia ]
+```
+
+Disastro visivo + **duplicazione di informazioni** (date, ospiti, prezzo)
+tra sidebar interna e sidebar esterna.
+
+### 14.2 Causa radice: spec scritto senza aver letto gli step
+
+Quando ho scritto il documento nei §1–§13, avevo letto solo:
+- `Wizard.tsx` (container, 177 righe)
+- `WizardSidebar.tsx` (vecchia sidebar, 282 righe)
+
+Non avevo letto `WizardStep2.tsx` (693) né `WizardStep3.tsx` (711). Ho dedotto
+dalla sola vista container che "il layout cambia pelle tra step 1 e 2/3" fosse
+un problema di container esterno. La verità, leggendo gli step, è diversa:
+
+| Step | Struttura reale | Implica |
+|---|---|---|
+| 1 | Lista card di scelta + filtri, pagina full-width | Niente sidebar: non ci sono dati da riepilogare finché l'utente non sceglie |
+| 2 | **Layout 2-col autonomo**: form 560px + sidebar interna 380px. La sidebar interna contiene: foto, banner "consumi energetici", **voucher input attivo**, date+Modifica, ospiti+Modifica, breakdown prezzo, **stepper extras (lettino +/–)**, tassa soggiorno, deposito cauzionale, politica cancellazione. | Una sidebar esterna aggiunta è **duplicazione**: non può replicare il contenuto interattivo (voucher, extras) e duplica le info statiche |
+| 3 | Single-column 640px con riepilogo finale + CTA pagamento (Stripe/PayPal) | Sidebar a fianco = rumore, lo step ha già tutto quello che serve |
+
+### 14.3 Decisioni rivedute
+
+| ID | Proposta originale | Scelta post-revisione |
+|---|---|---|
+| D1 | Stepper con label sempre visibili | ✅ **Confermata**, implementata, funziona. |
+| D2 | Sidebar esterna = solo summary, zero marketing | ❌ **Ritirata.** Nessuna sidebar esterna. Step 2 gestisce la sua, step 1/3 non ne hanno bisogno. Il primitivo `BookingSummary` resta creato ma inutilizzato nel wizard — verrà riusato in `/guest/portal` quando faremo refactor del portale guest. |
+| D3 | Container 720 + 320 = 1072 desktop | ❌ **Ritirata.** `.wizard-container` usa `--container-lg` (1200) per lasciare respiro a step 2; step 1 e step 3 gestiscono il loro `max-width` interno. |
+| D4 | Sticky bar mobile con prezzo totale + CTA | ❌ **Non implementata, rimandata.** Prima di aggiungere una bar sticky mobile bisogna capire se gli step mobile attuali hanno davvero bisogno (memoria utente: "da mobile sono abbastanza chiari"). Valutare in una revisione mobile dedicata. |
+
+### 14.4 Cosa resta dal lavoro fatto
+
+- ✅ **Stepper** primitivo creato (`components/ui/Stepper.tsx`) + CSS + i18n 4 lingue. Usato.
+- ✅ **13 design tokens** aggiunti a `globals.css` (colori semantici, shadow, line-height, container, z-index). Usati e riusabili.
+- 🟡 **BookingSummary** primitivo creato (`components/ui/BookingSummary.tsx`) + wrapper `WizardBookingSummary.tsx`. **Non usato** nel wizard. Pronti per riuso in `/guest/portal`.
+- ✅ **Audit UX** (`docs/ux-audit.md`) valido — nessuna revisione richiesta a quel livello.
+- ✅ **Principio guida** ("perdere 2 prenotazioni < deludere 1 ospite") è esplicito nel repo e continua a guidare le scelte.
+
+### 14.5 Lezione per i prossimi spec
+
+> **Non scrivere uno spec di layout senza aver letto integralmente i componenti
+> contenuti dentro quel layout.** Il container non è un contenitore vuoto: è
+> un contratto col contenuto. Se il contenuto ha già un layout sofisticato,
+> il container deve assecondarlo, non sovrapporsi.
+
+### 14.6 Prossimo passo (aggiornato)
+
+1. **Validare su Vercel** che dopo il rollback il layout sia tornato pulito (Stepper in cima, step interni come prima).
+2. **Non procedere** con refactor ulteriori dei wizard finché non c'è un problema UX specifico, misurabile, segnalato dall'utente o dagli analytics.
+3. **Prossimo fronte consigliato**: roadmap UX Step 4 (pilot `GuestLogin` a primitivi) oppure Step 6 (rollout CSS inline → token per pagina, partendo da una pagina semplice).
