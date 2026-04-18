@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
 import { getTranslations } from '@/lib/i18n';
 import Stepper from '@/components/ui/Stepper';
+import WizardSidebar from './WizardSidebar';
 import WizardStep1 from './WizardStep1';
 import WizardStep2 from './WizardStep2';
 import WizardStep3 from './WizardStep3';
@@ -13,6 +14,14 @@ import type { Locale } from '@/config/i18n';
 interface Props {
   translations: any;
   locale: string;
+}
+
+function WizardSidebarWrapper({ locale, logicalStep }: { locale: string; logicalStep: number }) {
+  const { selectedOfferId, nextStep } = useWizardStore();
+  if (logicalStep === 1) {
+    return <WizardSidebar locale={locale} step={5} onContinua={nextStep} canContinua={!!selectedOfferId} />;
+  }
+  return <WizardSidebar locale={locale} step={5} />;
 }
 
 export default function Wizard({ translations: t, locale }: Props) {
@@ -24,10 +33,12 @@ export default function Wizard({ translations: t, locale }: Props) {
     setPendingBooking,
   } = useWizardStore();
 
-  const [ready, setReady] = useState(false);
+  const [isDesk, setIsDesk]     = useState(false);
+  const [ready,  setReady]      = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const fromHome    = searchParams.get('from') === 'home';
   const fromRoom    = searchParams.get('from') === 'room';
   const roomIdUrl   = Number(searchParams.get('roomId') ?? '0') || null;
   const checkInUrl  = searchParams.get('checkIn') ?? '';
@@ -41,20 +52,34 @@ export default function Wizard({ translations: t, locale }: Props) {
 
   const isGuestLink = !!(fromRoom && roomIdUrl && checkInUrl && checkOutUrl);
 
+  useEffect(() => {
+    const check = () => setIsDesk(window.innerWidth >= 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
   // ── Gestione abbandono Stripe ──────────────────────────────────────────────
   useEffect(() => {
     if (cancelled !== '1' || !cancelledBookId) return;
 
     console.log('[Wizard] Stripe cancelled → cancello booking:', cancelledBookId);
 
+    // Cancella la prenotazione pendente su Beds24
     fetch('/api/bookings/cancel', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ bookingId: Number(cancelledBookId) }),
     }).catch(e => console.warn('[Wizard] cancel fallita (ignoro):', e));
 
+    // Pulisci il pendingBookId dallo store (per sicurezza)
     setPendingBooking(null, null);
+
+    // Pulisci anche sessionStorage se presente
     try { sessionStorage.removeItem('stripe_pending'); } catch {}
+
+    // Rimuovi i parametri dall'URL senza ricaricare la pagina
+    // così l'utente vede /prenota pulita e può ricominciare
     window.history.replaceState({}, '', `/${locale}/prenota`);
 
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -109,6 +134,9 @@ export default function Wizard({ translations: t, locale }: Props) {
     ? Math.max(2, Math.min(currentStep, 3))
     : Math.min(currentStep, 3);
 
+  const showSidebar = logicalStep === 1;
+  const fullWidth   = logicalStep >= 2;
+
   // ── Stepper labels (i18n) ─────────────────────────────────────────────────
   const tr = getTranslations(locale as Locale);
   const stepperT = tr.components.wizardStepper;
@@ -117,32 +145,26 @@ export default function Wizard({ translations: t, locale }: Props) {
     { label: stepperT.stepOspite },
     { label: stepperT.stepPaga },
   ];
-
-  // Click su step precedente = torna indietro (solo se l'utente può davvero
-  // tornarci: se arriva da link ospite, non è mai stato allo step 1).
+  // Click su step precedente = torna indietro, solo se l'utente è arrivato
+  // dal flusso completo (non da link ospite che salta step 1).
   const canGoBack = !fromRoom && !isGuestLink;
 
   if (isGuestLink && !ready) {
     return (
-      <div className="wizard-loading">
-        <div className="wizard-loading-spinner" />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '40vh', gap: 12, color: '#9ca3af', fontSize: 15 }}>
+        <div style={{ width: 22, height: 22, border: '2px solid #eee', borderTop: '2px solid var(--color-primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
         Caricamento...
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
 
-  // NOTA architetturale (post-rollback 2026-04-18):
-  // Nessuna sidebar esterna. Ogni step gestisce il proprio layout interno:
-  //  - Step 1 (WizardStep1): lista card a full-width del container
-  //  - Step 2 (WizardStep2): ha già un suo layout 2-col autonomo (form + sidebar
-  //    interna con voucher/extras interattivi, info critiche come deposito e
-  //    cancellazione). Una sidebar esterna qui duplicherebbe e confonderebbe.
-  //  - Step 3 (WizardStep3): single-column con riepilogo finale + CTA pagamento.
-  // Lo Stepper in cima è l'unico elemento cross-step introdotto da questo file.
-  // Vedi docs/ux/wizard-layout.md §14 per il razionale.
-
   return (
-    <div className="wizard-container">
+    <div style={{
+      maxWidth: 1100,
+      margin: '0 auto',
+      padding: isDesk ? '1.5rem 24px 3rem' : '1.25rem 16px 1rem',
+    }}>
       <Stepper
         steps={steps}
         current={logicalStep}
@@ -150,9 +172,27 @@ export default function Wizard({ translations: t, locale }: Props) {
         ariaLabel={stepperT.ariaLabel}
       />
 
-      {logicalStep === 1 && <WizardStep1 locale={locale} onBack={goBackHome} />}
-      {logicalStep === 2 && <WizardStep2 locale={locale} />}
-      {logicalStep === 3 && <WizardStep3 locale={locale} />}
+      <div style={{ display: 'flex', gap: 32 }}>
+
+        <div style={{ flex: 1, minWidth: 0, maxWidth: fullWidth ? 'none' : 680 }}>
+          {logicalStep === 1 && <WizardStep1 locale={locale} onBack={goBackHome} />}
+          {logicalStep === 2 && <WizardStep2 locale={locale} />}
+          {logicalStep === 3 && <WizardStep3 locale={locale} />}
+        </div>
+
+        {showSidebar && (
+          <div className="wizard-sidebar-wrapper">
+            <WizardSidebarWrapper locale={locale} logicalStep={logicalStep} />
+          </div>
+        )}
+      </div>
+
+      <style>{`
+        .wizard-sidebar-wrapper { display: none; }
+        @media (min-width: 768px) {
+          .wizard-sidebar-wrapper { display: block; }
+        }
+      `}</style>
     </div>
   );
 }
