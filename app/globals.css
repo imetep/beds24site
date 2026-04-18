@@ -420,7 +420,12 @@ body {
   margin-top: var(--space-md);
 }
 
-/* ── Wizard layout (applica docs/ux/wizard-layout.md D3 ratificata) ── */
+/* ── Wizard layout ──
+   Container cross-step che ospita lo Stepper + il contenuto del singolo step.
+   Nessuna sidebar esterna (rollback 2026-04-18, vedi docs/ux/wizard-layout.md §14):
+   ogni step gestisce il proprio layout interno. Step 2 ha già un layout 2-col
+   autonomo, step 3 è single-column. Una sidebar esterna duplicherebbe info.
+*/
 .wizard-container {
   max-width: var(--container-lg);
   margin: 0 auto;
@@ -429,41 +434,6 @@ body {
 @media (min-width: 768px) {
   .wizard-container {
     padding: var(--space-lg) var(--space-lg) 3rem;
-  }
-}
-.wizard-row {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-base);
-}
-@media (min-width: 1024px) {
-  .wizard-row {
-    flex-direction: row;
-    gap: var(--space-xl);
-    align-items: flex-start;
-  }
-}
-.wizard-content {
-  flex: 1;
-  min-width: 0;
-  max-width: 100%;
-}
-@media (min-width: 1024px) {
-  .wizard-content {
-    max-width: 720px;
-  }
-}
-.wizard-sidebar {
-  display: none;
-}
-@media (min-width: 1024px) {
-  .wizard-sidebar {
-    display: block;
-    width: 320px;
-    flex-shrink: 0;
-    position: sticky;
-    top: 90px;
-    align-self: flex-start;
   }
 }
 .wizard-loading {
