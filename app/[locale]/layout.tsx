@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: t.meta.home_title,
     description: t.meta.home_description,
-    icons: { icon: '/logo.png' },
+    icons: { icon: '/logo.svg' },
   };
 }
 
