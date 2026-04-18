@@ -408,6 +408,12 @@
       "beach": "A 250 metri dal mare",
       "poolNote": "A 250 metri dal mare la piscina non è necessaria — il mare è a portata di mano"
     },
+    "wizardStepper": {
+      "stepScegli": "Scegli",
+      "stepOspite": "Dati ospite",
+      "stepPaga": "Paga",
+      "ariaLabel": "Avanzamento prenotazione"
+    },
     "bedConfigDisplay": {
       "sectionTitle": "Dove dormirete",
       "configNote": "La configurazione esatta dei letti si sceglie dal portale ospiti dopo la prenotazione.",
