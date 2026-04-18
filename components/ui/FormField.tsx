@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, ReactNode } from 'react';
+import { InputHTMLAttributes, ReactNode, useId } from 'react';
 
 interface BaseProps {
   label?: string;
@@ -24,60 +24,62 @@ interface SelectProps extends BaseProps, Omit<React.SelectHTMLAttributes<HTMLSel
 
 type Props = InputProps | TextareaProps | SelectProps;
 
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: 'var(--text-xs)',
-  fontWeight: 600,
-  color: 'var(--color-text-label)',
-  marginBottom: 'var(--space-xs)',
-};
-
-const fieldStyle = (hasError: boolean): React.CSSProperties => ({
-  width: '100%',
-  padding: '10px 14px',
-  minHeight: 'var(--touch-target)',
-  fontSize: 'var(--text-base)',
-  border: `1.5px solid ${hasError ? '#dc2626' : 'var(--color-border)'}`,
-  borderRadius: 'var(--radius-sm)',
-  outline: 'none',
-  boxSizing: 'border-box',
-  color: 'var(--color-text)',
-  background: '#fff',
-});
-
-const hintStyle: React.CSSProperties = {
-  fontSize: 'var(--text-xs)',
-  color: 'var(--color-text-muted)',
-  margin: '4px 0 0',
-};
-
-const errorStyle: React.CSSProperties = {
-  fontSize: 'var(--text-xs)',
-  color: '#dc2626',
-  margin: '4px 0 0',
-};
-
 export default function FormField(props: Props) {
-  const { label, error, hint, style, as = 'input' } = props;
+  const { label, error, hint, as = 'input' } = props;
+  const autoId = useId();
+  const id = props.id ?? autoId;
   const hasError = !!error;
-  const fStyle = { ...fieldStyle(hasError), ...style };
+  const hintId = hint && !error ? `${id}-hint` : undefined;
+  const errorId = error ? `${id}-error` : undefined;
+  const describedBy = errorId ?? hintId;
+  const fieldClass = `ui-field-input${hasError ? ' is-error' : ''}`;
+
+  const { label: _l, error: _e, hint: _h, as: _a, ...nativeProps } = props as {
+    [k: string]: unknown;
+  };
+
+  const shared = {
+    ...nativeProps,
+    id,
+    'aria-invalid': hasError || undefined,
+    'aria-describedby': describedBy,
+  };
 
   return (
-    <div style={{ marginBottom: 'var(--space-md)' }}>
-      {label && <label style={labelStyle}>{label}</label>}
+    <div className="ui-field-wrapper">
+      {label && (
+        <label htmlFor={id} className="ui-field-label">
+          {label}
+        </label>
+      )}
       {as === 'input' && (
-        <input {...(props as InputProps)} style={fStyle} />
+        <input
+          {...(shared as InputHTMLAttributes<HTMLInputElement>)}
+          className={fieldClass}
+        />
       )}
       {as === 'textarea' && (
-        <textarea {...(props as TextareaProps)} style={{ ...fStyle, minHeight: 80, resize: 'vertical' }} />
+        <textarea
+          {...(shared as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
+          className={`${fieldClass} ui-field-textarea`}
+        />
       )}
       {as === 'select' && (
-        <select {...(props as SelectProps)} style={fStyle}>
-          {(props as SelectProps).children}
-        </select>
+        <select
+          {...(shared as React.SelectHTMLAttributes<HTMLSelectElement>)}
+          className={fieldClass}
+        />
       )}
-      {!error && hint && <p style={hintStyle}>{hint}</p>}
-      {error && <p style={errorStyle}>{error}</p>}
+      {!error && hint && (
+        <p id={hintId} className="ui-field-hint">
+          {hint}
+        </p>
+      )}
+      {error && (
+        <p id={errorId} className="ui-field-error" role="alert">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
