@@ -1,9 +1,24 @@
 # Wizard Layout Spec — ratifica direzione
 
 **Data:** 2026-04-18
-**Stato:** 🟡 proposta — richiede ratifica utente prima di codare
+**Stato:** 🟢 ratificato 2026-04-18 — pronto per implementazione
 **Riferimento:** [`docs/ux-audit.md §4`](../ux-audit.md)
 **Scope:** layout **contenitore** dei 2 wizard multi-step dell'app. Non tocca il contenuto dei form.
+
+## Principio guida (decisione utente, 2026-04-18)
+
+> **"È meglio perdere 2 prenotazioni che deludere un ospite."**
+
+Il wizard serve a **essere onesti con chi sta prenotando**, non a vendere. Il marketing sta altrove (home, `residenze/[slug]`, `dove-siamo`). Qui dentro: prezzo totale con tasse sempre visibile, zero scarcity, zero upsell, zero distrazioni.
+
+## Decisioni ratificate
+
+| ID | Scelta | Nota |
+|---|---|---|
+| **D1** | Stepper con label sempre visibili (mobile + desktop) | 3 step stanno comodi in una riga anche mobile; nascondere le label è un vezzo di flussi più lunghi |
+| **D2** | Sidebar = solo summary prenotazione. **Zero marketing.** | Ratifica del principio guida sopra |
+| **D3** | Container desktop **720px contenuto + 320px sidebar = 1072** | Formato Booking.com; 720 respira per form 3-colonne; 320 breakdown tasse leggibile |
+| **D4** | Mobile: sticky bar bottom con **prezzo totale + CTA** | Pattern mobile-first consolidato; il prezzo sempre visibile rispetta principio guida |
 
 ---
 
@@ -84,21 +99,21 @@ Tecnicamente: `showSidebar = logicalStep === 1` e `fullWidth = logicalStep >= 2`
 ║  │  ●───○───○    Scegli → Ospite → Paga                │  ║
 ║  └─────────────────────────────────────────────────────┘  ║
 ║                                                            ║
-║  ┌─ Contenuto step ────────┐    ┌─ Summary sidebar ───┐  ║
-║  │                         │    │                     │  ║
-║  │  max-width 680px        │    │  width 280px        │  ║
-║  │  (--container-sm)       │    │  sticky (top: 90px) │  ║
-║  │                         │    │                     │  ║
-║  │  [campi / scelte]       │    │  [date, ospiti,     │  ║
-║  │                         │    │   notti, prezzo     │  ║
-║  │                         │    │   totale con tasse] │  ║
-║  │                         │    │                     │  ║
-║  │  ┌────────────────┐     │    │  ┌──────────────┐  │  ║
-║  │  │  Continua →    │     │    │  │  Continua →  │  │  ║
-║  │  └────────────────┘     │    │  └──────────────┘  │  ║
-║  └─────────────────────────┘    └─────────────────────┘  ║
+║  ┌─ Contenuto step ────────┐    ┌─ Summary sidebar ────┐ ║
+║  │                         │    │                      │ ║
+║  │  max-width 720px        │    │  width 320px         │ ║
+║  │                         │    │  sticky (top: 90px)  │ ║
+║  │                         │    │                      │ ║
+║  │  [campi / scelte]       │    │  [date, ospiti,      │ ║
+║  │                         │    │   notti, prezzo      │ ║
+║  │                         │    │   totale CON TASSE]  │ ║
+║  │                         │    │                      │ ║
+║  │  ┌────────────────┐     │    │  ┌──────────────┐   │ ║
+║  │  │  Continua →    │     │    │  │  Continua →  │   │ ║
+║  │  └────────────────┘     │    │  └──────────────┘   │ ║
+║  └─────────────────────────┘    └──────────────────────┘ ║
 ║                                                            ║
-║  Gap tra colonne: 32px          Totale row: ~1000px       ║
+║  Gap tra colonne: 32px          Totale row: 1072px        ║
 ╚════════════════════════════════════════════════════════════╝
 ```
 
@@ -146,7 +161,7 @@ Tecnicamente: `showSidebar = logicalStep === 1` e `fullWidth = logicalStep >= 2`
   Scegli  Ospite  Paga
 ```
 - **3 stati per pallino**: `completato` (pieno blu + ✓), `corrente` (pieno arancione), `futuro` (vuoto grigio).
-- **Label sotto**: visibile a desktop, visibile solo per lo step corrente su mobile (per risparmiare spazio).
+- **Label sotto ogni pallino**: **sempre visibili** su desktop e mobile (D1 ratificata). I 3 step ("Scegli", "Ospite", "Paga") stanno comodamente in una riga anche a 375px.
 - **Connettori**: linea tra pallini, piena se lo step è completato.
 - **Click su step completato** = torna indietro. Click su step futuro = disabilitato.
 
@@ -186,7 +201,7 @@ type StepperProps = {
 **Le info marketing contestuali di oggi** (mappa Scauri, foto piscina, messaggi brand, spiegazione natura...). Vanno fuori dalla sidebar. Riflessione: il wizard non è il posto per convincere, è il posto per completare. Il convincere è nel dettaglio residenza (pagina `/residenze/[slug]`).
 
 ### 6.3 Dimensioni
-- Width: **280px** (oggi 250px — più stretto della card offerta media → 280 respira).
+- Width: **320px** (D3 ratificata — oggi 250px; 320 permette breakdown tasse leggibile senza ammassare).
 - Margin-left: `--space-xl` (32px) dal contenuto.
 - Sticky top: **90px** (sotto header).
 - Background: `--color-bg-muted`.
@@ -203,12 +218,12 @@ Riusabile nel portale guest (`/guest/portal`) per mostrare lo stesso riepilogo p
 | Breakpoint | Contenuto step | Sidebar | Container totale |
 |---|---|---|---|
 | `<768px` (mobile) | full-width meno padding 16px | sticky bar bottom | `--container-lg` |
-| `768–1023px` (tablet) | 640px | 280px | `--container-md` (1024px) |
-| `≥1024px` (desktop) | `--container-sm` (680px) | 280px | `--container-md` (1024px) |
+| `768–1023px` (tablet) | fluido, no sidebar (sotto la soglia utile) | — | `--container-md` |
+| `≥1024px` (desktop) | 720px | 320px | `--container-lg` (1200px) |
 
 **Padding container**: `--space-lg` desktop, `--space-base` mobile.
 
-**Totale riga desktop**: 680 + 32 gap + 280 = **992px**. Sta dentro `--container-md` (1024px). Comodo anche a 1280×720.
+**Totale riga desktop**: 720 + 32 gap + 320 = **1072px**. Sta dentro `--container-lg` (1200px) con respiro ai lati. Comodo da 1280×720 in su (Booking.com usa lo stesso formato).
 
 ---
 
@@ -245,29 +260,16 @@ Stessa struttura. Differenze:
 
 ---
 
-## 10. Decisioni aperte per ratifica ❓
+## 10. Decisioni ratificate ✅
 
-Prima di codare, servono 4 decisioni. Rispondi con A/B/C per ciascuna.
+Riepilogo chiuso (dettagli in testa a questo doc):
 
-### D1 — Stepper label
-- **A**: Stepper con label visibili desktop, solo corrente su mobile *(proposta §5.1)*.
-- **B**: Solo pallini numerati senza label (più minimal).
-- **C**: Barra di progresso lineare (0–100%) senza pallini.
-
-### D2 — Sidebar: contesto marketing vs summary puro
-- **A**: Sidebar = solo summary prenotazione, niente marketing *(proposta §6.1–6.2)*.
-- **B**: Sidebar = summary in alto + 1 blocco marketing fisso (es. "Prenotazione sicura, cancellazione gratuita entro 48h"). Niente più mappa/foto variabili per step.
-- **C**: Mantieni il contesto marketing per step (status quo), ma dentro a struttura uniforme.
-
-### D3 — Container desktop
-- **A**: Contenuto `--container-sm` (680px) + sidebar 280 = totale 992px *(proposta §7)*.
-- **B**: Contenuto 720px + sidebar 320 = totale 1072px (più respiro, meno compatto).
-- **C**: Mantieni 1100px wide attuale ma aggiungi solo sidebar (scelta "minima invasiva").
-
-### D4 — Mobile summary
-- **A**: Sticky bar bottom con 1 riga + CTA, tap per bottom sheet con breakdown *(proposta §4.3)*.
-- **B**: Card summary accordion in cima allo step (collassata default, espandibile).
-- **C**: Nessun summary mobile dentro lo step — si vede solo allo step "Paga" dove serve davvero.
+| ID | Scelta | Fonte |
+|---|---|---|
+| D1 | Stepper con label sempre visibili, mobile + desktop | best practice UX (flussi corti = label esplicite) |
+| D2 | Sidebar solo summary, zero marketing | preferenza utente + principio "perdere 2 prenotazioni ≪ deludere 1 ospite" |
+| D3 | 720 + 320 = 1072 desktop | formato Booking.com; respira per form 3-col + breakdown tasse leggibile |
+| D4 | Sticky bar bottom con prezzo totale + CTA | pattern mobile-first consolidato; prezzo sempre visibile |
 
 ---
 
@@ -300,9 +302,9 @@ Nessuna API change; niente modifiche al wizard-store; nessun rischio di regressi
 
 ## 13. Prossimo passo
 
-Dopo le 4 risposte D1–D4:
-1. Aggiorno questo doc con le decisioni ratificate (rimuovo alternative, tengo solo la scelta).
-2. Procedo con Step 3 della roadmap UX (primitivi `Stepper` + fix `Button`/`FormField`).
-3. Poi Step 5: refactor layout wizard vero e proprio.
-
-**Nessuna modifica a codice di produzione finché questo doc non è approvato.**
+Spec ratificato. Implementazione:
+1. Primitivo `Stepper` (`components/ui/Stepper.tsx`) — applica D1.
+2. Primitivo `BookingSummary` (`components/booking/BookingSummary.tsx`) — applica D2.
+3. Refactor `Wizard.tsx` con il layout unificato — applica D3.
+4. Sticky bar mobile (`components/wizard/WizardMobileBar.tsx`) — applica D4.
+5. Replica su self-checkin wizard.
