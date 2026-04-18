@@ -267,14 +267,17 @@ function RoomCard({ room, locale, ui }: { room: Room; locale: Locale; ui: UIShap
             borderRadius: '0 0 6px 6px',
           }}
         >
-          + {ui.optional}
+          {ui.configurabile}
         </div>
       )}
 
       {/* Room label */}
       <div
         className="fw-semibold text-uppercase"
-        style={{ fontSize: 11, color: '#888', letterSpacing: '0.05em' }}
+        style={{
+          fontSize: 11, color: '#888', letterSpacing: '0.05em',
+          marginTop: hasSommier || hasConfigurable || hasDivano ? 8 : 0,
+        }}
       >
         {room.label[locale]}
       </div>
