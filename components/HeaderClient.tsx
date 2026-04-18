@@ -69,7 +69,7 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
       <header className="sticky-top bg-white border-bottom">
         <div className="container d-flex align-items-center" style={{ maxWidth: 1200, height: 60 }}>
           <a href={`/${locale}/${localeSlugs.residences[locale]}`} className="d-flex align-items-center text-decoration-none flex-shrink-0">
-            <Image src="/logo.png" alt="LivingApple" height={34} width={130} style={{ objectFit: 'contain' }} priority />
+            <Image src="/logo.svg" alt="LivingApple" height={34} width={130} style={{ objectFit: 'contain' }} priority unoptimized />
           </a>
           <a href={`/${locale}/${localeSlugs.residences[locale]}`} className="ms-auto small text-muted text-decoration-none text-nowrap">
             ← {nav.residences}
@@ -84,7 +84,7 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
       <header className="sticky-top bg-white border-bottom">
         <div className="container d-flex align-items-center gap-3" style={{ maxWidth: 1200, height: 60 }}>
           <a href={`/${locale}`} className="d-flex align-items-center text-decoration-none flex-shrink-0">
-            <Image src="/logo.png" alt="LivingApple" height={34} width={130} style={{ objectFit: 'contain' }} priority />
+            <Image src="/logo.svg" alt="LivingApple" height={34} width={130} style={{ objectFit: 'contain' }} priority unoptimized />
           </a>
 
           {/* Nav desktop */}
