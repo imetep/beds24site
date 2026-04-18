@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
 import { getTranslations } from '@/lib/i18n';
 import Stepper from '@/components/ui/Stepper';
-import WizardBookingSummary from './WizardBookingSummary';
 import WizardStep1 from './WizardStep1';
 import WizardStep2 from './WizardStep2';
 import WizardStep3 from './WizardStep3';
@@ -23,7 +22,6 @@ export default function Wizard({ translations: t, locale }: Props) {
     setNumAdult,
     setSelectedRoomId, setSelectedOfferId, setOffers,
     setPendingBooking,
-    selectedOfferId, nextStep,
   } = useWizardStore();
 
   const [ready, setReady] = useState(false);
@@ -49,20 +47,14 @@ export default function Wizard({ translations: t, locale }: Props) {
 
     console.log('[Wizard] Stripe cancelled → cancello booking:', cancelledBookId);
 
-    // Cancella la prenotazione pendente su Beds24
     fetch('/api/bookings/cancel', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ bookingId: Number(cancelledBookId) }),
     }).catch(e => console.warn('[Wizard] cancel fallita (ignoro):', e));
 
-    // Pulisci il pendingBookId dallo store (per sicurezza)
     setPendingBooking(null, null);
-
-    // Pulisci anche sessionStorage se presente
     try { sessionStorage.removeItem('stripe_pending'); } catch {}
-
-    // Rimuovi i parametri dall'URL senza ricaricare la pagina
     window.history.replaceState({}, '', `/${locale}/prenota`);
 
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -126,12 +118,10 @@ export default function Wizard({ translations: t, locale }: Props) {
     { label: stepperT.stepPaga },
   ];
 
-  // Click su step precedente = torna indietro (solo se già visitato).
-  // Bloccato quando l'utente entra dal link ospite (fromRoom/isGuestLink):
-  // step 1 non è mai stato suo, niente senso permettergli di tornarci.
+  // Click su step precedente = torna indietro (solo se l'utente può davvero
+  // tornarci: se arriva da link ospite, non è mai stato allo step 1).
   const canGoBack = !fromRoom && !isGuestLink;
 
-  // ── Loader iniziale (solo per link ospite che fetcha offerte) ─────────────
   if (isGuestLink && !ready) {
     return (
       <div className="wizard-loading">
@@ -141,10 +131,15 @@ export default function Wizard({ translations: t, locale }: Props) {
     );
   }
 
-  // ── CTA sidebar: solo allo step 1 (scelta offerta), coerente con logica
-  //    attuale (gli step 2 e 3 hanno le loro CTA interne al form).
-  const showSidebarCta     = logicalStep === 1;
-  const sidebarCanContinua = !!selectedOfferId;
+  // NOTA architetturale (post-rollback 2026-04-18):
+  // Nessuna sidebar esterna. Ogni step gestisce il proprio layout interno:
+  //  - Step 1 (WizardStep1): lista card a full-width del container
+  //  - Step 2 (WizardStep2): ha già un suo layout 2-col autonomo (form + sidebar
+  //    interna con voucher/extras interattivi, info critiche come deposito e
+  //    cancellazione). Una sidebar esterna qui duplicherebbe e confonderebbe.
+  //  - Step 3 (WizardStep3): single-column con riepilogo finale + CTA pagamento.
+  // Lo Stepper in cima è l'unico elemento cross-step introdotto da questo file.
+  // Vedi docs/ux/wizard-layout.md §14 per il razionale.
 
   return (
     <div className="wizard-container">
@@ -155,21 +150,9 @@ export default function Wizard({ translations: t, locale }: Props) {
         ariaLabel={stepperT.ariaLabel}
       />
 
-      <div className="wizard-row">
-        <div className="wizard-content">
-          {logicalStep === 1 && <WizardStep1 locale={locale} onBack={goBackHome} />}
-          {logicalStep === 2 && <WizardStep2 locale={locale} />}
-          {logicalStep === 3 && <WizardStep3 locale={locale} />}
-        </div>
-
-        <aside className="wizard-sidebar">
-          <WizardBookingSummary
-            locale={locale}
-            onContinua={showSidebarCta ? nextStep : undefined}
-            canContinua={showSidebarCta ? sidebarCanContinua : undefined}
-          />
-        </aside>
-      </div>
+      {logicalStep === 1 && <WizardStep1 locale={locale} onBack={goBackHome} />}
+      {logicalStep === 2 && <WizardStep2 locale={locale} />}
+      {logicalStep === 3 && <WizardStep3 locale={locale} />}
     </div>
   );
 }
