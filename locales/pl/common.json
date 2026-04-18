@@ -408,6 +408,12 @@
       "beach": "250 metrów od morza",
       "poolNote": "Zaledwie 250m od morza — basen może nie być potrzebny"
     },
+    "wizardStepper": {
+      "stepScegli": "Wybierz",
+      "stepOspite": "Dane gościa",
+      "stepPaga": "Zapłać",
+      "ariaLabel": "Postęp rezerwacji"
+    },
     "bedConfigDisplay": {
       "sectionTitle": "Gdzie będziecie spać",
       "configNote": "Dokładna konfiguracja łóżek jest wybierana w portalu gości po rezerwacji.",
