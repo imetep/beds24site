@@ -419,3 +419,72 @@ body {
 .ui-booking-summary-cta-wrapper {
   margin-top: var(--space-md);
 }
+
+/* ── Wizard layout (applica docs/ux/wizard-layout.md D3 ratificata) ── */
+.wizard-container {
+  max-width: var(--container-lg);
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-base) var(--space-xl);
+}
+@media (min-width: 768px) {
+  .wizard-container {
+    padding: var(--space-lg) var(--space-lg) 3rem;
+  }
+}
+.wizard-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-base);
+}
+@media (min-width: 1024px) {
+  .wizard-row {
+    flex-direction: row;
+    gap: var(--space-xl);
+    align-items: flex-start;
+  }
+}
+.wizard-content {
+  flex: 1;
+  min-width: 0;
+  max-width: 100%;
+}
+@media (min-width: 1024px) {
+  .wizard-content {
+    max-width: 720px;
+  }
+}
+.wizard-sidebar {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .wizard-sidebar {
+    display: block;
+    width: 320px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 90px;
+    align-self: flex-start;
+  }
+}
+.wizard-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  gap: var(--space-md);
+  color: var(--color-text-muted);
+  font-size: var(--text-md);
+}
+.wizard-loading-spinner {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--color-border);
+  border-top: 2px solid var(--color-primary);
+  border-radius: var(--radius-pill);
+  animation: wizard-spin 0.8s linear infinite;
+}
+@keyframes wizard-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
