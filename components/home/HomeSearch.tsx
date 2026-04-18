@@ -282,7 +282,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
                 {ui.cancel}
               </button>
               <button onClick={() => setPanel('none')}
-                style={{ padding: '10px 24px', background: 'var(--color-warning)', color: 'var(--color-on-dark)', border: 'none', borderRadius: 50, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
+                style={{ padding: '10px 24px', background: 'var(--color-cta)', color: 'var(--color-on-dark)', border: 'none', borderRadius: 50, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
                 {ui.done}
               </button>
             </div>
@@ -312,7 +312,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
                 {ui.cancel}
               </button>
               <button onClick={() => setPanel('none')}
-                style={{ padding: '10px 28px', background: 'var(--color-warning)', color: 'var(--color-on-dark)', border: 'none', borderRadius: 50, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
+                style={{ padding: '10px 28px', background: 'var(--color-cta)', color: 'var(--color-on-dark)', border: 'none', borderRadius: 50, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
                 {ui.done}
               </button>
             </div>
@@ -389,7 +389,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
         )}
 
         <button onClick={() => setPanel('none')}
-          style={{ width: '100%', marginTop: 20, padding: '12px', background: 'var(--color-warning)', color: 'var(--color-on-dark)', border: 'none', borderRadius: 50, fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>
+          style={{ width: '100%', marginTop: 20, padding: '12px', background: 'var(--color-cta)', color: 'var(--color-on-dark)', border: 'none', borderRadius: 50, fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>
           {ui.done}
         </button>
       </div>
@@ -484,7 +484,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
             <button
               onClick={handleCerca}
               style={{
-                padding: '0 32px', background: 'var(--color-warning)', color: 'var(--color-on-dark)', border: 'none',
+                padding: '0 32px', background: 'var(--color-cta)', color: 'var(--color-on-dark)', border: 'none',
                 cursor: 'pointer', fontWeight: 700, fontSize: 15,
                 display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap',
               }}>
@@ -572,7 +572,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
                 width: '100%', boxSizing: 'border-box',
                 padding: '16px',
                 borderRadius: 50,
-                background: 'var(--color-warning)', color: 'var(--color-on-dark)', border: 'none',
+                background: 'var(--color-cta)', color: 'var(--color-on-dark)', border: 'none',
                 fontWeight: 700, fontSize: 16, cursor: 'pointer',
                 boxShadow: '0 4px 14px rgba(252,175,26,0.35)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
