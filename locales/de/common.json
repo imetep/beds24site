@@ -408,6 +408,12 @@
       "beach": "250 Meter vom Meer",
       "poolNote": "Nur 250m vom Meer — ein Pool ist vielleicht gar nicht nötig"
     },
+    "wizardStepper": {
+      "stepScegli": "Wählen",
+      "stepOspite": "Gastdaten",
+      "stepPaga": "Bezahlen",
+      "ariaLabel": "Buchungsfortschritt"
+    },
     "bedConfigDisplay": {
       "sectionTitle": "Wo Sie schlafen",
       "configNote": "Die genaue Bettkonfiguration wird nach der Buchung im Gästeportal festgelegt.",
