@@ -325,3 +325,97 @@ body {
 .ui-stepper-item.is-done .ui-stepper-label {
   color: var(--color-text-subtle);
 }
+
+/* ── UI primitive: BookingSummary ── */
+.ui-booking-summary {
+  background: var(--color-bg-muted);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg) var(--space-base);
+  box-sizing: border-box;
+  width: 100%;
+}
+.ui-booking-summary-title {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-md);
+}
+.ui-booking-summary-room {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+.ui-booking-summary-cover {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--color-border);
+  display: block;
+}
+.ui-booking-summary-room-name {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+  line-height: var(--line-height-tight);
+}
+.ui-booking-summary-sep {
+  height: 1px;
+  background: var(--color-border);
+  margin: var(--space-md) 0;
+  border: 0;
+}
+.ui-booking-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 3px 0;
+  gap: var(--space-sm);
+}
+.ui-booking-summary-row-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+.ui-booking-summary-row-value {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  text-align: right;
+}
+.ui-booking-summary-row-value.is-muted {
+  color: var(--color-text-subtle);
+  font-weight: 500;
+}
+.ui-booking-summary-price {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+  margin-top: var(--space-md);
+  gap: var(--space-sm);
+}
+.ui-booking-summary-price-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+.ui-booking-summary-price-total {
+  font-size: var(--text-xl);
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: var(--line-height-tight);
+}
+.ui-booking-summary-price-pernight {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  text-align: right;
+  margin: 2px 0 0;
+}
+.ui-booking-summary-cta-wrapper {
+  margin-top: var(--space-md);
+}
