@@ -31,7 +31,7 @@ export default function Button({
   const variantStyle: React.CSSProperties =
     variant === 'primary'
       ? {
-          background: disabled ? '#e0e0e0' : 'var(--color-warning)',
+          background: disabled ? '#e0e0e0' : 'var(--color-cta)',
           color: disabled ? '#999' : '#fff',
           border: 'none',
         }
