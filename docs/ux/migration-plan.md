@@ -123,10 +123,9 @@ Riferimenti:
 |---|---|---|---|
 | 3a | Cleanup dead code in WizardSidebar.tsx + rename `.step6-*` in WizardStep2.tsx | rimosso `NightsBadge`, rami 1-4 di `renderTopSection` (morti perché sempre chiamati con step=5), MapFrame, URL mappe/foto morti, `loc`. Rename a `.wizard-summary-*`. Zero cambio visivo. | ✅ `35924e3`, `fbcea4d`, `c635b9e` |
 | 3b | Creazione `BookingSidebar.tsx` + cablatura step 1 + eliminazione scaffolding | nuovo componente unificato, eliminazione di 3 file scaffolding (`WizardSidebar`, `WizardBookingSummary`, `components/ui/BookingSummary`), 19 chiavi i18n nuove, classi `.booking-sidebar*` in globals.css, fix icone Bootstrap (no emoji), fix leggibilità typography/date, label "Il tuo alloggio" neutra | ✅ `a4b6047`, `077a0e4`, `ab4de98`, `d3a5967`, `c2373ac`, `4024b67`, `fd03ed5`, `16751de` |
-| 3c | Uniformazione step 2 al DNA master (SidebarContent attuale) | 4 mini-step: 3c.1 BookingSidebar adotta look SidebarContent ✅ `6efbd85`; 3c.2 prop `step` + slot `step2VoucherSlot`/`step2ExtrasSlot` + callback Modifica ✅ `79d0c29`; 3c.3 WizardStep2 sidebar desktop → BookingSidebar con slot voucher/extras, bg grigio rimosso, WizardStep1 titolo nero ✅ `e595d2c`/`c6876de`; 3c.4 cleanup dead code `SidebarContent`/`SideRow`/`ENERGY_BOX`/`DEPOSIT_BOX` + mobile accordion in sessione dedicata futura ⏳ | 🟡 3c.1/3c.2/3c.3 ✅ |
+| 3c | Uniformazione step 2 al DNA master (SidebarContent attuale) | 4 mini-step: 3c.1 BookingSidebar adotta look SidebarContent ✅ `6efbd85`; 3c.2 prop `step` + slot + callback Modifica ✅ `79d0c29`; 3c.3 WizardStep2 sidebar desktop → BookingSidebar, bg grigio rimosso, titolo WizardStep1 nero, width main col 560→680 ✅ `e595d2c`/`c6876de`/`5e3fef2`; 3c.4 slot voucher+extras inline style → classi BEM (+ .section-title-main weight 800 per audit DNA) ✅ `66cb81a`/`fc14d00`/`565c778`/`95ad478`. Mobile accordion resta con SidebarContent legacy fino a sessione mobile dedicata (spec §7) | ✅ 3c.1/3c.2/3c.3/3c.4 |
 
-**Prompt per riprendere Sessione 3c in una nuova conversazione**:
-> *"Procedi con 3c.4 del migration plan"* (cleanup dead code step 2)
+**Sessione 3c completata** ✅ — prossimo step: Sessione 4 (WizardStep1 inline migration, 66 inline residui) oppure sessione mobile dedicata per WizardStep2 (cleanup SidebarContent + accordion mobile).
 
 La spec di dettaglio da seguire è [wizard-sidebar-design.md §6 roadmap](wizard-sidebar-design.md).
 
