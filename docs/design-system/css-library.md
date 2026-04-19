@@ -244,7 +244,39 @@ Tutti i banner/alert hanno triple `bg/border/text` per coerenza cromatica.
 </section>
 ```
 
-### 3.8 Layout ricorrenti
+### 3.8 Wizard container (pattern specifico `/prenota`)
+
+| Classe | Ruolo | Token usati |
+|---|---|---|
+| `.wizard-container` | Shell di pagina: `max-width --container-lg`, padding responsive (più laterale ≥768px) | `--container-lg`, `--space-lg`, `--space-base`, `--space-xl` |
+| `.wizard-container__layout` | Riga flex sidebar + main, `gap --space-xl` | `--space-xl` |
+| `.wizard-container__main` | Colonna main (`flex:1`, `min-width:0`, `max-width --container-sm`) | `--container-sm` |
+| `.wizard-container__main--full` | Modifier: `max-width: none` (usato su step 2/3 dove il main prende tutto) | — |
+| `.wizard-container__sidebar` | Wrapper sidebar: `display:none` mobile, `block` ≥768px | — |
+| `.wizard-loading` | Stato "Caricamento..." centrato verticalmente (min-height 40vh) | `--color-text-muted`, `--text-md`, `--space-md` |
+| `.wizard-loading-spinner` | Spinner circolare 22×22 con rotazione `wizard-spin` 0.8s | `--color-border`, `--color-primary`, `--radius-pill` |
+
+**Esempio:**
+
+```jsx
+<div className="wizard-container">
+  <Stepper ... />
+  <div className="wizard-container__layout">
+    <div className={`wizard-container__main ${fullWidth ? 'wizard-container__main--full' : ''}`}>
+      {stepContent}
+    </div>
+    {showSidebar && (
+      <div className="wizard-container__sidebar">
+        <WizardSidebar ... />
+      </div>
+    )}
+  </div>
+</div>
+```
+
+**Nota scope**: queste classi sono **specifiche del wizard** (un'istanza nel sito). Vivono nella libreria perché la regola è "zero CSS locale", non perché siano pattern generici. Se emergeranno altri container a 2 colonne, si valuterà se generalizzare.
+
+### 3.9 Layout ricorrenti
 
 | Classe | Ruolo |
 |---|---|
@@ -352,6 +384,11 @@ Prima del commit:
 ---
 
 ## 9. Changelog
+
+### 2026-04-19 — Sessione 2 — Wizard.tsx (v1.1)
+- Aggiunte 4 classi BEM + 1 modifier al blocco `.wizard-container` (`__layout`, `__main`, `__main--full`, `__sidebar`), documentate in §3.8.
+- Conferma d'uso di `.wizard-container`, `.wizard-loading`, `.wizard-loading-spinner` (già scritte in Sessione 1, ora usate).
+- Rinumerato §3.8 "Layout ricorrenti" → §3.9 per far spazio al wizard container come §3.8.
 
 ### 2026-04-19 — Sessione 1 (v1.0)
 - Prima release. 34 classi BEM + 16 token nuovi. Cambio `--color-warning` a `#F59E0B`.
