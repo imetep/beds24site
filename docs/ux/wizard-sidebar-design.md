@@ -251,8 +251,8 @@ interface BookingSidebarProps {
 |---|---|---|---|
 | **3c.1** | Aggiornamento `BookingSidebar` visuale a SidebarContent look: banner con titolo+testo, righe dati verticali, totale grande, extra chiavi i18n per banner titles | 🟡 medio | alto (step 1 aggiorna) |
 | **3c.2** | Aggiunta `step` prop + slot `step2VoucherSlot` / `step2ExtrasSlot` + `onEditDates/onEditGuests` al componente. Renderizza blocco voucher/extras quando step=2. Allineamento label i18n (priceSection → "Dettagli del prezzo", ecc.) | 🟢 basso | nullo (step 2 ancora non usa il componente) |
-| **3c.3** | In `Wizard.tsx`: `showSidebar = logicalStep === 1 \|\| logicalStep === 2`. WizardSidebarWrapper passa al BookingSidebar gli slot da WizardStep2 (via ref/callback oppure sollevando state al Wizard.tsx) | 🟡 medio | alto (step 2 adotta BookingSidebar) |
-| **3c.4** | In `WizardStep2.tsx`: elimina `SidebarContent`, sidebar desktop inline, accordion mobile, bg grigio edge-to-edge, helper `SideRow`/`PriceRow`, hardcoded `ENERGY_BOX`/`DEPOSIT_BOX` (spostati in i18n) | 🔴 alto (tocca pagamento) | alto (step 2 finalmente uniformato) |
+| **3c.3** | `WizardStep2` sidebar desktop sostituisce `<SidebarContent />` con `<BookingSidebar step={2} step2VoucherSlot={...} step2ExtrasSlot={...} onEditDates={...} onEditGuests={...} />`. Rimosso bg grigio edge-to-edge. Titolo `WizardStep1` blu→nero (visual audit §1.1). Wizard.tsx **non modificato** — step 2 orchestra la propria sidebar internamente | 🟡 medio | alto (step 2 uniformato) |
+| **3c.4** | Cleanup dead code in `WizardStep2.tsx`: `SidebarContent`, helper `SideRow`, `ENERGY_BOX`/`DEPOSIT_BOX` hardcoded (mobile accordion resta fino a sessione mobile dedicata futura, §7) | 🟢 basso | nullo |
 
 **Ordine**: 3c.1 → 3c.2 → **pausa visiva step 1** → 3c.3 → 3c.4 → **pausa visiva step 2**.
 
@@ -283,6 +283,18 @@ Ogni punto = 1 commit atomico + push → verifica Vercel.
 ---
 
 ## 9. Changelog
+
+### 2026-04-19 v3.1 — ratifica architettura 3c.3
+
+Durante l'esecuzione di 3c.3 è emerso che `WizardStep2.tsx` **già renderizza la propria sidebar** internamente (non la delega a `Wizard.tsx`). Anche voucher e upsell sono logica esclusiva di step 2.
+
+Decisione utente: lasciare che `WizardStep2` continui a orchestrare la propria sidebar — sostituisce `<SidebarContent />` con `<BookingSidebar step={2} step2VoucherSlot={...} step2ExtrasSlot={...} />`, passando gli slot come JSX inline con closure sul suo state locale (`voucherInput`, `voucherApplied`, `voucherError`, `upsellItems`).
+
+Conseguenze:
+- `Wizard.tsx` non cambia (sidebar step 2 **non** viene renderizzata da lì)
+- Nessun React Context / lift-state necessario
+- `BookingSidebar` legge voucher/extras dallo store Zustand (state condiviso) e riceve gli slot UI dal caller
+- Roadmap 3c.3/3c.4 riscritta in §6
 
 ### 2026-04-19 v3 — inversione direzione
 - L'utente ha valutato SidebarContent di WizardStep2 "più bella" di BookingSidebar. Direzione ribaltata: BookingSidebar si allinea a SidebarContent, non il contrario.
