@@ -129,9 +129,10 @@ export default function BookingSidebar({
 
   const handleContinua = onContinua ?? nextStep;
   // Step 1: CTA shown solo se selezionata un'offerta (legacy behaviour).
-  // Step 2: CTA sempre visibile, disabled governata da canContinua.
+  // Step 2: CTA opt-in — visibile solo se il caller passa `onContinua`
+  //         (WizardStep2 tiene la CTA sotto il form, non nella sidebar).
   const showContinua = step === 2
-    ? true
+    ? onContinua !== undefined
     : (canContinua !== undefined ? canContinua : !!selectedOfferId);
   const ctaDisabled = step === 2
     ? canContinua === false
