@@ -505,6 +505,56 @@ body {
   }
 }
 
+/* ── BookingSidebar (Sessione 3b) ─────────────────────────────────────────── */
+/* Box del riepilogo soggiorno nel wizard. Larghezza fissa 380px su desktop,
+   sticky top 90. Usato in step 1 e step 2 con stesso DNA (design doc §2.1). */
+.booking-sidebar {
+  width: 380px;
+  flex-shrink: 0;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-lg);
+  position: sticky;
+  top: 90px;
+  align-self: flex-start;
+  box-sizing: border-box;
+}
+.booking-sidebar__hero {
+  width: 100%;
+  height: 160px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: var(--space-md);
+}
+.booking-sidebar__hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.booking-sidebar__feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin: 0 0 var(--space-md);
+  padding: 0;
+  list-style: none;
+}
+.booking-sidebar__feature-item {
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  line-height: 1.5;
+}
+.booking-sidebar__footer {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+  margin-top: var(--space-md);
+  letter-spacing: 0.03em;
+}
+
 /* ==========================================================================
    Libreria CSS Sessione 1 — pattern estratti dai 17 file del migration plan.
    Convenzione: BEM (`.block`, `.block__element`, `.block--modifier`) per tutti
