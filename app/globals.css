@@ -613,6 +613,11 @@ body {
 .booking-sidebar__edit-btn:hover {
   background: var(--color-primary-soft);
 }
+/* Spacing tra banner e contenuto adiacente nella sidebar */
+.booking-sidebar .banner {
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-md);
+}
 .booking-sidebar__footer {
   font-size: var(--text-xs);
   color: var(--color-text-muted);

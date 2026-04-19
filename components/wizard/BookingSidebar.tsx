@@ -2,9 +2,12 @@
 
 /**
  * BookingSidebar — riepilogo soggiorno wizard unificato step 1 e step 2.
- * Spec: docs/ux/wizard-sidebar-design.md (v2 ratificato)
+ * Spec: docs/ux/wizard-sidebar-design.md (v3 ratificato)
+ * Look master: SidebarContent di WizardStep2 (ratificato 2026-04-19).
  *
- * Sessione 3b: step 1 (scelta appartamento). Step 2 verrà cablato in 3c.
+ * Sessione 3c.1: rifacimento visuale step 1 per adottare DNA unificato
+ * (banner titolo+testo, dati verticali, totale, riordinamento blocchi).
+ * Sessione 3c.2+: slot step=2 per voucher/extras (da fare).
  */
 
 import { useEffect, useState } from 'react';
@@ -100,6 +103,10 @@ export default function BookingSidebar({ locale = 'it', onContinua, canContinua 
   const showContinua = canContinua !== undefined ? canContinua : !!selectedOfferId;
   const hasPricing = offerPrice > 0 && nights > 0;
 
+  const depositText = room?.securityDeposit
+    ? t.depositText.replace('{amount}', String(room.securityDeposit))
+    : t.depositTextGeneric;
+
   return (
     <div className="booking-sidebar">
       {/* 1. HERO */}
@@ -120,7 +127,16 @@ export default function BookingSidebar({ locale = 'it', onContinua, canContinua 
         <p className="hint-text">{t.selectRoomMsg}</p>
       )}
 
-      {/* 2. FEATURE appartamento (solo se selezionato) */}
+      {/* 2. BANNER ⚡ CONSUMI (sempre visibile) */}
+      <div className="banner banner--info banner--with-icon">
+        <i className="bi bi-lightning-fill" aria-hidden="true"></i>
+        <div>
+          <p className="banner__title">{t.energyTitle}</p>
+          <p className="banner__text">{t.energyText}</p>
+        </div>
+      </div>
+
+      {/* 3. FEATURE appartamento (solo se selezionato) */}
       {room && (
         <>
           <hr className="divider-horizontal" />
@@ -167,30 +183,33 @@ export default function BookingSidebar({ locale = 'it', onContinua, canContinua 
         </>
       )}
 
-      {/* 3. DATI CHIAVE */}
+      {/* 5. DATI CHIAVE — layout verticale (label sopra, valore sotto) */}
       <hr className="divider-horizontal" />
-      <div className="label-row-between">
-        <span className="label-row-between__label">{t.checkin}</span>
-        <span className="label-row-between__value">{checkIn ? formatDate(checkIn, locale) : '—'}</span>
-      </div>
-      <div className="label-row-between">
-        <span className="label-row-between__label">{t.checkout}</span>
-        <span className="label-row-between__value">{checkOut ? formatDate(checkOut, locale) : '—'}</span>
-      </div>
-      {nights > 0 && (
-        <div className="label-row-between">
-          <span className="label-row-between__label"></span>
-          <span className="label-row-between__value">{nights} {nights === 1 ? t.night : t.nights}</span>
+      <div className="booking-sidebar__data-row">
+        <div className="booking-sidebar__data-cell">
+          <p className="booking-sidebar__data-label">{t.checkin}</p>
+          <p className="booking-sidebar__data-value">{checkIn ? formatDate(checkIn, locale) : '—'}</p>
         </div>
-      )}
-      <div className="label-row-between">
-        <span className="label-row-between__label">{t.guests}</span>
-        <span className="label-row-between__value">
-          {numAdult > 0 ? `${numAdult} ${t.adults}${numChild > 0 ? `, ${numChild} ${t.children}` : ''}` : '—'}
-        </span>
+      </div>
+      <div className="booking-sidebar__data-row">
+        <div className="booking-sidebar__data-cell">
+          <p className="booking-sidebar__data-label">{t.checkout}</p>
+          <p className="booking-sidebar__data-value">{checkOut ? formatDate(checkOut, locale) : '—'}</p>
+          {nights > 0 && (
+            <p className="booking-sidebar__data-hint">{nights} {nights === 1 ? t.night : t.nights}</p>
+          )}
+        </div>
+      </div>
+      <div className="booking-sidebar__data-row">
+        <div className="booking-sidebar__data-cell">
+          <p className="booking-sidebar__data-label">{t.guests}</p>
+          <p className="booking-sidebar__data-value">
+            {numAdult > 0 ? `${numAdult} ${t.adults}${numChild > 0 ? `, ${numChild} ${t.children}` : ''}` : '—'}
+          </p>
+        </div>
       </div>
 
-      {/* 5. BREAKDOWN + 6. TOTALE */}
+      {/* 6. DETTAGLI DEL PREZZO + 8. TOTALE */}
       <hr className="divider-horizontal" />
       <p className="label-uppercase-muted">{t.priceSection}</p>
       {hasPricing ? (
@@ -200,10 +219,13 @@ export default function BookingSidebar({ locale = 'it', onContinua, canContinua 
             <span>{fmt(offerPrice)}</span>
           </div>
           {touristTax > 0 && (
-            <div className="layout-row-between">
-              <span>{t.rate}</span>
-              <span>{fmt(touristTax)}</span>
-            </div>
+            <>
+              <div className="layout-row-between">
+                <span>{t.touristTax}</span>
+                <span>{fmt(touristTax)}</span>
+              </div>
+              <p className="hint-text">{t.touristTaxNote}</p>
+            </>
           )}
           <div className="booking-sidebar__total">
             <span className="booking-sidebar__total-label">{t.total}</span>
@@ -214,24 +236,25 @@ export default function BookingSidebar({ locale = 'it', onContinua, canContinua 
         <p className="hint-text">{t.priceWaitingMsg}</p>
       )}
 
-      {/* 7. CANCELLAZIONE */}
+      {/* 9. CANCELLAZIONE */}
       <hr className="divider-horizontal" />
       <p className="label-uppercase-muted">{t.cancellationSection}</p>
       <p className="hint-text">
         {offerCondition ? (offerName ? `${offerName} — ${offerCondition}` : offerCondition) : t.cancellationPendingMsg}
       </p>
 
-      {/* 8. DEPOSITO + 9. CONSUMI (banner visibili sempre) */}
+      {/* 10. BANNER 🔐 DEPOSITO */}
       <div className="banner banner--warning banner--with-icon">
         <i className="bi bi-shield-lock-fill" aria-hidden="true"></i>
-        <span>{t.deposit}{room?.securityDeposit ? ` (€${room.securityDeposit})` : ''}</span>
-      </div>
-      <div className="banner banner--info banner--with-icon">
-        <i className="bi bi-lightning-fill" aria-hidden="true"></i>
-        <span>{t.energy}</span>
+        <div>
+          <p className="banner__title">
+            {t.depositTitle}{room?.securityDeposit ? ` — €${room.securityDeposit}` : ''}
+          </p>
+          <p className="banner__text">{depositText}</p>
+        </div>
       </div>
 
-      {/* 10. CTA */}
+      {/* 11. CTA */}
       {showContinua && (
         <button
           onClick={handleContinua}
@@ -242,7 +265,7 @@ export default function BookingSidebar({ locale = 'it', onContinua, canContinua 
         </button>
       )}
 
-      {/* 11. CIN/CIR footer */}
+      {/* 12. CIN/CIR footer */}
       <p className="booking-sidebar__footer">{t.cinLabel} {CIN}</p>
     </div>
   );
