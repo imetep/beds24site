@@ -53,13 +53,6 @@ function poolLabel(t: any, room: Room): string | null {
   return null;
 }
 
-function extraFeatures(t: any, room: Room): string | null {
-  const feats: string[] = [];
-  if (room.features.garden) feats.push(t.featureGarden);
-  if (room.features.patio) feats.push(t.featurePatio);
-  if (room.features.eventHall) feats.push(t.featureEventHall);
-  return feats.length > 0 ? feats.join(' · ') : null;
-}
 
 export default function BookingSidebar({ locale = 'it', onContinua, canContinua }: Props) {
   const tr = getTranslations(locale as Locale);
@@ -134,14 +127,41 @@ export default function BookingSidebar({ locale = 'it', onContinua, canContinua 
           <p className="label-uppercase-muted">{t.propertySection}</p>
           <ul className="booking-sidebar__feature-list">
             {property && (
-              <li className="booking-sidebar__feature-item">📍 {property.name} · {property.distanceLabel}</li>
+              <li className="booking-sidebar__feature-item">
+                {property.name} · {property.distanceLabel}
+              </li>
             )}
-            <li className="booking-sidebar__feature-item">🛏️ {room.bedrooms} {t.bedrooms} · {room.bathrooms} {t.bathrooms}</li>
+            <li className="booking-sidebar__feature-item">
+              <i className="bi bi-door-closed-fill me-2" aria-hidden="true"></i>
+              {room.bedrooms} {t.bedrooms}
+              <i className="bi bi-droplet-fill ms-3 me-2" aria-hidden="true"></i>
+              {room.bathrooms} {t.bathrooms}
+              <i className="bi bi-people-fill ms-3 me-2" aria-hidden="true"></i>
+              {room.maxPeople} {t.people}
+            </li>
             {poolLabel(t, room) && (
-              <li className="booking-sidebar__feature-item">🏊 {poolLabel(t, room)}</li>
+              <li className="booking-sidebar__feature-item">
+                <i className="bi bi-water me-2" aria-hidden="true"></i>
+                {poolLabel(t, room)}
+              </li>
             )}
-            {extraFeatures(t, room) && (
-              <li className="booking-sidebar__feature-item">🌳 {extraFeatures(t, room)}</li>
+            {room.features.garden && (
+              <li className="booking-sidebar__feature-item">
+                <i className="bi bi-tree-fill me-2" aria-hidden="true"></i>
+                {t.featureGarden}
+              </li>
+            )}
+            {room.features.patio && (
+              <li className="booking-sidebar__feature-item">
+                <i className="bi bi-house-door-fill me-2" aria-hidden="true"></i>
+                {t.featurePatio}
+              </li>
+            )}
+            {room.features.eventHall && (
+              <li className="booking-sidebar__feature-item">
+                <i className="bi bi-calendar-event-fill me-2" aria-hidden="true"></i>
+                {t.featureEventHall}
+              </li>
             )}
           </ul>
         </>
@@ -203,11 +223,11 @@ export default function BookingSidebar({ locale = 'it', onContinua, canContinua 
 
       {/* 8. DEPOSITO + 9. CONSUMI (banner visibili sempre) */}
       <div className="banner banner--warning banner--with-icon">
-        <span>🔐</span>
+        <i className="bi bi-shield-lock-fill" aria-hidden="true"></i>
         <span>{t.deposit}{room?.securityDeposit ? ` (€${room.securityDeposit})` : ''}</span>
       </div>
       <div className="banner banner--info banner--with-icon">
-        <span>⚡</span>
+        <i className="bi bi-lightning-fill" aria-hidden="true"></i>
         <span>{t.energy}</span>
       </div>
 
