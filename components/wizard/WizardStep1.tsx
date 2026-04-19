@@ -292,7 +292,7 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
         </div>
       )}
 
-      <h2 className="mb-3" style={{ color: 'var(--color-text)', fontSize: 22, fontWeight: 800 }}>
+      <h2 className="section-title-main">
         {isSingleRoom ? t.titleSingle : t.titleMulti}
       </h2>
 
