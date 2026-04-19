@@ -245,18 +245,6 @@ function PhotoFrame({ src, alt }: { src: string; alt: string }) {
   );
 }
 
-function NightsBadge({ nights, label }: { nights: number; label: string }) {
-  return (
-    <div
-      className="d-inline-flex align-items-center mb-2 rounded-pill"
-      style={{ gap: 6, background: '#EEF5FC', border: '1.5px solid #1E73BE', padding: '5px 14px' }}
-    >
-      <span className="fw-bolder" style={{ fontSize: 18, color: '#0f4c7a' }}>{nights}</span>
-      <span className="fw-semibold" style={{ fontSize: 13, color: 'var(--color-primary)' }}>{label}</span>
-    </div>
-  );
-}
-
 function InfoItem({ children, icon, bold, italic }: { children: React.ReactNode; icon?: string; bold?: boolean; italic?: boolean }) {
   return (
     <div className="d-flex align-items-start mb-2" style={{ gap: 7 }}>
