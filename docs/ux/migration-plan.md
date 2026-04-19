@@ -101,15 +101,34 @@ L'ordine è ottimizzato per: **rischio crescente** (prima i facili come warm-up 
 
 ### Wizard (sessioni 2–6)
 
-| # | Sessione | File | Obiettivo |
-|---|---|---|---|
-| 2 | Wizard.tsx | migra 5 inline. Include anche la patch visiva §4.3 dell'audit visivo |
-| 3 | WizardSidebar.tsx | migra 29 inline. Applica §1.4 dell'audit visivo (CTA sidebar uniforme) |
-| 4 | WizardStep1.tsx | migra 66 inline. Applica §1.1 (titolo nero, non blu) dell'audit visivo |
-| 5 | WizardStep2.tsx | migra 81 inline. Applica §2.1–2.6 dell'audit visivo (sfondo grigio, shadow, sezione title, CTA) |
-| 6 | WizardStep3.tsx | migra 32 inline. Applica §3.1–3.7 dell'audit visivo (label blu→grigio, totale, policy, CTA) |
+| # | Sessione | File | Obiettivo | Stato |
+|---|---|---|---|---|
+| 2 | Wizard.tsx | migra 5 inline. Include anche la patch visiva §4.3 dell'audit visivo | ✅ |
+| 3 | WizardSidebar.tsx → **ristrutturazione** sidebar booking unificata step 1+2 | vedi §4-bis scomposizione | 🟡 3a/3b ✅, 3c ⏳ |
+| 4 | WizardStep1.tsx | migra 66 inline. Applica §1.1 (titolo nero, non blu) dell'audit visivo | ⏳ |
+| 5 | WizardStep2.tsx | migra 81 inline residui (post 3c). Applica §2.1–2.6 dell'audit visivo | ⏳ |
+| 6 | WizardStep3.tsx | migra 32 inline. Applica §3.1–3.7 dell'audit visivo | ⏳ |
 
 **Dopo ogni sessione**: screenshot desktop + mobile del step toccato, confronto con prima, approvazione tua prima di passare alla successiva.
+
+### 4-bis — Sessione 3 scomposta (ratificata 2026-04-19)
+
+Durante la Sessione 3 è emerso che il refactor del solo `WizardSidebar.tsx` non risolveva il problema reale: il wizard aveva **3 sidebar strutturalmente diverse** (step 1 a 250px / step 2 a 380px / step 3 assente). Audit + design doc dedicati hanno portato a ristrutturazione più ampia.
+
+Riferimenti:
+- 📋 [wizard-sidebar-audit.md](wizard-sidebar-audit.md) — diagnosi delle 3 varianti
+- 🎨 [wizard-sidebar-design.md](wizard-sidebar-design.md) v3 ratificato — DNA unificato, look master = SidebarContent di WizardStep2, API componente unificato
+
+| # | Sub-sessione | Cosa | Stato |
+|---|---|---|---|
+| 3a | Cleanup dead code in WizardSidebar.tsx + rename `.step6-*` in WizardStep2.tsx | rimosso `NightsBadge`, rami 1-4 di `renderTopSection` (morti perché sempre chiamati con step=5), MapFrame, URL mappe/foto morti, `loc`. Rename a `.wizard-summary-*`. Zero cambio visivo. | ✅ `35924e3`, `fbcea4d`, `c635b9e` |
+| 3b | Creazione `BookingSidebar.tsx` + cablatura step 1 + eliminazione scaffolding | nuovo componente unificato, eliminazione di 3 file scaffolding (`WizardSidebar`, `WizardBookingSummary`, `components/ui/BookingSummary`), 19 chiavi i18n nuove, classi `.booking-sidebar*` in globals.css, fix icone Bootstrap (no emoji), fix leggibilità typography/date, label "Il tuo alloggio" neutra | ✅ `a4b6047`, `077a0e4`, `ab4de98`, `d3a5967`, `c2373ac`, `4024b67`, `fd03ed5`, `16751de` |
+| 3c | Uniformazione step 2 al DNA master (SidebarContent attuale) | 4 mini-step: 3c.1 BookingSidebar adotta look SidebarContent (banner con titolo+testo, dati verticali, totale); 3c.2 aggiunge prop `step` + slot `step2VoucherSlot`/`step2ExtrasSlot` + callback Modifica; 3c.3 Wizard.tsx mostra sidebar anche step 2; 3c.4 WizardStep2 elimina `SidebarContent` inline, accordion mobile, bg grigio edge-to-edge, `ENERGY_BOX`/`DEPOSIT_BOX` hardcoded | ⏳ in corso |
+
+**Prompt per riprendere Sessione 3c in una nuova conversazione**:
+> *"Procedi con la Session 3c del migration plan"*
+
+La spec di dettaglio da seguire è [wizard-sidebar-design.md §6 roadmap](wizard-sidebar-design.md).
 
 ### Scheda abitazione (sessioni 7–12)
 
