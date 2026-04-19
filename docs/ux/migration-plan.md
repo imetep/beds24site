@@ -107,7 +107,7 @@ L'ordine è ottimizzato per: **rischio crescente** (prima i facili come warm-up 
 | 3 | WizardSidebar.tsx → **ristrutturazione** sidebar booking unificata step 1+2 | vedi §4-bis scomposizione | ✅ 3a/3b/3c |
 | 4 | WizardStep1.tsx | migra 66 inline. Applica §1.1 (titolo nero, non blu) dell'audit visivo | ⏳ |
 | 5 | WizardStep2.tsx | migra 81 inline residui (post 3c). Applica §2.1–2.6 dell'audit visivo | ⏳ |
-| 6 | WizardStep3.tsx | migra 32 inline. Applica §3.1–3.7 dell'audit visivo | ⏳ |
+| 6 | WizardStep3.tsx | migra 32 inline + redesign B single-col condensato + i18n namespace wizardStep3 (era UI inline 150 righe) + rinomina func WizardStep7→WizardStep3 + fetch cover hero. Applica §3.1–§3.7 audit visivo. Logica Stripe/PayPal PRESERVATA byte-identical | ✅ `b4807dc`/`3d28133`/`80f746c` |
 
 **Dopo ogni sessione**: screenshot desktop + mobile del step toccato, confronto con prima, approvazione tua prima di passare alla successiva.
 
