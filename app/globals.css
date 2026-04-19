@@ -11,9 +11,10 @@
 
   /* Design tokens — prefisso --color-* per non collidere con --bs-* */
   --color-primary: #1E73BE;
-  --color-primary-soft: #EEF5FC;
-  --color-warning: #FCAF1A;
+  --color-primary-soft: #EEF5FC;      /* Blu selezione unificato (deprecato #dbeafe, Caso H audit) */
+  --color-warning: #F59E0B;           /* Warning semantico — più giallo, distinto da --color-cta (Caso G audit) */
   --color-cta: #FCAF1A;               /* CTA arancione — separato da warning per semantica */
+  --color-brand-accent: var(--color-cta); /* Identità brand (logo, bordi accent) — alias di --color-cta */
   --color-error: #dc2626;             /* Errore validazione form */
   --color-success: #16a34a;           /* Feedback positivo (pagamento ok, check-in completato) */
   --color-danger: #c0392b;             /* CTA distruttive (annulla prenotazione, elimina) — distinto da error */
@@ -27,6 +28,31 @@
   --color-bg-muted: #f9fafb;
   --color-bg-dark: #111;
   --color-on-dark: #fff;
+
+  /* Stati semantici — triple bg/border/text per banner e alert (spec: css-pattern-audit §10, Caso E) */
+  --color-warning-bg: #fffbeb;
+  --color-warning-border: #fcd34d;
+  --color-warning-text: #92400e;
+
+  --color-info-bg: #f0f7ff;
+  --color-info-border: #bfdbfe;
+  --color-info-text: #1e40af;
+
+  --color-success-bg: #f0fdf4;
+  --color-success-border: #bbf7d0;
+  --color-success-text: var(--color-success);
+
+  --color-error-bg: #fff5f5;
+  --color-error-border: #f5c6cb;
+  --color-error-text: var(--color-danger);
+
+  --color-accent-soft: #FFF8EC;       /* Arancio pallido — banner policy, accent non-warning */
+  --color-accent-text: #B07820;       /* Testo scuro su sfondi accent-soft */
+
+  /* Overlay / utility */
+  --color-overlay-dark: rgba(0, 0, 0, 0.55);    /* Badge su foto, sfumature su immagini */
+  --color-overlay-gallery: #1a1a1a;             /* Fondo lightbox / gallery fullscreen */
+  --color-photo-placeholder: #f0f4f8;           /* Bg mentre le immagini caricano */
 
   /* Spacing scale — 4px base, multipli di 4 (8px grid friendly) */
   --space-xs: 4px;
@@ -457,4 +483,420 @@ body {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* ==========================================================================
+   Libreria CSS Sessione 1 — pattern estratti dai 17 file del migration plan.
+   Convenzione: BEM (`.block`, `.block__element`, `.block--modifier`) per tutti
+   i nuovi pattern. Stati tramite `.is-*` (is-selected, is-disabled, is-active).
+   Doc completo: docs/design-system/css-library.md
+   ========================================================================== */
+
+/* ── Bottoni (Caso A audit) ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s, filter 0.15s;
+  box-sizing: border-box;
+}
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+.btn:disabled,
+.btn.is-disabled {
+  cursor: not-allowed;
+  background: #e0e0e0;
+  color: #999;
+  border-color: #e0e0e0;
+  filter: none;
+}
+
+.btn--primary {
+  padding: 14px var(--space-base);
+  font-size: var(--text-base);
+  font-weight: 700;
+  background: var(--color-cta);
+  color: var(--color-on-dark);
+  border-radius: var(--radius-md);
+  min-height: var(--touch-target);
+}
+.btn--primary:hover:not(:disabled):not(.is-disabled) {
+  filter: brightness(0.95);
+}
+
+.btn--secondary {
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--text-base);
+  background: var(--color-bg);
+  color: var(--color-primary);
+  border: 1.5px solid var(--color-primary);
+}
+.btn--secondary:hover:not(:disabled):not(.is-disabled) {
+  background: var(--color-primary-soft);
+}
+
+.btn--ghost {
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--text-sm);
+  background: transparent;
+  color: var(--color-primary);
+}
+.btn--ghost:hover:not(:disabled):not(.is-disabled) {
+  text-decoration: underline;
+}
+
+.btn--stepper {
+  width: var(--touch-target);
+  height: var(--touch-target);
+  padding: 0;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+.btn--stepper.is-active {
+  background: var(--color-primary);
+  color: var(--color-on-dark);
+  border-color: var(--color-primary);
+}
+
+/* ── Card (Caso C audit) ── */
+.card-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-base);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  box-sizing: border-box;
+}
+.card-option:hover:not(.is-disabled) {
+  border-color: var(--color-primary);
+}
+.card-option:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+.card-option.is-selected {
+  border: 2px solid var(--color-primary);
+  background: var(--color-primary-soft);
+}
+.card-option.is-disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.card-info {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-base);
+  box-sizing: border-box;
+}
+.card-info--elevated {
+  box-shadow: var(--shadow-md);
+}
+
+.card-summary-highlight {
+  background: var(--color-primary-soft);
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-base);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-sm);
+}
+
+.card-room-bed {
+  width: 200px;
+  height: 220px;
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  background: var(--color-bg);
+  box-sizing: border-box;
+  position: relative;
+}
+.card-room-bed.is-configurable {
+  border: 2px solid var(--color-cta);
+}
+
+/* ── Banner / alert (Caso E audit) ── */
+.banner {
+  padding: var(--space-md) var(--space-base);
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  font-size: var(--text-sm);
+  line-height: var(--line-height-base);
+}
+.banner--info {
+  background: var(--color-info-bg);
+  border-color: var(--color-info-border);
+  color: var(--color-info-text);
+}
+.banner--warning {
+  background: var(--color-warning-bg);
+  border-color: var(--color-warning-border);
+  color: var(--color-warning-text);
+}
+.banner--accent {
+  background: var(--color-accent-soft);
+  border-color: var(--color-cta);
+  color: var(--color-accent-text);
+}
+.banner--success {
+  background: var(--color-success-bg);
+  border-color: var(--color-success-border);
+  color: var(--color-success-text);
+}
+.banner--error {
+  background: var(--color-error-bg);
+  border-color: var(--color-error-border);
+  color: var(--color-error-text);
+}
+.banner--with-icon {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+/* ── Badge (Caso B audit — 5 classi separate, no base condivisa) ── */
+.badge-selected {
+  display: inline-flex;
+  align-items: center;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-pill);
+}
+
+.badge-feature {
+  display: inline-flex;
+  align-items: center;
+  background: var(--color-bg-muted);
+  border: 0.5px solid var(--color-border);
+  color: var(--color-text-subtle);
+  font-size: var(--text-xs);
+  padding: 3px var(--space-sm);
+  border-radius: 6px;
+}
+
+.badge-overlay {
+  position: absolute;
+  background: var(--color-overlay-dark);
+  color: var(--color-on-dark);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px var(--space-sm);
+  border-radius: var(--radius-pill);
+}
+
+.badge-configurabile {
+  display: inline-flex;
+  align-items: center;
+  background: var(--color-cta);
+  color: #4a2f00;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px var(--space-sm);
+  border-radius: 6px;
+}
+.badge-configurabile--soft {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-text);
+}
+
+.badge-warning-chip {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  background: #fde8a0;
+  color: var(--color-accent-text);
+  font-size: 10px;
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-pill);
+}
+
+/* ── Label / micro-label ── */
+.label-uppercase-muted {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-sm);
+}
+
+.label-metadata {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.label-row-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-sm);
+}
+.label-row-between__label {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+.label-row-between__value {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  text-align: right;
+}
+
+/* ── Section title / heading ── */
+.section-title-main {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 var(--space-lg);
+  line-height: var(--line-height-tight);
+}
+
+.section-title-secondary {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 var(--space-md);
+  line-height: var(--line-height-tight);
+}
+
+.hint-text {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin: var(--space-xs) 0 0;
+  line-height: var(--line-height-base);
+}
+
+/* ── Divider / separatore ── */
+.divider-horizontal {
+  height: 1px;
+  background: var(--color-border);
+  border: 0;
+  margin: var(--space-md) 0;
+}
+
+.divider-border-bottom {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+/* ── Layout ricorrenti ── */
+.layout-row-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+}
+.layout-row-between--start {
+  align-items: flex-start;
+}
+.layout-row-between--baseline {
+  align-items: baseline;
+}
+
+.layout-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+}
+@media (min-width: 640px) {
+  .layout-grid-2col {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.layout-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+}
+
+.layout-accordion-toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) 0;
+  background: transparent;
+  border: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.layout-accordion-toggle:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
+
+.layout-sticky-mobile-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-bg);
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-md) var(--space-base);
+  z-index: var(--z-sticky);
+  box-shadow: var(--shadow-md);
+}
+@media (min-width: 768px) {
+  .layout-sticky-mobile-bar {
+    display: none;
+  }
+}
+
+.layout-sidebar-desktop {
+  display: none;
+}
+@media (min-width: 768px) {
+  .layout-sidebar-desktop {
+    display: block;
+    width: 320px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 90px;
+    background: var(--color-bg-muted);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    box-sizing: border-box;
+  }
+}
+
+.layout-fullscreen-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-overlay-gallery);
+  z-index: var(--z-modal);
 }
