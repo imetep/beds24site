@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
 import { getTranslations } from '@/lib/i18n';
 import Stepper from '@/components/ui/Stepper';
-import WizardSidebar from './WizardSidebar';
+import BookingSidebar from './BookingSidebar';
 import WizardStep1 from './WizardStep1';
 import WizardStep2 from './WizardStep2';
 import WizardStep3 from './WizardStep3';
@@ -19,9 +19,9 @@ interface Props {
 function WizardSidebarWrapper({ locale, logicalStep }: { locale: string; logicalStep: number }) {
   const { selectedOfferId, nextStep } = useWizardStore();
   if (logicalStep === 1) {
-    return <WizardSidebar locale={locale} step={5} onContinua={nextStep} canContinua={!!selectedOfferId} />;
+    return <BookingSidebar locale={locale} onContinua={nextStep} canContinua={!!selectedOfferId} />;
   }
-  return <WizardSidebar locale={locale} step={5} />;
+  return <BookingSidebar locale={locale} />;
 }
 
 export default function Wizard({ translations: t, locale }: Props) {
