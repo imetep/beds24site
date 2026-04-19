@@ -449,7 +449,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
       <div className="d-flex align-items-start" style={{ gap: 32 }}>
 
         {/* ── Colonna sinistra: form ── */}
-        <div className="flex-fill min-w-0" style={{ maxWidth: 560 }}>
+        <div className="flex-fill min-w-0" style={{ maxWidth: 'var(--container-sm)' }}>
 
           {/* Mobile: accordion riepilogo */}
           <div
