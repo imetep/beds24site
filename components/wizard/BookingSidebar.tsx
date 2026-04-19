@@ -84,6 +84,7 @@ export default function BookingSidebar({
   const {
     numAdult, numChild, checkIn, checkOut,
     selectedRoomId, selectedOfferId, cachedOffers,
+    selectedExtras, voucherCode, discountedPrice,
     nextStep,
   } = useWizardStore();
 
@@ -113,7 +114,15 @@ export default function BookingSidebar({
   const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
   const perNight = nights > 0 && offerPrice > 0 ? Math.round(offerPrice / nights) : 0;
   const touristTax = Math.min(nights, 10) * numAdult * 2;
-  const totalWithTax = offerPrice + touristTax;
+
+  // Step 2 addendum: voucher discount + extras contribute al totale e appaiono
+  // come righe supplementari nel price breakdown.
+  const basePrice = step === 2 && discountedPrice !== null ? discountedPrice : offerPrice;
+  const voucherSaving = step === 2 && discountedPrice !== null ? offerPrice - discountedPrice : 0;
+  const extrasTotal = step === 2
+    ? selectedExtras.reduce((sum, e) => sum + e.price * e.quantity, 0)
+    : 0;
+  const totalWithTax = basePrice + touristTax + extrasTotal;
 
   const offerInfo = offer ? OFFER_INFO[offer.offerId as number] : null;
   const offerCondition = offerInfo?.conditions[locale] ?? offerInfo?.conditions.it ?? null;
@@ -260,6 +269,18 @@ export default function BookingSidebar({
             <span>{nights} {nights === 1 ? t.night : t.nights} × {fmt(perNight)}</span>
             <span>{fmt(offerPrice)}</span>
           </div>
+          {step === 2 && voucherSaving > 0 && (
+            <div className="layout-row-between booking-sidebar__price-discount">
+              <span>{t.voucherDiscount}{voucherCode ? ` (${voucherCode})` : ''}</span>
+              <span>− {fmt(voucherSaving)}</span>
+            </div>
+          )}
+          {step === 2 && selectedExtras.map(extra => (
+            <div key={extra.id} className="layout-row-between">
+              <span>{extra.name[locale] ?? extra.name.it}{extra.quantity > 1 ? ` ×${extra.quantity}` : ''}</span>
+              <span>+ {fmt(extra.price * extra.quantity)}</span>
+            </div>
+          ))}
           {touristTax > 0 && (
             <>
               <div className="layout-row-between">
