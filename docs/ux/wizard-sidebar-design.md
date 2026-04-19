@@ -111,9 +111,11 @@ Testi da spostare dall'hardcode `ENERGY_BOX`/`DEPOSIT_BOX` di WizardStep2.tsx in
 
 ```
 Date                       Modifica
-29 maggio 2026 – 1 giugno 2026
+29 mag 2026 – 1 giu 2026
 3 notti                             ← riga aggiuntiva 12px muted
 ```
+
+**Formato data ratificato 2026-04-19**: `dd MMM yyyy` (mese corto + anno). Allineato a SidebarContent attuale, valido entrambi gli step.
 
 Invece di single-line `Check-in 29 maggio` (attuale BookingSidebar step 1).
 
@@ -190,7 +192,7 @@ Banner:
 │  I consumi sono calcolati...       │
 │  ────────────────────────────      │
 │  Date                              │
-│  29 maggio 2026 – 1 giugno 2026    │
+│  29 mag 2026 – 1 giu 2026          │
 │  3 notti                           │
 │  Ospiti                            │
 │  2 adulti                          │
