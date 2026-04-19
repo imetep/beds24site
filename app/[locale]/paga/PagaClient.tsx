@@ -323,7 +323,7 @@ export default function PagaClient({ locale }: Props) {
             style={{
               width: '100%', padding: '18px', borderRadius: 14, border: 'none',
               fontSize: 18, fontWeight: 900,
-              background: phase === 'paying' ? '#e0e0e0' : 'var(--color-warning)',
+              background: phase === 'paying' ? '#e0e0e0' : 'var(--color-cta)',
               color: phase === 'paying' ? '#999' : 'var(--color-on-dark)',
               cursor: phase === 'paying' ? 'not-allowed' : 'pointer',
               boxShadow: phase === 'paying' ? 'none' : '0 4px 14px rgba(252,175,26,0.4)',
