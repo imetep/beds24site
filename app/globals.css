@@ -611,6 +611,11 @@ body {
   flex-shrink: 0;
   border-radius: var(--radius-sm);
 }
+/* Riga di sconto voucher nel price breakdown (step 2) — testo verde success. */
+.booking-sidebar__price-discount {
+  color: var(--color-success);
+  font-weight: 600;
+}
 .booking-sidebar__edit-btn:hover {
   background: var(--color-primary-soft);
 }
