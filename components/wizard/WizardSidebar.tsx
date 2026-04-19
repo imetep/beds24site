@@ -37,7 +37,6 @@ export default function WizardSidebar({ locale = 'it', step = 1, onContinua, can
   const tr  = getTranslations(locale as Locale);
   const t   = tr.components.wizardSidebar;
   const OFFER_NAMES = tr.shared.offerNames as Record<string, string>;
-  const loc = (['it','en','de','pl'] as const).includes(locale as Locale) ? locale : 'it';
 
   const { numAdult, numChild, childrenAges, checkIn, checkOut, selectedRoomId, selectedOfferId, cachedOffers, poolPreference, nextStep } = useWizardStore();
 
@@ -67,69 +66,16 @@ export default function WizardSidebar({ locale = 'it', step = 1, onContinua, can
   const touristTax      = taxableNights * taxableAdults * 2;
   const totalWithTax    = offerPrice + touristTax;
   const perNight = nights > 0 && offerPrice > 0 ? Math.round(offerPrice / nights) : 0;
-  const mapsKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ?? '';
-
-  // Mappa Scauri (Step1) — zoom ridotto per vedere più territorio
-  const mapScauri = mapsKey
-    ? `https://www.google.com/maps/embed/v1/place?key=${mapsKey}&q=41.2590,13.7050&zoom=11&language=${loc}`
-    : '';
-  // Mappa LivingApple Beach (Step2) — zoom 15 sulla spiaggia
-  const mapBeach = mapsKey
-    ? `https://www.google.com/maps/embed/v1/place?key=${mapsKey}&q=41.237587,13.74424&zoom=11&language=${loc}`
-    : '';
-
-  // Foto piscina — Kissabel ha la piscina privata più bella
-  const poolPhotoUrl = cloudUrl('livingapple/kissabel');
-  const poolSpecificUrl = cloudUrl('17_iqlmy7.jpg');
-  const beachUrl = cloudUrl('DSC05154_phrl3z.jpg');
   const step5Photo = cloudUrl('_DSC2502_laqzeh.jpg');
-  // Foto LivingApple natura
-  const naturaPhotoUrl = cloudUrl('livingapple/stark');
 
   const handleContinua = onContinua ?? nextStep;
   const showContinua   = canContinua !== undefined ? canContinua : !!selectedOfferId;
 
-  // ── Sezione superiore: cambia per step ────────────────────────────────────
+  // ── Sezione superiore: foto appartamento (se noto) + banner energia/deposito ──
+  // Nota: Wizard.tsx chiama WizardSidebar sempre con step={5}, gli altri
+  // rami erano codice morto e sono stati rimossi in Sessione 3a.
   function renderTopSection() {
-    // Step 1 — Ospiti: mappa Scauri + messaggi brand
-    if (step === 1) return (
-      <div style={{ marginBottom: 14 }}>
-        <MapFrame src={mapScauri} />
-        <InfoItem bold>{t.prof1}</InfoItem>
-        <InfoItem>{t.prof2}</InfoItem>
-      </div>
-    );
-
-    // Step 2 — Date: mappa Beach + distanze, notti in evidenza
-    if (step === 2) return (
-      <div style={{ marginBottom: 14 }}>
-        <MapFrame src={mapBeach} />
-        <InfoItem icon="🌿">{t.nature}</InfoItem>
-        <InfoItem icon="🏖️">{t.beach}</InfoItem>
-      </div>
-    );
-
-    // Step 3 — Piscina: foto piscina + nota sul mare
-    if (step === 3) return (
-      <div style={{ marginBottom: 14 }}>
-        <PhotoFrame src={poolSpecificUrl} alt="Piscina LivingApple" />
-        <InfoItem icon="ℹ️" italic>{t.poolNote}</InfoItem>
-      </div>
-    );
-
-    // Step 4 — Under12: foto piscina (se vuole piscina) o spiaggia (se non interessa)
-    if (step === 4) {
-      return (
-        <div style={{ marginBottom: 14 }}>
-          <PhotoFrame src={beachUrl} alt="LivingApple Beach" />
-          <InfoItem icon="⚡">{t.energy}</InfoItem>
-          <InfoItem icon="🔐">{t.deposit}</InfoItem>
-        </div>
-      );
-    }
-
-    // Step 5 — Tariffa: foto appartamento se noto, altrimenti _DSC2502_laqzeh
-    if (step === 5) return (
+    return (
       <div style={{ marginBottom: 14 }}>
         {room ? (
           <div style={{ width: '100%', height: 130, borderRadius: 10, overflow: 'hidden', marginBottom: 10 }}>
@@ -145,8 +91,6 @@ export default function WizardSidebar({ locale = 'it', step = 1, onContinua, can
         <InfoItem icon="🔐">{t.deposit}</InfoItem>
       </div>
     );
-
-    return null;
   }
 
   return (
@@ -227,16 +171,6 @@ export default function WizardSidebar({ locale = 'it', step = 1, onContinua, can
 }
 
 // ─── Helper components ────────────────────────────────────────────────────────
-function MapFrame({ src }: { src: string }) {
-  if (!src) return <div className="mb-2" style={{ height: 130, borderRadius: 10, background: '#e5e7eb' }} />;
-  return (
-    <div className="overflow-hidden mb-2" style={{ height: 130, borderRadius: 10 }}>
-      <iframe src={src} width="100%" height="130" className="d-block border-0"
-        loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Mappa" />
-    </div>
-  );
-}
-
 function PhotoFrame({ src, alt }: { src: string; alt: string }) {
   return (
     <div className="overflow-hidden mb-2" style={{ height: 130, borderRadius: 10 }}>
