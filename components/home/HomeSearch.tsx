@@ -223,7 +223,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
             <div style={{
               display: 'flex', alignItems: 'center', gap: 10,
               background: 'linear-gradient(135deg, #FFF8EC 0%, #FFF3DC 100%)',
-              border: '1px solid var(--color-warning)', borderLeft: '4px solid var(--color-warning)',
+              border: '1px solid var(--color-cta)', borderLeft: '4px solid var(--color-cta)',
               borderRadius: 10, padding: '10px 14px', marginBottom: 12,
             }}>
               <span style={{ fontSize: 18, flexShrink: 0 }}>🌙</span>
