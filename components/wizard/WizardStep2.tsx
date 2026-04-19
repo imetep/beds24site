@@ -8,6 +8,7 @@ import { PROPERTIES, getPropertyForRoom } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
 import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import type { Locale } from '@/config/i18n';
+import BookingSidebar from './BookingSidebar';
 
 // ─── Testi fissi 4 lingue ─────────────────────────────────────────────────────
 const ENERGY_BOX: Record<string, string> = {
@@ -442,7 +443,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="min-vh-100" style={{ fontFamily: 'sans-serif', background: '#f9fafb', margin: '-24px -16px', padding: '24px 16px' }}>
+    <div className="min-vh-100" style={{ fontFamily: 'sans-serif' }}>
       <h2 className="fw-bold text-dark mb-3" style={{ fontSize: 22 }}>{t.title}</h2>
 
       <div className="d-flex align-items-start" style={{ gap: 32 }}>
@@ -594,12 +595,111 @@ export default function WizardStep2({ locale = 'it' }: Props) {
           </button>
         </div>
 
-        {/* ── Sidebar destra (desktop) ── */}
-        <div
-          className="wizard-summary-sidebar flex-shrink-0 border position-sticky align-self-start"
-          style={{ width: 380, borderRadius: 16, padding: '22px 24px', top: 90 }}
-        >
-          <SidebarContent />
+        {/* ── Sidebar destra (desktop) — usa BookingSidebar con slot voucher+extras ── */}
+        <div className="wizard-summary-sidebar flex-shrink-0">
+          <BookingSidebar
+            locale={locale}
+            step={2}
+            onEditDates={() => setCurrentStep(2)}
+            onEditGuests={() => setCurrentStep(1)}
+            step2VoucherSlot={
+              <>
+                <p style={sideLabel}>{t.voucher}</p>
+                <div style={{ display: 'flex', gap: 6, marginBottom: 6 }}>
+                  <input
+                    type="text"
+                    value={voucherInput}
+                    onChange={e => {
+                      setVoucherInput(e.target.value);
+                      if (voucherApplied) { setVoucherApplied(false); setDiscountedPrice(null); setVoucherCode(''); }
+                    }}
+                    placeholder="es. ESTATE2026"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    autoCapitalize="off"
+                    spellCheck={false}
+                    style={{ flex: 1, padding: '8px 10px', fontSize: 13, border: `1.5px solid ${voucherApplied ? '#16a34a' : '#e5e7eb'}`, borderRadius: 8, outline: 'none' }}
+                  />
+                  <button
+                    onClick={handleApplyVoucher}
+                    disabled={!voucherInput.trim()}
+                    style={{ padding: '8px 14px', minHeight: 'var(--touch-target)', borderRadius: 8, border: `1.5px solid ${voucherApplied ? '#16a34a' : 'var(--color-primary)'}`, background: voucherApplied ? '#16a34a' : '#fff', color: voucherApplied ? '#fff' : 'var(--color-primary)', fontSize: 13, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
+                  >
+                    {voucherApplied ? '✓ Applicato' : t.voucherApply}
+                  </button>
+                </div>
+                {voucherError && <p style={{ fontSize: 12, color: '#e74c3c', margin: '4px 0 8px' }}>{voucherError}</p>}
+              </>
+            }
+            step2ExtrasSlot={upsellItems.length > 0 ? (
+              <>
+                <p style={{ ...sideLabel, marginBottom: 8 }}>{t.sec2title}</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 10 }}>
+                  {upsellItems.map(item => {
+                    const sel = selectedExtras.find(e => e.id === item.id);
+                    const qty = sel?.quantity ?? 0;
+                    const MAX_QTY = 4;
+                    return (
+                      <div key={item.id} style={{
+                        display: 'flex', alignItems: 'center', gap: 10,
+                        padding: '10px 12px',
+                        border: `1.5px solid ${qty > 0 ? 'var(--color-primary)' : '#e5e7eb'}`,
+                        borderRadius: 10,
+                        background: qty > 0 ? '#EEF5FC' : '#fafafa',
+                        transition: 'all 0.15s',
+                      }}>
+                        <span style={{ fontSize: 20, flexShrink: 0 }}>🛏️</span>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: '#111', lineHeight: 1.3 }}>
+                            {item.name[loc] ?? item.name.it}
+                          </p>
+                          <p style={{ margin: '1px 0 0', fontSize: 11, color: '#888' }}>
+                            +{fmt(item.price)} / unità
+                          </p>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 0, flexShrink: 0 }}>
+                          <button
+                            onClick={() => setExtraQuantity(item, qty - 1)}
+                            disabled={qty === 0}
+                            style={{
+                              width: 'var(--touch-target)', height: 'var(--touch-target)', borderRadius: '50%',
+                              border: `1.5px solid ${qty > 0 ? 'var(--color-primary)' : '#d1d5db'}`,
+                              background: '#fff', color: qty > 0 ? 'var(--color-primary)' : '#ccc',
+                              fontSize: 18, fontWeight: 700, cursor: qty > 0 ? 'pointer' : 'not-allowed',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              transition: 'all 0.15s', lineHeight: 1,
+                            }}
+                          >−</button>
+                          <span style={{
+                            width: 32, textAlign: 'center', fontSize: 15, fontWeight: 700,
+                            color: qty > 0 ? 'var(--color-primary)' : '#999',
+                          }}>{qty}</span>
+                          <button
+                            onClick={() => setExtraQuantity(item, qty + 1)}
+                            disabled={qty >= MAX_QTY}
+                            style={{
+                              width: 'var(--touch-target)', height: 'var(--touch-target)', borderRadius: '50%',
+                              border: `1.5px solid ${qty < MAX_QTY ? 'var(--color-primary)' : '#d1d5db'}`,
+                              background: qty < MAX_QTY ? 'var(--color-primary)' : '#f5f5f5',
+                              color: qty < MAX_QTY ? '#fff' : '#ccc',
+                              fontSize: 18, fontWeight: 700, cursor: qty < MAX_QTY ? 'pointer' : 'not-allowed',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              transition: 'all 0.15s', lineHeight: 1,
+                            }}
+                          >+</button>
+                        </div>
+                        {qty > 0 && (
+                          <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--color-primary)', flexShrink: 0, minWidth: 40, textAlign: 'right' }}>
+                            {fmt(item.price * qty)}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            ) : null}
+          />
         </div>
       </div>
 
