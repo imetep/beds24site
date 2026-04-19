@@ -547,6 +547,28 @@ body {
   color: var(--color-text);
   line-height: 1.5;
 }
+.booking-sidebar__total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--color-border);
+}
+.booking-sidebar__total-label {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-text);
+}
+.booking-sidebar__total-value {
+  font-size: var(--text-xl);
+  font-weight: 800;
+  color: var(--color-primary);
+}
+.booking-sidebar__cta {
+  width: 100%;
+  margin-top: var(--space-md);
+}
 .booking-sidebar__footer {
   font-size: var(--text-xs);
   color: var(--color-text-muted);
