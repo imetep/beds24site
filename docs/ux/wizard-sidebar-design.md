@@ -1,413 +1,300 @@
-# Wizard Sidebar Design — DNA unificato step 1 e step 2
+# Wizard Sidebar Design — DNA unificato (look master = SidebarContent)
 
 **Data:** 2026-04-19
-**Stato:** 🟢 ratificato (v2 aggiornato dopo discussione contenuto)
+**Stato:** 🟢 ratificato v3 (inversione direzione)
 **Prerequisito:** [wizard-sidebar-audit.md](wizard-sidebar-audit.md) (diagnosi)
 
 ## Decisioni utente ratificate
 
 - **Larghezza sidebar 380px fissa** (step 1 e step 2 uguali)
-- **Grafica uniforme** tra step 1 e step 2 (stesso DNA visivo)
-- **Contenuto utile step 1**: feature dell'appartamento selezionato (pattern Airbnb/Booking "property highlights"). Niente USP generici inventati.
-- **Placeholder soft** se nessun appartamento selezionato (es. "Seleziona un appartamento"). Nessun blocco "Perché prenotare con noi" con trust signal generici.
-- **Feature mostrate** (quando appartamento selezionato): `tipo · mq · max ospiti · distanza mare · piscina · garden/patio/salone` (solo se presenti nel config).
-- **CIN/CIR visibile** come signal di regolarità (obbligo di legge comunicato come rassicurazione).
-- **Banner ⚡ consumi + 🔐 deposito visibili** in entrambi gli step, stessa posizione. **No modale nascosta**: l'utente deve vedere costi e obblighi prima della CTA (Baymard: "hidden costs" = causa #1 di abbandono carrello).
-- **Scope proporzionato al valore**: desktop = 35% del traffico. No sovra-ingegnerizzazione.
+- **Look master = `SidebarContent` di `WizardStep2.tsx`** (valutato "più bello" dall'utente 2026-04-19)
+- **BookingSidebar** (step 1) si **allinea visivamente** a SidebarContent, non il contrario
+- **Logica extras / voucher resta in `WizardStep2.tsx`** (non si travasa)
+- **Allineamento via slot**: BookingSidebar accetta `step2Extras?: React.ReactNode` prop; quando step=2 renderizza quel nodo nel blocco dedicato
+- **Scope proporzionato al 35% desktop** — no sovra-ingegnerizzazione
+- **Bootstrap Icons ovunque** (no emoji decorative)
 
-> **Principio**: documento fondato su ricerca UX pubblica (Baymard, NN/g) + pattern consolidati Booking/Airbnb/Hotels.com + dati reali di `config/properties.ts` e `OFFER_INFO`. Niente inferenze su USP inventati.
+> **Principio**: documento fondato su ricerca UX pubblica (Baymard, NN/g) + pattern consolidati Booking/Airbnb/Hotels.com + dati reali di `config/properties.ts`. Nessuna inferenza su USP inventati.
 
 ---
 
-## 1. Cosa dice la letteratura UX
+## 1. Letteratura UX
 
 ### 1.1 Baymard Institute — e-commerce checkout
 
-- **B1: Persistent Order Summary** — riepilogo visibile in tutti gli step. Fonte: Baymard Checkout Usability Report §3.2.
-- **B2: Thumbnail Image in Summary** — immagine del prodotto riduce l'ansia ("sto comprando la cosa giusta?"). Baymard §3.4.
-- **B3: Cost Breakdown Transparent** — ogni componente esplicito (tassa, extras, sconto, **deposito**, **consumi**). *"Hidden costs"* è causa #1 di abbandono (50% degli abbandoni). Fonte: Baymard E-Commerce Benchmark.
-- **B4: Trust Signals Near Decision Point** — i signal di fiducia funzionano vicino alla CTA, non nel footer. Baymard Trust Seals Study.
+- **B1 — Persistent Order Summary** — riepilogo in tutti gli step (§3.2)
+- **B2 — Thumbnail Image in Summary** — immagine del prodotto riduce l'ansia (§3.4)
+- **B3 — Cost Breakdown Transparent** — ogni componente esplicito (tassa, extras, sconto, **deposito**, **consumi**). "Hidden costs" = causa #1 di abbandono
+- **B4 — Trust Signals Near Decision Point** — i signal di fiducia funzionano vicino alla CTA
 
-### 1.2 Nielsen Norman Group (NN/g)
+### 1.2 Nielsen Norman Group
 
-- **Recognition over Recall** (Heuristic #6): l'utente riconosce le info già selezionate, non le ricorda.
-- **System Status Visibility** (Heuristic #1): cosa è già scelto, cosa manca.
-- **Progressive Disclosure**: vale per **dettagli accessori**, NON per info che influenzano l'acquisto (costi, policy). Consumi e deposito restano visibili.
+- **Recognition over Recall** (#6)
+- **System Status Visibility** (#1)
+- **Progressive Disclosure**: **NON applicare** a costi/obblighi — banner consumi e deposito restano visibili (scelta utente ratificata dopo tentativo modale scartato)
 
-### 1.3 Pattern ricorrenti tra i player
+### 1.3 Pattern ricorrenti player (fase selezione)
 
-| Player | Largh. sidebar | Background | Contenuto fase scelta | Contenuto fase compilazione |
-|---|---|---|---|---|
-| Airbnb | ~374px | bianco + border | foto · breakdown · cancellazione · trust pagamento | + dati guest in compilazione |
-| Booking.com | ~368px | bianco + border + shadow-sm | foto · breakdown · policy · "No pre-payment" | + riepilogo dati |
-| Hotels.com | ~352px | bianco + border | points/rewards · breakdown · policy | + guest info |
-
-**Ricorrente**: foto → dati chiave → breakdown → totale → costi aggiuntivi visibili → CTA.
+Sidebar ~352–374px fissa, bg bianco + border, **banner informativi con titolo + testo** (non 1-riga), righe dati chiave con **label sopra / valore sotto + bottone Modifica** inline, totale visibile, CTA in basso.
 
 ---
 
-## 2. DNA visivo unificato
+## 2. DNA visivo unificato (look master = SidebarContent)
 
-### 2.1 Token del contenitore
+### 2.1 Container
 
 ```
 width:         380px
-padding:       var(--space-lg) (24px)
 background:    #fff
 border:        1px solid var(--color-border)
-border-radius: var(--radius-lg) (16px)
+border-radius: var(--radius-lg)
 box-shadow:    var(--shadow-sm)
+padding:       var(--space-lg)
 position:      sticky
 top:           90px
 ```
 
-### 2.2 Gerarchia interna (blocchi ordinati)
+### 2.2 Gerarchia interna (10 blocchi ordinati)
 
-Ordine invariante in step 1 e step 2. I blocchi condizionali appaiono/spariscono ma non si spostano.
+Ordine invariante step 1 / step 2. Blocchi condizionali appaiono/spariscono ma non si spostano.
 
 ```
 ┌────────────────────────────────────┐
-│  1. HERO (foto + nome + tipo)      │  sempre visibile, foto location se no appto
+│  1. HERO — foto 160h + nome + tipo │  section-title-secondary / label-metadata
 ├────────────────────────────────────┤
-│  2. FEATURE APPTO (se selezionato) │  solo step 1 con appto scelto
+│  2. BANNER ⚡ CONSUMI (titolo+testo)│  banner--info con titolo + paragrafo esteso
 ├────────────────────────────────────┤
-│  3. DATI CHIAVE                    │  Check-in, Check-out, Ospiti
+│  3. FEATURE APPTO (step 1 solo)    │  icone bi-* + testo (da PROPERTIES config)
 ├────────────────────────────────────┤
-│  4. EXTRAS + VOUCHER (solo step 2) │  upsell stepper + input voucher
+│  4. SEZIONE VOUCHER (step 2 solo)  │  label + input + bottone Applica
 ├────────────────────────────────────┤
-│  5. BREAKDOWN PREZZO               │  righe prezzo / tassa / sconto / extras
+│  5. DATI CHIAVE — Date / Ospiti    │  label sopra, valore sotto, opz. Modifica a dx
 ├────────────────────────────────────┤
-│  6. TOTALE                         │  cifra evidenziata
+│  6. DETTAGLI DEL PREZZO            │  label uppercase + righe breakdown
+│     - Notti × prezzo / notte       │
+│     - Sconto voucher               │
+│     - Extras (step 2 solo)         │
+│     - Tassa di soggiorno           │
 ├────────────────────────────────────┤
-│  7. CANCELLAZIONE (1 riga)         │  condizioni della tariffa scelta (placeholder step 1)
+│  7. SERVIZI EXTRA (step 2 solo)    │  card con stepper +/− per upsell
 ├────────────────────────────────────┤
-│  8. 🔐 DEPOSITO (banner warning)   │  sempre visibile, spec nel config
+│  8. TOTALE                         │  20px/800 primary con border-top
 ├────────────────────────────────────┤
-│  9. ⚡ CONSUMI (banner info)       │  sempre visibile, testo fisso
+│  9. CANCELLAZIONE                  │  label uppercase + 1 riga condizione
 ├────────────────────────────────────┤
-│  10. CTA                           │  Continua / Vedi riepilogo →
+│  10. BANNER 🔐 DEPOSITO             │  banner--warning con titolo + paragrafo esteso
 ├────────────────────────────────────┤
-│  11. CIN/CIR footer micro          │  signal regolarità (legal + trust)
+│  11. CTA                           │  btn--primary full-width
+├────────────────────────────────────┤
+│  12. CIN/CIR footer micro          │  hint-text (solo step 1, signal regolarità)
 └────────────────────────────────────┘
 ```
 
-### 2.3 Typography e spacing (classi library)
+### 2.3 Banner informativi (pattern master)
 
-| Elemento | Classe |
+**Nuovo standard**: i banner ⚡ e 🔐 non sono più "1 riga" ma **blocco con titolo + testo esteso**.
+
+```
+┌─────────────────────────────────────┐
+│ 🛡️  Deposito cauzionale             │  icona + titolo
+│    Questo alloggio richiede un      │  testo esteso (12px, line-height 1.5)
+│    deposito di €1000. Carta di      │  può andare a capo
+│    credito richiesta al check-in    │
+└─────────────────────────────────────┘
+```
+
+Testi da spostare dall'hardcode `ENERGY_BOX`/`DEPOSIT_BOX` di WizardStep2.tsx in i18n standard.
+
+### 2.4 Righe dati chiave (Date / Ospiti)
+
+**Nuovo standard**: layout verticale (label sopra, valore sotto), bottone Modifica inline a destra solo in step 2.
+
+```
+Date                       Modifica
+29 maggio 2026 – 1 giugno 2026
+3 notti                             ← riga aggiuntiva 12px muted
+```
+
+Invece di single-line `Check-in 29 maggio` (attuale BookingSidebar step 1).
+
+### 2.5 Typography e spacing (classi library)
+
+| Elemento | Classe / Token |
 |---|---|
 | Nome appartamento | `.section-title-secondary` |
-| Tipo appartamento | `.label-metadata` |
-| Etichetta sezione | `.label-uppercase-muted` |
-| Riga dato (Check-in…) | `.label-row-between` + `__label` + `__value` |
-| Riga breakdown | `.layout-row-between` |
-| Totale | 22px / 800 / `--color-primary` |
-| Feature chip | `.badge-feature` |
-| Banner deposito | `.banner .banner--warning` |
-| Banner consumi | `.banner .banner--info` |
+| Tipo (sotto nome) | `.label-metadata` |
+| Label sezione | `.label-uppercase-muted` |
+| Label dato chiave | 12px muted |
+| Valore dato chiave | 14px text |
+| Nights hint | 12px muted (`.hint-text`) |
+| Bottone Modifica | 13px primary, decoration:underline |
+| Riga breakdown | `.layout-row-between`, 14px |
+| Totale label | 16px/700 text |
+| Totale valore | 20px/800 primary |
 | CTA | `.btn .btn--primary` |
-| Divider | `.divider-horizontal` |
-| CIN/CIR footer | `.hint-text` |
 
-**Niente numeri magici. Niente inline style. Niente hex hardcoded.**
+Banner:
+- `.banner .banner--info .banner--with-icon` (consumi)
+- `.banner .banner--warning .banner--with-icon` (deposito)
+- `.banner__title` nuovo element (700, margin-bottom)
+- `.banner__text` nuovo element (opzionale — lo si omette se banner è 1-riga)
 
 ---
 
-## 3. Contenuto della sidebar step 1
+## 3. Contenuto della sidebar step 1 (BookingSidebar)
 
-### 3.1 Quando NESSUN appartamento è selezionato (utente sta scegliendo)
-
-```
-┌────────────────────────────────────┐  380px
-│                                    │
-│  [foto location Scauri 160h]       │  hero statico
-│                                    │
-│  ────────────────────────────      │
-│                                    │
-│  Check-in         15 giu           │
-│  Check-out        22 giu           │
-│  Ospiti           2 adulti         │
-│                                    │
-│  ────────────────────────────      │
-│                                    │
-│  IL TUO PREZZO                     │  label-uppercase-muted
-│                                    │
-│  Seleziona un appartamento         │  hint-text (grigio)
-│  dalla lista                       │
-│                                    │
-│  ────────────────────────────      │
-│                                    │
-│  🗓️ CANCELLAZIONE                  │  label-uppercase-muted
-│  Dipende dalla tariffa scelta      │  hint-text
-│                                    │
-│  [🔐 Deposito] banner warning      │  testo fisso dal config
-│                                    │
-│  [⚡ Consumi] banner info          │  testo fisso                   │
-│                                    │
-│  ┌──────────────────────────────┐  │
-│  │        Continua  →           │  │  btn--primary DISABLED
-│  └──────────────────────────────┘  │
-│                                    │
-│  CIN IT059014B47RVOMN2D            │  hint-text (micro)
-│                                    │
-└────────────────────────────────────┘
-```
-
-### 3.2 Quando appartamento È selezionato (utente ha cliccato su Kissabel)
+### 3.1 Nessun appartamento selezionato
 
 ```
-┌────────────────────────────────────┐  380px
-│                                    │
-│  [foto Kissabel 160h]              │  hero dinamico
-│  Villa Kissabel                    │  section-title-secondary
-│  Villa · 260mq · 14 ospiti         │  label-metadata
-│                                    │
+┌────────────────────────────────────┐
+│  [foto location 160h]              │
+│  (placeholder senza nome)          │
 │  ────────────────────────────      │
-│                                    │
-│  📍 LivingApple · 1.5 km dal mare  │  feature chip list
-│  🛏️ 4 camere · 2 bagni             │
-│  🏊 Piscina privata + condivisa    │  (solo se privatePool=true)
-│  🌳 Giardino · Patio · Sala eventi │  (solo se presenti)
-│                                    │
+│  [🛡️ Deposito cauzionale]          │  sempre — testo fisso generico
+│  [⚡ Consumi energetici]            │  sempre — testo fisso
 │  ────────────────────────────      │
-│                                    │
-│  Check-in         15 giu           │
-│  Check-out        22 giu           │
-│  Ospiti           2 adulti         │
-│                                    │
+│  Date                              │
+│  —                                 │
+│  Ospiti                            │
+│  —                                 │
 │  ────────────────────────────      │
-│                                    │
-│  DETTAGLIO PREZZO                  │
-│  7 notti × €180       €1260        │  solo se offer + date note
-│  Tassa soggiorno       €28         │
-│                                    │
-│  Totale              €1288         │  22px / primary
-│                                    │
+│  DETTAGLI DEL PREZZO               │
+│  Seleziona un appartamento e date  │  hint-text
+│  per vedere il totale              │
 │  ────────────────────────────      │
-│                                    │
-│  🗓️ CANCELLAZIONE                  │
-│  Flessibile 60 gg — cancelli gratis│  dal OFFER_INFO della tariffa
-│                                    │
-│  [🔐 Deposito €1000] warning       │
-│  [⚡ Consumi a misura] info        │
-│                                    │
-│  ┌──────────────────────────────┐  │
-│  │   Continua   →               │  │  btn--primary ENABLED
-│  └──────────────────────────────┘  │
-│                                    │
+│  CANCELLAZIONE                     │
+│  Dipende dalla tariffa scelta      │
+│  ────────────────────────────      │
+│  [Continua →]  disabled            │
 │  CIN IT059014B47RVOMN2D            │
-│                                    │
 └────────────────────────────────────┘
 ```
 
-### 3.3 Feature chip — regole di rendering
+### 3.2 Appartamento selezionato
 
-- `📍` sempre (distanza mare dal `distanceLabel` della property)
-- `🛏️` sempre (bedrooms · bathrooms)
-- `🏊` mostra "privata + condivisa" se `privatePool`, "condivisa" se `sharedPool`, nulla se nessuna (appartamenti Beach)
-- `🌳` concatena `garden/patio/eventHall` con separatore `·`, solo se ≥1 true
-- Ordine fisso. Chip mancanti spariscono senza lasciare buco.
-
-**Esempio dal config**:
-- Kissabel (villa): tutto presente
-- Gala (Beach): `📍 250m dal mare · 🛏️ 2 camere · 2 bagni · 🌊 mare vicino` (no piscina, no giardino)
-- Annurca (monolocale): `📍 1.5 km dal mare · 🛏️ 1 camera · 1 bagno · 🏊 Piscina condivisa`
+```
+┌────────────────────────────────────┐
+│  [foto Kissabel 160h]              │
+│  Villa Kissabel                    │
+│  Villa · 260mq · 14 ospiti         │
+│  ────────────────────────────      │
+│  🚪 4 camere · 💧 2 bagni · 👥 14   │  feature chip con bi-door-closed-fill etc
+│  🌊 Piscina privata + condivisa    │
+│  🌳 Giardino                        │
+│  🏠 Patio                           │
+│  📅 Sala eventi                     │
+│  ────────────────────────────      │
+│  [🛡️ Deposito cauzionale]          │  ora mostra importo €1000 dal config
+│  Questo alloggio richiede...       │
+│  [⚡ Consumi energetici]            │
+│  I consumi sono calcolati...       │
+│  ────────────────────────────      │
+│  Date                              │
+│  29 maggio 2026 – 1 giugno 2026    │
+│  3 notti                           │
+│  Ospiti                            │
+│  2 adulti                          │
+│  ────────────────────────────      │
+│  DETTAGLI DEL PREZZO               │
+│  3 notti × €131    €393            │
+│  Tassa soggiorno    €12            │
+│  Totale          €405              │  grande primary
+│  ────────────────────────────      │
+│  CANCELLAZIONE                     │
+│  Flessibile 60gg — cancelli gratis │
+│  ────────────────────────────      │
+│  [Continua →]  enabled             │
+│  CIN IT059014B47RVOMN2D            │
+└────────────────────────────────────┘
+```
 
 ---
 
 ## 4. Contenuto della sidebar step 2
 
-I blocchi 1-3 e 5-11 sono identici allo step 1. Cambia solo il blocco 4.
-
-### Blocco 4 — Extras + Voucher (solo step 2)
-
-```
-  AGGIUNTE                          │  label-uppercase-muted
-                                    │
-  [🛏️ Letto extra  −0+  +€15/notte] │  upsell stepper compatto
-  [🍼 Culla        −0+  +€8/notte]  │
-                                    │
-  Codice sconto  [____]  [Applica]  │  voucher inline
-```
-
-### Cambi rispetto a oggi
-
-| Contenuto oggi (step 2) | Nuova posizione |
-|---|---|
-| Foto + nome + tipo | Blocco 1 (identico) |
-| Banner ⚡ consumi in cima | Blocco 9 (sposta sotto totale, stesso testo) |
-| Input voucher | Blocco 4 |
-| Date / Ospiti con Modifica | Blocco 3 |
-| Dettaglio prezzo | Blocco 5 |
-| Upsell stepper | Blocco 4 |
-| Tassa soggiorno | Blocco 5 |
-| Totale | Blocco 6 |
-| Banner 🔐 deposito | Blocco 8 (sposta vicino a consumi, uniforma) |
-| Politica cancellazione | Blocco 7 (compattata in 1 riga + testo) |
-
-**Nessuna info perde**: è lo stesso contenuto, riordinato.
+Stesso DNA di step 1 + **2 blocchi aggiuntivi** (voucher + servizi extra) + bottoni **Modifica** nelle righe Date/Ospiti. Contenuto logico gestito da WizardStep2, renderizzato via **slot** (vedi §5).
 
 ---
 
-## 5. Mockup testuale side-by-side
-
-### Step 1 (appartamento scelto) vs Step 2
-
-```
-  STEP 1                              STEP 2
-┌──────────────────────────┐        ┌──────────────────────────┐
-│ [foto Kissabel 160h]     │        │ [foto Kissabel 160h]     │
-│ Villa Kissabel           │        │ Villa Kissabel           │
-│ Villa · 260mq · 14 osp.  │        │ Villa · 260mq · 14 osp.  │
-├──────────────────────────┤        ├──────────────────────────┤
-│ 📍 1.5 km dal mare       │        │ (no feature — già scelto)│
-│ 🛏️ 4 camere · 2 bagni    │        │                          │
-│ 🏊 Piscina privata       │        │                          │
-│ 🌳 Giardino · Patio      │        │                          │
-├──────────────────────────┤        ├──────────────────────────┤
-│ Check-in     15 giu      │        │ Check-in   15 giu Modif. │
-│ Check-out    22 giu      │        │ Check-out  22 giu Modif. │
-│ Ospiti       2 adulti    │        │ Ospiti     2 adul. Modif.│
-├──────────────────────────┤        ├──────────────────────────┤
-│                          │        │ AGGIUNTE                 │
-│ (no extras — solo step 2)│        │ [🛏️ Letto ex -0+ +€15]   │
-│                          │        │ [🍼 Culla  -0+ +€8]      │
-│                          │        │ Codice [_____] Applica   │
-├──────────────────────────┤        ├──────────────────────────┤
-│ 7 notti × €180  €1260    │        │ 7 notti × €180  €1260    │
-│ Tassa sogg.     €28      │        │ Letto ×7        +€105    │
-│                          │        │ Tassa sogg.     €28      │
-│                          │        │                          │
-│ Totale        €1288      │        │ Totale        €1393      │
-├──────────────────────────┤        ├──────────────────────────┤
-│ 🗓️ Flex 60gg — gratis    │        │ 🗓️ Flex 60gg — gratis    │
-│ [🔐 Deposito €1000]      │        │ [🔐 Deposito €1000]      │
-│ [⚡ Consumi a misura]    │        │ [⚡ Consumi a misura]    │
-├──────────────────────────┤        ├──────────────────────────┤
-│ [    Continua  →     ]   │        │ [ Vedi riepil. →€1393 ]  │
-├──────────────────────────┤        ├──────────────────────────┤
-│ CIN IT059014B47RVOMN2D   │        │ CIN IT059014B47RVOMN2D   │
-└──────────────────────────┘        └──────────────────────────┘
-```
-
-**Identità**: i 2 mockup sono strutturalmente gemelli. Differenze = solo blocchi condizionali (feature in step 1, extras in step 2). Tutto il resto è identico in posizione, stile, tipografia.
-
----
-
-## 6. Componente unificato `BookingSidebar`
-
-### 6.1 API
+## 5. Componente `BookingSidebar` — API
 
 ```tsx
 interface BookingSidebarProps {
-  room?: {
-    name: string;
-    type: 'monolocale' | 'appartamento' | 'villa';
-    sqm: number;
-    maxPeople: number;
-    bedrooms: number;
-    bathrooms: number;
-    privatePool: boolean;
-    sharedPool: boolean;
-    features: { outdoorDining: boolean; garden: boolean; patio: boolean; eventHall: boolean };
-    securityDeposit: number;
-    coverUrl?: string;
-  };
-  propertyDistanceLabel?: string;   // es. "1.5 km dal mare"
-  fallbackHeroUrl?: string;         // foto location se no appto
+  locale?: string;
+  step?: 1 | 2;   // default 1
 
-  checkIn?: string;
-  checkOut?: string;
-  numAdults?: number;
-  numChildren?: number;
+  // step 1 (sempre disponibili)
+  onContinua?: () => void;
+  canContinua?: boolean;
 
-  pricing?: {
-    offerName: string;
-    offerCondition: string;          // es. "Flessibile 60gg — gratis"
-    basePrice: number;
-    nights: number;
-    perNight: number;
-    touristTax: number;
-    extras?: Array<{ name: string; price: number; quantity: number }>;
-    voucher?: { code: string; discount: number };
-    total: number;
-  };
-
-  step: 1 | 2;
-
-  // Controlli
-  onEditDates?: () => void;          // step 2
-  onEditGuests?: () => void;         // step 2
-  onVoucherApply?: (code: string) => void;  // step 2
-  extras?: {                          // step 2
-    items: ExtraItem[];
-    onQty: (id: string, qty: number) => void;
-  };
-
-  ctaLabel: string;
-  ctaDisabled?: boolean;
-  onCta: () => void;
-
-  labels: { /* i18n */ };
-  locale: string;
+  // step 2 — slot passante
+  step2VoucherSlot?: React.ReactNode;   // JSX dell'input voucher (gestione locale a WizardStep2)
+  step2ExtrasSlot?: React.ReactNode;    // JSX del catalogo upsell con stepper
+  onEditDates?: () => void;             // bottone Modifica su riga Date
+  onEditGuests?: () => void;            // bottone Modifica su riga Ospiti
+  ctaLabel?: string;                    // override CTA (default t.continua)
 }
 ```
 
-### 6.2 Scaffolding esistente
-
-`components/wizard/WizardBookingSummary.tsx` + `components/ui/BookingSummary.tsx` sono **scaffolding mai cablato** ([wizard-layout.md:359](wizard-layout.md:359)). L'API è incompatibile col nuovo scope (niente feature chip, niente banner).
-
-**Decisione**: creare `BookingSidebar.tsx` ex-novo, **eliminare** i due file scaffolding. Un componente unico, non tre.
+**Separazione**:
+- BookingSidebar = chrome visivo (hero, banner, layout, typography, totale, CTA, footer)
+- Slot = contenuti dinamici specifici dello step 2 (voucher input, upsell stepper)
+- WizardStep2 padrone di voucher/extras state + fetch API upsell
 
 ---
 
-## 7. Roadmap
+## 6. Roadmap
 
-Sostituisce §5 dell'audit. 3 mini-sessioni, ciascuna = 1 commit atomico + Vercel deploy.
-
-| # | Ambito | Rischio | Estetica impatto |
+| # | Ambito | Rischio | Visual |
 |---|---|---|---|
-| **3a** | Cleanup + rename. Elimino `WizardSidebar.tsx`, `WizardBookingSummary.tsx`, `components/ui/BookingSummary.tsx` (scaffolding morto). Rimuovo `renderTopSection` rami 1-4, `NightsBadge`, `.step6-sidebar`. Nessun cambio visivo. | 🟢 basso | nullo |
-| **3b** | Creo `BookingSidebar.tsx`. Cablo in `Wizard.tsx` per step 1. Contenuto: hero + (feature chip se appto scelto) + dati chiave + breakdown (placeholder se vuoto) + policy + deposito + consumi + CTA + CIN/CIR. Zero inline. Classi library. | 🟡 medio | alto (step 1 cambia aspetto) |
-| **3c** | Cablo `BookingSidebar` in step 2 con `step={2}` (blocco 4 extras+voucher). Rimuovo il `SidebarContent` inline e la sidebar 380 di `WizardStep2.tsx`. Rimuovo sfondo grigio edge-to-edge della pagina step 2. | 🔴 alto (tocca WizardStep2 in cui c'è logica pagamento collegata) | alto (step 2 si uniforma a step 1) |
+| **3c.1** | Aggiornamento `BookingSidebar` visuale a SidebarContent look: banner con titolo+testo, righe dati verticali, totale grande, extra chiavi i18n per banner titles | 🟡 medio | alto (step 1 aggiorna) |
+| **3c.2** | Aggiunta `step` prop + slot `step2VoucherSlot` / `step2ExtrasSlot` + `onEditDates/onEditGuests` al componente. Renderizza blocco voucher/extras quando step=2. Allineamento label i18n (priceSection → "Dettagli del prezzo", ecc.) | 🟢 basso | nullo (step 2 ancora non usa il componente) |
+| **3c.3** | In `Wizard.tsx`: `showSidebar = logicalStep === 1 \|\| logicalStep === 2`. WizardSidebarWrapper passa al BookingSidebar gli slot da WizardStep2 (via ref/callback oppure sollevando state al Wizard.tsx) | 🟡 medio | alto (step 2 adotta BookingSidebar) |
+| **3c.4** | In `WizardStep2.tsx`: elimina `SidebarContent`, sidebar desktop inline, accordion mobile, bg grigio edge-to-edge, helper `SideRow`/`PriceRow`, hardcoded `ENERGY_BOX`/`DEPOSIT_BOX` (spostati in i18n) | 🔴 alto (tocca pagamento) | alto (step 2 finalmente uniformato) |
 
-**Ordine**: 3a → 3b → **stop verifica visiva step 1** (screenshot + approvazione) → 3c → **stop verifica visiva step 2**.
+**Ordine**: 3c.1 → 3c.2 → **pausa visiva step 1** → 3c.3 → 3c.4 → **pausa visiva step 2**.
 
-Dopo 3b si apre la sidebar `/prenota` e si confronta col wireframe §3.2. Se non convince → torno al doc prima di toccare step 2.
-
----
-
-## 8. Cosa NON fa questo design
-
-- Non introduce modali, popup o tooltip (info sempre visibili, scelta ratificata dall'utente).
-- Non introduce animazioni o micro-interazioni.
-- Non tocca lo step 3 (pagamento) — resta full-width (pattern "order summary expanded at checkout" — Baymard §3.9).
-- Non adotta CSS-in-JS.
-- Non propone redesign del layout wizard container (stabile in [wizard-layout.md](wizard-layout.md)).
-- Non aggiunge dipendenze.
+Ogni punto = 1 commit atomico + push → verifica Vercel.
 
 ---
 
-## 9. Riferimenti
+## 7. Cosa NON fa questo design
 
-- **Baymard Institute** — Checkout Usability Report, Trust Seals Study (baymard.com/research)
-- **Nielsen Norman Group** — 10 Usability Heuristics (nngroup.com/articles)
-- **Dati reali**: [config/properties.ts](../../config/properties.ts), `OFFER_INFO`
-- [wizard-sidebar-audit.md](wizard-sidebar-audit.md) — diagnosi
-- [wizard-layout.md](wizard-layout.md) — container layout
-- [css-library.md](../design-system/css-library.md) — classi Sessione 1+2
-- [migration-plan.md](migration-plan.md) — piano generale
+- Non introduce modali (banner informativi sempre visibili)
+- Non tocca lo step 3 (pagamento) — resta full-width
+- Non tocca il layout wizard container
+- Non adotta CSS-in-JS
+- Non aggiunge dipendenze
+- Non rimuove l'accordion mobile step 2 (resterà fino a sessione mobile dedicata futura)
 
 ---
 
-## 10. Changelog
+## 8. Riferimenti
 
-### 2026-04-19 — v2 (ratificata)
-- Rimossa Opzione Progressive Disclosure con modale: banner ⚡/🔐 restano **visibili** in sidebar (Baymard "no hidden costs").
-- Contenuto step 1 ridefinito: feature dell'appartamento selezionato dal `config/properties.ts`. Niente trust signal generici inventati.
-- Placeholder soft quando nessun appto scelto (niente "Perché prenotare con noi").
-- Aggiunto CIN/CIR in footer sidebar come signal regolarità.
-- Gerarchia portata a 10 blocchi (+ CIN/CIR footer) — aggiunto cluster policy + deposito + consumi uniformato tra step.
-- Roadmap ridotta: 3 mini-sessioni (3d eliminata perché non serve più).
+- Baymard Institute, NN/g, Cialdini
+- [wizard-sidebar-audit.md](wizard-sidebar-audit.md)
+- [wizard-layout.md](wizard-layout.md)
+- [css-library.md](../design-system/css-library.md)
+- [config/properties.ts](../../config/properties.ts)
+- [components/wizard/WizardStep2.tsx §SidebarContent](../../components/wizard/WizardStep2.tsx) — look master
 
-### 2026-04-19 — v1
-- Prima stesura. 380px, DNA unificato, 4 trust signal generici (scartati in v2).
+---
+
+## 9. Changelog
+
+### 2026-04-19 v3 — inversione direzione
+- L'utente ha valutato SidebarContent di WizardStep2 "più bella" di BookingSidebar. Direzione ribaltata: BookingSidebar si allinea a SidebarContent, non il contrario.
+- Banner informativi con titolo + testo esteso (era 1 riga in v2)
+- Righe dati chiave con layout verticale (era label-row-between horizontale in v2)
+- Totale 20px/800 (era 22px in v2)
+- BookingSidebar accetta slot `step2VoucherSlot`/`step2ExtrasSlot` per non travasare logica da WizardStep2
+- Roadmap 3c scomposta in 3c.1/3c.2/3c.3/3c.4
+
+### 2026-04-19 v2
+- Rimossa Progressive Disclosure con modale
+- Contenuto step 1 basato su PROPERTIES config
+- CIN/CIR in footer
+- Banner visibili entrambi gli step
+
+### 2026-04-19 v1
+- Prima stesura, 380px, DNA unificato, trust signal generici scartati poi
