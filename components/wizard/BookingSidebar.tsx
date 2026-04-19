@@ -5,12 +5,14 @@
  * Spec: docs/ux/wizard-sidebar-design.md (v3 ratificato)
  * Look master: SidebarContent di WizardStep2 (ratificato 2026-04-19).
  *
- * Sessione 3c.1: rifacimento visuale step 1 per adottare DNA unificato
- * (banner titolo+testo, dati verticali, totale, riordinamento blocchi).
- * Sessione 3c.2+: slot step=2 per voucher/extras (da fare).
+ * Sessione 3c.1: rifacimento visuale step 1 (banner titolo+testo, dati verticali, totale).
+ * Sessione 3c.2: API estesa con prop `step`, slot `step2VoucherSlot` / `step2ExtrasSlot`,
+ *   callback `onEditDates` / `onEditGuests`, override `ctaLabel`. Il componente rende
+ *   i blocchi voucher/extras solo quando step=2 e mostra i bottoni "Modifica" inline.
+ *   Il cablaggio a WizardStep2 avviene in 3c.3.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useWizardStore } from '@/store/wizard-store';
 import { PROPERTIES, CIN, OFFER_INFO, type Room, type Property } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
@@ -19,8 +21,15 @@ import type { Locale } from '@/config/i18n';
 
 interface Props {
   locale?: string;
+  step?: 1 | 2;
   onContinua?: () => void;
   canContinua?: boolean;
+  // step=2 only
+  step2VoucherSlot?: ReactNode;
+  step2ExtrasSlot?: ReactNode;
+  onEditDates?: () => void;
+  onEditGuests?: () => void;
+  ctaLabel?: string;
 }
 
 function calcNights(ci: string, co: string) {
@@ -57,7 +66,17 @@ function poolLabel(t: any, room: Room): string | null {
 }
 
 
-export default function BookingSidebar({ locale = 'it', onContinua, canContinua }: Props) {
+export default function BookingSidebar({
+  locale = 'it',
+  step = 1,
+  onContinua,
+  canContinua,
+  step2VoucherSlot,
+  step2ExtrasSlot,
+  onEditDates,
+  onEditGuests,
+  ctaLabel,
+}: Props) {
   const tr = getTranslations(locale as Locale);
   const t = tr.components.wizardSidebar;
   const OFFER_NAMES = tr.shared.offerNames as Record<string, string>;
@@ -100,7 +119,14 @@ export default function BookingSidebar({ locale = 'it', onContinua, canContinua 
   const offerCondition = offerInfo?.conditions[locale] ?? offerInfo?.conditions.it ?? null;
 
   const handleContinua = onContinua ?? nextStep;
-  const showContinua = canContinua !== undefined ? canContinua : !!selectedOfferId;
+  // Step 1: CTA shown solo se selezionata un'offerta (legacy behaviour).
+  // Step 2: CTA sempre visibile, disabled governata da canContinua.
+  const showContinua = step === 2
+    ? true
+    : (canContinua !== undefined ? canContinua : !!selectedOfferId);
+  const ctaDisabled = step === 2
+    ? canContinua === false
+    : !selectedOfferId;
   const hasPricing = offerPrice > 0 && nights > 0;
 
   const depositText = room?.securityDeposit
@@ -136,8 +162,8 @@ export default function BookingSidebar({ locale = 'it', onContinua, canContinua 
         </div>
       </div>
 
-      {/* 3. FEATURE appartamento (solo se selezionato) */}
-      {room && (
+      {/* 3. FEATURE appartamento (solo step 1, se selezionato) */}
+      {step === 1 && room && (
         <>
           <hr className="divider-horizontal" />
           <p className="label-uppercase-muted">{t.propertySection}</p>
@@ -183,6 +209,14 @@ export default function BookingSidebar({ locale = 'it', onContinua, canContinua 
         </>
       )}
 
+      {/* 4. VOUCHER (solo step 2) — slot popolato da WizardStep2 in 3c.3/3c.4 */}
+      {step === 2 && step2VoucherSlot && (
+        <>
+          <hr className="divider-horizontal" />
+          {step2VoucherSlot}
+        </>
+      )}
+
       {/* 5. DATI CHIAVE — layout verticale (label sopra, valore sotto) */}
       <hr className="divider-horizontal" />
       <div className="booking-sidebar__data-row">
@@ -197,6 +231,11 @@ export default function BookingSidebar({ locale = 'it', onContinua, canContinua 
             <p className="booking-sidebar__data-hint">{nights} {nights === 1 ? t.night : t.nights}</p>
           )}
         </div>
+        {step === 2 && onEditDates && (
+          <button type="button" onClick={onEditDates} className="booking-sidebar__edit-btn">
+            {t.editBtn}
+          </button>
+        )}
       </div>
       <div className="booking-sidebar__data-row">
         <div className="booking-sidebar__data-cell">
@@ -205,9 +244,14 @@ export default function BookingSidebar({ locale = 'it', onContinua, canContinua 
             {numAdult > 0 ? `${numAdult} ${t.adults}${numChild > 0 ? `, ${numChild} ${t.children}` : ''}` : '—'}
           </p>
         </div>
+        {step === 2 && onEditGuests && (
+          <button type="button" onClick={onEditGuests} className="booking-sidebar__edit-btn">
+            {t.editBtn}
+          </button>
+        )}
       </div>
 
-      {/* 6. DETTAGLI DEL PREZZO + 8. TOTALE */}
+      {/* 6. DETTAGLI DEL PREZZO */}
       <hr className="divider-horizontal" />
       <p className="label-uppercase-muted">{t.priceSection}</p>
       {hasPricing ? (
@@ -225,13 +269,25 @@ export default function BookingSidebar({ locale = 'it', onContinua, canContinua 
               <p className="hint-text">{t.touristTaxNote}</p>
             </>
           )}
-          <div className="booking-sidebar__total">
-            <span className="booking-sidebar__total-label">{t.total}</span>
-            <span className="booking-sidebar__total-value">{fmt(totalWithTax)}</span>
-          </div>
         </>
       ) : (
         <p className="hint-text">{t.priceWaitingMsg}</p>
+      )}
+
+      {/* 7. SERVIZI EXTRA (solo step 2) — slot popolato da WizardStep2 in 3c.3/3c.4 */}
+      {step === 2 && step2ExtrasSlot && (
+        <>
+          <hr className="divider-horizontal" />
+          {step2ExtrasSlot}
+        </>
+      )}
+
+      {/* 8. TOTALE */}
+      {hasPricing && (
+        <div className="booking-sidebar__total">
+          <span className="booking-sidebar__total-label">{t.total}</span>
+          <span className="booking-sidebar__total-value">{fmt(totalWithTax)}</span>
+        </div>
       )}
 
       {/* 9. CANCELLAZIONE */}
@@ -257,9 +313,9 @@ export default function BookingSidebar({ locale = 'it', onContinua, canContinua 
         <button
           onClick={handleContinua}
           className="btn btn--primary booking-sidebar__cta"
-          disabled={!selectedOfferId}
+          disabled={ctaDisabled}
         >
-          {t.continua}
+          {ctaLabel ?? t.continua}
         </button>
       )}
 
