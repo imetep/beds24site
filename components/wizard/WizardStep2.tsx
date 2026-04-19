@@ -452,7 +452,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
           {/* Mobile: accordion riepilogo */}
           <div
-            className="step6-mobile-summary border mb-4 overflow-hidden"
+            className="wizard-summary-mobile border mb-4 overflow-hidden"
             style={{ display: 'none', borderRadius: 14 }}
           >
             <button
@@ -596,7 +596,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
         {/* ── Sidebar destra (desktop) ── */}
         <div
-          className="step6-sidebar flex-shrink-0 border position-sticky align-self-start"
+          className="wizard-summary-sidebar flex-shrink-0 border position-sticky align-self-start"
           style={{ width: 380, borderRadius: 16, padding: '22px 24px', top: 90 }}
         >
           <SidebarContent />
@@ -605,8 +605,8 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
       <style>{`
         @media (max-width: 767px) {
-          .step6-sidebar { display: none !important; }
-          .step6-mobile-summary { display: block !important; }
+          .wizard-summary-sidebar { display: none !important; }
+          .wizard-summary-mobile { display: block !important; }
         }
       `}</style>
     </div>
