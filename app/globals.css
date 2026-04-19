@@ -576,6 +576,14 @@ body {
   margin-top: var(--space-md);
   letter-spacing: 0.03em;
 }
+/* Typography rinforzata per i dati chiave dentro la sidebar: le date e il
+   conteggio ospiti devono essere leggibili (13/15 invece di 12/13 standard). */
+.booking-sidebar .label-row-between__label {
+  font-size: var(--text-sm);
+}
+.booking-sidebar .label-row-between__value {
+  font-size: var(--text-base);
+}
 
 /* ==========================================================================
    Libreria CSS Sessione 1 — pattern estratti dai 17 file del migration plan.
