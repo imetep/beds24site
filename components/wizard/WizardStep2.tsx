@@ -79,7 +79,8 @@ interface Props { locale?: string; }
 
 export default function WizardStep2({ locale = 'it' }: Props) {
   const loc = (SUPPORTED_LOCALES as readonly string[]).includes(locale) ? locale : 'it';
-  const t   = getTranslations(loc as Locale).components.wizardStep2;
+  const t         = getTranslations(loc as Locale).components.wizardStep2;
+  const tSidebar  = getTranslations(loc as Locale).components.wizardSidebar;
   const OFFER_NAMES = getTranslations(loc as Locale).shared.offerNames as Record<string, string>;
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -203,11 +204,11 @@ export default function WizardStep2({ locale = 'it' }: Props) {
         setDiscountedPrice(data.discountedPrice);
         setVoucherApplied(true);
       } else {
-        setVoucherError('Codice non valido');
+        setVoucherError(t.voucherErrorInvalid);
         setVoucherCode('');
       }
     } catch {
-      setVoucherError('Errore verifica codice');
+      setVoucherError(t.voucherErrorFetch);
     }
   }
 
@@ -613,7 +614,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                       setVoucherInput(e.target.value);
                       if (voucherApplied) { setVoucherApplied(false); setDiscountedPrice(null); setVoucherCode(''); }
                     }}
-                    placeholder="es. ESTATE2026"
+                    placeholder={tSidebar.voucherPlaceholder}
                     autoComplete="off"
                     autoCorrect="off"
                     autoCapitalize="off"
@@ -625,7 +626,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                     disabled={!voucherInput.trim()}
                     className={`voucher-block__apply-btn${voucherApplied ? ' is-applied' : ''}`}
                   >
-                    {voucherApplied ? '✓ Applicato' : t.voucherApply}
+                    {voucherApplied ? tSidebar.voucherApplied : t.voucherApply}
                   </button>
                 </div>
                 {voucherError && <p className="voucher-block__error">{voucherError}</p>}
@@ -647,7 +648,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                             {item.name[loc] ?? item.name.it}
                           </p>
                           <p className="extras-catalog__item-price">
-                            +{fmt(item.price)} / unità
+                            +{fmt(item.price)} {t.perUnit}
                           </p>
                         </div>
                         <div className="extras-catalog__stepper">
