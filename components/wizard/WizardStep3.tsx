@@ -1,157 +1,33 @@
 'use client';
 
+/**
+ * WizardStep3 — riepilogo finale + pagamento (Stripe o PayPal).
+ * Redesign B (2026-04-19): single-col 680px, 1 card riepilogo compatta
+ * con hero foto + dati soggiorno + prezzo breakdown + totale,
+ * banner policy cancellazione, card dati ospite compatta, trust signal,
+ * CTA full-width. Applica visual audit §3.1–§3.7.
+ *
+ * ⚠️ LOGICA PAGAMENTO PRESERVATA BYTE-IDENTICAL — non toccare:
+ *   - Pre-caricamento SDK PayPal avviene in WizardStep2 quando si sceglie PayPal
+ *   - `paymentMethod` NON va nelle deps dell'useEffect di render PayPal
+ *   - `createBooking()` invocata dentro `createOrder` (mai al mount)
+ *   - `createdBookIdRef` passa il bookId da createOrder a onApprove
+ *   - `paypalButtonsRendered.current` guard contro double-render
+ *   - Container `<div id="paypal-button-container">` sempre nel DOM
+ *   - Status 'new' è settato server-side in /api/paypal-capture (mai toccare qui)
+ *   - Stripe: booking creato con status 'request', Beds24 /channels/stripe setta
+ *     confirmed automaticamente → reset a 'request' avviene server-side in
+ *     /api/stripe-session. /api/stripe-confirm al ritorno setta 'new' + invoice items.
+ */
+
 import { useState, useEffect, useRef } from 'react';
 import { useWizardStore } from '@/store/wizard-store';
 import { PROPERTIES } from '@/config/properties';
+import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
 
-const UI: Record<string, Record<string, string>> = {
-  it: {
-    title:         'Riepilogo prenotazione',
-    subtitle:      'Controlla i dettagli e procedi al pagamento',
-    apartment:     'Appartamento',
-    dates:         'Date soggiorno',
-    guests:        'Ospiti',
-    adults:        'adulti',
-    children:      'bambini',
-    nights:        'notti',
-    night:         'notte',
-    rate:          'Tariffa',
-    cancelPolicy:  'Politica di cancellazione',
-    priceDetail:   'Dettaglio prezzo',
-    discount:      'Sconto voucher',
-    touristTax:    'Imposta di soggiorno',
-    touristNote:   '€2/pers/notte · max 10 notti · esenti under 12',
-    total:         'TOTALE',
-    guestData:     'Dati ospite',
-    name:          'Nome',
-    email:         'Email',
-    phone:         'Telefono',
-    country:       'Paese',
-    arrival:       'Ora arrivo',
-    notes:         'Richieste speciali',
-    payBtn:        'Conferma e paga con Carta',
-    payBtnPaypal:  'Paga con PayPal',
-    paying:        'Creazione prenotazione...',
-    payingPaypal:  'Elaborazione PayPal...',
-    back:          '← Modifica dati',
-    errTitle:      'Errore',
-    errBack:       'Torna indietro e riprova',
-    perNight:      '/notte',
-    voucher:       'Codice sconto',
-    paypalLoading: 'Caricamento PayPal...',
-    securePayment: 'Pagamento sicuro',
-  },
-  en: {
-    title:         'Booking summary',
-    subtitle:      'Check the details and proceed to payment',
-    apartment:     'Apartment',
-    dates:         'Stay dates',
-    guests:        'Guests',
-    adults:        'adults',
-    children:      'children',
-    nights:        'nights',
-    night:         'night',
-    rate:          'Rate',
-    cancelPolicy:  'Cancellation policy',
-    priceDetail:   'Price breakdown',
-    discount:      'Voucher discount',
-    touristTax:    'Tourist tax',
-    touristNote:   '€2/pers/night · max 10 nights · under 12 exempt',
-    total:         'TOTAL',
-    guestData:     'Guest details',
-    name:          'Name',
-    email:         'Email',
-    phone:         'Phone',
-    country:       'Country',
-    arrival:       'Arrival time',
-    notes:         'Special requests',
-    payBtn:        'Confirm and pay by Card',
-    payBtnPaypal:  'Pay with PayPal',
-    paying:        'Creating booking...',
-    payingPaypal:  'Processing PayPal...',
-    back:          '← Edit details',
-    errTitle:      'Error',
-    errBack:       'Go back and try again',
-    perNight:      '/night',
-    voucher:       'Discount code',
-    paypalLoading: 'Loading PayPal...',
-    securePayment: 'Secure payment',
-  },
-  de: {
-    title:         'Buchungsübersicht',
-    subtitle:      'Details prüfen und zur Zahlung fortfahren',
-    apartment:     'Unterkunft',
-    dates:         'Aufenthaltsdaten',
-    guests:        'Gäste',
-    adults:        'Erwachsene',
-    children:      'Kinder',
-    nights:        'Nächte',
-    night:         'Nacht',
-    rate:          'Tarif',
-    cancelPolicy:  'Stornierungsbedingungen',
-    priceDetail:   'Preisdetails',
-    discount:      'Gutscheinrabatt',
-    touristTax:    'Kurtaxe',
-    touristNote:   '€2/Pers/Nacht · max. 10 Nächte · Kinder unter 12 befreit',
-    total:         'GESAMT',
-    guestData:     'Gastdaten',
-    name:          'Name',
-    email:         'E-Mail',
-    phone:         'Telefon',
-    country:       'Land',
-    arrival:       'Ankunftszeit',
-    notes:         'Besondere Wünsche',
-    payBtn:        'Bestätigen und mit Karte bezahlen',
-    payBtnPaypal:  'Mit PayPal bezahlen',
-    paying:        'Buchung wird erstellt...',
-    payingPaypal:  'PayPal wird verarbeitet...',
-    back:          '← Daten bearbeiten',
-    errTitle:      'Fehler',
-    errBack:       'Zurück und erneut versuchen',
-    perNight:      '/Nacht',
-    voucher:       'Rabattcode',
-    paypalLoading: 'PayPal wird geladen...',
-    securePayment: 'Sichere Zahlung',
-  },
-  pl: {
-    title:         'Podsumowanie rezerwacji',
-    subtitle:      'Sprawdź szczegóły i przejdź do płatności',
-    apartment:     'Apartament',
-    dates:         'Daty pobytu',
-    guests:        'Goście',
-    adults:        'dorośli',
-    children:      'dzieci',
-    nights:        'nocy',
-    night:         'noc',
-    rate:          'Taryfa',
-    cancelPolicy:  'Polityka anulowania',
-    priceDetail:   'Szczegóły ceny',
-    discount:      'Zniżka voucher',
-    touristTax:    'Opłata turystyczna',
-    touristNote:   '€2/os./noc · maks. 10 nocy · dzieci poniżej 12 lat zwolnione',
-    total:         'ŁĄCZNIE',
-    guestData:     'Dane gościa',
-    name:          'Imię i nazwisko',
-    email:         'E-mail',
-    phone:         'Telefon',
-    country:       'Kraj',
-    arrival:       'Godzina przyjazdu',
-    notes:         'Specjalne życzenia',
-    payBtn:        'Potwierdź i zapłać kartą',
-    payBtnPaypal:  'Zapłać przez PayPal',
-    paying:        'Tworzenie rezerwacji...',
-    payingPaypal:  'Przetwarzanie PayPal...',
-    back:          '← Edytuj dane',
-    errTitle:      'Błąd',
-    errBack:       'Wróć i spróbuj ponownie',
-    perNight:      '/noc',
-    voucher:       'Kod rabatowy',
-    paypalLoading: 'Ładowanie PayPal...',
-    securePayment: 'Bezpieczna płatność',
-  },
-};
+const SUPPORTED_LOCALES = ['it', 'en', 'de', 'pl'] as const;
 
 function getRoomData(roomId: number | null) {
   if (!roomId) return null;
@@ -173,18 +49,19 @@ function fmt(n: number) {
 function formatDate(ymd: string, locale: string) {
   return new Date(ymd + 'T00:00:00').toLocaleDateString(
     locale === 'it' ? 'it-IT' : locale === 'de' ? 'de-DE' : locale === 'pl' ? 'pl-PL' : 'en-GB',
-    { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' }
+    { day: 'numeric', month: 'short', year: 'numeric' }
   );
 }
 
 interface Props { locale?: string; }
 
-export default function WizardStep7({ locale = 'it' }: Props) {
-  const t   = UI[locale] ?? UI.it;
-  const loc = locale in UI ? locale : 'it';
-  const tr  = getTranslations(loc as Locale);
-  const OFFER_NAMES    = tr.shared.offerNames as Record<string, string>;
-  const CANCEL_POLICY  = tr.shared.cancelPolicy as Record<string, string>;
+export default function WizardStep3({ locale = 'it' }: Props) {
+  const loc = (SUPPORTED_LOCALES as readonly string[]).includes(locale) ? locale : 'it';
+  const tr            = getTranslations(loc as Locale);
+  const t             = tr.components.wizardStep3;
+  const tSidebar      = tr.components.wizardSidebar;
+  const OFFER_NAMES   = tr.shared.offerNames as Record<string, string>;
+  const CANCEL_POLICY = tr.shared.cancelPolicy as Record<string, string>;
 
   const {
     numAdult, numChild, childrenAges,
@@ -196,22 +73,23 @@ export default function WizardStep7({ locale = 'it' }: Props) {
     paymentMethod,
     guestFirstName, guestLastName, guestEmail,
     guestPhone, guestCountry, guestArrivalTime, guestComments,
-    pendingBookId, invoiceAmount,
+    pendingBookId,
     discountedPrice,
     setPendingBooking,
     prevStep, reset,
   } = useWizardStore();
 
   // ✅ Fase iniziale 'ready': Step3 è solo riepilogo, nessuna API al mount
-  const [phase, setPhase]   = useState<'ready' | 'error' | 'paying'>('ready');
-  const [error, setError]   = useState<string | null>(null);
+  const [phase, setPhase]       = useState<'ready' | 'error' | 'paying'>('ready');
+  const [error, setError]       = useState<string | null>(null);
+  const [coverUrl, setCoverUrl] = useState<string | null>(null);
 
-  // PayPal SDK
-  const [paypalReady, setPaypalReady]         = useState(false);
-  const paypalContainerRef                    = useRef<HTMLDivElement>(null);
-  const paypalButtonsRendered                 = useRef(false);
+  // PayPal SDK state + refs (vedi vincoli PayPal in header)
+  const [paypalReady, setPaypalReady]   = useState(false);
+  const paypalContainerRef              = useRef<HTMLDivElement>(null);
+  const paypalButtonsRendered           = useRef(false);
   // ✅ Ref per bookId creato durante il flusso PayPal
-  const createdBookIdRef                      = useRef<number | null>(null);
+  const createdBookIdRef                = useRef<number | null>(null);
 
   const room   = getRoomData(selectedRoomId);
   const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
@@ -235,11 +113,23 @@ export default function WizardStep7({ locale = 'it' }: Props) {
   const extrasTotal    = (selectedExtras ?? []).reduce((sum: number, e: any) => sum + e.price * (e.quantity ?? 1), 0);
   const total          = realPrice + touristTax + extrasTotal;
 
+  // Etichetta tipo appartamento (legge wizardSidebar i18n — condivisa con step 1/2)
+  const roomTypeLabel = room?.type === 'monolocale' ? tSidebar.typeMonolocale
+                       : room?.type === 'villa'      ? tSidebar.typeVilla
+                       : room                        ? tSidebar.typeAppartamento
+                       : '';
+
+  // ── Fetch cover hero (miniatura foto appartamento) ────────────────────────
+  useEffect(() => {
+    if (!room?.cloudinaryFolder) { setCoverUrl(null); return; }
+    fetchCoversCached().then(covers => setCoverUrl(covers?.[room.cloudinaryFolder] ?? null));
+  }, [room?.cloudinaryFolder]);
+
   // ── Crea booking su Beds24 — chiamata solo al click del bottone Paga ──────
   // Restituisce il bookId oppure null se errore (setPhase('error') già chiamato)
   async function createBooking(): Promise<number | null> {
     if (!selectedRoomId || !checkIn || !checkOut) {
-      setError('Dati mancanti. Torna indietro e riprova.');
+      setError(t.errDataMissing);
       setPhase('error');
       return null;
     }
@@ -275,7 +165,7 @@ export default function WizardStep7({ locale = 'it' }: Props) {
       return bookData.bookId as number;
 
     } catch (e: any) {
-      setError(e.message ?? 'Errore sconosciuto');
+      setError(e.message ?? t.errGeneric);
       setPhase('error');
       return null;
     }
@@ -293,7 +183,7 @@ export default function WizardStep7({ locale = 'it' }: Props) {
 
   // ── Inizializza PayPal SDK ────────────────────────────────────────────────
   // Lo script è già stato pre-caricato da WizardStep2 quando l'utente ha
-  // selezionato PayPal — qui aspettiamo solo che sia pronto
+  // selezionato PayPal — qui aspettiamo solo che sia pronto.
   useEffect(() => {
     if (paymentMethod !== 'paypal') return;
 
@@ -322,11 +212,12 @@ export default function WizardStep7({ locale = 'it' }: Props) {
     script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=EUR&intent=capture`;
     script.async = true;
     script.onload = () => setPaypalReady(true);
-    script.onerror = () => setError('Impossibile caricare PayPal. Riprova o usa la carta.');
+    script.onerror = () => setError(t.errPayPalLoad);
     document.head.appendChild(script);
   }, [paymentMethod]);
 
   // ── Renderizza i bottoni PayPal quando SDK è pronto ───────────────────────
+  // ⚠️ Deps: [paypalReady, phase, total] — NON aggiungere paymentMethod!
   useEffect(() => {
     if (!paypalReady) return;
     if (phase !== 'ready') return;
@@ -349,9 +240,8 @@ export default function WizardStep7({ locale = 'it' }: Props) {
 
       // ✅ Crea booking PRIMA di creare l'ordine PayPal
       createOrder: async () => {
-        // Crea il booking su Beds24
         const bookId = await createBooking();
-        if (!bookId) throw new Error('Errore creazione prenotazione');
+        if (!bookId) throw new Error(t.errPayPalOrder);
 
         // Salva il bookId nel ref per onApprove/onError/onCancel
         createdBookIdRef.current = bookId;
@@ -371,7 +261,7 @@ export default function WizardStep7({ locale = 'it' }: Props) {
           // Booking creato ma ordine PayPal fallito: cancella il booking
           cancelBooking(bookId);
           createdBookIdRef.current = null;
-          throw new Error(data.error ?? 'Errore creazione ordine PayPal');
+          throw new Error(data.error ?? t.errPayPalOrder);
         }
         return data.orderID;
       },
@@ -381,7 +271,7 @@ export default function WizardStep7({ locale = 'it' }: Props) {
         setPhase('paying');
         const bookId = createdBookIdRef.current;
         if (!bookId) {
-          setError('Errore: prenotazione non trovata');
+          setError(t.errPayPalBookingMissing);
           setPhase('ready');
           paypalButtonsRendered.current = false;
           return;
@@ -401,14 +291,14 @@ export default function WizardStep7({ locale = 'it' }: Props) {
             }),
           });
           const result = await res.json();
-          if (!res.ok || !result.ok) throw new Error(result.error ?? 'Errore cattura PayPal');
+          if (!res.ok || !result.ok) throw new Error(result.error ?? t.errPayPalCapture);
 
           reset();
           const origin = window.location.origin;
           window.location.href = `${origin}/${locale}/prenota/successo?bookingId=${bookId}&paypal=1`;
 
         } catch (e: any) {
-          setError(e.message ?? 'Errore PayPal');
+          setError(e.message ?? t.errGeneric);
           setPhase('ready');
           paypalButtonsRendered.current = false;
         }
@@ -422,14 +312,13 @@ export default function WizardStep7({ locale = 'it' }: Props) {
           cancelBooking(createdBookIdRef.current);
           createdBookIdRef.current = null;
         }
-        setError('Errore PayPal. Riprova o usa la carta.');
+        setError(t.errPayPalGeneric);
         setPhase('ready');
         paypalButtonsRendered.current = false;
       },
 
       // Utente ha chiuso il popup PayPal senza pagare
       onCancel: () => {
-        // Se il booking era stato creato, cancellalo
         if (createdBookIdRef.current) {
           cancelBooking(createdBookIdRef.current);
           createdBookIdRef.current = null;
@@ -498,178 +387,222 @@ export default function WizardStep7({ locale = 'it' }: Props) {
       if (bookId) {
         cancelBooking(bookId);
       }
-      setError(e.message ?? 'Errore sconosciuto');
+      setError(e.message ?? t.errGeneric);
       setPhase('ready');
     }
   }
 
-  // ── Errore (dati mancanti) ─────────────────────────────────────────────────
+  // ── Error screen (phase === 'error', dati mancanti / errore fatale) ──────
   if (phase === 'error') {
     return (
-      <div style={{ maxWidth: 480, margin: '60px auto', textAlign: 'center', fontFamily: 'sans-serif', padding: '0 16px' }}>
-        <div style={{ fontSize: 48, marginBottom: 16 }}>⚠️</div>
-        <h2 style={{ fontSize: 20, fontWeight: 700, color: '#c0392b', margin: '0 0 10px' }}>{t.errTitle}</h2>
-        <p style={{ fontSize: 14, color: '#888', margin: '0 0 24px', lineHeight: 1.6 }}>{error}</p>
-        <button
-          onClick={handleBack}
-          style={{ padding: '12px 28px', borderRadius: 10, border: '1.5px solid #1E73BE', background: '#fff', color: 'var(--color-primary)', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
-        >
+      <div className="wizard-step3__error-screen">
+        <i className="bi bi-exclamation-triangle-fill wizard-step3__error-icon" aria-hidden="true"></i>
+        <h2 className="wizard-step3__error-title">{t.errTitle}</h2>
+        <p className="wizard-step3__error-msg">{error}</p>
+        <button onClick={handleBack} className="wizard-step3__error-btn">
           {t.errBack}
         </button>
       </div>
     );
   }
 
-  // ── Riepilogo ──────────────────────────────────────────────────────────────
+  // ── Riepilogo + pagamento ─────────────────────────────────────────────────
   return (
-    <div style={{ maxWidth: 640, margin: '0 auto', fontFamily: 'sans-serif', padding: '0 2px' }}>
+    <div className="wizard-step3">
 
-      <h2 style={{ fontSize: 24, fontWeight: 800, color: '#111', margin: '0 0 4px' }}>{t.title}</h2>
-      <p style={{ fontSize: 14, color: '#888', margin: '0 0 24px' }}>{t.subtitle}</p>
+      <h2 className="section-title-main">{t.title}</h2>
+      <p className="wizard-step3__subtitle">{t.subtitle}</p>
 
-      {/* Card appartamento + date */}
-      <div style={card}>
-        <Row label={t.apartment} value={room?.name ?? '—'} />
-        {checkIn && checkOut && (
-          <Row label={t.dates} value={`${formatDate(checkIn, locale)} → ${formatDate(checkOut, locale)}`} />
-        )}
-        {nights > 0 && <Row label="" value={`${nights} ${nights === 1 ? t.night : t.nights}`} dimmed />}
-        <Row label={t.guests} value={`${numAdult} ${t.adults}${numChild > 0 ? `, ${numChild} ${t.children}` : ''}`} />
-        <Row label={t.rate} value={offerName} />
-      </div>
+      {/* Card riepilogo principale: hero + dati soggiorno + prezzo + totale */}
+      <div className="card-info">
 
-      {/* Politica cancellazione */}
-      {cancelPolicy && (
-        <div style={{ ...card, background: '#FFF8EC', border: '1px solid #fcd34d', borderLeft: '4px solid #FCAF1A' }}>
-          <p style={{ ...labelStyle, color: '#B07820' }}>{t.cancelPolicy}</p>
-          <p style={{ fontSize: 13, color: '#78350f', margin: 0, lineHeight: 1.6 }}>{cancelPolicy}</p>
-        </div>
-      )}
-
-      {/* Dettaglio prezzo */}
-      <div style={card}>
-        <p style={labelStyle}>{t.priceDetail}</p>
-
-        <PriceRow
-          label={`${nights} ${nights === 1 ? t.night : t.nights} × ${fmt(perNight)}${t.perNight}`}
-          value={fmt(offerPrice)}
-        />
-
-        {hasDiscount && (
-          <PriceRow
-            label={`✓ ${t.discount}${voucherCode ? ` (${voucherCode})` : ''}`}
-            value={`− ${fmt(discountAmount)}`}
-            green
-          />
-        )}
-
-        {/* Righe extras selezionati */}
-        {(selectedExtras ?? []).map((extra: any) => (
-          <PriceRow
-            key={extra.id}
-            label={`${extra.name[loc] ?? extra.name.it}${(extra.quantity ?? 1) > 1 ? ` ×${extra.quantity}` : ''}`}
-            value={`+${fmt(extra.price * (extra.quantity ?? 1))}`}
-          />
-        ))}
-
-        {touristTax > 0 && <PriceRow label={t.touristTax} value={fmt(touristTax)} />}
-        {touristTax > 0 && <p style={{ fontSize: 11, color: '#9ca3af', margin: '-4px 0 12px' }}>{t.touristNote}</p>}
-
-        <div style={{ height: 1, background: '#e5e7eb', margin: '12px 0' }} />
-
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#EEF5FC', borderRadius: 12, padding: '14px 16px', marginTop: 4 }}>
-          <span style={{ fontSize: 16, fontWeight: 800, color: '#111' }}>{t.total}</span>
-          <span style={{ fontSize: 32, fontWeight: 900, color: 'var(--color-primary)', letterSpacing: '-0.02em' }}>{fmt(total)}</span>
+        {/* Hero compatto: foto 80x80 + nome + meta */}
+        <div className="wizard-step3__hero">
+          {coverUrl ? (
+            <img
+              src={coverUrl}
+              alt={room?.name ?? ''}
+              className="wizard-step3__hero-img"
+              loading="lazy"
+            />
+          ) : (
+            <div className="wizard-step3__hero-placeholder" aria-hidden="true">
+              <i className="bi bi-house-fill"></i>
+            </div>
+          )}
+          <div className="wizard-step3__hero-info">
+            <p className="wizard-step3__hero-name">{room?.name ?? '—'}</p>
+            {room && (
+              <p className="wizard-step3__hero-meta">
+                {roomTypeLabel} · {room.sqm} {tSidebar.sqm} · {room.maxPeople} {tSidebar.people}
+              </p>
+            )}
+          </div>
         </div>
 
+        <hr className="divider-horizontal" />
+
+        {/* Dati chiave soggiorno (Date, Ospiti, Tariffa) */}
+        <dl className="wizard-step3__data-grid">
+          {checkIn && checkOut && (
+            <>
+              <dt>{t.dates}</dt>
+              <dd>
+                {formatDate(checkIn, locale)} – {formatDate(checkOut, locale)}
+                {nights > 0 && ` · ${nights} ${nights === 1 ? t.night : t.nights}`}
+              </dd>
+            </>
+          )}
+          <dt>{t.guests}</dt>
+          <dd>
+            {numAdult} {t.adults}
+            {numChild > 0 ? `, ${numChild} ${t.children}` : ''}
+          </dd>
+          {offerName && (
+            <>
+              <dt>{t.rate}</dt>
+              <dd>{offerName}</dd>
+            </>
+          )}
+        </dl>
+
+        <hr className="divider-horizontal" />
+
+        {/* Dettaglio prezzo breakdown */}
+        <p className="label-uppercase-muted">{t.priceDetail}</p>
+        <div className="wizard-step3__price-rows">
+          <div className="layout-row-between">
+            <span>{nights} {nights === 1 ? t.night : t.nights} × {fmt(perNight)}{t.perNight}</span>
+            <span>{fmt(offerPrice)}</span>
+          </div>
+          {hasDiscount && (
+            <div className="layout-row-between wizard-step3__price-discount">
+              <span>{t.discount}{voucherCode ? ` (${voucherCode})` : ''}</span>
+              <span>− {fmt(discountAmount)}</span>
+            </div>
+          )}
+          {(selectedExtras ?? []).map((extra: any) => (
+            <div key={extra.id} className="layout-row-between">
+              <span>
+                {extra.name[loc] ?? extra.name.it}
+                {(extra.quantity ?? 1) > 1 ? ` ×${extra.quantity}` : ''}
+              </span>
+              <span>+ {fmt(extra.price * (extra.quantity ?? 1))}</span>
+            </div>
+          ))}
+          {touristTax > 0 && (
+            <div className="layout-row-between">
+              <span>{t.touristTax}</span>
+              <span>{fmt(touristTax)}</span>
+            </div>
+          )}
+        </div>
+        {touristTax > 0 && (
+          <p className="wizard-step3__price-note">{t.touristNote}</p>
+        )}
+
+        {/* Totale — audit §3.5: 22px/800, nessun box gigantismo */}
+        <div className="wizard-step3__total-row">
+          <span className="wizard-step3__total-label">{t.total}</span>
+          <span className="wizard-step3__total-value">{fmt(total)}</span>
+        </div>
         {hasDiscount && (
-          <p style={{ fontSize: 12, color: '#27ae60', margin: '6px 0 0', textAlign: 'right', fontWeight: 600 }}>
-            Hai risparmiato {fmt(discountAmount)} 🎉
+          <p className="wizard-step3__savings">
+            {t.savedMsg.replace('{amount}', fmt(discountAmount))}
           </p>
         )}
       </div>
 
-      {/* Dati ospite */}
-      <div style={card}>
-        <p style={labelStyle}>{t.guestData}</p>
-        <Row label={t.name}  value={`${guestFirstName} ${guestLastName}`} />
-        <Row label={t.email} value={guestEmail} />
-        {guestPhone       && <Row label={t.phone}   value={guestPhone} />}
-        {guestCountry     && <Row label={t.country} value={guestCountry} />}
-        {guestArrivalTime && <Row label={t.arrival} value={guestArrivalTime} />}
-        {guestComments    && <Row label={t.notes}   value={guestComments} />}
+      {/* Banner policy cancellazione — audit §3.4: no border-left giallo */}
+      {cancelPolicy && (
+        <div className="banner banner--warning banner--with-icon">
+          <i className="bi bi-calendar-x" aria-hidden="true"></i>
+          <div>
+            <p className="banner__title">{t.cancelPolicy}</p>
+            <p className="banner__text">{cancelPolicy}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Card dati ospite compatta */}
+      <div className="card-info">
+        <p className="label-uppercase-muted">{t.guestData}</p>
+        <p className="wizard-step3__guest-name">{guestFirstName} {guestLastName}</p>
+        <p className="wizard-step3__guest-meta">{guestEmail}</p>
+        {(guestPhone || guestCountry || guestArrivalTime) && (
+          <p className="wizard-step3__guest-meta">
+            {[
+              guestPhone,
+              guestCountry,
+              guestArrivalTime ? `${t.arrival}: ${guestArrivalTime}` : null,
+            ].filter(Boolean).join(' · ')}
+          </p>
+        )}
+        {guestComments && (
+          <div className="wizard-step3__guest-notes">
+            <i className="bi bi-chat-left-text" aria-hidden="true"></i>
+            <span>{guestComments}</span>
+          </div>
+        )}
       </div>
 
       {/* Errore inline (dopo tentativo di pagamento fallito) */}
       {error && phase === 'ready' && (
-        <div style={{ background: '#fff5f5', border: '1px solid #f5c6cb', borderRadius: 10, padding: '12px 16px', marginBottom: 16 }}>
-          <p style={{ margin: 0, color: '#c0392b', fontWeight: 600, fontSize: 14 }}>{t.errTitle}</p>
-          <p style={{ margin: '4px 0 0', fontSize: 13, color: '#888' }}>{error}</p>
+        <div className="banner banner--error banner--with-icon">
+          <i className="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+          <div>
+            <p className="banner__title">{t.errTitle}</p>
+            <p className="banner__text">{error}</p>
+          </div>
         </div>
       )}
 
-      {/* ── Trust signal sopra la CTA — UX 3.3 (solo visuale) ── */}
-      <div className="alert alert-success d-flex align-items-center gap-2 mb-2 py-2">
-        <i className="bi bi-shield-lock-fill fs-5"></i>
-        <div>
-          <div className="fw-semibold">{t.securePayment}</div>
-          <div className="small text-muted">Stripe · PayPal</div>
-        </div>
+      {/* Trust signal inline sopra CTA */}
+      <div className="wizard-step3__trust">
+        <i className="bi bi-shield-lock-fill" aria-hidden="true"></i>
+        <span>{t.securePayment} · Stripe · PayPal</span>
       </div>
 
-      {/* ── CTA: Stripe o PayPal ── */}
+      {/* CTA — Stripe oppure wrapper PayPal */}
       {paymentMethod === 'stripe' ? (
         <button
           onClick={handlePagaStripe}
           disabled={phase === 'paying'}
-          style={{
-            width: '100%', padding: '18px', borderRadius: 14, border: 'none',
-            fontSize: 18, fontWeight: 900, marginBottom: 12,
-            background: phase === 'paying' ? '#e0e0e0' : '#FCAF1A',
-            color: phase === 'paying' ? '#999' : '#fff',
-            cursor: phase === 'paying' ? 'not-allowed' : 'pointer',
-            transition: 'all 0.15s',
-            boxShadow: phase === 'paying' ? 'none' : '0 4px 14px rgba(252,175,26,0.4)',
-            letterSpacing: '0.02em',
-          }}
+          className="btn btn--primary wizard-step3__cta"
         >
           {phase === 'paying'
-            ? `⏳ ${t.paying}`
-            : `💳 ${t.payBtn} · ${fmt(total)}`
-          }
+            ? t.paying
+            : `${t.payBtn} · ${fmt(total)}`}
         </button>
       ) : (
-        <div style={{ marginBottom: 12 }}>
+        <div className="wizard-step3__paypal-wrapper">
           {!paypalReady && (
-            <div style={{
-              width: '100%', padding: '18px', borderRadius: 14,
-              background: '#f0f4f8', textAlign: 'center',
-              fontSize: 14, color: '#888',
-            }}>
-              ⏳ {t.paypalLoading}
+            <div className="wizard-step3__paypal-loading">
+              {t.paypalLoading}
             </div>
           )}
+          {/* IMPORTANTE: il container PayPal deve rimanere nel DOM quando
+              l'useEffect di render SDK viene eseguito. È sempre renderizzato
+              quando paymentMethod === 'paypal', solo nascosto via d-none
+              quando non ready o in paying. NON unmountarlo condizionalmente. */}
           <div
             ref={paypalContainerRef}
             id="paypal-button-container"
-            style={{ display: paypalReady && phase !== 'paying' ? 'block' : 'none' }}
+            className={paypalReady && phase !== 'paying' ? '' : 'd-none'}
           />
           {phase === 'paying' && (
-            <div style={{
-              width: '100%', padding: '18px', borderRadius: 14,
-              background: '#e0e0e0', textAlign: 'center',
-              fontSize: 14, color: '#999', fontWeight: 600,
-            }}>
-              ⏳ {t.payingPaypal}
+            <div className="wizard-step3__paypal-loading">
+              {t.payingPaypal}
             </div>
           )}
         </div>
       )}
 
+      {/* Back link (subtle, in basso) */}
       <button
         onClick={handleBack}
         disabled={phase === 'paying'}
-        style={{ background: 'none', border: 'none', color: 'var(--color-primary)', fontSize: 14, cursor: 'pointer', padding: 0 }}
+        className="wizard-step3__back-link"
       >
         {t.back}
       </button>
@@ -677,35 +610,3 @@ export default function WizardStep7({ locale = 'it' }: Props) {
     </div>
   );
 }
-
-// ─── Sub-components ──────────────────────────────────────────────────────────
-function Row({ label, value, dimmed }: { label: string; value: string; dimmed?: boolean }) {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10, gap: 12 }}>
-      {label
-        ? <span style={{ fontSize: 13, color: '#6b7280', fontWeight: 600, flexShrink: 0, minWidth: 100 }}>{label}</span>
-        : <span />
-      }
-      <span style={{ fontSize: 13, color: dimmed ? '#9ca3af' : '#111', textAlign: 'right', lineHeight: 1.4 }}>{value}</span>
-    </div>
-  );
-}
-
-function PriceRow({ label, value, green }: { label: string; value: string; green?: boolean }) {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-      <span style={{ fontSize: 14, color: green ? '#27ae60' : '#444' }}>{label}</span>
-      <span style={{ fontSize: 14, fontWeight: 600, color: green ? '#27ae60' : '#111' }}>{value}</span>
-    </div>
-  );
-}
-
-const card: React.CSSProperties = {
-  border: '1px solid #e5e7eb', borderRadius: 'var(--radius-lg)',
-  padding: 'var(--space-base)', marginBottom: 'var(--space-base)', background: '#fff',
-};
-
-const labelStyle: React.CSSProperties = {
-  fontSize: 11, fontWeight: 700, color: 'var(--color-primary)',
-  textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 12px',
-};
