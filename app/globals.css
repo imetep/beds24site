@@ -569,6 +569,50 @@ body {
   width: 100%;
   margin-top: var(--space-md);
 }
+.booking-sidebar__data-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+.booking-sidebar__data-row:last-of-type {
+  margin-bottom: 0;
+}
+.booking-sidebar__data-cell {
+  flex: 1;
+  min-width: 0;
+}
+.booking-sidebar__data-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+.booking-sidebar__data-value {
+  font-size: var(--text-base);
+  color: var(--color-text);
+  margin: var(--space-xs) 0 0;
+}
+.booking-sidebar__data-hint {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin: var(--space-xs) 0 0;
+}
+.booking-sidebar__edit-btn {
+  background: none;
+  border: none;
+  padding: var(--space-xs) var(--space-sm);
+  color: var(--color-primary);
+  font-size: var(--text-sm);
+  text-decoration: underline;
+  cursor: pointer;
+  min-height: var(--touch-target);
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+}
+.booking-sidebar__edit-btn:hover {
+  background: var(--color-primary-soft);
+}
 .booking-sidebar__footer {
   font-size: var(--text-xs);
   color: var(--color-text-muted);
@@ -771,6 +815,15 @@ body {
   background: var(--color-error-bg);
   border-color: var(--color-error-border);
   color: var(--color-error-text);
+}
+.banner__title {
+  font-weight: 700;
+  margin: 0 0 var(--space-xs);
+}
+.banner__text {
+  margin: 0;
+  font-size: var(--text-xs);
+  line-height: 1.5;
 }
 .banner--with-icon {
   display: flex;
