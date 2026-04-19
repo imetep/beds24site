@@ -110,10 +110,16 @@ export default function HomeSearch({ locale }: { locale: string }) {
 
   function handleDay(ymd: string) {
     if (ymd < todayYMD) return;
+    // Se il giorno cliccato è nel mese destro, sposta il calendario in avanti
+    // così la data scelta diventa il mese di sinistra e il check-out resta visibile.
+    const clicked = parseYMD(ymd);
+    if (clicked.getFullYear() === sec.y && clicked.getMonth() === sec.m) {
+      setVY(sec.y);
+      setVM(sec.m);
+    }
     if (phase === 'ci') {
       setCheckIn(ymd);
-      const d = parseYMD(ymd);
-      const pre = new Date(d.getTime() + 3 * 86400000);
+      const pre = new Date(clicked.getTime() + 3 * 86400000);
       setCheckOut(toYMD(pre.getFullYear(), pre.getMonth(), pre.getDate()));
       setSelectingCheckout(true);
     } else {
