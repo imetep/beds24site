@@ -187,14 +187,12 @@ export default function BookingSidebar({ locale = 'it', onContinua, canContinua 
       <hr className="divider-horizontal" />
       <div className="booking-sidebar__data-row">
         <div className="booking-sidebar__data-cell">
-          <p className="booking-sidebar__data-label">{t.checkin}</p>
-          <p className="booking-sidebar__data-value">{checkIn ? formatDate(checkIn, locale) : '—'}</p>
-        </div>
-      </div>
-      <div className="booking-sidebar__data-row">
-        <div className="booking-sidebar__data-cell">
-          <p className="booking-sidebar__data-label">{t.checkout}</p>
-          <p className="booking-sidebar__data-value">{checkOut ? formatDate(checkOut, locale) : '—'}</p>
+          <p className="booking-sidebar__data-label">{t.dates}</p>
+          <p className="booking-sidebar__data-value">
+            {checkIn && checkOut
+              ? `${formatDate(checkIn, locale)} – ${formatDate(checkOut, locale)}`
+              : '—'}
+          </p>
           {nights > 0 && (
             <p className="booking-sidebar__data-hint">{nights} {nights === 1 ? t.night : t.nights}</p>
           )}
