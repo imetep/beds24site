@@ -39,7 +39,7 @@ function calcNights(ci: string, co: string) {
 function formatDate(ymd: string, locale: string) {
   return new Date(ymd + 'T00:00:00').toLocaleDateString(
     locale === 'it' ? 'it-IT' : locale === 'de' ? 'de-DE' : locale === 'pl' ? 'pl-PL' : 'en-GB',
-    { day: 'numeric', month: 'long' }
+    { day: 'numeric', month: 'short', year: 'numeric' }
   );
 }
 
