@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
 import { getTranslations } from '@/lib/i18n';
@@ -125,6 +125,16 @@ export default function Wizard({ translations: t, locale }: Props) {
   const logicalStep = fromRoom || isGuestLink
     ? Math.max(2, Math.min(currentStep, 3))
     : Math.min(currentStep, 3);
+
+  // Scroll-to-top a ogni cambio step (Continua, Indietro, click Stepper, "Modifica").
+  // Salta il primo render per non interferire con scroll restoration del browser.
+  const prevLogicalStep = useRef(logicalStep);
+  useEffect(() => {
+    if (prevLogicalStep.current !== logicalStep) {
+      prevLogicalStep.current = logicalStep;
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+  }, [logicalStep]);
 
   const showSidebar = logicalStep === 1;
   const fullWidth   = logicalStep >= 2;
