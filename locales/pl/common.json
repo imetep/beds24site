@@ -966,6 +966,7 @@
       "children": "dzieci",
       "summaryTitle": "Twój pobyt",
       "paypalFlexNote": "W przypadku PayPal płatność jest naliczana natychmiast.",
+      "stripeFlexNote": "W przypadku Stripe karta jest tylko zapisywana — bez natychmiastowego obciążenia.",
       "vediRiepilogo": "Zobacz podsumowanie"
     },
     "wizardStep3": {
