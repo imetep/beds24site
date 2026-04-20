@@ -984,6 +984,7 @@
       "children": "bambini",
       "summaryTitle": "Il tuo soggiorno",
       "paypalFlexNote": "Con PayPal il pagamento viene addebitato subito.",
+      "stripeFlexNote": "Con Stripe la carta viene solo salvata — nessun addebito immediato.",
       "vediRiepilogo": "Vedi riepilogo finale"
     },
     "wizardStep3": {
