@@ -108,6 +108,7 @@ export default function SuccessContent({ locale }: Props) {
         touristTax:     stored?.touristTax ?? 0,
         discountAmount: stored?.discountAmount ?? 0,
         voucherCode:    stored?.voucherCode ?? null,
+        extras:         Array.isArray(stored?.extras) ? stored.extras : [],
       }),
     })
       .then(r => r.json())
