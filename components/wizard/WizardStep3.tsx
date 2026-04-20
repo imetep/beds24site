@@ -288,6 +288,11 @@ export default function WizardStep3({ locale = 'it' }: Props) {
               touristTax:     touristTax,
               discountAmount: discountAmount,
               voucherCode:    voucherCode || undefined,
+              extras:         (selectedExtras ?? []).map(e => ({
+                description: e.name.it,
+                price:       e.price,
+                quantity:    e.quantity,
+              })),
             }),
           });
           const result = await res.json();
@@ -373,6 +378,11 @@ export default function WizardStep3({ locale = 'it' }: Props) {
           touristTax:     touristTax,
           discountAmount: discountAmount,
           voucherCode:    voucherCode || null,
+          extras:         (selectedExtras ?? []).map(e => ({
+            description: e.name.it,
+            price:       e.price,
+            quantity:    e.quantity,
+          })),
         }));
       } catch {
         // sessionStorage non disponibile (Safari privato) — continua comunque
