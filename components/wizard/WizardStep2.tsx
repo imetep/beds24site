@@ -149,6 +149,16 @@ export default function WizardStep2({ locale = 'it' }: Props) {
   const formValid = guestFirstName.trim() && guestLastName.trim()
     && guestEmail.trim() && guestEmail.includes('@');
 
+  // ── Offerte flex (3-6): disabilita PayPal ────────────────────────────────
+  // PayPal non rimborsa la commissione 3.4% sui refund, quindi su tariffe
+  // cancellabili ogni cancellazione = 3.4% di perdita pura. Stripe invece
+  // su flex usa capture:false (carta solo salvata) → nessun costo se cancella.
+  useEffect(() => {
+    if (isFlexOffer && paymentMethod === 'paypal') {
+      setPaymentMethod('stripe');
+    }
+  }, [isFlexOffer, paymentMethod, setPaymentMethod]);
+
   // ── Pre-carica script PayPal SDK quando utente seleziona PayPal ──────────
   useEffect(() => {
     if (paymentMethod !== 'paypal') return;
@@ -495,23 +505,29 @@ export default function WizardStep2({ locale = 'it' }: Props) {
               </div>
             </label>
 
-            <label style={radioRow(paymentMethod === 'paypal')} onClick={() => setPaymentMethod('paypal')}>
-              <div style={radioOuter(paymentMethod === 'paypal')}>
-                {paymentMethod === 'paypal' && <div style={radioInner} />}
-              </div>
-              <div>
-                <div className="d-flex align-items-center gap-2">
-                  <p className="m-0 fw-semibold text-dark" style={{ fontSize: 15 }}>{t.payInstall}</p>
-                  <span
-                    className="fw-bold"
-                    style={{ fontSize: 12, color: '#003087', background: '#e8f0fb', padding: '2px 8px', borderRadius: 4 }}
-                  >PayPal</span>
+            {!isFlexOffer && (
+              <label style={radioRow(paymentMethod === 'paypal')} onClick={() => setPaymentMethod('paypal')}>
+                <div style={radioOuter(paymentMethod === 'paypal')}>
+                  {paymentMethod === 'paypal' && <div style={radioInner} />}
                 </div>
-                <p className="mb-0" style={{ marginTop: 2, fontSize: 13, color: '#888' }}>
-                  {PAY_INSTALL_NOTE[loc]?.(installment) ?? ''}
-                </p>
-              </div>
-            </label>
+                <div>
+                  <div className="d-flex align-items-center gap-2">
+                    <p className="m-0 fw-semibold text-dark" style={{ fontSize: 15 }}>{t.payInstall}</p>
+                    <span
+                      className="fw-bold"
+                      style={{ fontSize: 12, color: '#003087', background: '#e8f0fb', padding: '2px 8px', borderRadius: 4 }}
+                    >PayPal</span>
+                  </div>
+                  <p className="mb-0" style={{ marginTop: 2, fontSize: 13, color: '#888' }}>
+                    {PAY_INSTALL_NOTE[loc]?.(installment) ?? ''}
+                  </p>
+                </div>
+              </label>
+            )}
+
+            {isFlexOffer && (
+              <p className="small text-muted mt-1 mb-2">{t.flexOnlyCardNote}</p>
+            )}
 
             {showPaypalFlexWarning && (
               <div
