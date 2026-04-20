@@ -144,6 +144,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
   const isFlexOffer = selectedOfferId !== null && FLEX_OFFER_IDS.includes(selectedOfferId);
   const showPaypalFlexWarning = paymentMethod === 'paypal' && isFlexOffer;
+  const showStripeFlexInfo    = paymentMethod === 'stripe' && isFlexOffer;
 
   const formValid = guestFirstName.trim() && guestLastName.trim()
     && guestEmail.trim() && guestEmail.includes('@');
@@ -518,6 +519,13 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                 style={{ background: '#fffbeb', borderColor: '#fcd34d', borderRadius: 8, padding: '10px 14px', marginTop: 4, fontSize: 13, color: '#92400e' }}
               >
                 ⚠️ {t.paypalFlexNote}
+              </div>
+            )}
+
+            {showStripeFlexInfo && (
+              <div className="banner banner--success banner--with-icon">
+                <i className="bi bi-credit-card-2-back" aria-hidden="true"></i>
+                <span>{t.stripeFlexNote}</span>
               </div>
             )}
           </div>
