@@ -967,6 +967,7 @@
       "summaryTitle": "Your stay",
       "paypalFlexNote": "With PayPal, payment is charged immediately.",
       "stripeFlexNote": "With Stripe your card is only saved — no immediate charge.",
+      "flexOnlyCardNote": "We only accept card payment for this rate.",
       "vediRiepilogo": "View booking summary"
     },
     "wizardStep3": {
