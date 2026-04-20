@@ -29,9 +29,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Body JSON non valido' }, { status: 400 });
   }
 
-  const { orderID, bookingId, amount, accommodation, touristTax, discountAmount, voucherCode } = body;
+  const { orderID, bookingId, amount, accommodation, touristTax, discountAmount, voucherCode, extras } = body;
 
-  console.log('[paypal-capture] Body ricevuto:', JSON.stringify({ accommodation, touristTax, discountAmount, voucherCode }));
+  console.log('[paypal-capture] Body ricevuto:', JSON.stringify({ accommodation, touristTax, discountAmount, voucherCode, extrasCount: Array.isArray(extras) ? extras.length : 0 }));
 
   if (!orderID || !bookingId) {
     return NextResponse.json({ error: 'Campi obbligatori mancanti: orderID, bookingId' }, { status: 400 });
@@ -104,6 +104,18 @@ export async function POST(req: NextRequest) {
         amount: Number(touristTax),
         qty: 1,
       });
+    }
+
+    // Upsell items selezionati dall'utente (lettino, ecc.)
+    if (Array.isArray(extras)) {
+      for (const ex of extras) {
+        const price = Number(ex?.price);
+        const qty   = Number(ex?.quantity);
+        const desc  = typeof ex?.description === 'string' ? ex.description : '';
+        if (desc && price > 0 && qty > 0) {
+          invoiceItems.push({ type: 'charge', description: desc, amount: price, qty });
+        }
+      }
     }
 
     invoiceItems.push({
