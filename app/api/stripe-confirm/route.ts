@@ -25,6 +25,7 @@ const BEDS24_BASE = 'https://beds24.com/api/v2';
  *   touristTax:     number
  *   discountAmount: number
  *   voucherCode:    string | null
+ *   extras:         Array<{ description, price, quantity }>  — upsell items selezionati
  * }
  */
 export async function POST(req: NextRequest) {
@@ -35,7 +36,7 @@ export async function POST(req: NextRequest) {
 
   const {
     bookingId, capture,
-    accommodation, touristTax, discountAmount, voucherCode,
+    accommodation, touristTax, discountAmount, voucherCode, extras,
   } = body;
 
   if (!bookingId) {
@@ -88,6 +89,18 @@ export async function POST(req: NextRequest) {
           amount:      Number(touristTax),
           qty:         1,
         });
+      }
+
+      // Upsell items selezionati dall'utente (lettino, ecc.)
+      if (Array.isArray(extras)) {
+        for (const ex of extras) {
+          const price = Number(ex?.price);
+          const qty   = Number(ex?.quantity);
+          const desc  = typeof ex?.description === 'string' ? ex.description : '';
+          if (desc && price > 0 && qty > 0) {
+            invoiceItems.push({ type: 'charge', description: desc, amount: price, qty });
+          }
+        }
       }
 
       // Nota: non aggiungiamo la riga "payment Stripe" perché Beds24
