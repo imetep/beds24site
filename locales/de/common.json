@@ -967,6 +967,7 @@
       "summaryTitle": "Ihr Aufenthalt",
       "paypalFlexNote": "Bei PayPal wird der Betrag sofort belastet.",
       "stripeFlexNote": "Bei Stripe wird die Karte nur gespeichert — keine sofortige Belastung.",
+      "flexOnlyCardNote": "Für diesen Tarif akzeptieren wir nur Kartenzahlung.",
       "vediRiepilogo": "Buchungsübersicht anzeigen"
     },
     "wizardStep3": {
