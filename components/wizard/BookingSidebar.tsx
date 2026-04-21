@@ -82,7 +82,7 @@ export default function BookingSidebar({
   const OFFER_NAMES = tr.shared.offerNames as Record<string, string>;
 
   const {
-    numAdult, numChild, checkIn, checkOut,
+    numAdult, numChild, childrenAges, checkIn, checkOut,
     selectedRoomId, selectedOfferId, cachedOffers,
     selectedExtras, voucherCode, discountedPrice,
     nextStep,
@@ -113,7 +113,8 @@ export default function BookingSidebar({
   const offerPrice: number = offer?.price ?? 0;
   const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
   const perNight = nights > 0 && offerPrice > 0 ? Math.round(offerPrice / nights) : 0;
-  const touristTax = Math.min(nights, 10) * numAdult * 2;
+  const childrenTaxable = (childrenAges ?? []).filter((a: number) => a >= 12).length;
+  const touristTax = Math.min(nights, 10) * (numAdult + childrenTaxable) * 2;
 
   // Step 2 addendum: voucher discount + extras contribute al totale e appaiono
   // come righe supplementari nel price breakdown.
