@@ -757,6 +757,11 @@ body {
   min-width: 40px;
   text-align: right;
 }
+/* qty=0: il totale occupa lo spazio ma è invisibile, così lo stepper
+   non si sposta quando l'utente incrementa la quantità da 0 a 1. */
+.extras-catalog__item-total.is-hidden {
+  visibility: hidden;
+}
 
 /* Stepper buttons asimmetrici: minus outlined, plus filled quando attivi.
    Variante dedicata al catalogo extras — diversa da .btn--stepper che è
