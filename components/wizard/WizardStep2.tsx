@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
 import type { SelectedExtra } from '@/store/wizard-store';
-import { PROPERTIES, getPropertyForRoom } from '@/config/properties';
+import { PROPERTIES, getPropertyForRoom, calculateTouristTax } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
 import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import type { Locale } from '@/config/i18n';
@@ -130,11 +130,8 @@ export default function WizardStep2({ locale = 'it' }: Props) {
   const depositAmount = depositFromOffer ?? room?.securityDeposit ?? null;
   const perNight = nights > 0 && offerPrice > 0 ? Math.round(offerPrice / nights) : 0;
 
-  const taxableNights = Math.min(nights, 10);
-  const childrenTaxable = (childrenAges ?? []).filter((a: number) => a >= 12).length;
-  const taxableAdults   = numAdult + childrenTaxable;
-  const touristTax    = taxableNights * taxableAdults * 2;
-  const basePrice     = discountedPrice !== null ? discountedPrice : offerPrice;
+  const touristTax = calculateTouristTax(numAdult, childrenAges, nights);
+  const basePrice  = discountedPrice !== null ? discountedPrice : offerPrice;
 
   // ── Totale extras selezionati ──────────────────────────────────────────────
   const extrasTotal = selectedExtras.reduce((sum, e) => sum + e.price * e.quantity, 0);
