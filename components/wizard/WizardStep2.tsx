@@ -331,7 +331,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
       {/* Righe extras selezionati */}
       {selectedExtras.map(extra => (
-        <div key={extra.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: '#444', marginBottom: 6 }}>
+        <div key={extra.id} className="price-row" style={{ fontSize: 14, color: '#444', marginBottom: 6 }}>
           <span>{extra.name[loc] ?? extra.name.it}{extra.quantity > 1 ? ` ×${extra.quantity}` : ''}</span>
           <span>+{fmt(extra.price * extra.quantity)}</span>
         </div>
