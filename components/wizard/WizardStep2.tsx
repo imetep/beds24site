@@ -394,11 +394,18 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                       }}
                     >+</button>
                   </div>
-                  {qty > 0 && (
-                    <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--color-primary)', flexShrink: 0, minWidth: 40, textAlign: 'right' }}>
-                      {fmt(item.price * qty)}
-                    </span>
-                  )}
+                  <span
+                    aria-hidden={qty === 0}
+                    style={{
+                      fontSize: 13, fontWeight: 800, color: 'var(--color-primary)',
+                      flexShrink: 0, minWidth: 40, textAlign: 'right',
+                      // valore dinamico: riserva lo spazio anche con qty=0 per evitare
+                      // che lo stepper si sposti quando si incrementa da 0 a 1
+                      visibility: qty === 0 ? 'hidden' : 'visible',
+                    }}
+                  >
+                    {fmt(item.price * Math.max(qty, 1))}
+                  </span>
                 </div>
               );
             })}
@@ -687,11 +694,12 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                             className={`extras-stepper-btn extras-stepper-btn--plus${qty < MAX_QTY ? ' is-active' : ''}`}
                           >+</button>
                         </div>
-                        {qty > 0 && (
-                          <span className="extras-catalog__item-total">
-                            {fmt(item.price * qty)}
-                          </span>
-                        )}
+                        <span
+                          className={`extras-catalog__item-total${qty === 0 ? ' is-hidden' : ''}`}
+                          aria-hidden={qty === 0}
+                        >
+                          {fmt(item.price * Math.max(qty, 1))}
+                        </span>
                       </div>
                     );
                   })}
