@@ -7,7 +7,7 @@ import type { SelectedExtra } from '@/store/wizard-store';
 import { PROPERTIES, getPropertyForRoom, calculateTouristTax, formatTouristTaxNote } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
 import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
-import { findOffer, isFlexBookingType } from '@/lib/offer-deposit';
+import { findOffer, findPropertyByRoom, isFlexBookingType, computeDepositAmount } from '@/lib/offer-deposit';
 import type { Locale } from '@/config/i18n';
 import BookingSidebar from './BookingSidebar';
 
@@ -235,6 +235,28 @@ export default function WizardStep2({ locale = 'it' }: Props) {
   // ── Sidebar content ──────────────────────────────────────────────────────
   const sideBasePrice = discountedPrice !== null ? discountedPrice : offerPrice;
   const totalDisplay  = sideBasePrice + touristTax + extrasTotal;
+
+  // Importo da pagare ORA (acconto). Dipende dal bookingType dell'offerta:
+  // - 100% per offerte non rimborsabili
+  // - 50% (o quanto configurato su Beds24) per parzialmente rimborsabili
+  // - 0 per offerte flex (carta salvata, nessun addebito oggi)
+  // Fallback a totalDisplay se propertyConfig non è ancora caricato.
+  const propertyCfg = findPropertyByRoom(propertyConfig, selectedRoomId);
+  const amountToChargeDisplay = computeDepositAmount(totalDisplay, offerConfig, propertyCfg);
+  const isPartialDeposit = !isFlexOffer && amountToChargeDisplay > 0 && amountToChargeDisplay < totalDisplay;
+
+  // Etichetta e importo del radio Stripe "Paga tutto ora / acconto / salva carta"
+  const stripeRadioLabel = isFlexOffer
+    ? t.paySaveCard
+    : isPartialDeposit
+      ? t.payDeposit
+      : t.payFull;
+  const stripeRadioAmount = isFlexOffer ? null : amountToChargeDisplay;
+  const stripeRadioNote = isFlexOffer
+    ? t.paySaveCardNote
+    : isPartialDeposit
+      ? `${t.payDepositNote} ${fmt(totalDisplay - amountToChargeDisplay)}`
+      : null;
 
   const SidebarContent = () => (
     <div>
@@ -507,8 +529,13 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                 {paymentMethod === 'stripe' && <div style={radioInner} />}
               </div>
               <div>
-                <p className="m-0 fw-semibold text-dark" style={{ fontSize: 15 }}>{t.payFull}</p>
-                <p className="mb-0" style={{ marginTop: 2, fontSize: 13, color: '#888' }}>{fmt(totalDisplay)}</p>
+                <p className="m-0 fw-semibold text-dark" style={{ fontSize: 15 }}>
+                  {stripeRadioLabel}
+                  {stripeRadioAmount !== null && ` · ${fmt(stripeRadioAmount)}`}
+                </p>
+                {stripeRadioNote && (
+                  <p className="mb-0" style={{ marginTop: 2, fontSize: 13, color: '#888' }}>{stripeRadioNote}</p>
+                )}
               </div>
             </label>
 
