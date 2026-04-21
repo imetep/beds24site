@@ -7,6 +7,7 @@ import type { SelectedExtra } from '@/store/wizard-store';
 import { PROPERTIES, getPropertyForRoom, calculateTouristTax, formatTouristTaxNote } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
 import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
+import { findOffer, isFlexBookingType } from '@/lib/offer-deposit';
 import type { Locale } from '@/config/i18n';
 import BookingSidebar from './BookingSidebar';
 
@@ -40,9 +41,6 @@ const PAY_INSTALL_NOTE: Record<string, (n: number) => string> = {
   de: (n) => `3 Raten à €${n} · zinsfrei · über PayPal`,
   pl: (n) => `3 raty po €${n} · bez odsetek · przez PayPal`,
 };
-
-// Offerte Flex (3-6): con PayPal il pagamento è immediato — avvisa l'utente
-const FLEX_OFFER_IDS = [3, 4, 5, 6];
 
 // ─── Mock upsell items ────────────────────────────────────────────────────────
 // TODO: sostituire con chiamata API Beds24 quando gli upsell saranno configurati
@@ -98,6 +96,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
     guestPhone, guestCountry, guestArrivalTime, guestComments,
     setGuestField, setCurrentStep, prevStep, nextStep,
     discountedPrice, setDiscountedPrice,
+    propertyConfig,
   } = useWizardStore();
 
   const [error, setError]                     = useState<string | null>(null);
@@ -139,7 +138,11 @@ export default function WizardStep2({ locale = 'it' }: Props) {
   const total         = basePrice + touristTax + extrasTotal;
   const installment   = Math.round(total / 3);
 
-  const isFlexOffer = selectedOfferId !== null && FLEX_OFFER_IDS.includes(selectedOfferId);
+  // Lettura dinamica bookingType dalla config Beds24 (cachata in store).
+  // Fallback sicuro: se la config non è ancora caricata, nessuna offerta è
+  // considerata flex → il wizard si comporta come prima della patch.
+  const offerConfig = findOffer(propertyConfig, selectedRoomId, selectedOfferId);
+  const isFlexOffer = isFlexBookingType(offerConfig?.bookingType);
   const showPaypalFlexWarning = paymentMethod === 'paypal' && isFlexOffer;
   const showStripeFlexInfo    = paymentMethod === 'stripe' && isFlexOffer;
 
