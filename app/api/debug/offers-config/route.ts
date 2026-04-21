@@ -17,7 +17,14 @@ const BASE_URL = 'https://beds24.com/api/v2';
 export async function GET() {
   try {
     const token = await getToken();
-    const res = await fetch(`${BASE_URL}/properties?includeOffers=true`, {
+    // Aggiungiamo tutti i flag include* plausibili per far restituire le offers per-offerId con il loro bookingType
+    const qs = new URLSearchParams({
+      includeAllRooms:  'true',
+      includeOffers:    'true',
+      includeTexts:     'all',
+      includePriceRules: 'true',
+    });
+    const res = await fetch(`${BASE_URL}/properties?${qs}`, {
       headers: { token },
       cache: 'no-store',
     });
