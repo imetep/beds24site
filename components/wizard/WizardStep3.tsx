@@ -25,7 +25,7 @@ import { useWizardStore } from '@/store/wizard-store';
 import { PROPERTIES, calculateTouristTax } from '@/config/properties';
 import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import { getTranslations } from '@/lib/i18n';
-import { findOffer, findPropertyByRoom, computeDepositAmount } from '@/lib/offer-deposit';
+import { findOffer, findPropertyByRoom, computeDepositAmount, isFlexBookingType } from '@/lib/offer-deposit';
 import type { Locale } from '@/config/i18n';
 
 const SUPPORTED_LOCALES = ['it', 'en', 'de', 'pl'] as const;
@@ -119,6 +119,7 @@ export default function WizardStep3({ locale = 'it' }: Props) {
   const offerConfig   = findOffer(propertyConfig, selectedRoomId, selectedOfferId);
   const propertyCfg   = findPropertyByRoom(propertyConfig, selectedRoomId);
   const amountToCharge = computeDepositAmount(total, offerConfig, propertyCfg);
+  const isFlexOffer   = isFlexBookingType(offerConfig?.bookingType);
 
   // Etichetta tipo appartamento (legge wizardSidebar i18n — condivisa con step 1/2)
   const roomTypeLabel = room?.type === 'monolocale' ? tSidebar.typeMonolocale
@@ -528,6 +529,9 @@ export default function WizardStep3({ locale = 'it' }: Props) {
           <span className="wizard-step3__total-label">{t.total}</span>
           <span className="wizard-step3__total-value">{fmt(total)}</span>
         </div>
+        {isFlexOffer && (
+          <p className="wizard-step3__total-note">{t.totalFlexNote}</p>
+        )}
         {hasDiscount && (
           <p className="wizard-step3__savings">
             {t.savedMsg.replace('{amount}', fmt(discountAmount))}
@@ -587,15 +591,22 @@ export default function WizardStep3({ locale = 'it' }: Props) {
 
       {/* CTA — Stripe oppure wrapper PayPal */}
       {paymentMethod === 'stripe' ? (
-        <button
-          onClick={handlePagaStripe}
-          disabled={phase === 'paying'}
-          className="btn btn--primary wizard-step3__cta"
-        >
-          {phase === 'paying'
-            ? t.paying
-            : `${t.payBtn} · ${fmt(amountToCharge > 0 ? amountToCharge : total)}`}
-        </button>
+        <>
+          <button
+            onClick={handlePagaStripe}
+            disabled={phase === 'paying'}
+            className="btn btn--primary wizard-step3__cta"
+          >
+            {phase === 'paying'
+              ? t.paying
+              : isFlexOffer
+                ? t.payBtnFlex
+                : `${t.payBtn} · ${fmt(amountToCharge > 0 ? amountToCharge : total)}`}
+          </button>
+          {isFlexOffer && phase !== 'paying' && (
+            <p className="wizard-step3__cta-note">{t.payBtnFlexNote}</p>
+          )}
+        </>
       ) : (
         <div className="wizard-step3__paypal-wrapper">
           {!paypalReady && (

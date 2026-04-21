@@ -1379,6 +1379,20 @@ body {
   text-align: right;
   margin: var(--space-xs) 0 0;
 }
+/* Nota sotto il totale per offerte flex (carta salvata, no addebito) */
+.wizard-step3__total-note {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  text-align: right;
+  margin: var(--space-xs) 0 0;
+}
+/* Nota sotto il CTA Stripe quando l'offerta è flex */
+.wizard-step3__cta-note {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+  margin: var(--space-xs) 0 0;
+}
 
 /* Dati ospite (card compatta) */
 .wizard-step3__guest-name {
