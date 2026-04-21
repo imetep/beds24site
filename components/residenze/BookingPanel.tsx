@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
+import { calculateTouristTax } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
 
@@ -40,10 +41,7 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
   const [pickedOffer, setPicked]   = useState<number | null>(null);
 
   const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
-  const childrenTaxable = (childrenAges ?? []).filter((a: number) => a >= 12).length;
-  const taxableAdults   = numAdult + childrenTaxable;
-  const taxableNights   = Math.min(nights, 10);
-  const touristTax      = taxableNights * taxableAdults * 2;
+  const touristTax = calculateTouristTax(numAdult, childrenAges, nights);
   const totalPeople = numAdult + numChild;
   const overCapacity = totalPeople > maxPeople;
 
