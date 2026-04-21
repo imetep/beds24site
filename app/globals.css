@@ -1146,6 +1146,26 @@ body {
   align-items: baseline;
 }
 
+/* Price row del breakdown sidebar: label a sx che può wrappare su 2+ righe,
+   valore a dx che resta sempre su una riga. Risolve il caso con upsell
+   dal nome lungo (es. "Lettino da campeggio con biancheria ×2") dove il
+   prezzo "+ 80 €" finiva spezzato su due righe. */
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+.price-row > :first-child {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.price-row > :last-child {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 .layout-grid-2col {
   display: grid;
   grid-template-columns: 1fr;
