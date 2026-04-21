@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
 import { PROPERTIES } from '@/config/properties';
@@ -70,6 +70,8 @@ export default function HomeSearch({ locale }: { locale: string }) {
   const [lightbox,     setLightbox]   = useState<string | null>(null);
   const residenzeRef = useRef<HTMLDivElement>(null);
   const dintorniRef  = useRef<HTMLDivElement>(null);
+  const personeBtnRef = useRef<HTMLButtonElement>(null);
+  const guestsPopoverRef = useRef<HTMLDivElement>(null);
 
   const now = new Date(); now.setHours(0, 0, 0, 0);
   const todayYMD = toYMD(now.getFullYear(), now.getMonth(), now.getDate());
@@ -87,6 +89,19 @@ export default function HomeSearch({ locale }: { locale: string }) {
   useEffect(() => {
     document.body.style.overflow = (!isDesk && panel !== 'none') ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
+  }, [panel, isDesk]);
+
+  // Allinea il popover Persone al bordo destro del relativo pulsante,
+  // non al bordo destro del wrapper (che si estende oltre Cerca).
+  useLayoutEffect(() => {
+    if (!isDesk || panel !== 'guests') return;
+    const btn = personeBtnRef.current;
+    const pop = guestsPopoverRef.current;
+    const offsetParent = pop?.offsetParent as HTMLElement | null;
+    if (!btn || !pop || !offsetParent) return;
+    const parentRect = offsetParent.getBoundingClientRect();
+    const btnRect    = btn.getBoundingClientRect();
+    pop.style.right = `${parentRect.right - btnRect.right}px`;
   }, [panel, isDesk]);
 
   useEffect(() => {
@@ -110,12 +125,16 @@ export default function HomeSearch({ locale }: { locale: string }) {
 
   function handleDay(ymd: string) {
     if (ymd < todayYMD) return;
-    // Se il giorno cliccato è nel mese destro, sposta il calendario in avanti
-    // così la data scelta diventa il mese di sinistra e il check-out resta visibile.
+    // Se il giorno cliccato è negli ultimi 6 giorni del mese destro, sposta
+    // il calendario in avanti così il mese destro diventa quello di sinistra
+    // e il check-out auto-calcolato (+3 giorni) resta visibile.
     const clicked = parseYMD(ymd);
     if (clicked.getFullYear() === sec.y && clicked.getMonth() === sec.m) {
-      setVY(sec.y);
-      setVM(sec.m);
+      const lastDay = new Date(sec.y, sec.m + 1, 0).getDate();
+      if (clicked.getDate() > lastDay - 6) {
+        setVY(sec.y);
+        setVM(sec.m);
+      }
     }
     if (phase === 'ci') {
       setCheckIn(ymd);
@@ -467,6 +486,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
 
             {/* Ospiti */}
             <button
+              ref={personeBtnRef}
               onClick={() => setPanel(p => p === 'guests' ? 'none' : 'guests')}
               style={{
                 flex: '0 0 260px', display: 'flex', alignItems: 'center', gap: 12, padding: '14px 24px',
@@ -602,7 +622,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
           </div>
         )}
         {isDesk && panel === 'guests' && (
-          <div style={{
+          <div ref={guestsPopoverRef} style={{
             position: 'absolute', top: 'calc(100% + 8px)', right: 0, width: 300,
             background: 'var(--color-bg)', borderRadius: 16,
             boxShadow: '0 8px 32px rgba(0,0,0,0.15)', zIndex: 200, overflow: 'hidden',
