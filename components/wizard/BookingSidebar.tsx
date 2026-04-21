@@ -277,7 +277,7 @@ export default function BookingSidebar({
             </div>
           )}
           {step === 2 && selectedExtras.map(extra => (
-            <div key={extra.id} className="layout-row-between">
+            <div key={extra.id} className="price-row">
               <span>{extra.name[locale] ?? extra.name.it}{extra.quantity > 1 ? ` ×${extra.quantity}` : ''}</span>
               <span>+ {fmt(extra.price * extra.quantity)}</span>
             </div>
