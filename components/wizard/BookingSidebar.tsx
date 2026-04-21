@@ -14,7 +14,7 @@
 
 import { useEffect, useState, type ReactNode } from 'react';
 import { useWizardStore } from '@/store/wizard-store';
-import { PROPERTIES, CIN, OFFER_INFO, type Room, type Property } from '@/config/properties';
+import { PROPERTIES, CIN, OFFER_INFO, calculateTouristTax, type Room, type Property } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
 import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import type { Locale } from '@/config/i18n';
@@ -113,8 +113,7 @@ export default function BookingSidebar({
   const offerPrice: number = offer?.price ?? 0;
   const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
   const perNight = nights > 0 && offerPrice > 0 ? Math.round(offerPrice / nights) : 0;
-  const childrenTaxable = (childrenAges ?? []).filter((a: number) => a >= 12).length;
-  const touristTax = Math.min(nights, 10) * (numAdult + childrenTaxable) * 2;
+  const touristTax = calculateTouristTax(numAdult, childrenAges, nights);
 
   // Step 2 addendum: voucher discount + extras contribute al totale e appaiono
   // come righe supplementari nel price breakdown.
