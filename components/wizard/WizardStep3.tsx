@@ -594,7 +594,7 @@ export default function WizardStep3({ locale = 'it' }: Props) {
         >
           {phase === 'paying'
             ? t.paying
-            : `${t.payBtn} · ${fmt(total)}`}
+            : `${t.payBtn} · ${fmt(amountToCharge > 0 ? amountToCharge : total)}`}
         </button>
       ) : (
         <div className="wizard-step3__paypal-wrapper">
