@@ -14,7 +14,7 @@
 
 import { useEffect, useState, type ReactNode } from 'react';
 import { useWizardStore } from '@/store/wizard-store';
-import { PROPERTIES, CIN, OFFER_INFO, calculateTouristTax, type Room, type Property } from '@/config/properties';
+import { PROPERTIES, CIN, OFFER_INFO, calculateTouristTax, formatTouristTaxNote, type Room, type Property } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
 import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import type { Locale } from '@/config/i18n';
@@ -288,7 +288,7 @@ export default function BookingSidebar({
                 <span>{t.touristTax}</span>
                 <span>{fmt(touristTax)}</span>
               </div>
-              <p className="hint-text">{t.touristTaxNote}</p>
+              <p className="hint-text">{formatTouristTaxNote(t.touristTaxNote)}</p>
             </>
           )}
         </>
