@@ -370,7 +370,8 @@ export default function WizardStep3({ locale = 'it' }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           bookingId:   bookId,
-          amount:      amountToCharge,
+          amount:      amountToCharge,  // quanto addebitare ora (0 per flex)
+          total,                        // totale pieno (line_item quando capture=false)
           offerId:     selectedOfferId,
           bookingType: offerConfig?.bookingType ?? null,
           locale,
