@@ -338,12 +338,22 @@ export function getCloudinaryUrl(room: Room, photoIndex: number = 1, width: numb
   return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/w_${width},c_fill,q_auto,f_auto/${room.cloudinaryFolder}/${photoIndex}.jpg`;
 }
 
-// Calcola Imposta di Soggiorno
-// Regola Comune di Scauri: €2/giorno per adulto over 12, solo primi 10 giorni
-export function calculateTouristTax(numAdult: number, numUnder12: number, numNights: number): number {
-  const taxableNights = Math.min(numNights, 10);
-  const taxableAdults = numAdult - numUnder12;
-  return taxableNights * taxableAdults * 2;
+// Imposta di Soggiorno — Comune di Minturno (Scauri)
+// €2/persona/notte · max 10 notti · esenti under 12
+export const TOURIST_TAX_RATE_EUR = 2;
+export const TOURIST_TAX_MAX_NIGHTS = 10;
+export const TOURIST_TAX_EXEMPT_UNDER_AGE = 12;
+
+export function calculateTouristTax(
+  numAdult: number,
+  childrenAges: number[] | undefined,
+  nights: number
+): number {
+  if (nights <= 0) return 0;
+  const taxableNights = Math.min(nights, TOURIST_TAX_MAX_NIGHTS);
+  const taxableChildren = (childrenAges ?? []).filter(a => a >= TOURIST_TAX_EXEMPT_UNDER_AGE).length;
+  const taxablePeople = numAdult + taxableChildren;
+  return taxableNights * taxablePeople * TOURIST_TAX_RATE_EUR;
 }
 
 // ─── OFFERS — uguali per tutte le property ───────────────────────────────────
