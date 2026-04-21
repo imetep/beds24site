@@ -58,65 +58,65 @@ export async function POST(req: NextRequest) {
     const statusRaw = await statusRes.text();
     console.log('[stripe-confirm] Beds24 status → confirmed:', statusRes.status, statusRaw.slice(0, 150));
 
-    // ── 2. Aggiunge invoiceItems (solo per pagamento immediato) ─────────────
-    // Per carta salvata (capture=false, offerte 3-6) non c'è ancora
-    // un pagamento da registrare — verrà addebitato in seguito.
-    if (capture) {
-      const invoiceItems: any[] = [];
+    // ── 2. Aggiunge invoiceItems ────────────────────────────────────────────
+    // SEMPRE, indipendentemente da capture:
+    //  - i type:'charge' (soggiorno, sconto, tassa, extras) rappresentano ciò
+    //    che l'ospite dovrà pagare, e devono comparire in Charges & Payment
+    //    anche per le tariffe flex (carta salvata, addebito differito).
+    //  - NON aggiungiamo la riga type:'payment' Stripe: quella viene scritta
+    //    da Beds24 autonomamente quando riceve il webhook Stripe. Per flex
+    //    (capture=false) non c'è webhook di pagamento perché l'addebito non
+    //    avviene, e Beds24 non aggiungerà nulla — è corretto così.
+    const invoiceItems: any[] = [];
 
-      if (accommodation && Number(accommodation) > 0) {
-        invoiceItems.push({
-          type:        'charge',
-          description: voucherCode ? `Soggiorno (voucher: ${voucherCode})` : 'Soggiorno',
-          amount:      Number(accommodation),
-          qty:         1,
-        });
-      }
+    if (accommodation && Number(accommodation) > 0) {
+      invoiceItems.push({
+        type:        'charge',
+        description: voucherCode ? `Soggiorno (voucher: ${voucherCode})` : 'Soggiorno',
+        amount:      Number(accommodation),
+        qty:         1,
+      });
+    }
 
-      if (discountAmount && Number(discountAmount) > 0) {
-        invoiceItems.push({
-          type:        'charge',
-          description: `Sconto voucher${voucherCode ? ` (${voucherCode})` : ''}`,
-          amount:      -Number(discountAmount),
-          qty:         1,
-        });
-      }
+    if (discountAmount && Number(discountAmount) > 0) {
+      invoiceItems.push({
+        type:        'charge',
+        description: `Sconto voucher${voucherCode ? ` (${voucherCode})` : ''}`,
+        amount:      -Number(discountAmount),
+        qty:         1,
+      });
+    }
 
-      if (touristTax && Number(touristTax) > 0) {
-        invoiceItems.push({
-          type:        'charge',
-          description: 'Imposta di soggiorno',
-          amount:      Number(touristTax),
-          qty:         1,
-        });
-      }
+    if (touristTax && Number(touristTax) > 0) {
+      invoiceItems.push({
+        type:        'charge',
+        description: 'Imposta di soggiorno',
+        amount:      Number(touristTax),
+        qty:         1,
+      });
+    }
 
-      // Upsell items selezionati dall'utente (lettino, ecc.)
-      if (Array.isArray(extras)) {
-        for (const ex of extras) {
-          const price = Number(ex?.price);
-          const qty   = Number(ex?.quantity);
-          const desc  = typeof ex?.description === 'string' ? ex.description : '';
-          if (desc && price > 0 && qty > 0) {
-            invoiceItems.push({ type: 'charge', description: desc, amount: price, qty });
-          }
+    // Upsell items selezionati dall'utente (lettino, ecc.)
+    if (Array.isArray(extras)) {
+      for (const ex of extras) {
+        const price = Number(ex?.price);
+        const qty   = Number(ex?.quantity);
+        const desc  = typeof ex?.description === 'string' ? ex.description : '';
+        if (desc && price > 0 && qty > 0) {
+          invoiceItems.push({ type: 'charge', description: desc, amount: price, qty });
         }
       }
+    }
 
-      // Nota: non aggiungiamo la riga "payment Stripe" perché Beds24
-      // la registra autonomamente quando riceve il webhook da Stripe.
-      // Aggiungendola noi avremmo un doppio pagamento nella fattura.
-
-      if (invoiceItems.length > 0) {
-        const invoiceRes = await fetch(`${BEDS24_BASE}/bookings`, {
-          method: 'POST',
-          headers: { token, 'Content-Type': 'application/json' },
-          body: JSON.stringify([{ id: Number(bookingId), invoiceItems }]),
-          cache: 'no-store',
-        });
-        const invoiceRaw = await invoiceRes.text();
-        console.log('[stripe-confirm] Beds24 invoiceItems:', invoiceRes.status, invoiceRaw.slice(0, 150));
-      }
+    if (invoiceItems.length > 0) {
+      const invoiceRes = await fetch(`${BEDS24_BASE}/bookings`, {
+        method: 'POST',
+        headers: { token, 'Content-Type': 'application/json' },
+        body: JSON.stringify([{ id: Number(bookingId), invoiceItems }]),
+        cache: 'no-store',
+      });
+      const invoiceRaw = await invoiceRes.text();
+      console.log('[stripe-confirm] Beds24 invoiceItems:', invoiceRes.status, invoiceRaw.slice(0, 150), '· capture:', capture);
     }
 
     return NextResponse.json({ ok: true, confirmed: true, cardSaved: !capture });
