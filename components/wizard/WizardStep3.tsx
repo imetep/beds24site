@@ -22,7 +22,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useWizardStore } from '@/store/wizard-store';
-import { PROPERTIES } from '@/config/properties';
+import { PROPERTIES, calculateTouristTax } from '@/config/properties';
 import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
@@ -99,11 +99,8 @@ export default function WizardStep3({ locale = 'it' }: Props) {
     ?? cachedOffers?.flatMap((ro: any) => ro.offers ?? []).find((o: any) => o.offerId === selectedOfferId);
   const offerPrice: number = offer?.price ?? 0;
 
-  const childrenTaxable = (childrenAges ?? []).filter((a: number) => a >= 12).length;
-  const taxableNights   = Math.min(nights, 10);
-  const taxableAdults   = numAdult + childrenTaxable;
-  const touristTax      = taxableNights * taxableAdults * 2;
-  const perNight        = nights > 0 && offerPrice > 0 ? Math.round(offerPrice / nights) : 0;
+  const touristTax = calculateTouristTax(numAdult, childrenAges, nights);
+  const perNight   = nights > 0 && offerPrice > 0 ? Math.round(offerPrice / nights) : 0;
   const offerName       = OFFER_NAMES[String(selectedOfferId ?? 0)] ?? offer?.offerName ?? '';
   const cancelPolicy    = CANCEL_POLICY[String(selectedOfferId ?? 0)] ?? '';
 
