@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from '@/lib/beds24-token';
+import { isFlexBookingType } from '@/lib/offer-deposit';
 
 const BASE_URL = 'https://beds24.com/api/v2';
-
-// Offerte 1-2: addebito immediato | Offerte 3-6: salva carta
-const IMMEDIATE_CHARGE_OFFERS = [1, 2];
 
 export async function POST(req: NextRequest) {
   let body: any;
@@ -14,8 +12,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Body JSON non valido' }, { status: 400 });
   }
 
-  const { bookingId, amount, offerId, locale = 'it', description = 'Soggiorno LivingApple' } = body;
-  console.log('[stripe-session] Ricevuto:', { bookingId, amount, offerId });
+  const {
+    bookingId,
+    amount,
+    total,
+    offerId,
+    bookingType,
+    locale = 'it',
+    description = 'Soggiorno LivingApple',
+  } = body;
+  console.log('[stripe-session] Ricevuto:', { bookingId, amount, total, offerId, bookingType });
 
   if (!bookingId || amount === undefined || amount === null) {
     return NextResponse.json(
@@ -24,8 +30,21 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const capture    = IMMEDIATE_CHARGE_OFFERS.includes(Number(offerId));
-  const unitAmount = Math.round(Number(amount) * 100);
+  // capture = false per offerte flex (bookingType === 'confirmedWithCreditCard'):
+  // la carta viene solo salvata, nessun addebito immediato.
+  // Per tutti gli altri bookingType addebitiamo subito l'importo ricevuto.
+  const capture = !isFlexBookingType(bookingType);
+
+  // line_item unit_amount:
+  // - se capture=true  → addebitiamo `amount` (importo già calcolato dal client
+  //                      in base al bookingType: 100% o 50% del totale)
+  // - se capture=false → Stripe Checkout richiede comunque un unit_amount > 0
+  //                      per creare la sessione, anche se non verrà addebitata.
+  //                      Usiamo `total` (fallback ad `amount` se non fornito)
+  //                      così l'utente vede l'importo corretto della prenotazione
+  //                      nella pagina Stripe prima di inserire la carta.
+  const displayAmount = capture ? Number(amount) : Number(total ?? amount);
+  const unitAmount    = Math.round(displayAmount * 100);
   const origin     = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ?? `https://${req.headers.get('host')}`;
 
   const successUrl = `${origin}/${locale}/prenota/successo?bookingId=${bookingId}&session_id={CHECKOUT_SESSION_ID}`;
@@ -48,7 +67,7 @@ export async function POST(req: NextRequest) {
     capture,
   }];
 
-  console.log('[API /stripe-session] offerId:', offerId, '→ capture:', capture);
+  console.log('[API /stripe-session] bookingType:', bookingType, '→ capture:', capture, '· unit_amount(EUR):', displayAmount);
 
   try {
     const token = await getToken();
