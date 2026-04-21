@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useWizardStore } from '@/store/wizard-store';
+import { calculateTouristTax } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
 
@@ -34,11 +35,7 @@ export default function StickyBookingBar({ roomId, locale, roomName }: Props) {
   const [loadingPrice, setLoadingPrice] = useState(false);
   const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
 
-  // Tassa di soggiorno — stessa formula di BookingPanel
-  const childrenTaxable = (childrenAges ?? []).filter((a: number) => a >= 12).length;
-  const taxableAdults   = numAdult + childrenTaxable;
-  const taxableNights   = Math.min(nights, 10);
-  const touristTax      = taxableNights * taxableAdults * 2;
+  const touristTax = calculateTouristTax(numAdult, childrenAges, nights);
 
   // ── 1. Scroll threshold: appare dopo 350px (oltre la foto) ──────────────
   useEffect(() => {
