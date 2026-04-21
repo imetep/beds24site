@@ -356,6 +356,14 @@ export function calculateTouristTax(
   return taxableNights * taxablePeople * TOURIST_TAX_RATE_EUR;
 }
 
+// Inietta le costanti tassa di soggiorno nel template i18n (placeholder {rate} / {maxNights} / {exemptAge}).
+export function formatTouristTaxNote(template: string): string {
+  return template
+    .replace('{rate}', String(TOURIST_TAX_RATE_EUR))
+    .replace('{maxNights}', String(TOURIST_TAX_MAX_NIGHTS))
+    .replace('{exemptAge}', String(TOURIST_TAX_EXEMPT_UNDER_AGE));
+}
+
 // ─── OFFERS — uguali per tutte le property ───────────────────────────────────
 
 export interface OfferInfo {
