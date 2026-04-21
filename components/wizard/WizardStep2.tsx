@@ -136,7 +136,12 @@ export default function WizardStep2({ locale = 'it' }: Props) {
   const extrasTotal = selectedExtras.reduce((sum, e) => sum + e.price * e.quantity, 0);
 
   const total         = basePrice + touristTax + extrasTotal;
-  const installment   = Math.round(total / 3);
+  // PayPal in 3 rate: si applica all'importo effettivamente addebitato (acconto
+  // per offerte parzialmente rimborsabili). Per le flex il radio PayPal è
+  // comunque nascosto (isFlexOffer → solo Stripe con capture=false).
+  // Nota: `amountToChargeDisplay` è definito più sotto — temporaneamente uso
+  // total come fallback, poi lo sovrascrivo dopo averlo calcolato.
+  let installment = Math.round(total / 3);
 
   // Lettura dinamica bookingType dalla config Beds24 (cachata in store).
   // Fallback sicuro: se la config non è ancora caricata, nessuna offerta è
@@ -244,6 +249,9 @@ export default function WizardStep2({ locale = 'it' }: Props) {
   const propertyCfg = findPropertyByRoom(propertyConfig, selectedRoomId);
   const amountToChargeDisplay = computeDepositAmount(totalDisplay, offerConfig, propertyCfg);
   const isPartialDeposit = !isFlexOffer && amountToChargeDisplay > 0 && amountToChargeDisplay < totalDisplay;
+
+  // Aggiorna rate PayPal sull'importo effettivo (acconto invece di totale)
+  installment = Math.round(amountToChargeDisplay / 3);
 
   // Etichetta e importo del radio Stripe "Paga tutto ora / acconto / salva carta"
   const stripeRadioLabel = isFlexOffer
