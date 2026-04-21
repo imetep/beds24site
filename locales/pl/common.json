@@ -972,7 +972,8 @@
       "paypalFlexNote": "W przypadku PayPal płatność jest naliczana natychmiast.",
       "stripeFlexNote": "W przypadku Stripe karta jest tylko zapisywana — bez natychmiastowego obciążenia.",
       "flexOnlyCardNote": "Dla tej taryfy akceptujemy tylko płatność kartą.",
-      "vediRiepilogo": "Zobacz podsumowanie"
+      "vediRiepilogo": "Zobacz podsumowanie",
+      "vediRiepilogoFlex": "Dalej"
     },
     "wizardStep3": {
       "title": "Podsumowanie rezerwacji",
@@ -999,6 +1000,9 @@
       "arrival": "Godzina przyjazdu",
       "notes": "Specjalne życzenia",
       "payBtn": "Potwierdź i zapłać kartą",
+      "payBtnFlex": "Potwierdź rezerwację",
+      "payBtnFlexNote": "Brak obciążenia dzisiaj — karta zapisana",
+      "totalFlexNote": "Obciążenie tylko przy późnym anulowaniu",
       "payBtnPaypal": "Zapłać przez PayPal",
       "paying": "Tworzenie rezerwacji…",
       "payingPaypal": "Przetwarzanie PayPal…",

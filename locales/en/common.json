@@ -972,7 +972,8 @@
       "paypalFlexNote": "With PayPal, payment is charged immediately.",
       "stripeFlexNote": "With Stripe your card is only saved — no immediate charge.",
       "flexOnlyCardNote": "We only accept card payment for this rate.",
-      "vediRiepilogo": "View booking summary"
+      "vediRiepilogo": "View booking summary",
+      "vediRiepilogoFlex": "Continue"
     },
     "wizardStep3": {
       "title": "Booking summary",
@@ -999,6 +1000,9 @@
       "arrival": "Arrival time",
       "notes": "Special requests",
       "payBtn": "Confirm and pay by Card",
+      "payBtnFlex": "Confirm booking",
+      "payBtnFlexNote": "No charge today — card saved on file",
+      "totalFlexNote": "Charged only in case of late cancellation",
       "payBtnPaypal": "Pay with PayPal",
       "paying": "Creating booking…",
       "payingPaypal": "Processing PayPal…",

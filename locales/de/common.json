@@ -972,7 +972,8 @@
       "paypalFlexNote": "Bei PayPal wird der Betrag sofort belastet.",
       "stripeFlexNote": "Bei Stripe wird die Karte nur gespeichert — keine sofortige Belastung.",
       "flexOnlyCardNote": "Für diesen Tarif akzeptieren wir nur Kartenzahlung.",
-      "vediRiepilogo": "Buchungsübersicht anzeigen"
+      "vediRiepilogo": "Buchungsübersicht anzeigen",
+      "vediRiepilogoFlex": "Weiter"
     },
     "wizardStep3": {
       "title": "Buchungsübersicht",
@@ -999,6 +1000,9 @@
       "arrival": "Ankunftszeit",
       "notes": "Besondere Wünsche",
       "payBtn": "Bestätigen und mit Karte bezahlen",
+      "payBtnFlex": "Buchung bestätigen",
+      "payBtnFlexNote": "Keine Belastung heute — Karte gespeichert",
+      "totalFlexNote": "Belastung nur bei verspäteter Stornierung",
       "payBtnPaypal": "Mit PayPal bezahlen",
       "paying": "Buchung wird erstellt…",
       "payingPaypal": "PayPal wird verarbeitet…",
