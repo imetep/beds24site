@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { PoolType } from '@/config/properties';
+import type { PropertyConfigResponse } from '@/app/api/property-config/route';
 
 export type PaymentMethod = 'stripe' | 'paypal';
 
@@ -32,6 +33,11 @@ export interface WizardState {
 
   // Step 5 → 6 — Offerte caricate da /api/offers
   cachedOffers: any[];
+
+  // Configurazione property (bookingType per-offer + paymentCollection).
+  // Caricata una sola volta dal wizard via /api/property-config, cache Redis 1h.
+  // Usata per decidere dinamicamente se un'offerta è flex e quale % addebitare.
+  propertyConfig: PropertyConfigResponse | null;
 
   // Step 6 — Riepilogo
   selectedOfferId: number | null;
@@ -68,6 +74,7 @@ export interface WizardState {
   setPaymentMethod: (method: PaymentMethod) => void;
   setVoucherCode: (code: string) => void;
   setOffers: (offers: any[]) => void;
+  setPropertyConfig: (config: PropertyConfigResponse | null) => void;
   setGuestField: (field: string, value: string) => void;
   setPendingBooking: (bookId: number | null, invoiceAmount: number | null) => void;
   setDiscountedPrice: (price: number | null) => void;
@@ -87,6 +94,7 @@ const initialState = {
   selectedRoomId: null,
   selectedExtras: [] as SelectedExtra[],
   cachedOffers: [],
+  propertyConfig: null,
   selectedOfferId: null,
   paymentMethod: 'stripe' as PaymentMethod,
   voucherCode: '',
@@ -143,6 +151,7 @@ export const useWizardStore = create<WizardState>((set) => ({
   setPendingBooking: (bookId, invoiceAmount) => set({ pendingBookId: bookId, invoiceAmount }),
   setDiscountedPrice: (price) => set({ discountedPrice: price }),
   setOffers: (offers) => set({ cachedOffers: offers }),
+  setPropertyConfig: (config) => set({ propertyConfig: config }),
   setGuestField: (field, value) => set({ [field]: value } as any),
   setCurrentStep: (step) => set({ currentStep: step }),
   nextStep: () => set((state) => ({ currentStep: Math.min(7, state.currentStep + 1) })),
