@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
 import type { SelectedExtra } from '@/store/wizard-store';
-import { PROPERTIES, getPropertyForRoom, calculateTouristTax } from '@/config/properties';
+import { PROPERTIES, getPropertyForRoom, calculateTouristTax, formatTouristTaxNote } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
 import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import type { Locale } from '@/config/i18n';
@@ -426,7 +426,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
         </div>
       </div>
       {touristTax > 0 && (
-        <p style={{ fontSize: 11, color: '#9ca3af', margin: '4px 0 0' }}>{t.touristTaxNote}</p>
+        <p style={{ fontSize: 11, color: '#9ca3af', margin: '4px 0 0' }}>{formatTouristTaxNote(t.touristTaxNote)}</p>
       )}
 
       {/* Deposito cauzionale */}
