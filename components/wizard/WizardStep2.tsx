@@ -646,7 +646,9 @@ export default function WizardStep2({ locale = 'it' }: Props) {
               transition: 'background 0.15s',
             }}
           >
-            {`${t.vediRiepilogo} → ${fmt(amountToChargeDisplay || totalDisplay)}`}
+            {isFlexOffer
+              ? t.vediRiepilogoFlex
+              : `${t.vediRiepilogo} → ${fmt(amountToChargeDisplay || totalDisplay)}`}
           </button>
 
           <p className="text-center mb-3" style={{ fontSize: 12, color: '#aaa' }}>
