@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
-import { getAvailableRooms, getPropertyForRoom, PROPERTIES } from '@/config/properties';
+import { getAvailableRooms, getPropertyForRoom, PROPERTIES, calculateTouristTax } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
 import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import type { Room } from '@/config/properties';
@@ -88,10 +88,7 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
   const [isDesk, setIsDesk]               = useState(false);
 
   const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
-  const childrenTaxable = (childrenAges ?? []).filter((a: number) => a >= 12).length;
-  const taxableAdults   = numAdult + childrenTaxable;
-  const taxableNights   = Math.min(nights, 10);
-  const touristTax      = taxableNights * taxableAdults * 2;
+  const touristTax = calculateTouristTax(numAdult, childrenAges, nights);
 
   // ── Fetch offerte ────────────────────────────────────────────────────────
   const fetchOffers = useCallback(async () => {
