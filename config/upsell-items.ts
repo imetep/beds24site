@@ -26,7 +26,7 @@ export const UPSELL_TEXTS: Record<number, Record<number, UpsellItemTexts>> = {
 
   // ── Livingapple campagna (46487) ─────────────────────────────────────────
   46487: {
-    1: {
+    11: {
       name: {
         it: 'Lettino da campeggio con biancheria',
         en: 'Camp cot with bedding',
@@ -38,7 +38,7 @@ export const UPSELL_TEXTS: Record<number, Record<number, UpsellItemTexts>> = {
 
   // ── Livingapple beach (46871) ────────────────────────────────────────────
   46871: {
-    1: {
+    11: {
       name: {
         it: 'Lettino da campeggio con biancheria',
         en: 'Camp cot with bedding',
