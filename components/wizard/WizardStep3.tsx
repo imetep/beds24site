@@ -25,6 +25,7 @@ import { useWizardStore } from '@/store/wizard-store';
 import { PROPERTIES, calculateTouristTax } from '@/config/properties';
 import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import { getTranslations } from '@/lib/i18n';
+import { findOffer, findPropertyByRoom, computeDepositAmount } from '@/lib/offer-deposit';
 import type { Locale } from '@/config/i18n';
 
 const SUPPORTED_LOCALES = ['it', 'en', 'de', 'pl'] as const;
@@ -77,6 +78,7 @@ export default function WizardStep3({ locale = 'it' }: Props) {
     discountedPrice,
     setPendingBooking,
     prevStep, reset,
+    propertyConfig,
   } = useWizardStore();
 
   // ✅ Fase iniziale 'ready': Step3 è solo riepilogo, nessuna API al mount
@@ -109,6 +111,14 @@ export default function WizardStep3({ locale = 'it' }: Props) {
   const discountAmount = hasDiscount ? offerPrice - discountedPrice! : 0;
   const extrasTotal    = (selectedExtras ?? []).reduce((sum: number, e: any) => sum + e.price * (e.quantity ?? 1), 0);
   const total          = realPrice + touristTax + extrasTotal;
+
+  // Importo da addebitare ORA, calcolato dinamicamente in base al bookingType
+  // dell'offerta e al paymentCollection della property (letti da Beds24 e cachati
+  // in store via /api/property-config). Fallback a `total` se config non caricata.
+  // Vedi lib/offer-deposit.ts per la regola completa.
+  const offerConfig   = findOffer(propertyConfig, selectedRoomId, selectedOfferId);
+  const propertyCfg   = findPropertyByRoom(propertyConfig, selectedRoomId);
+  const amountToCharge = computeDepositAmount(total, offerConfig, propertyCfg);
 
   // Etichetta tipo appartamento (legge wizardSidebar i18n — condivisa con step 1/2)
   const roomTypeLabel = room?.type === 'monolocale' ? tSidebar.typeMonolocale
@@ -243,12 +253,13 @@ export default function WizardStep3({ locale = 'it' }: Props) {
         // Salva il bookId nel ref per onApprove/onError/onCancel
         createdBookIdRef.current = bookId;
 
-        // Poi crea l'ordine PayPal
+        // Poi crea l'ordine PayPal — importo = amountToCharge (può essere 50%
+        // del totale per offerte parzialmente rimborsabili).
         const res = await fetch('/api/paypal-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            amount:      total,
+            amount:      amountToCharge,
             bookingId:   bookId,
             description: `LivingApple · ${room?.name ?? ''} · ${checkIn} → ${checkOut}`,
           }),
@@ -280,7 +291,7 @@ export default function WizardStep3({ locale = 'it' }: Props) {
             body: JSON.stringify({
               orderID:        data.orderID,
               bookingId:      bookId,
-              amount:         total,
+              amount:         amountToCharge,
               accommodation:  offerPrice,
               touristTax:     touristTax,
               discountAmount: discountAmount,
@@ -352,13 +363,16 @@ export default function WizardStep3({ locale = 'it' }: Props) {
       if (!bookId) return; // createBooking ha già gestito l'errore
 
       // Step 2: crea sessione Stripe
+      // amountToCharge è già stato calcolato in base al bookingType dell'offerta:
+      // 100% per non rimborsabile, 50% per parzialmente rimborsabile, 0 per flex.
       const stripeRes = await fetch('/api/stripe-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           bookingId:   bookId,
-          amount:      total,
+          amount:      amountToCharge,
           offerId:     selectedOfferId,
+          bookingType: offerConfig?.bookingType ?? null,
           locale,
           description: `LivingApple · ${room?.name ?? ''} · ${checkIn} → ${checkOut}`,
         }),
