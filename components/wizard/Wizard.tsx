@@ -31,6 +31,7 @@ export default function Wizard({ translations: t, locale }: Props) {
     setNumAdult,
     setSelectedRoomId, setSelectedOfferId, setOffers,
     setPendingBooking,
+    propertyConfig, setPropertyConfig,
   } = useWizardStore();
 
   const [ready,  setReady]      = useState(false);
@@ -50,6 +51,18 @@ export default function Wizard({ translations: t, locale }: Props) {
   const cancelledBookId  = searchParams.get('bookingId');
 
   const isGuestLink = !!(fromRoom && roomIdUrl && checkInUrl && checkOutUrl);
+
+  // ── Pre-caricamento propertyConfig ────────────────────────────────────────
+  // Fetcha una sola volta all'ingresso del wizard (cache Redis 1h sul server).
+  // Serve a WizardStep2/3 per decidere dinamicamente isFlexOffer + deposit %
+  // leggendo bookingType e paymentCollection da Beds24 invece di hardcodare.
+  useEffect(() => {
+    if (propertyConfig) return; // già in store, skip
+    fetch('/api/property-config')
+      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(data => setPropertyConfig(data))
+      .catch(err => console.warn('[Wizard] property-config fetch failed:', err));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Gestione abbandono Stripe ──────────────────────────────────────────────
   useEffect(() => {
