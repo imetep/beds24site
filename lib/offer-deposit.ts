@@ -64,25 +64,38 @@ export function isPartialRefundableBookingType(bookingType: string | null | unde
  * Calcola `chargeAt` (ISO8601 UTC) — quando il cron PayPal deve addebitare
  * il vault — partendo dalla data di check-in e dal tipo di offerta.
  *
- * Regole (decise con l'utente, v1):
- *  - Flessibile              → checkIn − 24h  (scadenza cancellazione gratuita)
- *  - Parzialmente rimborsabile → checkIn − 48h  (addebito 50% residuo)
+ * Regole:
+ *  - Flessibile → checkIn − N giorni, dove N è `cancellationDaysBeforeArrival`
+ *    letto da Beds24 (per-offerta: es. Flex60=60, Flex42=45, Flex30=30, Flex5=5)
+ *  - Parzialmente rimborsabile → checkIn − 48h (addebito 50% residuo, regola fissa)
  *
- * @param checkInYmd  data di arrivo in formato 'YYYY-MM-DD'
+ * @param checkInYmd  data di arrivo 'YYYY-MM-DD'
  * @param policy      tipo di vault
+ * @param daysBeforeArrival
+ *   Per `flex`: giorni letti dall'offer config (Beds24).
+ *   Fallback a 1 giorno se null/undefined — preferiamo un addebito tardivo
+ *   rispetto a perderlo del tutto.
  * @returns ISO8601 UTC o null se input non valido
  */
 export function computeVaultChargeAt(
   checkInYmd: string | null | undefined,
   policy: 'flex' | 'rimborsabile-residuo',
+  daysBeforeArrival?: number | null,
 ): string | null {
   if (!checkInYmd) return null;
-  // checkIn interpretato come mezzanotte locale della property (Italia, UTC+1/+2).
-  // Usiamo UTC per coerenza col cron: checkIn YYYY-MM-DD come 00:00Z, poi sottraiamo.
   const ci = Date.parse(`${checkInYmd}T00:00:00Z`);
   if (!Number.isFinite(ci)) return null;
-  const offsetHours = policy === 'flex' ? 24 : 48;
-  return new Date(ci - offsetHours * 3600 * 1000).toISOString();
+
+  let offsetMs: number;
+  if (policy === 'flex') {
+    const days = typeof daysBeforeArrival === 'number' && daysBeforeArrival > 0
+      ? daysBeforeArrival
+      : 1;
+    offsetMs = days * 24 * 3600 * 1000;
+  } else {
+    offsetMs = 48 * 3600 * 1000;
+  }
+  return new Date(ci - offsetMs).toISOString();
 }
 
 /**
