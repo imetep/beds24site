@@ -343,7 +343,7 @@
       "basement": "Seminterrato"
     },
     "cancelPolicy": {
-      "1": "Pagamento non rimborsabile entro 48h dalla prenotazione.",
+      "1": "Tariffa non rimborsabile: l'importo viene trattenuto in caso di cancellazione.",
       "2": "50% subito, saldo all'arrivo. Cancellazione parzialmente rimborsabile.",
       "3": "Cancellazione gratuita fino a 60 giorni prima dell'arrivo.",
       "4": "Cancellazione gratuita fino a 45 giorni prima dell'arrivo.",
