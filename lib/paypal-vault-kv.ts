@@ -181,21 +181,30 @@ export async function listDueBookingIds(nowEpochMs: number): Promise<number[]> {
 /**
  * Acquisisce il lock del cron. Ritorna true se acquisito, false se già locked.
  * TTL 10 min (abbondante per processare anche 100+ vault).
+ *
+ * Usa pipeline (SET key value NX EX ttl come array): la sintassi path-based
+ * `/set/KEY/VALUE?NX=true&EX=600` NON viene interpretata correttamente da
+ * Upstash REST — il lock risulterebbe sempre presente (SET senza NX
+ * sovrascrive e ritorna sempre OK).
  */
 export async function acquireLock(ttlSeconds = 600): Promise<boolean> {
   const c = kvCreds();
-  if (!c) return true; // niente KV in dev locale → no lock = ok
+  if (!c) return true; // niente KV in dev → no lock necessario
   try {
-    // SET key value NX EX ttl
-    const res = await fetch(`${c.url}/set/${encodeURIComponent(KV_LOCK)}/${Date.now()}?NX=true&EX=${ttlSeconds}`, {
+    const res = await fetch(`${c.url}/pipeline`, {
       method:  'POST',
-      headers: { Authorization: `Bearer ${c.token}` },
+      headers: { Authorization: `Bearer ${c.token}`, 'Content-Type': 'application/json' },
+      body:    JSON.stringify([
+        ['SET', KV_LOCK, String(Date.now()), 'NX', 'EX', String(ttlSeconds)],
+      ]),
       cache:   'no-store',
     });
     if (!res.ok) return false;
-    const data = await res.json();
-    return data.result === 'OK';
-  } catch {
+    const arr = await res.json();
+    const result = Array.isArray(arr) ? arr[0]?.result : arr?.result;
+    return result === 'OK';
+  } catch (e) {
+    console.warn('[paypal-vault-kv] acquireLock exception:', e);
     return false;
   }
 }
@@ -204,9 +213,10 @@ export async function releaseLock(): Promise<void> {
   const c = kvCreds();
   if (!c) return;
   try {
-    await fetch(`${c.url}/del/${encodeURIComponent(KV_LOCK)}`, {
+    await fetch(`${c.url}/pipeline`, {
       method:  'POST',
-      headers: { Authorization: `Bearer ${c.token}` },
+      headers: { Authorization: `Bearer ${c.token}`, 'Content-Type': 'application/json' },
+      body:    JSON.stringify([['DEL', KV_LOCK]]),
       cache:   'no-store',
     });
   } catch {}
