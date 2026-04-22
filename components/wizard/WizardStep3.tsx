@@ -127,11 +127,11 @@ export default function WizardStep3({ locale = 'it' }: Props) {
   // Vedi lib/offer-deposit.ts per la regola completa.
   const offerConfig   = findOffer(propertyConfig, selectedRoomId, selectedOfferId);
   const propertyCfg   = findPropertyByRoom(propertyConfig, selectedRoomId);
-  const amountToCharge       = computeDepositAmount(total, offerConfig, propertyCfg);
-  const isFlexOffer          = isFlexBookingType(offerConfig?.bookingType);
-  const isPartialRefundable  = isPartialRefundableBookingType(offerConfig?.bookingType);
+  const amountToCharge         = computeDepositAmount(total, offerConfig, propertyCfg);
+  const isFlexOffer            = isFlexBookingType(offerConfig?.bookingType);
+  const isPartialRefundable    = isPartialRefundableBookingType(offerConfig?.bookingType);
   // Residuo da addebitare al cron per Rimborsabile (50% se amountToCharge è 50%).
-  const residualAmount       = isPartialRefundable ? Math.max(0, total - amountToCharge) : 0;
+  const residualAmountFromTotal = isPartialRefundable ? Math.max(0, total - amountToCharge) : 0;
 
   // Etichetta tipo appartamento (legge wizardSidebar i18n — condivisa con step 1/2)
   const roomTypeLabel = room?.type === 'monolocale' ? tSidebar.typeMonolocale
@@ -265,9 +265,10 @@ export default function WizardStep3({ locale = 'it' }: Props) {
         if (cancelled) return;
         sdkInstanceRef.current = instance;
 
-        // 4. Session one-time solo per non-flex
-        //    (flex non usa il SDK: vault save via REST)
-        if (!isFlexOffer && typeof instance.createPayPalOneTimePaymentSession === 'function') {
+        // 4. Session one-time solo per Non rimborsabile (charge 100% one-shot).
+        //    Flex e Rimborsabile usano il vault flow (setup-token + redirect),
+        //    quindi non serve la session del SDK.
+        if (!isFlexOffer && !isPartialRefundable && typeof instance.createPayPalOneTimePaymentSession === 'function') {
           paypalSessionRef.current = instance.createPayPalOneTimePaymentSession({
             onApprove: async (data: { orderId: string }) => {
               setPhase('paying');
@@ -278,6 +279,8 @@ export default function WizardStep3({ locale = 'it' }: Props) {
                 return;
               }
               try {
+                // Questa session serve solo per Non rimborsabile → capture
+                // 100% one-shot senza saveVault (no residuo).
                 const res = await fetch('/api/paypal-capture', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
@@ -294,13 +297,6 @@ export default function WizardStep3({ locale = 'it' }: Props) {
                       price:       e.price,
                       quantity:    e.quantity,
                     })),
-                    // Rimborsabile: attiva il vault save + dati per KV
-                    saveVault:        isPartialRefundable,
-                    residualAmount:   isPartialRefundable ? residualAmount : 0,
-                    residualChargeAt: isPartialRefundable
-                      ? computeVaultChargeAt(checkIn, 'rimborsabile-residuo')
-                      : null,
-                    residualPolicy:   isPartialRefundable ? 'rimborsabile-residuo' : null,
                   }),
                 });
                 const result = await res.json();
@@ -343,9 +339,12 @@ export default function WizardStep3({ locale = 'it' }: Props) {
     })();
 
     return () => { cancelled = true; };
-  }, [paymentMethod, isFlexOffer]);
+  }, [paymentMethod, isFlexOffer, isPartialRefundable]);
 
-  // ── Click bottone "Paga con PayPal" (non-flex one-time) ──────────────────
+  // ── Click bottone "Paga con PayPal" (solo Non rimborsabile) ──────────────
+  // Capture 100% one-shot via SDK v6. Rimborsabile e Flex usano invece il
+  // flow setup-token (handlePayPalVaultFlow) perché il vault_id async di
+  // PayPal non è affidabile in sandbox.
   async function handlePayPalOneTime() {
     if (!paypalSessionRef.current) {
       setError(t.errPayPalGeneric);
@@ -353,13 +352,11 @@ export default function WizardStep3({ locale = 'it' }: Props) {
     }
     setError(null);
 
-    // createOrder è una Promise<string> che crea booking + order PayPal
     const createOrderPromise = (async () => {
       const bookId = await createBooking();
       if (!bookId) throw new Error(t.errPayPalOrder);
       createdBookIdRef.current = bookId;
 
-      const origin = window.location.origin;
       const res = await fetch('/api/paypal-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -367,15 +364,6 @@ export default function WizardStep3({ locale = 'it' }: Props) {
           amount:      amountToCharge,
           bookingId:   bookId,
           description: `LivingApple · ${room?.name ?? ''} · ${checkIn} → ${checkOut}`,
-          // Rimborsabile: salva il vault per il 50% residuo
-          saveVault:   isPartialRefundable,
-          returnUrl:   isPartialRefundable
-            ? `${origin}/${locale}/prenota/successo?bookingId=${bookId}&paypal=1`
-            : undefined,
-          cancelUrl:   isPartialRefundable
-            ? `${origin}/${locale}/prenota?cancelled=1&bookingId=${bookId}`
-            : undefined,
-          guestEmail:  isPartialRefundable ? guestEmail.trim() : undefined,
         }),
       });
       const data = await res.json();
@@ -403,26 +391,32 @@ export default function WizardStep3({ locale = 'it' }: Props) {
     }
   }
 
-  // ── Click bottone "Salva PayPal" (flex → vault save, no charge) ──────────
-  async function handlePayPalFlexVault() {
+  // ── Click bottone "Salva PayPal" / "Paga 50%" via vault flow ─────────────
+  // Funziona per Flex e Rimborsabile. Il path è identico (setup-token +
+  // redirect + return page) ma la policy + gli amount cambiano:
+  //   • flex              → chargeAt=-24h, upfront=0, residual=100%
+  //   • rimborsabile-residuo → chargeAt=-48h, upfront=50%, residual=50%
+  // La return page (/paypal-return) legge sessionStorage e chiama
+  // l'endpoint giusto (confirm-vault per flex, confirm-vault-and-charge
+  // per rimborsabile).
+  async function handlePayPalVaultFlow(policy: 'flex' | 'rimborsabile-residuo') {
     setError(null);
     setVaultPhase('saving');
 
     try {
-      // 1. Crea booking (status 'request' finché non confermato post-approve)
       const bookId = await createBooking();
       if (!bookId) { setVaultPhase('idle'); return; }
       createdBookIdRef.current = bookId;
 
-      // 2. Dati per /api/paypal-confirm-vault vanno preservati in sessionStorage:
-      //    dopo il redirect PayPal l'utente torna alla pagina /paypal-return
-      //    che ha bisogno di accommodation/touristTax/ecc per scrivere gli
-      //    invoice items su Beds24.
-      const chargeAt = computeVaultChargeAt(checkIn, 'flex');
+      const chargeAt = computeVaultChargeAt(checkIn, policy);
       if (!chargeAt) {
         cancelBooking(bookId);
         throw new Error(t.errDataMissing);
       }
+
+      // amount breakdown per la return page
+      const upfrontAmount  = policy === 'rimborsabile-residuo' ? amountToCharge : 0;
+      const residualAmount = policy === 'rimborsabile-residuo' ? residualAmountFromTotal : total;
 
       const origin    = window.location.origin;
       const returnUrl = `${origin}/${locale}/paypal-return?bookingId=${bookId}`;
@@ -431,9 +425,11 @@ export default function WizardStep3({ locale = 'it' }: Props) {
       try {
         sessionStorage.setItem('paypal_vault_pending', JSON.stringify({
           bookingId:      bookId,
-          policy:         'flex',
+          policy,
           chargeAt,
           totalAmount:    total,
+          upfrontAmount,
+          residualAmount,
           accommodation:  offerPrice,
           touristTax,
           discountAmount,
@@ -444,9 +440,8 @@ export default function WizardStep3({ locale = 'it' }: Props) {
             quantity:    e.quantity,
           })),
         }));
-      } catch { /* sessionStorage non disponibile — continuerà dal server */ }
+      } catch { /* sessionStorage non disponibile */ }
 
-      // 3. Crea setup-token lato server
       const res = await fetch('/api/paypal-setup-token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -466,11 +461,9 @@ export default function WizardStep3({ locale = 'it' }: Props) {
       }
 
       try {
-        // Salva setupTokenId separato così la return page lo legge facilmente
         sessionStorage.setItem('paypal_vault_setupToken', data.setupTokenId);
       } catch {}
 
-      // 4. Redirect a PayPal per approvazione
       setVaultPhase('redirecting');
       window.location.href = data.approveUrl;
 
@@ -479,6 +472,11 @@ export default function WizardStep3({ locale = 'it' }: Props) {
       setVaultPhase('idle');
     }
   }
+
+  // Wrapper per il bottone "Salva PayPal" sulla tariffa Flex
+  const handlePayPalFlexVault = () => handlePayPalVaultFlow('flex');
+  // Wrapper per il bottone "Paga 50%" sulla tariffa Rimborsabile
+  const handlePayPalRimborsabile = () => handlePayPalVaultFlow('rimborsabile-residuo');
 
   // ── Torna indietro ────────────────────────────────────────────────────────
   // ✅ Cancella il booking solo se era già stato creato (es. Stripe fallito)
@@ -751,7 +749,7 @@ export default function WizardStep3({ locale = 'it' }: Props) {
             </div>
           )}
 
-          {/* Flex: bottone "Salva PayPal" → POST setup-token → redirect */}
+          {/* Flex: bottone "Salva PayPal" → setup-token → redirect */}
           {sdkReady && isFlexOffer && vaultPhase === 'idle' && phase !== 'paying' && (
             <>
               <button
@@ -768,8 +766,20 @@ export default function WizardStep3({ locale = 'it' }: Props) {
             </>
           )}
 
-          {/* Non-flex: bottone "Paga con PayPal" → session.start */}
-          {sdkReady && !isFlexOffer && phase !== 'paying' && (
+          {/* Rimborsabile: stesso flow del flex + charge upfront 50% al ritorno */}
+          {sdkReady && !isFlexOffer && isPartialRefundable && vaultPhase === 'idle' && phase !== 'paying' && (
+            <button
+              onClick={handlePayPalRimborsabile}
+              className="wizard-step3__paypal-v6-btn"
+              type="button"
+            >
+              <i className="bi bi-paypal" aria-hidden="true"></i>
+              <span>{t.payBtnPaypal} · {fmt(amountToCharge)}</span>
+            </button>
+          )}
+
+          {/* Non rimborsabile: capture 100% one-shot via SDK v6 */}
+          {sdkReady && !isFlexOffer && !isPartialRefundable && phase !== 'paying' && (
             <button
               onClick={handlePayPalOneTime}
               className="wizard-step3__paypal-v6-btn"
