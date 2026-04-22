@@ -408,7 +408,14 @@ export default function WizardStep3({ locale = 'it' }: Props) {
       if (!bookId) { setVaultPhase('idle'); return; }
       createdBookIdRef.current = bookId;
 
-      const chargeAt = computeVaultChargeAt(checkIn, policy);
+      // Per flex, il cron deve addebitare quando scade la cancellazione gratuita
+      // specifica dell'offerta (daysBeforeArrivalValue letto da Beds24).
+      // Per rimborsabile-residuo il parametro è ignorato (48h fisse).
+      const chargeAt = computeVaultChargeAt(
+        checkIn,
+        policy,
+        offerConfig?.cancellationDaysBeforeArrival,
+      );
       if (!chargeAt) {
         cancelBooking(bookId);
         throw new Error(t.errDataMissing);
