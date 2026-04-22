@@ -343,7 +343,7 @@
       "basement": "Untergeschoss"
     },
     "cancelPolicy": {
-      "1": "Nicht erstattungsfähige Zahlung innerhalb 48h.",
+      "1": "Nicht erstattbarer Tarif: Der Betrag wird bei Stornierung einbehalten.",
       "2": "50% jetzt, Rest bei Ankunft. Teilweise erstattungsfähig.",
       "3": "Kostenlose Stornierung bis 60 Tage vor Ankunft.",
       "4": "Kostenlose Stornierung bis 45 Tage vor Ankunft.",
