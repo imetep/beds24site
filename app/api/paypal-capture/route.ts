@@ -63,22 +63,45 @@ export async function POST(req: NextRequest) {
       throw new Error(`Pagamento PayPal non completato. Status: ${captureStatus ?? 'sconosciuto'}`);
     }
 
-    // 1b. Estrai vault id se saveVault era on
-    // PayPal espone il vault id in uno di questi campi a seconda del flow:
+    // 1b. Estrai vault id se saveVault era on.
+    // PayPal lo espone in posti diversi a seconda del flow/versione:
     //   data.payment_source.paypal.attributes.vault.id
-    //   data.purchase_units[0].payments.captures[0].payment_source.paypal.attributes.vault.id
+    //   data.payment_source.paypal.vault.id              (senza "attributes")
+    //   captureUnit.payment_source.paypal.attributes.vault.id
+    //   captureUnit.payment_source.paypal.vault.id
+    //   data.payment_source.card.attributes.vault.id     (ospite paga con carta via PayPal)
+    // Se non lo trova, logghiamo l'intera response ridotta per capire.
     let vaultId: string | null = null;
     let customerId: string | null = null;
     if (saveVault) {
-      vaultId =
-        data?.payment_source?.paypal?.attributes?.vault?.id ??
-        captureUnit?.payment_source?.paypal?.attributes?.vault?.id ??
-        null;
-      customerId =
-        data?.payment_source?.paypal?.attributes?.vault?.customer?.id ??
-        captureUnit?.payment_source?.paypal?.attributes?.vault?.customer?.id ??
-        null;
+      const ps       = data?.payment_source ?? {};
+      const psCap    = captureUnit?.payment_source ?? {};
+      const candidates: Array<string | undefined> = [
+        ps?.paypal?.attributes?.vault?.id,
+        ps?.paypal?.vault?.id,
+        ps?.card?.attributes?.vault?.id,
+        psCap?.paypal?.attributes?.vault?.id,
+        psCap?.paypal?.vault?.id,
+        psCap?.card?.attributes?.vault?.id,
+      ];
+      vaultId = candidates.find(v => typeof v === 'string' && v.length > 0) ?? null;
+
+      const custCandidates: Array<string | undefined> = [
+        ps?.paypal?.attributes?.vault?.customer?.id,
+        ps?.paypal?.vault?.customer?.id,
+        ps?.card?.attributes?.vault?.customer?.id,
+        psCap?.paypal?.attributes?.vault?.customer?.id,
+        psCap?.paypal?.vault?.customer?.id,
+        data?.payer?.payer_id,
+      ];
+      customerId = custCandidates.find(v => typeof v === 'string' && v.length > 0) ?? null;
+
       console.log('[paypal-capture] vault id extracted:', vaultId, 'customer:', customerId);
+      if (!vaultId) {
+        // Debug: logghiamo i blocchi chiave della response per capire dove sta.
+        console.log('[paypal-capture] 🔍 DEBUG payment_source (root):',   JSON.stringify(ps).slice(0, 800));
+        console.log('[paypal-capture] 🔍 DEBUG payment_source (capture):', JSON.stringify(psCap).slice(0, 800));
+      }
     }
 
     const token = await getToken();
