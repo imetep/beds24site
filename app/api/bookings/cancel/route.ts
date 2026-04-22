@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from '@/lib/beds24-token';
+import { getVault, updateVault } from '@/lib/paypal-vault-kv';
 
 const BASE_URL = 'https://beds24.com/api/v2';
 
@@ -7,6 +8,9 @@ const BASE_URL = 'https://beds24.com/api/v2';
  * POST /api/bookings/cancel
  * Cancella un booking pendente se l'utente torna indietro dal riepilogo.
  * Body: { bookingId: number }
+ *
+ * Se esiste un vault PayPal associato (record su KV con status 'pending'),
+ * viene marcato 'cancelled' così il cron non prova ad addebitarlo.
  */
 export async function POST(req: NextRequest) {
   let body: any;
@@ -30,6 +34,17 @@ export async function POST(req: NextRequest) {
 
     const raw = await res.text();
     console.log('[cancel booking]', bookingId, 'status:', res.status, raw.slice(0, 200));
+
+    // Se c'è un vault pending associato, neutralizzalo (rimuove anche dallo ZSET due)
+    try {
+      const vault = await getVault(Number(bookingId));
+      if (vault && vault.status === 'pending') {
+        await updateVault(Number(bookingId), { status: 'cancelled' });
+        console.log('[cancel booking]', bookingId, '→ vault KV marked cancelled');
+      }
+    } catch (vaultErr: any) {
+      console.warn('[cancel booking] vault cleanup failed (non-blocking):', vaultErr.message);
+    }
 
     return NextResponse.json({ ok: true });
   } catch (err: any) {
