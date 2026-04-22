@@ -59,6 +59,10 @@ export default function SuccessContent({ locale }: Props) {
   const bookingIdParam = params.get('bookingId');
   const sessionId      = params.get('session_id');
   const isPaypal       = params.get('paypal') === '1';
+  // Flow vault save (Flex o Rimborsabile con 50% upfront): anche questo è
+  // già confermato lato server (/api/paypal-confirm-vault* scrive gli
+  // invoice items e setta status 'new'). Non chiamare stripe-confirm.
+  const isPaypalVault  = params.get('paypal-vault') === '1';
 
   // Per Stripe: conferma asincrona via /api/stripe-confirm
   const [confirming,    setConfirming]    = useState(false);
@@ -67,8 +71,8 @@ export default function SuccessContent({ locale }: Props) {
   const [isCardSaved,   setIsCardSaved]   = useState(false);
 
   useEffect(() => {
-    // PayPal: già confermato da /api/paypal-capture — niente da fare
-    if (isPaypal) return;
+    // Flow PayPal (capture immediata o vault save): già confermato lato server
+    if (isPaypal || isPaypalVault) return;
 
     // Nessun session_id: carta salvata (offerte 3-6, capture=false)
     // In questo caso Beds24 non ha ancora ricevuto lo status confirmed
