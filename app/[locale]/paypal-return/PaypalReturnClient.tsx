@@ -46,47 +46,25 @@ export default function PaypalReturnClient({ locale }: Props) {
           throw new Error(t.errDataMissing);
         }
         const pending = JSON.parse(pendingRaw);
-        const policy: 'flex' | 'rimborsabile-residuo' = pending.policy ?? 'flex';
 
-        // Branch endpoint in base alla policy:
-        //  - flex              → /api/paypal-confirm-vault (no charge, solo salva)
-        //  - rimborsabile-residuo → /api/paypal-confirm-vault-and-charge
-        //    (confirm + charge 50% upfront + salva vault per residuo)
-        const endpoint = policy === 'rimborsabile-residuo'
-          ? '/api/paypal-confirm-vault-and-charge'
-          : '/api/paypal-confirm-vault';
-
-        const payload = policy === 'rimborsabile-residuo'
-          ? {
-              bookingId,
-              setupTokenId:     setupId,
-              upfrontAmount:    pending.upfrontAmount,
-              residualAmount:   pending.residualAmount,
-              residualChargeAt: pending.chargeAt,
-              residualPolicy:   'rimborsabile-residuo',
-              accommodation:    pending.accommodation,
-              touristTax:       pending.touristTax,
-              discountAmount:   pending.discountAmount,
-              voucherCode:      pending.voucherCode,
-              extras:           pending.extras ?? [],
-            }
-          : {
-              bookingId,
-              setupTokenId:   setupId,
-              policy:         'flex',
-              chargeAt:       pending.chargeAt,
-              totalAmount:    pending.totalAmount ?? pending.residualAmount,
-              accommodation:  pending.accommodation,
-              touristTax:     pending.touristTax,
-              discountAmount: pending.discountAmount,
-              voucherCode:    pending.voucherCode,
-              extras:         pending.extras ?? [],
-            };
-
-        const res = await fetch(endpoint, {
+        // Solo Flex passa da qui: salva vault per addebito differito via cron.
+        // (Rimborsabile è tornata a capture one-shot, non attraversa questa
+        // pagina.)
+        const res = await fetch('/api/paypal-confirm-vault', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+          body: JSON.stringify({
+            bookingId,
+            setupTokenId:   setupId,
+            policy:         'flex',
+            chargeAt:       pending.chargeAt,
+            totalAmount:    pending.totalAmount,
+            accommodation:  pending.accommodation,
+            touristTax:     pending.touristTax,
+            discountAmount: pending.discountAmount,
+            voucherCode:    pending.voucherCode,
+            extras:         pending.extras ?? [],
+          }),
         });
         const data = await res.json();
         if (cancelled) return;

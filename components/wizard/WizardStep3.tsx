@@ -404,7 +404,6 @@ export default function WizardStep3({ locale = 'it' }: Props) {
 
       const chargeAt = computeVaultChargeAt(
         checkIn,
-        'flex',
         offerConfig?.cancellationDaysBeforeArrival,
       );
       if (!chargeAt) {

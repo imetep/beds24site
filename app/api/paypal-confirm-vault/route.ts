@@ -20,7 +20,7 @@ const BEDS24_BASE = 'https://beds24.com/api/v2';
  *   {
  *     bookingId:       number
  *     setupTokenId:    string
- *     policy:          'flex' | 'rimborsabile-residuo'
+ *     policy:          'flex'            // unico caso supportato
  *     chargeAt:        string ISO8601    // quando il cron deve addebitare
  *     totalAmount:     number            // € da addebitare a chargeAt
  *     accommodation:   number            // per invoice items type 'charge'
@@ -48,8 +48,8 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Validazione policy
-  if (policy !== 'flex' && policy !== 'rimborsabile-residuo') {
+  // Validazione policy (solo 'flex' al momento)
+  if (policy !== 'flex') {
     return NextResponse.json({ error: `policy non valida: ${policy}` }, { status: 400 });
   }
 

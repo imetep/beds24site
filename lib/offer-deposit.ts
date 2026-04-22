@@ -55,47 +55,31 @@ export function isFlexBookingType(bookingType: string | null | undefined): boole
   return bookingType === 'confirmedWithCreditCard';
 }
 
-/** true se l'offerta prevede addebito parziale upfront + residuo a checkIn. */
-export function isPartialRefundableBookingType(bookingType: string | null | undefined): boolean {
-  return bookingType === 'confirmedWithDepositCollection2';
-}
-
 /**
  * Calcola `chargeAt` (ISO8601 UTC) — quando il cron PayPal deve addebitare
- * il vault — partendo dalla data di check-in e dal tipo di offerta.
+ * il vault Flex — partendo dal check-in e dai giorni di cancellazione
+ * gratuita letti da Beds24 per la specifica offerta.
  *
- * Regole:
- *  - Flessibile → checkIn − N giorni, dove N è `cancellationDaysBeforeArrival`
- *    letto da Beds24 (per-offerta: es. Flex60=60, Flex42=45, Flex30=30, Flex5=5)
- *  - Parzialmente rimborsabile → checkIn − 48h (addebito 50% residuo, regola fissa)
+ * Es. Flex60 con check-in 2026-07-03 → chargeAt 2026-05-04 (60 giorni prima).
  *
  * @param checkInYmd  data di arrivo 'YYYY-MM-DD'
- * @param policy      tipo di vault
  * @param daysBeforeArrival
- *   Per `flex`: giorni letti dall'offer config (Beds24).
+ *   giorni letti dall'offer config Beds24 (OfferConfig.cancellationDaysBeforeArrival).
  *   Fallback a 1 giorno se null/undefined — preferiamo un addebito tardivo
  *   rispetto a perderlo del tutto.
  * @returns ISO8601 UTC o null se input non valido
  */
 export function computeVaultChargeAt(
   checkInYmd: string | null | undefined,
-  policy: 'flex' | 'rimborsabile-residuo',
   daysBeforeArrival?: number | null,
 ): string | null {
   if (!checkInYmd) return null;
   const ci = Date.parse(`${checkInYmd}T00:00:00Z`);
   if (!Number.isFinite(ci)) return null;
-
-  let offsetMs: number;
-  if (policy === 'flex') {
-    const days = typeof daysBeforeArrival === 'number' && daysBeforeArrival > 0
-      ? daysBeforeArrival
-      : 1;
-    offsetMs = days * 24 * 3600 * 1000;
-  } else {
-    offsetMs = 48 * 3600 * 1000;
-  }
-  return new Date(ci - offsetMs).toISOString();
+  const days = typeof daysBeforeArrival === 'number' && daysBeforeArrival > 0
+    ? daysBeforeArrival
+    : 1;
+  return new Date(ci - days * 24 * 3600 * 1000).toISOString();
 }
 
 /**

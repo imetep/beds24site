@@ -18,7 +18,7 @@
  * app/api/property-config/route.ts.
  */
 
-export type VaultPolicy = 'flex' | 'rimborsabile-residuo';
+export type VaultPolicy = 'flex';
 export type VaultStatus =
   | 'pending'      // in attesa del cron
   | 'processing'   // cron ha preso in carico
