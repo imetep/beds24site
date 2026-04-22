@@ -1492,6 +1492,42 @@ body {
   cursor: not-allowed;
 }
 
+/* ── PayPal return page (post-approvazione vault save) ── */
+.paypal-return-main {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg) var(--space-base);
+}
+.paypal-return-center {
+  max-width: 420px;
+  text-align: center;
+}
+.paypal-return-spinner {
+  font-size: 40px;
+  color: var(--color-primary);
+  display: inline-block;
+  animation: wizard-hourglass 1.5s linear infinite;
+  margin-bottom: var(--space-sm);
+}
+.paypal-return-error-icon {
+  font-size: 48px;
+  color: #dc2626;
+  margin-bottom: var(--space-sm);
+}
+.paypal-return-title {
+  font-size: var(--text-lg);
+  font-weight: 800;
+  margin: 0 0 var(--space-sm);
+}
+.paypal-return-text {
+  font-size: var(--text-md);
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-md);
+  line-height: 1.5;
+}
+
 /* ── PayPal vault-save (flex) flow: nota informativa sotto il bottone ── */
 .wizard-step3__vault-note {
   font-size: var(--text-sm);
