@@ -188,6 +188,61 @@ export async function confirmPaymentToken(setupTokenId: string): Promise<{
   return { vaultId, customerId, emailAddress: email };
 }
 
+// ─── Recupero asincrono vault.id dopo capture ────────────────────────────────
+// Quando una capture viene fatta con attributes.vault.store_in_vault: ON_SUCCESS,
+// PayPal popola `vault.status: APPROVED` subito ma il `vault.id` compare in
+// modo asincrono (tipicamente 1-3 secondi dopo). Questo helper fa GET
+// sull'ordine con retry finché non trova l'id, oppure restituisce null.
+
+export async function retrieveVaultForOrder(
+  orderId: string,
+  retries: number = 3,
+  delayMs: number = 1500,
+): Promise<{ vaultId: string | null; customerId: string | null; status: string | null }> {
+  const accessToken = await getPaypalAccessToken();
+
+  for (let attempt = 0; attempt < retries; attempt++) {
+    if (attempt > 0) await new Promise(r => setTimeout(r, delayMs));
+
+    const res = await fetch(`${PAYPAL_BASE}/v2/checkout/orders/${orderId}`, {
+      headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+      cache: 'no-store',
+    });
+    if (!res.ok) continue;
+    const data = await res.json();
+
+    const capUnit = data.purchase_units?.[0]?.payments?.captures?.[0];
+    const ps     = data.payment_source ?? {};
+    const psCap  = capUnit?.payment_source ?? {};
+
+    const vaultId =
+      ps?.paypal?.attributes?.vault?.id ??
+      ps?.paypal?.vault?.id ??
+      psCap?.paypal?.attributes?.vault?.id ??
+      psCap?.paypal?.vault?.id ??
+      null;
+
+    const status =
+      ps?.paypal?.attributes?.vault?.status ??
+      ps?.paypal?.vault?.status ??
+      null;
+
+    const customerId =
+      ps?.paypal?.attributes?.vault?.customer?.id ??
+      ps?.paypal?.vault?.customer?.id ??
+      ps?.paypal?.account_id ??
+      null;
+
+    console.log(
+      `[retrieveVaultForOrder] attempt ${attempt + 1}/${retries}:`,
+      { vaultId, status, customerId },
+    );
+
+    if (vaultId) return { vaultId, customerId, status };
+  }
+  return { vaultId: null, customerId: null, status: null };
+}
+
 // ─── Charge con vault_id (merchant-initiated) ────────────────────────────────
 
 export interface ChargeVaultOpts {

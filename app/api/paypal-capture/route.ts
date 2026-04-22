@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from '@/lib/beds24-token';
-import { getPaypalAccessToken } from '@/lib/paypal';
+import { getPaypalAccessToken, retrieveVaultForOrder } from '@/lib/paypal';
 import { setVault } from '@/lib/paypal-vault-kv';
 
 const PAYPAL_BASE =
@@ -96,11 +96,21 @@ export async function POST(req: NextRequest) {
       ];
       customerId = custCandidates.find(v => typeof v === 'string' && v.length > 0) ?? null;
 
-      console.log('[paypal-capture] vault id extracted:', vaultId, 'customer:', customerId);
+      console.log('[paypal-capture] vault id extracted (immediate):', vaultId, 'customer:', customerId);
+
+      // Se vault.status === APPROVED ma id ancora non popolato (tipico del
+      // flow ON_SUCCESS), PayPal lo crea in modo asincrono. Retry con GET
+      // ordine fino a 3 volte (~4.5 sec totali).
       if (!vaultId) {
-        // Debug: logghiamo i blocchi chiave della response per capire dove sta.
-        console.log('[paypal-capture] 🔍 DEBUG payment_source (root):',   JSON.stringify(ps).slice(0, 800));
-        console.log('[paypal-capture] 🔍 DEBUG payment_source (capture):', JSON.stringify(psCap).slice(0, 800));
+        const retrieved = await retrieveVaultForOrder(orderID);
+        if (retrieved.vaultId) {
+          vaultId    = retrieved.vaultId;
+          customerId = retrieved.customerId ?? customerId;
+          console.log('[paypal-capture] vault id retrieved via retry:', vaultId);
+        } else {
+          console.log('[paypal-capture] 🔍 DEBUG payment_source (root):',   JSON.stringify(ps).slice(0, 800));
+          console.log('[paypal-capture] 🔍 DEBUG payment_source (capture):', JSON.stringify(psCap).slice(0, 800));
+        }
       }
     }
 
