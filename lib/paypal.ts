@@ -95,19 +95,19 @@ export async function createSetupToken(opts: CreateSetupTokenOpts): Promise<{
 }> {
   const accessToken = await getPaypalAccessToken();
 
-  // Omettiamo brand_name: PayPal rifiuta valori custom con
-  // INCOMPATIBLE_PARAMETER_VALUE e usa quello registrato sull'app.
+  // Body minimale per /v3/vault/setup-tokens. Manteniamo solo i campi
+  // strettamente richiesti — vault_instruction e shipping_preference sono
+  // opzionali e in alcune configurazioni sandbox possono triggerare 403
+  // NOT_AUTHORIZED anche quando la feature Vault è abilitata.
   const body: any = {
     payment_source: {
       paypal: {
         usage_type:    'MERCHANT',
         customer_type: 'CONSUMER',
         experience_context: {
-          return_url:        opts.returnUrl,
-          cancel_url:        opts.cancelUrl,
-          locale:            'it-IT',
-          shipping_preference: 'NO_SHIPPING',
-          vault_instruction: 'ON_CREATE_PAYMENT_TOKENS',
+          return_url: opts.returnUrl,
+          cancel_url: opts.cancelUrl,
+          locale:     'it-IT',
         },
       },
     },
