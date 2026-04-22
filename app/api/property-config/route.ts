@@ -68,6 +68,16 @@ export type OfferConfig = {
    * - 'default'                         → usa il default della property
    */
   bookingType: string;
+  /**
+   * Giorni prima del check-in entro cui è ancora possibile cancellare
+   * gratuitamente. Letto da Beds24 `allowCancellation.daysBeforeArrivalValue`.
+   * null se l'offerta è non cancellabile (`allowCancellation.type === 'never'`,
+   * tipico di Non Rimborsabile e Parzialmente Rimborsabile).
+   *
+   * Usato dal flow PayPal Flex per calcolare `chargeAt` del cron
+   * (vedi lib/offer-deposit.ts:computeVaultChargeAt).
+   */
+  cancellationDaysBeforeArrival: number | null;
 };
 
 export type RoomConfig = {
@@ -153,11 +163,23 @@ export async function GET() {
             offers: Array.isArray(r.offers)
               ? r.offers
                   .filter((o: any) => o.name && String(o.name).trim() !== '')
-                  .map((o: any) => ({
-                    offerId:     Number(o.offerId),
-                    offerName:   String(o.name),
-                    bookingType: String(o.bookingType ?? 'default'),
-                  }))
+                  .map((o: any) => {
+                    // allowCancellation può essere:
+                    //   { type: 'never' }
+                    //   { type: 'daysBeforeArrival', daysBeforeArrivalValue: N }
+                    //   altri tipi ('always', 'atAnyTime', ecc.) — trattati come null
+                    const ac = o.allowCancellation ?? {};
+                    const cancellationDaysBeforeArrival =
+                      ac.type === 'daysBeforeArrival' && typeof ac.daysBeforeArrivalValue === 'number'
+                        ? ac.daysBeforeArrivalValue
+                        : null;
+                    return {
+                      offerId:     Number(o.offerId),
+                      offerName:   String(o.name),
+                      bookingType: String(o.bookingType ?? 'default'),
+                      cancellationDaysBeforeArrival,
+                    };
+                  })
               : [],
           }))
         : [],
