@@ -174,10 +174,14 @@ export default function PagaClient({ locale }: Props) {
 
         const paypal = (window as any).paypal;
         if (!paypal?.createInstance) return;
+        // v6 one-time: clientId è sufficiente. clientToken JWT serve solo
+        // per componenti avanzati (Fastlane) non usati in /paga.
+        const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
+        if (!clientId) return;
         const instance = await paypal.createInstance({
-          clientToken: tkData.clientToken,
-          components:  ['paypal-payments'],
-          pageType:    'checkout',
+          clientId,
+          components: ['paypal-payments'],
+          pageType:   'checkout',
         });
         if (cancelled) return;
         sdkInstanceRef.current = instance;

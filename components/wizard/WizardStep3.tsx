@@ -249,10 +249,18 @@ export default function WizardStep3({ locale = 'it' }: Props) {
           setError(t.errPayPalLoad);
           return;
         }
+        // v6 accetta clientId per i flussi one-time (paypal-payments).
+        // Il clientToken JWT serve solo per componenti avanzati (Fastlane)
+        // che non usiamo. Il flex vault save gira via REST, non via SDK.
+        const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
+        if (!clientId) {
+          setError(t.errPayPalLoad);
+          return;
+        }
         const instance = await paypalGlobal.createInstance({
-          clientToken: tkData.clientToken,
-          components:  ['paypal-payments'],
-          pageType:    'checkout',
+          clientId,
+          components: ['paypal-payments'],
+          pageType:   'checkout',
         });
         if (cancelled) return;
         sdkInstanceRef.current = instance;
