@@ -28,7 +28,7 @@ import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import { getTranslations } from '@/lib/i18n';
 import {
   findOffer, findPropertyByRoom, computeDepositAmount,
-  isFlexBookingType, isPartialRefundableBookingType, computeVaultChargeAt,
+  isFlexBookingType, computeVaultChargeAt,
 } from '@/lib/offer-deposit';
 import type { Locale } from '@/config/i18n';
 
@@ -127,11 +127,8 @@ export default function WizardStep3({ locale = 'it' }: Props) {
   // Vedi lib/offer-deposit.ts per la regola completa.
   const offerConfig   = findOffer(propertyConfig, selectedRoomId, selectedOfferId);
   const propertyCfg   = findPropertyByRoom(propertyConfig, selectedRoomId);
-  const amountToCharge         = computeDepositAmount(total, offerConfig, propertyCfg);
-  const isFlexOffer            = isFlexBookingType(offerConfig?.bookingType);
-  const isPartialRefundable    = isPartialRefundableBookingType(offerConfig?.bookingType);
-  // Residuo da addebitare al cron per Rimborsabile (50% se amountToCharge è 50%).
-  const residualAmountFromTotal = isPartialRefundable ? Math.max(0, total - amountToCharge) : 0;
+  const amountToCharge = computeDepositAmount(total, offerConfig, propertyCfg);
+  const isFlexOffer    = isFlexBookingType(offerConfig?.bookingType);
 
   // Etichetta tipo appartamento (legge wizardSidebar i18n — condivisa con step 1/2)
   const roomTypeLabel = room?.type === 'monolocale' ? tSidebar.typeMonolocale
@@ -265,10 +262,11 @@ export default function WizardStep3({ locale = 'it' }: Props) {
         if (cancelled) return;
         sdkInstanceRef.current = instance;
 
-        // 4. Session one-time solo per Non rimborsabile (charge 100% one-shot).
-        //    Flex e Rimborsabile usano il vault flow (setup-token + redirect),
-        //    quindi non serve la session del SDK.
-        if (!isFlexOffer && !isPartialRefundable && typeof instance.createPayPalOneTimePaymentSession === 'function') {
+        // 4. Session one-time per tutte le offerte non-flex (Non Rimborsabile
+        //    addebita 100%, Rimborsabile 50%). Il 50% residuo delle Rimborsabili
+        //    viene incassato manualmente al check-in, quindi niente vault.
+        //    Solo Flex usa il vault flow (setup-token + redirect + cron).
+        if (!isFlexOffer && typeof instance.createPayPalOneTimePaymentSession === 'function') {
           paypalSessionRef.current = instance.createPayPalOneTimePaymentSession({
             onApprove: async (data: { orderId: string }) => {
               setPhase('paying');
@@ -339,7 +337,7 @@ export default function WizardStep3({ locale = 'it' }: Props) {
     })();
 
     return () => { cancelled = true; };
-  }, [paymentMethod, isFlexOffer, isPartialRefundable]);
+  }, [paymentMethod, isFlexOffer]);
 
   // ── Click bottone "Paga con PayPal" (solo Non rimborsabile) ──────────────
   // Capture 100% one-shot via SDK v6. Rimborsabile e Flex usano invece il
@@ -391,15 +389,11 @@ export default function WizardStep3({ locale = 'it' }: Props) {
     }
   }
 
-  // ── Click bottone "Salva PayPal" / "Paga 50%" via vault flow ─────────────
-  // Funziona per Flex e Rimborsabile. Il path è identico (setup-token +
-  // redirect + return page) ma la policy + gli amount cambiano:
-  //   • flex              → chargeAt=-24h, upfront=0, residual=100%
-  //   • rimborsabile-residuo → chargeAt=-48h, upfront=50%, residual=50%
-  // La return page (/paypal-return) legge sessionStorage e chiama
-  // l'endpoint giusto (confirm-vault per flex, confirm-vault-and-charge
-  // per rimborsabile).
-  async function handlePayPalVaultFlow(policy: 'flex' | 'rimborsabile-residuo') {
+  // ── Click bottone "Salva PayPal" (Flex only) ─────────────────────────────
+  // Setup-token + redirect PayPal + return page. Il 100% del totale viene
+  // addebitato dal cron quando scade la cancellazione gratuita (N giorni
+  // prima del check-in, valore letto da Beds24 per offerta).
+  async function handlePayPalFlexVault() {
     setError(null);
     setVaultPhase('saving');
 
@@ -408,22 +402,15 @@ export default function WizardStep3({ locale = 'it' }: Props) {
       if (!bookId) { setVaultPhase('idle'); return; }
       createdBookIdRef.current = bookId;
 
-      // Per flex, il cron deve addebitare quando scade la cancellazione gratuita
-      // specifica dell'offerta (daysBeforeArrivalValue letto da Beds24).
-      // Per rimborsabile-residuo il parametro è ignorato (48h fisse).
       const chargeAt = computeVaultChargeAt(
         checkIn,
-        policy,
+        'flex',
         offerConfig?.cancellationDaysBeforeArrival,
       );
       if (!chargeAt) {
         cancelBooking(bookId);
         throw new Error(t.errDataMissing);
       }
-
-      // amount breakdown per la return page
-      const upfrontAmount  = policy === 'rimborsabile-residuo' ? amountToCharge : 0;
-      const residualAmount = policy === 'rimborsabile-residuo' ? residualAmountFromTotal : total;
 
       const origin    = window.location.origin;
       const returnUrl = `${origin}/${locale}/paypal-return?bookingId=${bookId}`;
@@ -432,11 +419,9 @@ export default function WizardStep3({ locale = 'it' }: Props) {
       try {
         sessionStorage.setItem('paypal_vault_pending', JSON.stringify({
           bookingId:      bookId,
-          policy,
+          policy:         'flex',
           chargeAt,
           totalAmount:    total,
-          upfrontAmount,
-          residualAmount,
           accommodation:  offerPrice,
           touristTax,
           discountAmount,
@@ -479,11 +464,6 @@ export default function WizardStep3({ locale = 'it' }: Props) {
       setVaultPhase('idle');
     }
   }
-
-  // Wrapper per il bottone "Salva PayPal" sulla tariffa Flex
-  const handlePayPalFlexVault = () => handlePayPalVaultFlow('flex');
-  // Wrapper per il bottone "Paga 50%" sulla tariffa Rimborsabile
-  const handlePayPalRimborsabile = () => handlePayPalVaultFlow('rimborsabile-residuo');
 
   // ── Torna indietro ────────────────────────────────────────────────────────
   // ✅ Cancella il booking solo se era già stato creato (es. Stripe fallito)
@@ -773,20 +753,10 @@ export default function WizardStep3({ locale = 'it' }: Props) {
             </>
           )}
 
-          {/* Rimborsabile: stesso flow del flex + charge upfront 50% al ritorno */}
-          {sdkReady && !isFlexOffer && isPartialRefundable && vaultPhase === 'idle' && phase !== 'paying' && (
-            <button
-              onClick={handlePayPalRimborsabile}
-              className="wizard-step3__paypal-v6-btn"
-              type="button"
-            >
-              <i className="bi bi-paypal" aria-hidden="true"></i>
-              <span>{t.payBtnPaypal} · {fmt(amountToCharge)}</span>
-            </button>
-          )}
-
-          {/* Non rimborsabile: capture 100% one-shot via SDK v6 */}
-          {sdkReady && !isFlexOffer && !isPartialRefundable && phase !== 'paying' && (
+          {/* Non Rimborsabile (100%) + Rimborsabile (50% upfront) */}
+          {/* Entrambe usano capture one-shot via SDK v6. Il 50% residuo della
+              Rimborsabile viene incassato manualmente al check-in. */}
+          {sdkReady && !isFlexOffer && phase !== 'paying' && (
             <button
               onClick={handlePayPalOneTime}
               className="wizard-step3__paypal-v6-btn"
