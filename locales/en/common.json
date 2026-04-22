@@ -343,7 +343,7 @@
       "basement": "Basement"
     },
     "cancelPolicy": {
-      "1": "Non-refundable payment within 48h of booking.",
+      "1": "Non-refundable rate: the amount is retained in case of cancellation.",
       "2": "50% now, balance at arrival. Partially refundable.",
       "3": "Free cancellation up to 60 days before arrival.",
       "4": "Free cancellation up to 45 days before arrival.",
