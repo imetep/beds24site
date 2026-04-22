@@ -970,6 +970,7 @@
       "children": "Kinder",
       "summaryTitle": "Ihr Aufenthalt",
       "paypalFlexNote": "Bei PayPal wird der Betrag sofort belastet.",
+      "paypalFlexVaultNote": "Bei PayPal wird Ihr Konto nur gespeichert — keine sofortige Belastung.",
       "stripeFlexNote": "Bei Stripe wird die Karte nur gespeichert — keine sofortige Belastung.",
       "flexOnlyCardNote": "Für diesen Tarif akzeptieren wir nur Kartenzahlung.",
       "vediRiepilogo": "Buchungsübersicht anzeigen",
@@ -1020,7 +1021,14 @@
       "errPayPalLoad": "PayPal konnte nicht geladen werden. Erneut versuchen oder Karte verwenden.",
       "errPayPalCapture": "PayPal-Abbuchungsfehler",
       "errPayPalOrder": "PayPal-Bestellungserstellungsfehler",
-      "errPayPalBookingMissing": "Fehler: Buchung nicht gefunden"
+      "errPayPalBookingMissing": "Fehler: Buchung nicht gefunden",
+      "paypalVaultBtn": "PayPal speichern und bestätigen",
+      "paypalVaultSaving": "PayPal wird gespeichert…",
+      "paypalVaultRedirect": "Weiterleitung zu PayPal…",
+      "paypalVaultConfirming": "Speicherung wird bestätigt…",
+      "paypalVaultSuccess": "PayPal gespeichert. Keine Belastung heute.",
+      "paypalVaultChargeNote": "Die Belastung erfolgt automatisch bei Ablauf der kostenlosen Stornierungsfrist.",
+      "errPayPalVault": "PayPal-Speicherfehler. Erneut versuchen oder Karte verwenden."
     },
     "homeSearch": {
       "ui": {

@@ -1465,6 +1465,100 @@ body {
   color: var(--color-text-muted);
 }
 
+/* ── PayPal v6 one-time button (custom, SDK v6 non fornisce render() nativo) */
+.wizard-step3__paypal-v6-btn {
+  width: 100%;
+  padding: 14px var(--space-base);
+  font-size: var(--text-md);
+  font-weight: 700;
+  color: #fff;
+  background: #0070ba; /* PayPal blue */
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  min-height: var(--touch-target);
+  margin-bottom: var(--space-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.15s;
+}
+.wizard-step3__paypal-v6-btn:hover {
+  background: #005c98;
+}
+.wizard-step3__paypal-v6-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── PayPal return page (post-approvazione vault save) ── */
+.paypal-return-main {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg) var(--space-base);
+}
+.paypal-return-center {
+  max-width: 420px;
+  text-align: center;
+}
+.paypal-return-spinner {
+  font-size: 40px;
+  color: var(--color-primary);
+  display: inline-block;
+  animation: wizard-hourglass 1.5s linear infinite;
+  margin-bottom: var(--space-sm);
+}
+.paypal-return-error-icon {
+  font-size: 48px;
+  color: #dc2626;
+  margin-bottom: var(--space-sm);
+}
+.paypal-return-title {
+  font-size: var(--text-lg);
+  font-weight: 800;
+  margin: 0 0 var(--space-sm);
+}
+.paypal-return-text {
+  font-size: var(--text-md);
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-md);
+  line-height: 1.5;
+}
+
+/* ── PayPal vault-save (flex) flow: nota informativa sotto il bottone ── */
+.wizard-step3__vault-note {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+  margin: 0 0 var(--space-md);
+  line-height: 1.4;
+}
+
+/* Loading/redirect overlay durante il vault save redirect */
+.wizard-step3__vault-redirecting {
+  width: 100%;
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-muted);
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.wizard-step3__vault-redirecting .bi-hourglass-split {
+  animation: wizard-hourglass 1.5s linear infinite;
+}
+@keyframes wizard-hourglass {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 /* Back link (subtle, in basso) */
 .wizard-step3__back-link {
   background: none;

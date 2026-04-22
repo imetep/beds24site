@@ -970,6 +970,7 @@
       "children": "children",
       "summaryTitle": "Your stay",
       "paypalFlexNote": "With PayPal, payment is charged immediately.",
+      "paypalFlexVaultNote": "With PayPal, your account is only saved — no immediate charge.",
       "stripeFlexNote": "With Stripe your card is only saved — no immediate charge.",
       "flexOnlyCardNote": "We only accept card payment for this rate.",
       "vediRiepilogo": "View booking summary",
@@ -1020,7 +1021,14 @@
       "errPayPalLoad": "Unable to load PayPal. Try again or use a card.",
       "errPayPalCapture": "PayPal capture error",
       "errPayPalOrder": "PayPal order creation error",
-      "errPayPalBookingMissing": "Error: booking not found"
+      "errPayPalBookingMissing": "Error: booking not found",
+      "paypalVaultBtn": "Save PayPal and confirm",
+      "paypalVaultSaving": "Saving PayPal…",
+      "paypalVaultRedirect": "Redirecting to PayPal…",
+      "paypalVaultConfirming": "Confirming the save…",
+      "paypalVaultSuccess": "PayPal saved. No charge today.",
+      "paypalVaultChargeNote": "Charge will happen automatically when the free-cancellation window ends.",
+      "errPayPalVault": "PayPal save error. Try again or use a card."
     },
     "homeSearch": {
       "ui": {

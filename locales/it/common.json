@@ -988,6 +988,7 @@
       "children": "bambini",
       "summaryTitle": "Il tuo soggiorno",
       "paypalFlexNote": "Con PayPal il pagamento viene addebitato subito.",
+      "paypalFlexVaultNote": "Con PayPal il tuo conto viene solo salvato — nessun addebito immediato.",
       "stripeFlexNote": "Con Stripe la carta viene solo salvata — nessun addebito immediato.",
       "flexOnlyCardNote": "Per questa tariffa accettiamo solo pagamento con carta.",
       "vediRiepilogo": "Vedi riepilogo finale",
@@ -1038,7 +1039,14 @@
       "errPayPalLoad": "Impossibile caricare PayPal. Riprova o usa la carta.",
       "errPayPalCapture": "Errore cattura PayPal",
       "errPayPalOrder": "Errore creazione ordine PayPal",
-      "errPayPalBookingMissing": "Errore: prenotazione non trovata"
+      "errPayPalBookingMissing": "Errore: prenotazione non trovata",
+      "paypalVaultBtn": "Salva PayPal e conferma",
+      "paypalVaultSaving": "Salvataggio PayPal in corso…",
+      "paypalVaultRedirect": "Reindirizzamento a PayPal…",
+      "paypalVaultConfirming": "Conferma del salvataggio…",
+      "paypalVaultSuccess": "PayPal salvato. Nessun addebito oggi.",
+      "paypalVaultChargeNote": "L'addebito avverrà automaticamente alla scadenza della cancellazione gratuita.",
+      "errPayPalVault": "Errore salvataggio PayPal. Riprova o usa la carta."
     },
     "homeSearch": {
       "ui": {

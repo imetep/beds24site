@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from '@/lib/beds24-token';
+import { getPaypalAccessToken } from '@/lib/paypal';
+import { setVault } from '@/lib/paypal-vault-kv';
 
 const PAYPAL_BASE =
   process.env.PAYPAL_MODE === 'sandbox'
@@ -8,36 +10,33 @@ const PAYPAL_BASE =
 
 const BEDS24_BASE = 'https://beds24.com/api/v2';
 
-async function getPaypalAccessToken(): Promise<string> {
-  const clientId     = process.env.PAYPAL_CLIENT_ID;
-  const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
-  if (!clientId || !clientSecret) throw new Error('PAYPAL_CLIENT_ID o PAYPAL_CLIENT_SECRET non configurati');
-  const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
-  const res = await fetch(`${PAYPAL_BASE}/v1/oauth2/token`, {
-    method: 'POST',
-    headers: { 'Authorization': `Basic ${credentials}`, 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: 'grant_type=client_credentials',
-    cache: 'no-store',
-  });
-  if (!res.ok) { const text = await res.text(); throw new Error(`PayPal auth fallita (${res.status}): ${text.slice(0, 200)}`); }
-  return (await res.json()).access_token;
-}
-
 export async function POST(req: NextRequest) {
   let body: any;
   try { body = await req.json(); } catch {
     return NextResponse.json({ error: 'Body JSON non valido' }, { status: 400 });
   }
 
-  const { orderID, bookingId, amount, accommodation, touristTax, discountAmount, voucherCode, extras } = body;
+  const {
+    orderID, bookingId, amount, accommodation, touristTax, discountAmount,
+    voucherCode, extras,
+    // Nuovi: quando il paypal-order è stato creato con saveVault=true
+    // (Rimborsabile), il client passa anche questi per registrare il vault
+    // residuo su KV.
+    saveVault          = false,
+    residualAmount     = 0,          // es. 50% del totale → addebitato dal cron
+    residualChargeAt   = null,       // ISO8601, es. checkIn - 48h
+    residualPolicy     = null,       // 'rimborsabile-residuo' attualmente
+  } = body;
 
-  console.log('[paypal-capture] Body ricevuto:', JSON.stringify({ accommodation, touristTax, discountAmount, voucherCode, extrasCount: Array.isArray(extras) ? extras.length : 0 }));
+  console.log('[paypal-capture] Body:', JSON.stringify({
+    accommodation, touristTax, discountAmount, voucherCode,
+    extrasCount: Array.isArray(extras) ? extras.length : 0,
+    saveVault, residualAmount, residualChargeAt,
+  }));
 
   if (!orderID || !bookingId) {
     return NextResponse.json({ error: 'Campi obbligatori mancanti: orderID, bookingId' }, { status: 400 });
   }
-
-  console.log('[paypal-capture] Cattura ordine:', { orderID, bookingId, amount });
 
   try {
     const accessToken = await getPaypalAccessToken();
@@ -53,20 +52,39 @@ export async function POST(req: NextRequest) {
     console.log('[paypal-capture] PayPal status:', res.status, rawText.slice(0, 400));
     if (!res.ok) throw new Error(`PayPal capture fallita (${res.status}): ${rawText.slice(0, 200)}`);
 
-    const data         = JSON.parse(rawText);
-    const captureUnit  = data.purchase_units?.[0]?.payments?.captures?.[0];
-    const captureID    = captureUnit?.id;
+    const data          = JSON.parse(rawText);
+    const captureUnit   = data.purchase_units?.[0]?.payments?.captures?.[0];
+    const captureID     = captureUnit?.id;
     const captureStatus = captureUnit?.status;
     const capturedAmount = Number(captureUnit?.amount?.value ?? amount ?? 0);
 
     console.log('[paypal-capture] captureID:', captureID, 'status:', captureStatus, 'amount:', capturedAmount);
-    if (captureStatus !== 'COMPLETED') throw new Error(`Pagamento PayPal non completato. Status: ${captureStatus ?? 'sconosciuto'}`);
+    if (captureStatus !== 'COMPLETED') {
+      throw new Error(`Pagamento PayPal non completato. Status: ${captureStatus ?? 'sconosciuto'}`);
+    }
+
+    // 1b. Estrai vault id se saveVault era on
+    // PayPal espone il vault id in uno di questi campi a seconda del flow:
+    //   data.payment_source.paypal.attributes.vault.id
+    //   data.purchase_units[0].payments.captures[0].payment_source.paypal.attributes.vault.id
+    let vaultId: string | null = null;
+    let customerId: string | null = null;
+    if (saveVault) {
+      vaultId =
+        data?.payment_source?.paypal?.attributes?.vault?.id ??
+        captureUnit?.payment_source?.paypal?.attributes?.vault?.id ??
+        null;
+      customerId =
+        data?.payment_source?.paypal?.attributes?.vault?.customer?.id ??
+        captureUnit?.payment_source?.paypal?.attributes?.vault?.customer?.id ??
+        null;
+      console.log('[paypal-capture] vault id extracted:', vaultId, 'customer:', customerId);
+    }
 
     const token = await getToken();
 
-    // 2. Aggiorna status a confirmed
+    // 2. Aggiorna status a new
     const statusPayload = [{ id: Number(bookingId), status: 'new' }];
-    console.log('[paypal-capture] Beds24 status update:', JSON.stringify(statusPayload));
     const res1 = await fetch(`${BEDS24_BASE}/bookings`, {
       method: 'POST',
       headers: { token, 'Content-Type': 'application/json' },
@@ -106,7 +124,6 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Upsell items selezionati dall'utente (lettino, ecc.)
     if (Array.isArray(extras)) {
       for (const ex of extras) {
         const price = Number(ex?.price);
@@ -126,7 +143,6 @@ export async function POST(req: NextRequest) {
     });
 
     const invoicePayload = [{ id: Number(bookingId), invoiceItems }];
-    console.log('[paypal-capture] Beds24 invoice payload:', JSON.stringify(invoicePayload));
     const res2 = await fetch(`${BEDS24_BASE}/bookings`, {
       method: 'POST',
       headers: { token, 'Content-Type': 'application/json' },
@@ -140,7 +156,42 @@ export async function POST(req: NextRequest) {
       console.error('[paypal-capture] Beds24 update parzialmente fallita — verificare manualmente');
     }
 
-    return NextResponse.json({ ok: true, captureID, status: captureStatus, bookingId: Number(bookingId), amount: capturedAmount });
+    // 4. Se era un vault save (Rimborsabile), persistiamo il vault record su KV
+    //    per il cron che addebiterà il 50% residuo a checkIn − 48h.
+    if (saveVault && vaultId && residualAmount > 0 && residualChargeAt && residualPolicy) {
+      try {
+        await setVault({
+          bookingId:      Number(bookingId),
+          vaultId,
+          customerId,
+          amount:         Number(residualAmount),
+          currency:       'EUR',
+          policy:         residualPolicy,
+          createdAt:      new Date().toISOString(),
+          chargeAt:       residualChargeAt,
+          status:         'pending',
+          retryCount:     0,
+          lastAttemptAt:  null,
+          lastError:      null,
+          captureId:      null,
+          capturedAmount: null,
+        });
+        console.log('[paypal-capture] ✅ vault saved for residual charge:', { bookingId, vaultId, residualAmount, residualChargeAt });
+      } catch (vaultErr: any) {
+        console.error('[paypal-capture] ⚠️ vault KV save failed (pagamento upfront OK):', vaultErr.message);
+      }
+    } else if (saveVault && !vaultId) {
+      console.warn('[paypal-capture] ⚠️ saveVault richiesto ma vault_id non presente in risposta PayPal — il 50% residuo non potrà essere addebitato automaticamente');
+    }
+
+    return NextResponse.json({
+      ok:        true,
+      captureID,
+      status:    captureStatus,
+      bookingId: Number(bookingId),
+      amount:    capturedAmount,
+      vaultSaved: Boolean(saveVault && vaultId),
+    });
 
   } catch (err: any) {
     console.error('[paypal-capture] Errore:', err.message);

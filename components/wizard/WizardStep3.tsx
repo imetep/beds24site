@@ -7,17 +7,18 @@
  * banner policy cancellazione, card dati ospite compatta, trust signal,
  * CTA full-width. Applica visual audit §3.1–§3.7.
  *
- * ⚠️ LOGICA PAGAMENTO PRESERVATA BYTE-IDENTICAL — non toccare:
- *   - Pre-caricamento SDK PayPal avviene in WizardStep2 quando si sceglie PayPal
- *   - `paymentMethod` NON va nelle deps dell'useEffect di render PayPal
- *   - `createBooking()` invocata dentro `createOrder` (mai al mount)
- *   - `createdBookIdRef` passa il bookId da createOrder a onApprove
- *   - `paypalButtonsRendered.current` guard contro double-render
- *   - Container `<div id="paypal-button-container">` sempre nel DOM
- *   - Status 'new' è settato server-side in /api/paypal-capture (mai toccare qui)
+ * ⚠️ LOGICA PAGAMENTO — vincoli da preservare:
+ *   - Pre-caricamento SDK v6 core avviene in WizardStep2 quando si sceglie PayPal
+ *   - `createBooking()` invocata dentro il click del bottone PayPal (mai al mount)
+ *   - `createdBookIdRef` passa il bookId al capture handler
+ *   - Status 'new' è settato server-side in /api/paypal-capture o
+ *     /api/paypal-confirm-vault (flex) — mai toccare qui
  *   - Stripe: booking creato con status 'request', Beds24 /channels/stripe setta
  *     confirmed automaticamente → reset a 'request' avviene server-side in
  *     /api/stripe-session. /api/stripe-confirm al ritorno setta 'new' + invoice items.
+ *   - Flex + PayPal: redirect full-page a PayPal (approveUrl) → return a
+ *     /[locale]/paypal-return che chiama /api/paypal-confirm-vault. Dati
+ *     soggiorno passati via sessionStorage key `paypal_vault_pending`.
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -25,7 +26,10 @@ import { useWizardStore } from '@/store/wizard-store';
 import { PROPERTIES, calculateTouristTax } from '@/config/properties';
 import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import { getTranslations } from '@/lib/i18n';
-import { findOffer, findPropertyByRoom, computeDepositAmount, isFlexBookingType } from '@/lib/offer-deposit';
+import {
+  findOffer, findPropertyByRoom, computeDepositAmount,
+  isFlexBookingType, isPartialRefundableBookingType, computeVaultChargeAt,
+} from '@/lib/offer-deposit';
 import type { Locale } from '@/config/i18n';
 
 const SUPPORTED_LOCALES = ['it', 'en', 'de', 'pl'] as const;
@@ -86,12 +90,17 @@ export default function WizardStep3({ locale = 'it' }: Props) {
   const [error, setError]       = useState<string | null>(null);
   const [coverUrl, setCoverUrl] = useState<string | null>(null);
 
-  // PayPal SDK state + refs (vedi vincoli PayPal in header)
-  const [paypalReady, setPaypalReady]   = useState(false);
-  const paypalContainerRef              = useRef<HTMLDivElement>(null);
-  const paypalButtonsRendered           = useRef(false);
-  // ✅ Ref per bookId creato durante il flusso PayPal
-  const createdBookIdRef                = useRef<number | null>(null);
+  // PayPal SDK v6 state + refs
+  //   - sdkReady        : SDK v6 core caricato + createInstance OK
+  //   - sdkInstanceRef  : istanza restituita da paypal.createInstance()
+  //   - paypalSessionRef: session one-time (creata solo per non-flex)
+  //   - vaultPhase      : UX del flusso Flessibile (save PayPal senza addebito)
+  //   - createdBookIdRef: bookId passato da createOrder a onApprove (pattern v5)
+  const [sdkReady,  setSdkReady]  = useState(false);
+  const [vaultPhase, setVaultPhase] = useState<'idle' | 'saving' | 'redirecting'>('idle');
+  const sdkInstanceRef              = useRef<any>(null);
+  const paypalSessionRef            = useRef<any>(null);
+  const createdBookIdRef            = useRef<number | null>(null);
 
   const room   = getRoomData(selectedRoomId);
   const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
@@ -118,8 +127,11 @@ export default function WizardStep3({ locale = 'it' }: Props) {
   // Vedi lib/offer-deposit.ts per la regola completa.
   const offerConfig   = findOffer(propertyConfig, selectedRoomId, selectedOfferId);
   const propertyCfg   = findPropertyByRoom(propertyConfig, selectedRoomId);
-  const amountToCharge = computeDepositAmount(total, offerConfig, propertyCfg);
-  const isFlexOffer   = isFlexBookingType(offerConfig?.bookingType);
+  const amountToCharge       = computeDepositAmount(total, offerConfig, propertyCfg);
+  const isFlexOffer          = isFlexBookingType(offerConfig?.bookingType);
+  const isPartialRefundable  = isPartialRefundableBookingType(offerConfig?.bookingType);
+  // Residuo da addebitare al cron per Rimborsabile (50% se amountToCharge è 50%).
+  const residualAmount       = isPartialRefundable ? Math.max(0, total - amountToCharge) : 0;
 
   // Etichetta tipo appartamento (legge wizardSidebar i18n — condivisa con step 1/2)
   const roomTypeLabel = room?.type === 'monolocale' ? tSidebar.typeMonolocale
@@ -189,160 +201,275 @@ export default function WizardStep3({ locale = 'it' }: Props) {
     setPendingBooking(null, null);
   }
 
-  // ── Inizializza PayPal SDK ────────────────────────────────────────────────
-  // Lo script è già stato pre-caricato da WizardStep2 quando l'utente ha
-  // selezionato PayPal — qui aspettiamo solo che sia pronto.
+  // ── Inizializza PayPal SDK v6 (clientToken + createInstance) ─────────────
+  // Flow:
+  //   1. Se paymentMethod==='paypal', fetch clientToken + mode
+  //   2. Inject script web-sdk/v6/core (idempotente per id)
+  //   3. Al load: paypal.createInstance({ clientToken, components }) → sdkInstance
+  //   4. Per offerte NON flex: crea subito createPayPalOneTimePaymentSession
+  //      (per flex il SDK non serve: il bottone fa POST setup-token + redirect)
   useEffect(() => {
     if (paymentMethod !== 'paypal') return;
 
-    const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
-    if (!clientId) {
-      console.error('[PayPal] NEXT_PUBLIC_PAYPAL_CLIENT_ID non configurato');
-      return;
-    }
+    let cancelled = false;
 
-    // Se lo script è già caricato e window.paypal è disponibile → subito ready
-    if (document.getElementById('paypal-sdk-script') && (window as any).paypal) {
-      setPaypalReady(true);
-      return;
-    }
-
-    // Script già nel DOM ma non ancora eseguito → aspetta onload
-    const existing = document.getElementById('paypal-sdk-script');
-    if (existing) {
-      existing.addEventListener('load', () => setPaypalReady(true));
-      return;
-    }
-
-    // Fallback: carica lo script ora (caso in cui Step2 non l'ha caricato)
-    const script = document.createElement('script');
-    script.id = 'paypal-sdk-script';
-    script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=EUR&intent=capture`;
-    script.async = true;
-    script.onload = () => setPaypalReady(true);
-    script.onerror = () => setError(t.errPayPalLoad);
-    document.head.appendChild(script);
-  }, [paymentMethod]);
-
-  // ── Renderizza i bottoni PayPal quando SDK è pronto ───────────────────────
-  // ⚠️ Deps: [paypalReady, phase, total] — NON aggiungere paymentMethod!
-  useEffect(() => {
-    if (!paypalReady) return;
-    if (phase !== 'ready') return;
-    if (paypalButtonsRendered.current) return;
-    if (!paypalContainerRef.current) return;
-
-    const paypal = (window as any).paypal;
-    if (!paypal) return;
-
-    paypalButtonsRendered.current = true;
-
-    paypal.Buttons({
-      style: {
-        layout: 'vertical',
-        color:  'blue',
-        shape:  'rect',
-        label:  'paypal',
-        height: 50,
-      },
-
-      // ✅ Crea booking PRIMA di creare l'ordine PayPal
-      createOrder: async () => {
-        const bookId = await createBooking();
-        if (!bookId) throw new Error(t.errPayPalOrder);
-
-        // Salva il bookId nel ref per onApprove/onError/onCancel
-        createdBookIdRef.current = bookId;
-
-        // Poi crea l'ordine PayPal — importo = amountToCharge (può essere 50%
-        // del totale per offerte parzialmente rimborsabili).
-        const res = await fetch('/api/paypal-order', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            amount:      amountToCharge,
-            bookingId:   bookId,
-            description: `LivingApple · ${room?.name ?? ''} · ${checkIn} → ${checkOut}`,
-          }),
-        });
-        const data = await res.json();
-        if (!res.ok || !data.orderID) {
-          // Booking creato ma ordine PayPal fallito: cancella il booking
-          cancelBooking(bookId);
-          createdBookIdRef.current = null;
-          throw new Error(data.error ?? t.errPayPalOrder);
-        }
-        return data.orderID;
-      },
-
-      // Utente ha approvato il pagamento su PayPal
-      onApprove: async (data: { orderID: string }) => {
-        setPhase('paying');
-        const bookId = createdBookIdRef.current;
-        if (!bookId) {
-          setError(t.errPayPalBookingMissing);
-          setPhase('ready');
-          paypalButtonsRendered.current = false;
+    (async () => {
+      try {
+        // 1. Client token + mode
+        const tkRes  = await fetch('/api/paypal-client-token', { method: 'POST' });
+        const tkData = await tkRes.json();
+        if (cancelled) return;
+        if (!tkRes.ok || !tkData.clientToken) {
+          setError(t.errPayPalLoad);
           return;
         }
-        try {
-          const res = await fetch('/api/paypal-capture', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              orderID:        data.orderID,
-              bookingId:      bookId,
-              amount:         amountToCharge,
-              accommodation:  offerPrice,
-              touristTax:     touristTax,
-              discountAmount: discountAmount,
-              voucherCode:    voucherCode || undefined,
-              extras:         (selectedExtras ?? []).map(e => ({
-                description: e.name.it,
-                price:       e.price,
-                quantity:    e.quantity,
-              })),
-            }),
+        const mode   = tkData.mode === 'sandbox' ? 'sandbox' : 'live';
+        const host   = mode === 'sandbox' ? 'www.sandbox.paypal.com' : 'www.paypal.com';
+        const src    = `https://${host}/web-sdk/v6/core`;
+
+        // 2. Carica script v6 (idempotente)
+        const existing = document.getElementById('paypal-sdk-script') as HTMLScriptElement | null;
+        if (!existing || existing.src !== src) {
+          if (existing) existing.remove();
+          const script   = document.createElement('script');
+          script.id      = 'paypal-sdk-script';
+          script.src     = src;
+          script.async   = true;
+          await new Promise<void>((resolve, reject) => {
+            script.onload  = () => resolve();
+            script.onerror = () => reject(new Error('script load failed'));
+            document.head.appendChild(script);
           });
-          const result = await res.json();
-          if (!res.ok || !result.ok) throw new Error(result.error ?? t.errPayPalCapture);
-
-          reset();
-          const origin = window.location.origin;
-          window.location.href = `${origin}/${locale}/prenota/successo?bookingId=${bookId}&paypal=1`;
-
-        } catch (e: any) {
-          setError(e.message ?? t.errGeneric);
-          setPhase('ready');
-          paypalButtonsRendered.current = false;
         }
-      },
+        if (cancelled) return;
 
-      // Errore PayPal (rete, timeout, ecc.)
-      onError: (err: any) => {
-        console.error('[PayPal] onError:', err);
-        // Se il booking era stato creato, cancellalo
-        if (createdBookIdRef.current) {
-          cancelBooking(createdBookIdRef.current);
-          createdBookIdRef.current = null;
+        // 3. createInstance
+        const paypalGlobal = (window as any).paypal;
+        if (!paypalGlobal?.createInstance) {
+          setError(t.errPayPalLoad);
+          return;
         }
-        setError(t.errPayPalGeneric);
-        setPhase('ready');
-        paypalButtonsRendered.current = false;
-      },
+        const instance = await paypalGlobal.createInstance({
+          clientToken: tkData.clientToken,
+          components:  ['paypal-payments'],
+          pageType:    'checkout',
+        });
+        if (cancelled) return;
+        sdkInstanceRef.current = instance;
 
-      // Utente ha chiuso il popup PayPal senza pagare
-      onCancel: () => {
-        if (createdBookIdRef.current) {
-          cancelBooking(createdBookIdRef.current);
-          createdBookIdRef.current = null;
+        // 4. Session one-time solo per non-flex
+        //    (flex non usa il SDK: vault save via REST)
+        if (!isFlexOffer && typeof instance.createPayPalOneTimePaymentSession === 'function') {
+          paypalSessionRef.current = instance.createPayPalOneTimePaymentSession({
+            onApprove: async (data: { orderId: string }) => {
+              setPhase('paying');
+              const bookId = createdBookIdRef.current;
+              if (!bookId) {
+                setError(t.errPayPalBookingMissing);
+                setPhase('ready');
+                return;
+              }
+              try {
+                const res = await fetch('/api/paypal-capture', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    orderID:        data.orderId,
+                    bookingId:      bookId,
+                    amount:         amountToCharge,
+                    accommodation:  offerPrice,
+                    touristTax:     touristTax,
+                    discountAmount: discountAmount,
+                    voucherCode:    voucherCode || undefined,
+                    extras:         (selectedExtras ?? []).map(e => ({
+                      description: e.name.it,
+                      price:       e.price,
+                      quantity:    e.quantity,
+                    })),
+                    // Rimborsabile: attiva il vault save + dati per KV
+                    saveVault:        isPartialRefundable,
+                    residualAmount:   isPartialRefundable ? residualAmount : 0,
+                    residualChargeAt: isPartialRefundable
+                      ? computeVaultChargeAt(checkIn, 'rimborsabile-residuo')
+                      : null,
+                    residualPolicy:   isPartialRefundable ? 'rimborsabile-residuo' : null,
+                  }),
+                });
+                const result = await res.json();
+                if (!res.ok || !result.ok) throw new Error(result.error ?? t.errPayPalCapture);
+
+                reset();
+                const origin = window.location.origin;
+                window.location.href = `${origin}/${locale}/prenota/successo?bookingId=${bookId}&paypal=1`;
+
+              } catch (e: any) {
+                setError(e.message ?? t.errGeneric);
+                setPhase('ready');
+              }
+            },
+
+            onCancel: () => {
+              if (createdBookIdRef.current) {
+                cancelBooking(createdBookIdRef.current);
+                createdBookIdRef.current = null;
+              }
+            },
+
+            onError: (err: any) => {
+              console.error('[PayPal v6] onError:', err);
+              if (createdBookIdRef.current) {
+                cancelBooking(createdBookIdRef.current);
+                createdBookIdRef.current = null;
+              }
+              setError(t.errPayPalGeneric);
+              setPhase('ready');
+            },
+          });
         }
-        paypalButtonsRendered.current = false;
-      },
 
-    }).render(paypalContainerRef.current);
+        setSdkReady(true);
+      } catch (e: any) {
+        console.error('[PayPal v6] init error:', e);
+        if (!cancelled) setError(t.errPayPalLoad);
+      }
+    })();
 
-  }, [paypalReady, phase, total]);
+    return () => { cancelled = true; };
+  }, [paymentMethod, isFlexOffer]);
+
+  // ── Click bottone "Paga con PayPal" (non-flex one-time) ──────────────────
+  async function handlePayPalOneTime() {
+    if (!paypalSessionRef.current) {
+      setError(t.errPayPalGeneric);
+      return;
+    }
+    setError(null);
+
+    // createOrder è una Promise<string> che crea booking + order PayPal
+    const createOrderPromise = (async () => {
+      const bookId = await createBooking();
+      if (!bookId) throw new Error(t.errPayPalOrder);
+      createdBookIdRef.current = bookId;
+
+      const origin = window.location.origin;
+      const res = await fetch('/api/paypal-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount:      amountToCharge,
+          bookingId:   bookId,
+          description: `LivingApple · ${room?.name ?? ''} · ${checkIn} → ${checkOut}`,
+          // Rimborsabile: salva il vault per il 50% residuo
+          saveVault:   isPartialRefundable,
+          returnUrl:   isPartialRefundable
+            ? `${origin}/${locale}/prenota/successo?bookingId=${bookId}&paypal=1`
+            : undefined,
+          cancelUrl:   isPartialRefundable
+            ? `${origin}/${locale}/prenota?cancelled=1&bookingId=${bookId}`
+            : undefined,
+          guestEmail:  isPartialRefundable ? guestEmail.trim() : undefined,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.orderID) {
+        cancelBooking(bookId);
+        createdBookIdRef.current = null;
+        throw new Error(data.error ?? t.errPayPalOrder);
+      }
+      return data.orderID as string;
+    })();
+
+    try {
+      await paypalSessionRef.current.start(
+        { presentationMode: 'auto' },
+        createOrderPromise,
+      );
+    } catch (e: any) {
+      console.error('[PayPal v6] session.start failed:', e);
+      if (createdBookIdRef.current) {
+        cancelBooking(createdBookIdRef.current);
+        createdBookIdRef.current = null;
+      }
+      setError(e?.message ?? t.errPayPalGeneric);
+    }
+  }
+
+  // ── Click bottone "Salva PayPal" (flex → vault save, no charge) ──────────
+  async function handlePayPalFlexVault() {
+    setError(null);
+    setVaultPhase('saving');
+
+    try {
+      // 1. Crea booking (status 'request' finché non confermato post-approve)
+      const bookId = await createBooking();
+      if (!bookId) { setVaultPhase('idle'); return; }
+      createdBookIdRef.current = bookId;
+
+      // 2. Dati per /api/paypal-confirm-vault vanno preservati in sessionStorage:
+      //    dopo il redirect PayPal l'utente torna alla pagina /paypal-return
+      //    che ha bisogno di accommodation/touristTax/ecc per scrivere gli
+      //    invoice items su Beds24.
+      const chargeAt = computeVaultChargeAt(checkIn, 'flex');
+      if (!chargeAt) {
+        cancelBooking(bookId);
+        throw new Error(t.errDataMissing);
+      }
+
+      const origin    = window.location.origin;
+      const returnUrl = `${origin}/${locale}/paypal-return?bookingId=${bookId}`;
+      const cancelUrl = `${origin}/${locale}/prenota?cancelled=1&bookingId=${bookId}`;
+
+      try {
+        sessionStorage.setItem('paypal_vault_pending', JSON.stringify({
+          bookingId:      bookId,
+          policy:         'flex',
+          chargeAt,
+          totalAmount:    total,
+          accommodation:  offerPrice,
+          touristTax,
+          discountAmount,
+          voucherCode:    voucherCode || null,
+          extras: (selectedExtras ?? []).map(e => ({
+            description: e.name.it,
+            price:       e.price,
+            quantity:    e.quantity,
+          })),
+        }));
+      } catch { /* sessionStorage non disponibile — continuerà dal server */ }
+
+      // 3. Crea setup-token lato server
+      const res = await fetch('/api/paypal-setup-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bookingId:  bookId,
+          amount:     total,
+          returnUrl,
+          cancelUrl,
+          guestEmail: guestEmail.trim() || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.setupTokenId || !data.approveUrl) {
+        cancelBooking(bookId);
+        createdBookIdRef.current = null;
+        throw new Error(data.error ?? t.errPayPalVault);
+      }
+
+      try {
+        // Salva setupTokenId separato così la return page lo legge facilmente
+        sessionStorage.setItem('paypal_vault_setupToken', data.setupTokenId);
+      } catch {}
+
+      // 4. Redirect a PayPal per approvazione
+      setVaultPhase('redirecting');
+      window.location.href = data.approveUrl;
+
+    } catch (e: any) {
+      setError(e?.message ?? t.errPayPalVault);
+      setVaultPhase('idle');
+    }
+  }
 
   // ── Torna indietro ────────────────────────────────────────────────────────
   // ✅ Cancella il booking solo se era già stato creato (es. Stripe fallito)
@@ -609,21 +736,55 @@ export default function WizardStep3({ locale = 'it' }: Props) {
         </>
       ) : (
         <div className="wizard-step3__paypal-wrapper">
-          {!paypalReady && (
+          {!sdkReady && phase !== 'paying' && vaultPhase === 'idle' && (
             <div className="wizard-step3__paypal-loading">
               {t.paypalLoading}
             </div>
           )}
-          {/* IMPORTANTE: il container PayPal deve rimanere nel DOM quando
-              l'useEffect di render SDK viene eseguito. È sempre renderizzato
-              quando paymentMethod === 'paypal', solo nascosto via d-none
-              quando non ready o in paying. NON unmountarlo condizionalmente. */}
-          <div
-            ref={paypalContainerRef}
-            id="paypal-button-container"
-            className={paypalReady && phase !== 'paying' ? '' : 'd-none'}
-          />
-          {phase === 'paying' && (
+
+          {/* Flex: bottone "Salva PayPal" → POST setup-token → redirect */}
+          {sdkReady && isFlexOffer && vaultPhase === 'idle' && phase !== 'paying' && (
+            <>
+              <button
+                onClick={handlePayPalFlexVault}
+                className="wizard-step3__paypal-v6-btn"
+                type="button"
+              >
+                <i className="bi bi-paypal" aria-hidden="true"></i>
+                <span>{(t as any).paypalVaultBtn ?? t.payBtnFlex}</span>
+              </button>
+              <p className="wizard-step3__vault-note">
+                {(t as any).paypalVaultChargeNote ?? t.payBtnFlexNote}
+              </p>
+            </>
+          )}
+
+          {/* Non-flex: bottone "Paga con PayPal" → session.start */}
+          {sdkReady && !isFlexOffer && phase !== 'paying' && (
+            <button
+              onClick={handlePayPalOneTime}
+              className="wizard-step3__paypal-v6-btn"
+              type="button"
+            >
+              <i className="bi bi-paypal" aria-hidden="true"></i>
+              <span>{t.payBtnPaypal} · {fmt(amountToCharge > 0 ? amountToCharge : total)}</span>
+            </button>
+          )}
+
+          {/* Loading states */}
+          {vaultPhase === 'saving' && (
+            <div className="wizard-step3__vault-redirecting">
+              <i className="bi bi-hourglass-split" aria-hidden="true"></i>
+              <span>{(t as any).paypalVaultSaving ?? t.paying}</span>
+            </div>
+          )}
+          {vaultPhase === 'redirecting' && (
+            <div className="wizard-step3__vault-redirecting">
+              <i className="bi bi-hourglass-split" aria-hidden="true"></i>
+              <span>{(t as any).paypalVaultRedirect ?? t.paying}</span>
+            </div>
+          )}
+          {phase === 'paying' && vaultPhase === 'idle' && (
             <div className="wizard-step3__paypal-loading">
               {t.payingPaypal}
             </div>

@@ -970,6 +970,7 @@
       "children": "dzieci",
       "summaryTitle": "Twój pobyt",
       "paypalFlexNote": "W przypadku PayPal płatność jest naliczana natychmiast.",
+      "paypalFlexVaultNote": "W przypadku PayPal Twoje konto jest tylko zapisywane — bez natychmiastowego obciążenia.",
       "stripeFlexNote": "W przypadku Stripe karta jest tylko zapisywana — bez natychmiastowego obciążenia.",
       "flexOnlyCardNote": "Dla tej taryfy akceptujemy tylko płatność kartą.",
       "vediRiepilogo": "Zobacz podsumowanie",
@@ -1020,7 +1021,14 @@
       "errPayPalLoad": "Nie można załadować PayPal. Spróbuj ponownie lub użyj karty.",
       "errPayPalCapture": "Błąd realizacji PayPal",
       "errPayPalOrder": "Błąd tworzenia zamówienia PayPal",
-      "errPayPalBookingMissing": "Błąd: rezerwacja nie znaleziona"
+      "errPayPalBookingMissing": "Błąd: rezerwacja nie znaleziona",
+      "paypalVaultBtn": "Zapisz PayPal i potwierdź",
+      "paypalVaultSaving": "Zapisywanie PayPal…",
+      "paypalVaultRedirect": "Przekierowanie do PayPal…",
+      "paypalVaultConfirming": "Potwierdzanie zapisu…",
+      "paypalVaultSuccess": "PayPal zapisany. Brak obciążenia dzisiaj.",
+      "paypalVaultChargeNote": "Obciążenie nastąpi automatycznie po upływie okresu bezpłatnej anulacji.",
+      "errPayPalVault": "Błąd zapisu PayPal. Spróbuj ponownie lub użyj karty."
     },
     "homeSearch": {
       "ui": {

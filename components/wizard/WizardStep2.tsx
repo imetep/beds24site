@@ -148,33 +148,44 @@ export default function WizardStep2({ locale = 'it' }: Props) {
   // considerata flex → il wizard si comporta come prima della patch.
   const offerConfig = findOffer(propertyConfig, selectedRoomId, selectedOfferId);
   const isFlexOffer = isFlexBookingType(offerConfig?.bookingType);
-  const showPaypalFlexWarning = paymentMethod === 'paypal' && isFlexOffer;
-  const showStripeFlexInfo    = paymentMethod === 'stripe' && isFlexOffer;
+  // Su flex PayPal ora salva solo il conto (vault) — info utente, non warning.
+  const showPaypalFlexVaultInfo = paymentMethod === 'paypal' && isFlexOffer;
+  const showStripeFlexInfo      = paymentMethod === 'stripe' && isFlexOffer;
 
   const formValid = guestFirstName.trim() && guestLastName.trim()
     && guestEmail.trim() && guestEmail.includes('@');
 
-  // ── Offerte flex (3-6): disabilita PayPal ────────────────────────────────
-  // PayPal non rimborsa la commissione 3.4% sui refund, quindi su tariffe
-  // cancellabili ogni cancellazione = 3.4% di perdita pura. Stripe invece
-  // su flex usa capture:false (carta solo salvata) → nessun costo se cancella.
-  useEffect(() => {
-    if (isFlexOffer && paymentMethod === 'paypal') {
-      setPaymentMethod('stripe');
-    }
-  }, [isFlexOffer, paymentMethod, setPaymentMethod]);
+  // ── PayPal su offerte flex è supportato via vault save ──────────────────
+  // (lib/paypal + /api/paypal-setup-token). Nessun charge al momento del
+  // salvataggio quindi niente commissione 3.4% al refund se l'ospite cancella
+  // entro la scadenza della cancellazione gratuita.
 
-  // ── Pre-carica script PayPal SDK quando utente seleziona PayPal ──────────
+  // ── Pre-carica script PayPal SDK v6 quando utente seleziona PayPal ───────
+  // Lo script v6 core è universale (sandbox vs live si sceglie dal sottodominio).
+  // Per evitare NEXT_PUBLIC_PAYPAL_MODE, facciamo una fetch leggera al client-token
+  // endpoint solo al prefetch: scopriamo la mode e carichiamo lo script giusto.
   useEffect(() => {
     if (paymentMethod !== 'paypal') return;
     if (document.getElementById('paypal-sdk-script')) return;
-    const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
-    if (!clientId) return;
-    const script = document.createElement('script');
-    script.id = 'paypal-sdk-script';
-    script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=EUR&intent=capture`;
-    script.async = true;
-    document.head.appendChild(script);
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/paypal-client-token', { method: 'POST' });
+        const data = await res.json();
+        if (cancelled || !res.ok) return;
+        const mode   = data.mode === 'sandbox' ? 'sandbox' : 'live';
+        const host   = mode === 'sandbox' ? 'www.sandbox.paypal.com' : 'www.paypal.com';
+        const script = document.createElement('script');
+        script.id    = 'paypal-sdk-script';
+        script.src   = `https://${host}/web-sdk/v6/core`;
+        script.async = true;
+        document.head.appendChild(script);
+      } catch {
+        // prefetch fallito — Step3 riproverà al mount con messaggi d'errore utente
+      }
+    })();
+    return () => { cancelled = true; };
   }, [paymentMethod]);
 
   // ── Carica upsell items da API ───────────────────────────────────────────
@@ -547,36 +558,30 @@ export default function WizardStep2({ locale = 'it' }: Props) {
               </div>
             </label>
 
-            {!isFlexOffer && (
-              <label style={radioRow(paymentMethod === 'paypal')} onClick={() => setPaymentMethod('paypal')}>
-                <div style={radioOuter(paymentMethod === 'paypal')}>
-                  {paymentMethod === 'paypal' && <div style={radioInner} />}
+            <label style={radioRow(paymentMethod === 'paypal')} onClick={() => setPaymentMethod('paypal')}>
+              <div style={radioOuter(paymentMethod === 'paypal')}>
+                {paymentMethod === 'paypal' && <div style={radioInner} />}
+              </div>
+              <div>
+                <div className="d-flex align-items-center gap-2">
+                  <p className="m-0 fw-semibold text-dark" style={{ fontSize: 15 }}>{t.payInstall}</p>
+                  <span
+                    className="fw-bold"
+                    style={{ fontSize: 12, color: '#003087', background: '#e8f0fb', padding: '2px 8px', borderRadius: 4 }}
+                  >PayPal</span>
                 </div>
-                <div>
-                  <div className="d-flex align-items-center gap-2">
-                    <p className="m-0 fw-semibold text-dark" style={{ fontSize: 15 }}>{t.payInstall}</p>
-                    <span
-                      className="fw-bold"
-                      style={{ fontSize: 12, color: '#003087', background: '#e8f0fb', padding: '2px 8px', borderRadius: 4 }}
-                    >PayPal</span>
-                  </div>
-                  <p className="mb-0" style={{ marginTop: 2, fontSize: 13, color: '#888' }}>
-                    {PAY_INSTALL_NOTE[loc]?.(installment) ?? ''}
-                  </p>
-                </div>
-              </label>
-            )}
+                <p className="mb-0" style={{ marginTop: 2, fontSize: 13, color: '#888' }}>
+                  {isFlexOffer
+                    ? (t as any).paypalFlexVaultNote ?? t.paypalFlexNote
+                    : (PAY_INSTALL_NOTE[loc]?.(installment) ?? '')}
+                </p>
+              </div>
+            </label>
 
-            {isFlexOffer && (
-              <p className="small text-muted mt-1 mb-2">{t.flexOnlyCardNote}</p>
-            )}
-
-            {showPaypalFlexWarning && (
-              <div
-                className="border"
-                style={{ background: '#fffbeb', borderColor: '#fcd34d', borderRadius: 8, padding: '10px 14px', marginTop: 4, fontSize: 13, color: '#92400e' }}
-              >
-                ⚠️ {t.paypalFlexNote}
+            {showPaypalFlexVaultInfo && (
+              <div className="banner banner--success banner--with-icon">
+                <i className="bi bi-shield-lock" aria-hidden="true"></i>
+                <span>{(t as any).paypalFlexVaultNote ?? t.paypalFlexNote}</span>
               </div>
             )}
 
