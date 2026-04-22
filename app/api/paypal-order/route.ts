@@ -75,10 +75,14 @@ export async function POST(req: NextRequest) {
 
     // Rimborsabile: addebita il 50% E salva il vault_id per il residuo.
     // PayPal fornisce vault.id nella response della capture successiva.
+    //
+    // NB: quando passiamo payment_source.paypal.experience_context, NON
+    // includere brand_name né duplicare application_context — PayPal
+    // risponde 422 INCOMPATIBLE_PARAMETER_VALUE. Usa solo experience_context
+    // e ometti il brand_name (PayPal usa quello registrato sull'app).
     if (saveVault) {
       const paypalSource: any = {
         experience_context: {
-          brand_name:          'LivingApple',
           return_url:          returnUrl,
           cancel_url:          cancelUrl,
           shipping_preference: 'NO_SHIPPING',
@@ -97,6 +101,9 @@ export async function POST(req: NextRequest) {
         paypalSource.attributes.customer = { merchant_customer_id: guestEmail };
       }
       payload.payment_source = { paypal: paypalSource };
+      // Con payment_source presente, application_context non serve (e può
+      // confliggere). Lo rimuoviamo per evitare errori 422.
+      delete payload.application_context;
     }
 
     const res = await fetch(`${PAYPAL_BASE}/v2/checkout/orders`, {

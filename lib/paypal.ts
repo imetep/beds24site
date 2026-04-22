@@ -95,13 +95,14 @@ export async function createSetupToken(opts: CreateSetupTokenOpts): Promise<{
 }> {
   const accessToken = await getPaypalAccessToken();
 
+  // Omettiamo brand_name: PayPal rifiuta valori custom con
+  // INCOMPATIBLE_PARAMETER_VALUE e usa quello registrato sull'app.
   const body: any = {
     payment_source: {
       paypal: {
         usage_type:    'MERCHANT',
         customer_type: 'CONSUMER',
         experience_context: {
-          brand_name:        opts.brandName ?? 'LivingApple',
           return_url:        opts.returnUrl,
           cancel_url:        opts.cancelUrl,
           locale:            'it-IT',
