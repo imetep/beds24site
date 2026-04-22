@@ -128,7 +128,8 @@ export default function PagaClient({ locale }: Props) {
   const [phase,         setPhase]         = useState<'ready' | 'paying' | 'done'>('ready');
   const [payMethod,     setPayMethod]     = useState<'stripe' | 'paypal'>('stripe');
   const [paypalReady,   setPaypalReady]   = useState(false);
-  const paypalRef = useRef<HTMLDivElement>(null);
+  const sdkInstanceRef   = useRef<any>(null);
+  const paypalSessionRef = useRef<any>(null);
 
   // Carica dati prenotazione da Beds24
   useEffect(() => {
@@ -143,50 +144,103 @@ export default function PagaClient({ locale }: Props) {
       .finally(() => setLoading(false));
   }, [bookId]);
 
-  // Carica PayPal SDK
+  // Carica PayPal SDK v6 + crea session one-time
   useEffect(() => {
     if (payMethod !== 'paypal' || !booking) return;
-    const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
-    if (!clientId || document.getElementById('paypal-sdk')) { setPaypalReady(true); return; }
-    const script = document.createElement('script');
-    script.id  = 'paypal-sdk';
-    script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=EUR`;
-    script.onload = () => {
-      mountPayPal();
-      setPaypalReady(true);
-    };
-    document.body.appendChild(script);
-  }, [payMethod, booking]);
 
-  function mountPayPal() {
-    if (!booking || !paypalRef.current) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const tkRes  = await fetch('/api/paypal-client-token', { method: 'POST' });
+        const tkData = await tkRes.json();
+        if (cancelled || !tkRes.ok || !tkData.clientToken) return;
+
+        const host = tkData.mode === 'sandbox' ? 'www.sandbox.paypal.com' : 'www.paypal.com';
+        const src  = `https://${host}/web-sdk/v6/core`;
+        const existing = document.getElementById('paypal-sdk-script') as HTMLScriptElement | null;
+        if (!existing || existing.src !== src) {
+          if (existing) existing.remove();
+          const script = document.createElement('script');
+          script.id    = 'paypal-sdk-script';
+          script.src   = src;
+          script.async = true;
+          await new Promise<void>((resolve, reject) => {
+            script.onload  = () => resolve();
+            script.onerror = () => reject(new Error('load failed'));
+            document.body.appendChild(script);
+          });
+        }
+        if (cancelled) return;
+
+        const paypal = (window as any).paypal;
+        if (!paypal?.createInstance) return;
+        const instance = await paypal.createInstance({
+          clientToken: tkData.clientToken,
+          components:  ['paypal-payments'],
+          pageType:    'checkout',
+        });
+        if (cancelled) return;
+        sdkInstanceRef.current = instance;
+
+        const depositAmount = Math.round(booking.price * validPct / 100 * 100) / 100;
+
+        paypalSessionRef.current = instance.createPayPalOneTimePaymentSession({
+          onApprove: async (data: { orderId: string }) => {
+            setPhase('paying');
+            try {
+              const res = await fetch('/api/paypal-capture', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  orderID:   data.orderId,
+                  bookingId: booking.bookId,
+                  amount:    depositAmount,
+                }),
+              });
+              const d = await res.json();
+              if (!res.ok || !d.ok) throw new Error(d.error ?? 'capture failed');
+              setPhase('done');
+            } catch (e: any) {
+              setError(e.message ?? 'Errore PayPal');
+              setPhase('ready');
+            }
+          },
+          onCancel: () => setPhase('ready'),
+          onError:  () => setError('Errore PayPal. Riprova.'),
+        });
+
+        setPaypalReady(true);
+      } catch {
+        setError('Impossibile caricare PayPal.');
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [payMethod, booking, validPct]);
+
+  async function handlePayPalClick() {
+    if (!booking || !paypalSessionRef.current) return;
     const depositAmount = Math.round(booking.price * validPct / 100 * 100) / 100;
-    const win = window as any;
-    if (!win.paypal) return;
-    win.paypal.Buttons({
-      createOrder: async () => {
-        const res = await fetch('/api/paypal-order', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ bookingId: booking.bookId, amount: depositAmount, locale }),
-        });
-        const d = await res.json();
-        if (!d.ok) throw new Error(d.error);
-        return d.orderId;
-      },
-      onApprove: async (data: any) => {
-        setPhase('paying');
-        const res = await fetch('/api/paypal-capture', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ orderId: data.orderID, bookingId: booking.bookId, amount: depositAmount }),
-        });
-        const d = await res.json();
-        if (!d.ok) throw new Error(d.error);
-        setPhase('done');
-      },
-      onError: () => setError('Errore PayPal. Riprova.'),
-    }).render(paypalRef.current);
+
+    const createOrderPromise = (async () => {
+      const res = await fetch('/api/paypal-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bookingId: booking.bookId, amount: depositAmount }),
+      });
+      const d = await res.json();
+      if (!res.ok || !d.orderID) throw new Error(d.error ?? 'order failed');
+      return d.orderID as string;
+    })();
+
+    try {
+      await paypalSessionRef.current.start(
+        { presentationMode: 'auto' },
+        createOrderPromise,
+      );
+    } catch (e: any) {
+      setError(e?.message ?? 'Errore PayPal');
+    }
   }
 
   async function handleStripe() {
@@ -332,15 +386,24 @@ export default function PagaClient({ locale }: Props) {
           </button>
         )}
 
-        {/* Bottone PayPal */}
+        {/* Bottone PayPal (SDK v6) */}
         {payMethod === 'paypal' && (
           <div>
-            {!paypalReady && (
+            {!paypalReady && phase !== 'paying' && (
               <div style={{ width: '100%', padding: '18px', borderRadius: 14, background: '#f0f4f8', textAlign: 'center', fontSize: 14, color: '#888' }}>
                 ⏳ {t.paypalLoading}
               </div>
             )}
-            <div ref={paypalRef} style={{ display: paypalReady && phase !== 'paying' ? 'block' : 'none' }} />
+            {paypalReady && phase !== 'paying' && (
+              <button
+                onClick={handlePayPalClick}
+                className="wizard-step3__paypal-v6-btn"
+                type="button"
+              >
+                <i className="bi bi-paypal" aria-hidden="true"></i>
+                <span>{t.payBtn} · {fmt(depositAmount)}</span>
+              </button>
+            )}
             {phase === 'paying' && (
               <div style={{ width: '100%', padding: '18px', borderRadius: 14, background: '#e0e0e0', textAlign: 'center', fontSize: 14, color: '#999', fontWeight: 600 }}>
                 ⏳ {t.payingPaypal}
