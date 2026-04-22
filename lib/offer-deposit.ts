@@ -55,6 +55,36 @@ export function isFlexBookingType(bookingType: string | null | undefined): boole
   return bookingType === 'confirmedWithCreditCard';
 }
 
+/** true se l'offerta prevede addebito parziale upfront + residuo a checkIn. */
+export function isPartialRefundableBookingType(bookingType: string | null | undefined): boolean {
+  return bookingType === 'confirmedWithDepositCollection2';
+}
+
+/**
+ * Calcola `chargeAt` (ISO8601 UTC) — quando il cron PayPal deve addebitare
+ * il vault — partendo dalla data di check-in e dal tipo di offerta.
+ *
+ * Regole (decise con l'utente, v1):
+ *  - Flessibile              → checkIn − 24h  (scadenza cancellazione gratuita)
+ *  - Parzialmente rimborsabile → checkIn − 48h  (addebito 50% residuo)
+ *
+ * @param checkInYmd  data di arrivo in formato 'YYYY-MM-DD'
+ * @param policy      tipo di vault
+ * @returns ISO8601 UTC o null se input non valido
+ */
+export function computeVaultChargeAt(
+  checkInYmd: string | null | undefined,
+  policy: 'flex' | 'rimborsabile-residuo',
+): string | null {
+  if (!checkInYmd) return null;
+  // checkIn interpretato come mezzanotte locale della property (Italia, UTC+1/+2).
+  // Usiamo UTC per coerenza col cron: checkIn YYYY-MM-DD come 00:00Z, poi sottraiamo.
+  const ci = Date.parse(`${checkInYmd}T00:00:00Z`);
+  if (!Number.isFinite(ci)) return null;
+  const offsetHours = policy === 'flex' ? 24 : 48;
+  return new Date(ci - offsetHours * 3600 * 1000).toISOString();
+}
+
 /**
  * Calcola l'importo da addebitare ORA in base al bookingType dell'offerta e
  * al paymentCollection della property. Restituisce 0 per offerte flex.
