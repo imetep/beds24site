@@ -234,7 +234,8 @@ export default function PagaClient({ locale }: Props) {
       });
       const d = await res.json();
       if (!res.ok || !d.orderID) throw new Error(d.error ?? 'order failed');
-      return d.orderID as string;
+      // v6 vuole un oggetto { orderId }, non la stringa diretta
+      return { orderId: d.orderID as string };
     })();
 
     try {

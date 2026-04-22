@@ -384,7 +384,8 @@ export default function WizardStep3({ locale = 'it' }: Props) {
         createdBookIdRef.current = null;
         throw new Error(data.error ?? t.errPayPalOrder);
       }
-      return data.orderID as string;
+      // v6 session.start vuole { orderId: string } (oggetto, non stringa)
+      return { orderId: data.orderID as string };
     })();
 
     try {
