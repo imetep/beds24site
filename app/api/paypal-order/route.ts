@@ -1,42 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getPaypalAccessToken } from '@/lib/paypal';
 
 const PAYPAL_BASE =
   process.env.PAYPAL_MODE === 'sandbox'
     ? 'https://api-m.sandbox.paypal.com'
     : 'https://api-m.paypal.com';
 
-// ── Ottieni access token PayPal (client credentials) ──────────────────────────
-async function getPaypalAccessToken(): Promise<string> {
-  const clientId     = process.env.PAYPAL_CLIENT_ID;
-  const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
-
-  if (!clientId || !clientSecret) {
-    throw new Error('PAYPAL_CLIENT_ID o PAYPAL_CLIENT_SECRET non configurati');
-  }
-
-  const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
-
-  const res = await fetch(`${PAYPAL_BASE}/v1/oauth2/token`, {
-    method:  'POST',
-    headers: {
-      'Authorization': `Basic ${credentials}`,
-      'Content-Type':  'application/x-www-form-urlencoded',
-    },
-    body:  'grant_type=client_credentials',
-    cache: 'no-store',
-  });
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`PayPal auth fallita (${res.status}): ${text.slice(0, 200)}`);
-  }
-
-  const data = await res.json();
-  return data.access_token;
-}
-
 // ── POST /api/paypal-order ────────────────────────────────────────────────────
-// Body: { amount: number, bookingId: number, description: string }
+// Body: {
+//   amount:       number      // importo da addebitare ora
+//   bookingId:    number
+//   description:  string
+//   saveVault?:   boolean     // true → aggiunge store_in_vault per Rimborsabile
+//                             //         (così cattura il 50% subito E salva il
+//                             //         vault_id per il 50% residuo via cron)
+//   returnUrl?:   string      // richiesto quando saveVault=true
+//   cancelUrl?:   string      // richiesto quando saveVault=true
+//   guestEmail?:  string      // opzionale (merchant_customer_id per vault)
+// }
 // Risposta: { orderID: string }
 export async function POST(req: NextRequest) {
   let body: any;
@@ -46,7 +27,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Body JSON non valido' }, { status: 400 });
   }
 
-  const { amount, bookingId, description = 'Soggiorno LivingApple' } = body;
+  const {
+    amount, bookingId, description = 'Soggiorno LivingApple',
+    saveVault = false, returnUrl, cancelUrl, guestEmail,
+  } = body;
 
   if (!amount || !bookingId) {
     return NextResponse.json(
@@ -55,20 +39,26 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Importo in centesimi → PayPal vuole stringa con 2 decimali (es. "350.00")
+  if (saveVault && (!returnUrl || !cancelUrl)) {
+    return NextResponse.json(
+      { error: 'Con saveVault=true servono returnUrl e cancelUrl' },
+      { status: 400 },
+    );
+  }
+
   const amountStr = Number(amount).toFixed(2);
 
-  console.log('[paypal-order] Creo ordine PayPal:', { amount: amountStr, bookingId, description });
+  console.log('[paypal-order] Creo ordine:', { amount: amountStr, bookingId, saveVault });
 
   try {
     const accessToken = await getPaypalAccessToken();
 
-    const payload = {
+    const payload: any = {
       intent: 'CAPTURE',
       purchase_units: [
         {
           reference_id: String(bookingId),
-          description:  description.slice(0, 127), // max 127 chars per PayPal
+          description:  String(description).slice(0, 127),
           amount: {
             currency_code: 'EUR',
             value:         amountStr,
@@ -83,12 +73,38 @@ export async function POST(req: NextRequest) {
       },
     };
 
+    // Rimborsabile: addebita il 50% E salva il vault_id per il residuo.
+    // PayPal fornisce vault.id nella response della capture successiva.
+    if (saveVault) {
+      const paypalSource: any = {
+        experience_context: {
+          brand_name:          'LivingApple',
+          return_url:          returnUrl,
+          cancel_url:          cancelUrl,
+          shipping_preference: 'NO_SHIPPING',
+          user_action:         'PAY_NOW',
+          locale:              'it-IT',
+        },
+        attributes: {
+          vault: {
+            store_in_vault: 'ON_SUCCESS',
+            usage_type:     'MERCHANT',
+            customer_type:  'CONSUMER',
+          },
+        },
+      };
+      if (guestEmail) {
+        paypalSource.attributes.customer = { merchant_customer_id: guestEmail };
+      }
+      payload.payment_source = { paypal: paypalSource };
+    }
+
     const res = await fetch(`${PAYPAL_BASE}/v2/checkout/orders`, {
       method:  'POST',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type':  'application/json',
-        'PayPal-Request-Id': `livingapple-${bookingId}-${Date.now()}`, // idempotency key
+        'Authorization':     `Bearer ${accessToken}`,
+        'Content-Type':      'application/json',
+        'PayPal-Request-Id': `livingapple-${bookingId}-${Date.now()}`,
       },
       body:  JSON.stringify(payload),
       cache: 'no-store',
@@ -101,14 +117,14 @@ export async function POST(req: NextRequest) {
       throw new Error(`PayPal /v2/checkout/orders fallita (${res.status}): ${rawText.slice(0, 200)}`);
     }
 
-    const data = JSON.parse(rawText);
+    const data    = JSON.parse(rawText);
     const orderID = data.id;
 
     if (!orderID) {
       throw new Error('PayPal non ha restituito un order ID. Risposta: ' + rawText.slice(0, 200));
     }
 
-    console.log('[paypal-order] Order creato:', orderID);
+    console.log('[paypal-order] Order creato:', orderID, saveVault ? '(vault save)' : '');
     return NextResponse.json({ ok: true, orderID });
 
   } catch (err: any) {
