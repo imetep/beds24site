@@ -470,7 +470,7 @@ export default function FotoGalleryClient({
       </div>
 
       {/* ── Foto verticali ── */}
-      <div className="mx-auto pb-5 position-relative" style={{ maxWidth: 900, paddingTop: 4 }}>
+      <div className="page-container pb-5 position-relative" style={{ paddingTop: 4 }}>
 
         {photos.length === 0 ? (
           <div className="text-center py-5 px-3" style={{ color: '#999', fontSize: 15 }}>
