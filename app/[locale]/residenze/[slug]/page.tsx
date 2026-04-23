@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { v2 as cloudinary } from 'cloudinary';
+import { unstable_cache } from 'next/cache';
 import { redisSet } from '@/lib/cloudinary-covers';
 import { getRoomBySlug, getPropertyForRoom, PROPERTIES } from '@/config/properties';
 import { locales, isValidLocale, type Locale } from '@/config/i18n';
@@ -97,51 +98,46 @@ async function redisGet(key: string): Promise<string | null> {
   }
 }
 
-// Anti-stampede: worker paralleli del build Next.js che chiedono la stessa
-// folder riusano la Promise in volo invece di colpire Cloudinary N volte.
-const roomPhotosInflight = new Map<string, Promise<string[]>>();
+async function fetchRoomPhotos(folder: string): Promise<string[]> {
+  const redisKey = `cloudinary:room-photos:${folder}`;
 
-async function getRoomPhotos(folder: string): Promise<string[]> {
-  const existing = roomPhotosInflight.get(folder);
-  if (existing) return existing;
-
-  const promise = (async (): Promise<string[]> => {
-    const redisKey = `cloudinary:room-photos:${folder}`;
-
-    const cached = await redisGet(redisKey);
-    if (cached) {
-      try {
-        const arr = JSON.parse(cached);
-        if (Array.isArray(arr)) return arr as string[];
-      } catch { /* corrotto → ricarica */ }
-    }
-
+  // 1. Redis (persiste runtime, 24h)
+  const cached = await redisGet(redisKey);
+  if (cached) {
     try {
-      const result = await cloudinary.search
-        .expression(`folder:${folder}`)
-        .sort_by('public_id', 'asc')
-        .max_results(20)
-        .execute();
-      const urls = result.resources.map((r: any) =>
-        cloudinary.url(r.public_id, { width: 1200, crop: 'fill', quality: 'auto', fetch_format: 'auto' })
-      );
-      await redisSet(
-        redisKey,
-        JSON.stringify(urls),
-        urls.length > 0 ? TTL_PHOTOS_SECONDS : TTL_FALLBACK_SECONDS,
-      );
-      return urls;
-    } catch {
-      await redisSet(redisKey, JSON.stringify([]), TTL_FALLBACK_SECONDS).catch(() => {});
-      return [];
-    }
-  })().finally(() => {
-    roomPhotosInflight.delete(folder);
-  });
+      const arr = JSON.parse(cached);
+      if (Array.isArray(arr)) return arr as string[];
+    } catch { /* corrotto → ricarica */ }
+  }
 
-  roomPhotosInflight.set(folder, promise);
-  return promise;
+  // 2. Cloudinary Search API
+  try {
+    const result = await cloudinary.search
+      .expression(`folder:${folder}`)
+      .sort_by('public_id', 'asc')
+      .max_results(20)
+      .execute();
+    const urls = result.resources.map((r: any) =>
+      cloudinary.url(r.public_id, { width: 1200, crop: 'fill', quality: 'auto', fetch_format: 'auto' })
+    );
+    await redisSet(
+      redisKey,
+      JSON.stringify(urls),
+      urls.length > 0 ? TTL_PHOTOS_SECONDS : TTL_FALLBACK_SECONDS,
+    );
+    return urls;
+  } catch {
+    await redisSet(redisKey, JSON.stringify([]), TTL_FALLBACK_SECONDS).catch(() => {});
+    return [];
+  }
 }
+
+// unstable_cache dedupa cross-worker al build Next.js (chiave base + folder argomento).
+const getRoomPhotos = unstable_cache(
+  fetchRoomPhotos,
+  ['cloudinary-room-photos'],
+  { revalidate: TTL_PHOTOS_SECONDS, tags: ['cloudinary'] },
+);
 
 async function getRoomDescription(propId: number, roomId: number, lang: string): Promise<string> {
   try {
