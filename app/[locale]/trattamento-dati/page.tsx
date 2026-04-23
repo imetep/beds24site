@@ -107,7 +107,7 @@ export default async function TrattamentoDatiPage({ params }: Props) {
   const t = T[locale];
 
   return (
-    <div className="container py-5" style={{ maxWidth: 800 }}>
+    <div className="page-container py-5">
       <h1 className="fs-1 fw-bold mb-3">{t.h1}</h1>
       <div className="alert alert-primary"><strong>{t.infoBox}</strong></div>
       <div className="text-secondary" style={{ lineHeight: 1.8 }}>
