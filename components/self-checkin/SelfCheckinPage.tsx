@@ -253,7 +253,7 @@ export default function SelfCheckinPage({ locale, wizardHref, contactHref }: Pro
   const [sourcesOpen, setSourcesOpen] = useState(false);
 
   return (
-    <div style={{ maxWidth: 720, margin: '0 auto', padding: '0 0 60px' }}>
+    <div className="page-container" style={{ paddingLeft: 0, paddingRight: 0, paddingBottom: 60 }}>
 
       {/* ── Hero ────────────────────────────────────────────────────────────── */}
       <div style={{ background: '#fff', padding: '28px 20px 24px', borderBottom: '0.5px solid #f3f4f6', marginBottom: 8 }}>
