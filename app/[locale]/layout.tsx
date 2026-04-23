@@ -58,10 +58,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         padding: '3rem 1.5rem 5.5rem', // extra bottom per bottone fisso
         marginTop: '4rem',
       }}>
-        <div style={{
-          maxWidth: '1100px',
-          margin: '0 auto',
-        }}>
+        <div className="page-container">
 
           {/* Griglia 3 colonne desktop, 1 mobile */}
           <div style={{
