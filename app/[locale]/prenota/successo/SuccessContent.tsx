@@ -151,9 +151,9 @@ export default function SuccessContent({ locale }: Props) {
   // ── Spinner: conferma in corso ─────────────────────────────────────────────
   if (confirming) {
     return (
-      <div style={{
+      <div className="page-container" style={{
         textAlign: 'center', padding: '3rem 1.5rem',
-        maxWidth: 520, margin: '0 auto', fontFamily: 'sans-serif',
+        fontFamily: 'sans-serif',
       }}>
         <div style={{
           width: 48, height: 48, margin: '0 auto 24px',
@@ -170,9 +170,9 @@ export default function SuccessContent({ locale }: Props) {
 
   // ── Contenuto principale ───────────────────────────────────────────────────
   return (
-    <div style={{
+    <div className="page-container" style={{
       textAlign: 'center', padding: '3rem 1.5rem',
-      maxWidth: 520, margin: '0 auto', fontFamily: 'sans-serif',
+      fontFamily: 'sans-serif',
     }}>
       <div style={{ fontSize: 56, marginBottom: 20 }}>
         {isCardSaved ? '🔐' : '🎉'}
