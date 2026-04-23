@@ -1610,3 +1610,504 @@ body {
   font-weight: 600;
   cursor: pointer;
 }
+
+/* ==========================================================================
+   WizardStep1 — scelta residenza + filtri (Session 4)
+   Pattern: booking summary compatto, filter bar + modal (radio/pills),
+   room card VRBO 3 colonne desktop. Applica patch audit §1.2 (shadow card),
+   §1.3 (hex → var(--color-cta)), §1.4 (banner piscina via .banner--accent).
+   ========================================================================== */
+
+/* ── Modifier compatto di .card-info (box riassunto date step 1) ── */
+.card-info--compact {
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+/* ── Booking summary (riassunto date + ospiti in cima allo step) ── */
+.step1-summary__dates {
+  font-weight: 700;
+  color: var(--color-text);
+  font-size: var(--text-base);
+}
+.step1-summary__meta {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-top: 2px;
+  line-height: var(--line-height-base);
+}
+.step1-summary__edit-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-primary);
+}
+
+/* ── Filter bar (riga scrollabile orizzontale con bottone + chip attivi) ── */
+.step1-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-bottom: var(--space-md);
+}
+.step1-filter-bar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Filter toggle button (apre il modale) ── */
+.step1-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: var(--space-sm) var(--space-base);
+  min-height: var(--touch-target);
+  border: 1.5px solid var(--color-text);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: var(--text-base);
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.step1-filter-btn.is-active {
+  border-color: var(--color-cta);
+  background: var(--color-cta);
+  color: var(--color-on-dark);
+}
+.step1-filter-btn__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--color-accent-text);
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ── Filter chip attivo (chiudibile, mostra filtro applicato) ── */
+.step1-filter-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 11px;
+  min-height: var(--touch-target);
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--color-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.step1-filter-chip__x {
+  font-size: var(--text-md);
+  line-height: 1;
+}
+
+/* ── Filter modal: overlay + panel (centered desktop / bottom-sheet mobile) ── */
+.filter-modal__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 300;
+}
+.filter-modal__panel {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-bg);
+  z-index: 301;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18);
+}
+.filter-modal__panel--bottom-sheet {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 85vh;
+  border-radius: 20px 20px 0 0;
+}
+.filter-modal__panel--centered {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 560px;
+  max-width: 90vw;
+  max-height: 85vh;
+  border-radius: var(--radius-lg);
+}
+.filter-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md) var(--space-base);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+.filter-modal__header-title {
+  font-size: var(--text-base);
+  font-weight: 700;
+}
+.filter-modal__close-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-pill);
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-lg);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.filter-modal__clear-btn {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: var(--text-base);
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+.filter-modal__body {
+  flex: 1;
+  padding: 0 var(--space-base);
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+.filter-modal__body-spacer {
+  height: var(--space-lg);
+}
+.filter-modal__section {
+  padding: 14px 0 10px;
+}
+.filter-modal__section-title {
+  font-weight: 700;
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  margin-bottom: 10px;
+}
+.filter-modal__divider {
+  height: 1px;
+  background: var(--color-border);
+}
+
+/* Radio rows (ordina per) — lista verticale con divider interno sottile */
+.filter-modal__radio-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 9px 0;
+  min-height: var(--touch-target);
+  background: none;
+  border: none;
+  /* #f0f0f0 = divider più chiaro di --color-border per gerarchia interna alla
+     modale: il --color-border (#e5e7eb) è usato per le cornici esterne. */
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  text-align: left;
+}
+.filter-modal__radio-label {
+  font-size: var(--text-md);
+  color: var(--color-text);
+  font-weight: 400;
+}
+.filter-modal__radio-row.is-active .filter-modal__radio-label {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+.filter-modal__radio-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+  border: 2px solid var(--color-border);
+  background: var(--color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.filter-modal__radio-row.is-active .filter-modal__radio-dot {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+}
+.filter-modal__radio-dot-inner {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-bg);
+}
+
+/* Pill filters (mare, piscina, tipo, camere) — wrap orizzontale */
+.filter-modal__pills {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+.filter-pill {
+  padding: 7px 14px;
+  min-height: var(--touch-target);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  font-weight: 400;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-bg-muted);
+  color: var(--color-text-subtle);
+}
+.filter-pill.is-active {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.filter-modal__footer {
+  flex-shrink: 0;
+  background: var(--color-bg);
+  padding: var(--space-md) var(--space-base) var(--space-base);
+  border-top: 1px solid var(--color-border);
+}
+
+/* ── Loading & empty states step 1 ── */
+.step1-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xl) 0;
+}
+.step1-loading__spinner {
+  width: 38px;
+  height: 38px;
+  border: 3px solid var(--color-border);
+  border-top: 3px solid var(--color-primary);
+  border-radius: var(--radius-pill);
+  animation: wizard-spin 0.8s linear infinite;
+}
+.step1-loading__label {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.step1-empty-state {
+  text-align: center;
+  margin-bottom: var(--space-md);
+  padding: var(--space-base) var(--space-md);
+  background: var(--color-bg-muted);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  font-size: var(--text-base);
+}
+
+/* ── Room card VRBO: verticale mobile, 3 colonne desktop ── */
+.step1-room-card {
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-bg);
+  box-shadow: var(--shadow-sm);              /* audit §1.2 */
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.step1-room-card.is-selected {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(30, 115, 190, 0.12);
+}
+.step1-room-card__row {
+  display: flex;
+  flex-direction: column;
+}
+.step1-room-card__photo {
+  width: 100%;
+  height: 180px;
+  background: var(--color-photo-placeholder);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.step1-room-card__photo-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.step1-room-card__photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.step1-room-card__photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-border);
+  font-size: var(--text-xl);
+}
+.step1-room-card__floor {
+  top: 10px;
+  left: 10px;
+  pointer-events: none;
+}
+.step1-room-card__details {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-base);
+  border-bottom: 1px solid #f0f0f0;
+}
+.step1-room-card__name {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--space-sm);
+}
+.step1-room-card__meta-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.step1-room-card__offers {
+  padding: var(--space-sm) var(--space-md) 14px;
+}
+@media (min-width: 768px) {
+  .step1-room-card__row {
+    flex-direction: row;
+    align-items: stretch;
+  }
+  .step1-room-card__photo {
+    width: 220px;
+    height: auto;
+    min-height: 180px;
+  }
+  .step1-room-card__details {
+    border-bottom: none;
+    border-right: 1px solid #f0f0f0;
+    flex: 1;
+  }
+  .step1-room-card__offers {
+    width: 260px;
+    flex-shrink: 0;
+    padding: var(--space-base) 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+/* ── Offer option (tariffa selezionabile nella card residenza) ── */
+.step1-offer-option {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-bg);
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+}
+.step1-offer-option:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.step1-offer-option.is-selected {
+  border: 2px solid var(--color-primary);
+  background: var(--color-primary-soft);
+}
+.step1-offer-option__info {
+  flex: 1;
+  margin-right: 10px;
+  min-width: 0;
+}
+.step1-offer-option__name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.step1-offer-option__name {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-text);
+}
+.step1-offer-option__selected-tag {
+  font-size: 11px;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+.step1-offer-option__desc {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  line-height: 1.3;
+}
+.step1-offer-option__unavail {
+  font-size: 11px;
+  color: var(--color-error);
+  display: block;
+  margin-top: 2px;
+}
+.step1-offer-option__price-col {
+  text-align: right;
+  flex-shrink: 0;
+}
+.step1-offer-option__price {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1;
+}
+.step1-offer-option__per-night {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-top: 1px;
+}
+.step1-offer-option__total-label {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  margin-top: 1px;
+}
+.step1-offer-expand-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  cursor: pointer;
+  padding: var(--space-xs) 0;
+  min-height: var(--touch-target);
+  text-align: center;
+}
+
+/* ── Back link subtle sotto la lista ── */
+.step1-back-link {
+  display: block;
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: var(--text-base);
+  padding: var(--space-md) 0 80px;
+  cursor: pointer;
+}

@@ -308,6 +308,105 @@ Tutti i banner/alert hanno triple `bg/border/text` per coerenza cromatica.
 </div>
 ```
 
+### 3.10 WizardStep1 — scelta residenza (Sessione 4)
+
+Pattern specifici dello step 1 del wizard `/prenota`. Ogni sottoblocco è autonomo; nessuna base condivisa perché i pattern sono contestuali.
+
+**Riassunto prenotazione (in cima allo step)**
+
+| Classe | Ruolo |
+|---|---|
+| `.card-info--compact` | Modifier di `.card-info`: padding e margin-bottom ridotti a `--space-md` (per box riassunto date) |
+| `.step1-summary__dates` | Riga date "8 apr – 15 apr" (`text-base`, 700, nero) |
+| `.step1-summary__meta` | Sottoriga "7 notti · 2 adulti, 1 bambino (5a)" (`text-sm`, muted) |
+| `.step1-summary__edit-btn` | Bottone "modifica" icona freccia (touch-target, no background) |
+
+**Filter bar** (riga scrollabile orizzontale sotto il titolo)
+
+| Classe | Ruolo |
+|---|---|
+| `.step1-filter-bar` | Container: flex + `overflow-x:auto`, scrollbar nascosta |
+| `.step1-filter-btn` | Bottone "Filtri" pill, bordo nero; con `.is-active` diventa arancio (`--color-cta`) — audit §1.3 |
+| `.step1-filter-btn__count` | Badge conteggio dentro il bottone (tondo 20×20, `--color-accent-text`) |
+| `.step1-filter-chip` | Chip filtro attivo (blu pastello, con "×" per rimuovere) |
+| `.step1-filter-chip__x` | Glifo × dentro il chip |
+
+**Filter modal** (bottom-sheet mobile / centered desktop)
+
+| Classe | Ruolo |
+|---|---|
+| `.filter-modal__overlay` | Overlay nero 50% (fixed inset:0, z-300) |
+| `.filter-modal__panel` | Contenitore base (flex column, hidden overflow) |
+| `.filter-modal__panel--bottom-sheet` | Modifier mobile: ancorato in basso, 85vh, radius top |
+| `.filter-modal__panel--centered` | Modifier desktop: centrato, 560px, radius-lg |
+| `.filter-modal__header` | Header fisso con X, titolo, reset |
+| `.filter-modal__close-btn` | Bottone X tondo 32px |
+| `.filter-modal__clear-btn` | Link "reset" sottolineato a destra |
+| `.filter-modal__body` | Body scrollabile (`overflow-y: scroll`) |
+| `.filter-modal__body-spacer` | Spacer in fondo al body (evita che l'ultimo elemento tocchi il footer) |
+| `.filter-modal__section` | Sezione filtro (padding top/bottom) |
+| `.filter-modal__section-title` | Titolo sezione ("Ordina per", "Piscina", ecc.) — **non uppercase** per coerenza col modale |
+| `.filter-modal__divider` | Divider tra sezioni (alternativa a `.divider-horizontal` senza margin) |
+| `.filter-modal__radio-row` | Riga radio list (sort), con `.is-active` il testo diventa blu + bold |
+| `.filter-modal__radio-label` | Label testo della riga |
+| `.filter-modal__radio-dot` | Cerchio radio custom 20×20; con `.is-active` sul parent si riempie di blu |
+| `.filter-modal__radio-dot-inner` | Pallino interno bianco (visibile solo quando `.is-active`) |
+| `.filter-modal__pills` | Container dei pill filter (flex wrap) |
+| `.filter-pill` | Pill filter generico (mare, piscina, tipo, camere); `.is-active` → blu selezionato |
+| `.filter-modal__footer` | Footer fisso con CTA "Applica" |
+
+**Nota**: il CTA "Applica" usa `.btn .btn--primary` (no classe dedicata). Il banner info piscina aperta usa `.banner .banner--accent .banner--with-icon` (audit §1.4, già in libreria §3.3).
+
+**Loading & empty states**
+
+| Classe | Ruolo |
+|---|---|
+| `.step1-loading` | Container centrato verticalmente |
+| `.step1-loading__spinner` | Spinner 38×38 (grande, dedicato; `.wizard-loading-spinner` è 22×22 per intro wizard) |
+| `.step1-loading__label` | Testo "Caricamento tariffe..." |
+| `.step1-empty-state` | Box "nessun risultato" (bg muted, radius-md) |
+
+**Room card VRBO** (verticale mobile, 3 colonne ≥768px)
+
+| Classe | Ruolo |
+|---|---|
+| `.step1-room-card` | Card base; con `.is-selected` bordo blu + glow azzurrino |
+| `.step1-room-card__row` | Flex column (mobile) / flex row (desktop ≥768px) |
+| `.step1-room-card__photo` | Colonna foto (180px alto mobile, 220px largo desktop) |
+| `.step1-room-card__photo-link` | Wrapper cliccabile per router.push(/residenze/slug) |
+| `.step1-room-card__photo-img` | `<img>` cover della residenza |
+| `.step1-room-card__photo-placeholder` | Fallback quando Cloudinary non ha la cover |
+| `.step1-room-card__floor` | Posizionamento del `.badge-overlay` sopra la foto (top/left 10px) |
+| `.step1-room-card__details` | Colonna centrale: nome + chip metadati |
+| `.step1-room-card__name` | Nome residenza (`text-lg` 700 blu) |
+| `.step1-room-card__meta-chips` | Wrapper flex-wrap per i `.badge-feature` (camere, mq, piscina, location) |
+| `.step1-room-card__offers` | Colonna tariffe |
+
+**Offer option** (bottone tariffa nella colonna destra della card)
+
+| Classe | Ruolo |
+|---|---|
+| `.step1-offer-option` | Bottone base; con `.is-selected` bordo blu + background `--color-primary-soft`; `:disabled` → opacity 0.4 |
+| `.step1-offer-option__info` | Colonna sinistra: nome + descrizione |
+| `.step1-offer-option__name-row` | Riga nome + tag "selezionata" |
+| `.step1-offer-option__name` | Nome tariffa (text-sm, 700) |
+| `.step1-offer-option__selected-tag` | Tag "selezionata" blu |
+| `.step1-offer-option__desc` | Descrizione offerta (11px, muted) |
+| `.step1-offer-option__unavail` | "Non disponibile" rosso error |
+| `.step1-offer-option__price-col` | Colonna destra prezzo (text-align right) |
+| `.step1-offer-option__price` | Prezzo totale 19px 800 blu |
+| `.step1-offer-option__per-night` | Prezzo per notte (11px muted) |
+| `.step1-offer-option__total-label` | Label "totale" minuscola (10px muted) |
+| `.step1-offer-expand-btn` | Bottone "Vedi tutte le tariffe ▾" / "Meno ▴" (solo desktop con più offerte) |
+
+**Back link**
+
+| Classe | Ruolo |
+|---|---|
+| `.step1-back-link` | Link "← Indietro" sotto la lista (blu, padding generoso per non sovrapporsi alla sticky CTA mobile) |
+
+**CTA finale**: il bottone "Continua" usa `.layout-sticky-mobile-bar` (wrapper) + `.btn .btn--primary` (bottone). Nessuna classe custom.
+
 ---
 
 ## 4. Come decidere se creare una nuova classe
@@ -384,6 +483,19 @@ Prima del commit:
 ---
 
 ## 9. Changelog
+
+### 2026-04-23 — Sessione 4 — WizardStep1.tsx (v1.2)
+- Aggiunto §3.10 "WizardStep1 — scelta residenza" con ~40 classi BEM nuove:
+  summary compatto (`.card-info--compact`, `.step1-summary__*`), filter bar
+  (`.step1-filter-bar`, `.step1-filter-btn`, `.step1-filter-chip`), filter modal
+  (`.filter-modal__*`, `.filter-pill`), loading/empty state (`.step1-loading__*`,
+  `.step1-empty-state`), room card VRBO (`.step1-room-card__*`) e offer option
+  (`.step1-offer-option__*`).
+- Applicate patch visive audit §1.2 (`.step1-room-card` usa `var(--shadow-sm)`),
+  §1.3 (filter button attivo via `var(--color-cta)` invece di `#FCAF1A`
+  hardcoded), §1.4 (banner piscina aperta via `.banner .banner--accent` già in
+  libreria, non più box inline).
+- Nessun nuovo token: tutto mappato su quelli di Sessione 1.
 
 ### 2026-04-19 — Sessione 2 — Wizard.tsx (v1.1)
 - Aggiunte 4 classi BEM + 1 modifier al blocco `.wizard-container` (`__layout`, `__main`, `__main--full`, `__sidebar`), documentate in §3.8.
