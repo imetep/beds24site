@@ -63,7 +63,7 @@ export default function UtenzeClient({ locale }: Props) {
   const isWinter = season === 'winter';
 
   return (
-    <div className="container pb-5" style={{ maxWidth: 720 }}>
+    <div className="page-container pb-5">
 
       {/* Hero */}
       <div className="bg-white border-bottom p-3 mb-2">
