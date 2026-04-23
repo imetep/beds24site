@@ -57,47 +57,59 @@ function makeUrl(publicId: string, width: number, height?: number): string {
   return cloudinary.url(publicId, transforms);
 }
 
+// Anti-stampede: se più worker chiamano getCovers() in parallelo (build Next.js),
+// riusano la stessa Promise finché non è risolta, invece di colpire Cloudinary N volte.
+let coversInflight: Promise<Record<string, string | null>> | null = null;
+
 /**
  * Restituisce la cover URL per ogni folder.
  * Prova Redis (7gg) → poi Cloudinary Search API → salva su Redis.
  * Usata da /api/cloudinary?covers=true e da residenze/page.tsx.
  */
 export async function getCovers(): Promise<Record<string, string | null>> {
-  // 1. Prova Redis
-  const cached = await redisGet(REDIS_KEY);
-  if (cached) {
-    try {
-      return JSON.parse(cached) as Record<string, string | null>;
-    } catch { /* corrotto → ricarica */ }
-  }
+  if (coversInflight) return coversInflight;
 
-  // 2. Cloudinary Search API
-  const results = await Promise.all(
-    FOLDERS.map(async (f) => {
+  coversInflight = (async () => {
+    // 1. Prova Redis
+    const cached = await redisGet(REDIS_KEY);
+    if (cached) {
       try {
-        const res = await cloudinary.search
-          .expression(`folder:${f}`)
-          .sort_by('public_id', 'asc')
-          .max_results(1)
-          .execute();
-        const photo = res.resources[0];
-        return { folder: f, url: photo ? makeUrl(photo.public_id, 600, 400) : null };
-      } catch {
-        return { folder: f, url: null };
-      }
-    })
-  );
+        return JSON.parse(cached) as Record<string, string | null>;
+      } catch { /* corrotto → ricarica */ }
+    }
 
-  const coverMap: Record<string, string | null> = {};
-  results.forEach(({ folder, url }) => { coverMap[folder] = url; });
+    // 2. Cloudinary Search API
+    const results = await Promise.all(
+      FOLDERS.map(async (f) => {
+        try {
+          const res = await cloudinary.search
+            .expression(`folder:${f}`)
+            .sort_by('public_id', 'asc')
+            .max_results(1)
+            .execute();
+          const photo = res.resources[0];
+          return { folder: f, url: photo ? makeUrl(photo.public_id, 600, 400) : null };
+        } catch {
+          return { folder: f, url: null };
+        }
+      })
+    );
 
-  // 3. Salva Redis: 7gg se ha risultati, 5 min se tutti null (anti-storm)
-  const hasResults = Object.values(coverMap).some(v => v !== null);
-  await redisSet(
-    REDIS_KEY,
-    JSON.stringify(coverMap),
-    hasResults ? TTL_COVERS_SECONDS : TTL_FALLBACK_SECONDS,
-  );
+    const coverMap: Record<string, string | null> = {};
+    results.forEach(({ folder, url }) => { coverMap[folder] = url; });
 
-  return coverMap;
+    // 3. Salva Redis: 7gg se ha risultati, 5 min se tutti null (anti-storm)
+    const hasResults = Object.values(coverMap).some(v => v !== null);
+    await redisSet(
+      REDIS_KEY,
+      JSON.stringify(coverMap),
+      hasResults ? TTL_COVERS_SECONDS : TTL_FALLBACK_SECONDS,
+    );
+
+    return coverMap;
+  })().finally(() => {
+    coversInflight = null;
+  });
+
+  return coversInflight;
 }
