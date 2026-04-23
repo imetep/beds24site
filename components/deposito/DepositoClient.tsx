@@ -50,7 +50,7 @@ export default function DepositoClient({ locale, contactHref, portalHref }: Prop
   const t = getTranslations(locale).components.depositoClient;
 
   return (
-    <div className="mx-auto pb-5" style={{ maxWidth: 720 }}>
+    <div className="page-container pb-5">
 
       {/* ── Hero ────────────────────────────────────────────────────────────── */}
       <div className="bg-white px-3 pt-4 pb-3 border-bottom mb-2">
