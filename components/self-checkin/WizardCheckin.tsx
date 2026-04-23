@@ -270,7 +270,7 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
       { icon: '✅', title: 'Email di approvazione', text: "Riceverai una email con l'esito della tua richiesta." },
     ];
     return (
-      <div className="mx-auto px-3 pt-4 pb-5" style={{ maxWidth: 600 }}>
+      <div className="page-container pt-4 pb-5">
         <div className="text-center mb-4">
           <div className="mb-3" style={{ fontSize: 52 }}>✅</div>
           <h1 className="fw-bold mb-2" style={{ fontSize: 22, color: '#111' }}>
@@ -319,7 +319,7 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
   }
 
   return (
-    <div className="mx-auto pb-5" style={{ maxWidth: 600 }}>
+    <div className="page-container pb-5" style={{ paddingLeft: 0, paddingRight: 0 }}>
 
       {/* ── STEP 1 ────────────────────────────────────────────────────────── */}
       {step === 1 && (<>
