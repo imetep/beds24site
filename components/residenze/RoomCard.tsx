@@ -83,10 +83,7 @@ export default function RoomCard({ room, locale, coverUrl }: Props) {
           noPhotoLabel={t.noPhoto}
           linkHref={roomHref}
         />
-        <div
-          className="position-absolute text-white small fw-semibold rounded-pill px-2 py-1"
-          style={{ top: 12, left: 12, background: 'rgba(0,0,0,0.55)', pointerEvents: 'none' }}
-        >
+        <div className="badge-overlay badge-overlay--corner-tl">
           {floorLabel}
         </div>
       </div>
