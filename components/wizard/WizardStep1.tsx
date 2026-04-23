@@ -247,21 +247,17 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
 
   // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div style={{ padding: '0 2px', fontFamily: 'sans-serif' }}>
+    <div>
 
-      {/* ── Box riassunto prenotazione stile Expedia ── */}
+      {/* ── Box riassunto prenotazione ── */}
       {checkIn && checkOut && (
-        <div
-          className="bg-white px-3 py-3 mb-3 shadow-sm"
-          style={{ border: '1.5px solid #e5e7eb', borderRadius: 14 }}
-        >
-          {/* Date e modifica */}
-          <div className="d-flex justify-content-between align-items-start">
+        <div className="card-info card-info--compact">
+          <div className="layout-row-between layout-row-between--start">
             <div>
-              <div className="fw-bold text-dark" style={{ fontSize: 16 }}>
+              <div className="step1-summary__dates">
                 {fmtShort(checkIn, loc)} – {fmtShort(checkOut, loc)}
               </div>
-              <div style={{ fontSize: 13, color: '#666', marginTop: 2 }}>
+              <div className="step1-summary__meta">
                 {nights} {nights === 1 ? t.nightsSing : t.nightsPlur}
                 {' · '}
                 {numAdult} {locale === 'it' ? (numAdult === 1 ? 'adulto' : 'adulti') : locale === 'de' ? 'Erw.' : locale === 'pl' ? 'dorosłych' : (numAdult === 1 ? 'adult' : 'adults')}
@@ -278,10 +274,10 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
             </div>
             <button
               onClick={onBack ?? prevStep}
-              className="btn p-0 d-flex align-items-center justify-content-center"
-              style={{ minWidth: 'var(--touch-target)', minHeight: 'var(--touch-target)' }}
+              className="step1-summary__edit-btn"
+              aria-label={t.indietro}
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="1.8">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                 <path d="M11 4H4v7"/><path d="M4 4l7 7"/><path d="M20 20v-7h-7"/><path d="M20 20l-7-7"/>
               </svg>
             </button>
@@ -293,135 +289,89 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
         {isSingleRoom ? t.titleSingle : t.titleMulti}
       </h2>
 
-      {/* ── Filtri ── */}
+      {/* ── Filter bar ── */}
       {!isSingleRoom && !loading && !error && roomOffers.length > 0 && (
-        <div className="mb-3">
+        <div className="step1-filter-bar">
 
-          {/* Riga: bottone Filtri + chip filtri attivi */}
-          <div className="d-flex align-items-center gap-2" style={{ overflowX: 'auto', scrollbarWidth: 'none' }}>
+          {/* Bottone apri modale */}
+          <button
+            onClick={() => setShowFilterPanel(true)}
+            className={`step1-filter-btn${activeFiltersCount > 0 ? ' is-active' : ''}`}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="20" y2="12"/><line x1="12" y1="18" x2="20" y2="18"/>
+            </svg>
+            {t.filtriBtn}
+            {activeFiltersCount > 0 && (
+              <span className="step1-filter-btn__count">{activeFiltersCount}</span>
+            )}
+          </button>
 
-            {/* Bottone Filtri */}
-            <button
-              onClick={() => setShowFilterPanel(true)}
-              className="d-flex align-items-center fw-semibold flex-shrink-0 rounded-pill"
-              style={{
-                gap: 7,
-                padding: '8px 16px',
-                minHeight: 'var(--touch-target)',
-                border: activeFiltersCount > 0 ? '1.5px solid #FCAF1A' : '1.5px solid #333',
-                background: activeFiltersCount > 0 ? '#FCAF1A' : '#fff',
-                color: activeFiltersCount > 0 ? '#fff' : '#111',
-                fontSize: 14, cursor: 'pointer',
-              }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="20" y2="12"/><line x1="12" y1="18" x2="20" y2="18"/>
-              </svg>
-              {t.filtriBtn}
-              {activeFiltersCount > 0 && (
-                <span
-                  className="rounded-circle d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
-                  style={{
-                    background: 'rgba(255,255,255,0.9)', color: '#B07820',
-                    width: 20, height: 20,
-                    fontSize: 11,
-                  }}
-                >
-                  {activeFiltersCount}
-                </span>
-              )}
+          {/* Chip filtri attivi (chiudibili) */}
+          {activeFilter !== 'all' && (
+            <button onClick={() => setActiveFilter('all')} className="step1-filter-chip">
+              {activeFilter === 'priceLow' ? t.sortPriceLow : activeFilter === 'priceHigh' ? t.sortPriceHigh : activeFilter === 'size' ? t.sortBiggest : t.sortSmallest}
+              <span className="step1-filter-chip__x">×</span>
             </button>
-
-            {/* Chip filtri attivi */}
-            {activeFilter !== 'all' && (
-              <button onClick={() => setActiveFilter('all')} style={chipActiveStyle}>
-                {activeFilter === 'priceLow' ? t.sortPriceLow : activeFilter === 'priceHigh' ? t.sortPriceHigh : activeFilter === 'size' ? t.sortBiggest : t.sortSmallest}
-                <span style={{ fontSize: 15, lineHeight: 1 }}>×</span>
-              </button>
-            )}
-            {activeSeaFilter !== 'all' && (
-              <button onClick={() => setActiveSeaFilter('all')} style={chipActiveStyle}>
-                {activeSeaFilter === 'sea' ? t.sea250 : t.sea2km}
-                <span style={{ fontSize: 15, lineHeight: 1 }}>×</span>
-              </button>
-            )}
-            {poolPreference !== 'none' && (
-              <button onClick={() => setPoolPreference('none')} style={chipActiveStyle}>
-                {poolPreference === 'private' ? t.poolPrivate : t.poolShared}
-                <span style={{ fontSize: 15, lineHeight: 1 }}>×</span>
-              </button>
-            )}
-            {activeTypeFilter !== 'all' && (
-              <button onClick={() => setActiveTypeFilter('all')} style={chipActiveStyle}>
-                {activeTypeFilter === 'monolocale' ? t.typeMono : activeTypeFilter === 'appartamento' ? t.typeAppart : t.typeVilla}
-                <span style={{ fontSize: 15, lineHeight: 1 }}>×</span>
-              </button>
-            )}
-            {activeBedsFilter > 0 && (
-              <button onClick={() => setActiveBedsFilter(0)} style={chipActiveStyle}>
-                {activeBedsFilter}+ {t.camere}
-                <span style={{ fontSize: 15, lineHeight: 1 }}>×</span>
-              </button>
-            )}
-          </div>
+          )}
+          {activeSeaFilter !== 'all' && (
+            <button onClick={() => setActiveSeaFilter('all')} className="step1-filter-chip">
+              {activeSeaFilter === 'sea' ? t.sea250 : t.sea2km}
+              <span className="step1-filter-chip__x">×</span>
+            </button>
+          )}
+          {poolPreference !== 'none' && (
+            <button onClick={() => setPoolPreference('none')} className="step1-filter-chip">
+              {poolPreference === 'private' ? t.poolPrivate : t.poolShared}
+              <span className="step1-filter-chip__x">×</span>
+            </button>
+          )}
+          {activeTypeFilter !== 'all' && (
+            <button onClick={() => setActiveTypeFilter('all')} className="step1-filter-chip">
+              {activeTypeFilter === 'monolocale' ? t.typeMono : activeTypeFilter === 'appartamento' ? t.typeAppart : t.typeVilla}
+              <span className="step1-filter-chip__x">×</span>
+            </button>
+          )}
+          {activeBedsFilter > 0 && (
+            <button onClick={() => setActiveBedsFilter(0)} className="step1-filter-chip">
+              {activeBedsFilter}+ {t.camere}
+              <span className="step1-filter-chip__x">×</span>
+            </button>
+          )}
         </div>
       )}
 
-      {/* ── Panel filtri: modal su desktop, bottom sheet su mobile ── */}
+      {/* ── Filter modal (bottom-sheet mobile / centered desktop) ── */}
       {showFilterPanel && (
         <>
-          {/* Overlay */}
           <div
             onClick={() => setShowFilterPanel(false)}
-            className="position-fixed"
-            style={{ inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 300 }}
+            className="filter-modal__overlay"
           />
-
-          {/* Contenitore: centrato su desktop, bottom sheet su mobile */}
-          <div
-            className="position-fixed bg-white d-flex flex-column overflow-hidden"
-            style={{
-              zIndex: 301,
-              ...(isDesk ? {
-                top: '50%', left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: 560, maxWidth: '90vw',
-                borderRadius: 16,
-                maxHeight: '85vh',
-              } : {
-                bottom: 0, left: 0, right: 0,
-                borderRadius: '20px 20px 0 0',
-                height: '85vh',
-              }),
-              boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
-            }}
-          >
+          <div className={`filter-modal__panel ${isDesk ? 'filter-modal__panel--centered' : 'filter-modal__panel--bottom-sheet'}`}>
 
             {/* Header fisso */}
-            <div className="d-flex justify-content-between align-items-center px-3 py-3 border-bottom flex-shrink-0">
+            <div className="filter-modal__header">
               <button
                 onClick={() => setShowFilterPanel(false)}
-                className="rounded-circle bg-white d-flex align-items-center justify-content-center flex-shrink-0"
-                style={{ width: 32, height: 32, border: '1.5px solid #333', fontSize: 18, cursor: 'pointer' }}
+                className="filter-modal__close-btn"
+                aria-label="Chiudi"
               >
                 ×
               </button>
-              <span className="fw-bold" style={{ fontSize: 16 }}>{t.filtriTitle}</span>
-              <button
-                onClick={resetAllFilters}
-                className="btn fw-semibold text-decoration-underline"
-                style={{ color: 'var(--color-primary)', fontSize: 14 }}
-              >
+              <span className="filter-modal__header-title">{t.filtriTitle}</span>
+              <button onClick={resetAllFilters} className="filter-modal__clear-btn">
                 {t.filtriClear}
               </button>
             </div>
 
             {/* Corpo scrollabile */}
-            <div className="flex-fill px-3" style={{ overflowY: 'scroll', WebkitOverflowScrolling: 'touch' }}>
+            <div className="filter-modal__body">
 
-              {/* ── 1. Ordina per ── */}
-              <div style={sectionStyle}>
-                <div style={sectionTitleStyle}>{t.sortSection}</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+              {/* 1. Ordina per — radio list */}
+              <div className="filter-modal__section">
+                <div className="filter-modal__section-title">{t.sortSection}</div>
+                <div>
                   {([
                     { key: 'all'       as FilterType, label: t.sortDefault },
                     { key: 'priceLow'  as FilterType, label: t.sortPriceLow },
@@ -429,66 +379,69 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                     { key: 'size'      as FilterType, label: t.sortBiggest },
                     { key: 'sizeSmall' as FilterType, label: t.sortSmallest },
                   ]).map(({ key, label }) => (
-                    <button key={key} onClick={() => setActiveFilter(key)} style={radioRowStyle}>
-                      <span style={{ fontSize: 15, color: activeFilter === key ? 'var(--color-primary)' : '#111', fontWeight: activeFilter === key ? 600 : 400 }}>{label}</span>
-                      <div style={{
-                        width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
-                        border: `2px solid ${activeFilter === key ? 'var(--color-primary)' : '#ccc'}`,
-                        background: activeFilter === key ? 'var(--color-primary)' : '#fff',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      }}>
-                        {activeFilter === key && <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#fff' }} />}
+                    <button
+                      key={key}
+                      onClick={() => setActiveFilter(key)}
+                      className={`filter-modal__radio-row${activeFilter === key ? ' is-active' : ''}`}
+                    >
+                      <span className="filter-modal__radio-label">{label}</span>
+                      <div className="filter-modal__radio-dot">
+                        {activeFilter === key && <div className="filter-modal__radio-dot-inner" />}
                       </div>
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div style={dividerStyle} />
+              <div className="filter-modal__divider" />
 
-              {/* ── 2. Distanza dal mare (solo se entrambe le proprietà disponibili) ── */}
+              {/* 2. Distanza mare (opzionale) */}
               {hasSeaFilter && (
                 <>
-                  <div style={sectionStyle}>
-                    <div style={sectionTitleStyle}>{t.seaSection}</div>
-                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <div className="filter-modal__section">
+                    <div className="filter-modal__section-title">{t.seaSection}</div>
+                    <div className="filter-modal__pills">
                       {([
                         { key: 'all'    as const, label: t.seaAll },
                         { key: 'sea'    as const, label: t.sea250 },
                         { key: 'nature' as const, label: t.sea2km },
                       ]).map(({ key, label }) => (
-                        <button key={key} onClick={() => setActiveSeaFilter(key)} style={pillStyle(activeSeaFilter === key)}>
+                        <button
+                          key={key}
+                          onClick={() => setActiveSeaFilter(key)}
+                          className={`filter-pill${activeSeaFilter === key ? ' is-active' : ''}`}
+                        >
                           {label}
                         </button>
                       ))}
                     </div>
                   </div>
-                  <div style={dividerStyle} />
+                  <div className="filter-modal__divider" />
                 </>
               )}
 
-              {/* ── 3. Piscina ── */}
-              <div style={sectionStyle}>
-                <div style={sectionTitleStyle}>{t.poolSection}</div>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {/* 3. Piscina */}
+              <div className="filter-modal__section">
+                <div className="filter-modal__section-title">{t.poolSection}</div>
+                <div className="filter-modal__pills">
                   {([
                     { val: 'none'    as const, label: locale === 'it' ? 'Tutte' : locale === 'de' ? 'Tutte' : locale === 'pl' ? 'Wszystkie' : 'All' },
                     { val: 'private' as const, label: t.poolPrivate },
                     { val: 'shared'  as const, label: t.poolShared },
                   ]).map(({ val, label }) => (
-                    <button key={val} onClick={() => setPoolPreference(val)} style={pillStyle(poolPreference === val)}>
+                    <button
+                      key={val}
+                      onClick={() => setPoolPreference(val)}
+                      className={`filter-pill${poolPreference === val ? ' is-active' : ''}`}
+                    >
                       {label}
                     </button>
                   ))}
                 </div>
                 {poolPreference !== 'none' && (
-                  <div style={{
-                    marginTop: 10, padding: '9px 12px', borderRadius: 8,
-                    background: '#FFF8EC', border: '1px solid #FCAF1A',
-                    display: 'flex', alignItems: 'flex-start', gap: 8,
-                  }}>
-                    <span style={{ fontSize: 14, flexShrink: 0 }}>🏊</span>
-                    <span style={{ fontSize: 12, color: '#B07820', lineHeight: 1.5 }}>
+                  <div className="banner banner--accent banner--with-icon">
+                    <span>🏊</span>
+                    <span>
                       {locale === 'it' ? 'La piscina è aperta indicativamente da fine maggio a metà ottobre.' :
                        locale === 'de' ? 'Der Pool ist voraussichtlich von Ende Mai bis Mitte Oktober geöffnet.' :
                        locale === 'pl' ? 'Basen jest czynny orientacyjnie od końca maja do połowy października.' :
@@ -498,20 +451,24 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                 )}
               </div>
 
-              {/* ── 4. Tipo di casa (solo se più tipi disponibili) ── */}
+              {/* 4. Tipo di casa (opzionale) */}
               {hasMultipleTypes && (
                 <>
-                  <div style={dividerStyle} />
-                  <div style={sectionStyle}>
-                    <div style={sectionTitleStyle}>{t.typeSection}</div>
-                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <div className="filter-modal__divider" />
+                  <div className="filter-modal__section">
+                    <div className="filter-modal__section-title">{t.typeSection}</div>
+                    <div className="filter-modal__pills">
                       {([
                         { val: 'all'          as const, label: locale === 'it' ? 'Tutti' : locale === 'de' ? 'Alle' : locale === 'pl' ? 'Wszystkie' : 'All' },
                         ...(hasMono   ? [{ val: 'monolocale'   as const, label: t.typeMono }]   : []),
                         ...(hasAppart ? [{ val: 'appartamento' as const, label: t.typeAppart }] : []),
                         ...(hasVilla  ? [{ val: 'villa'        as const, label: t.typeVilla }]  : []),
                       ]).map(({ val, label }) => (
-                        <button key={val} onClick={() => setActiveTypeFilter(val)} style={pillStyle(activeTypeFilter === val)}>
+                        <button
+                          key={val}
+                          onClick={() => setActiveTypeFilter(val)}
+                          className={`filter-pill${activeTypeFilter === val ? ' is-active' : ''}`}
+                        >
                           {label}
                         </button>
                       ))}
@@ -520,11 +477,11 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                 </>
               )}
 
-              {/* ── 5. Camere da letto ── */}
-              <div style={dividerStyle} />
-              <div style={sectionStyle}>
-                <div style={sectionTitleStyle}>{t.bedsSection}</div>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {/* 5. Camere da letto */}
+              <div className="filter-modal__divider" />
+              <div className="filter-modal__section">
+                <div className="filter-modal__section-title">{t.bedsSection}</div>
+                <div className="filter-modal__pills">
                   {([
                     { val: 0 as const, label: t.bedsAny },
                     { val: 1 as const, label: '1+' },
@@ -532,22 +489,25 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                     { val: 3 as const, label: '3+' },
                     { val: 4 as const, label: '4+' },
                   ]).map(({ val, label }) => (
-                    <button key={val} onClick={() => setActiveBedsFilter(val)} style={pillStyle(activeBedsFilter === val)}>
+                    <button
+                      key={val}
+                      onClick={() => setActiveBedsFilter(val)}
+                      className={`filter-pill${activeBedsFilter === val ? ' is-active' : ''}`}
+                    >
                       {label}
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div style={{ height: 24 }} />
+              <div className="filter-modal__body-spacer" />
             </div>
 
             {/* Footer fisso */}
-            <div className="flex-shrink-0 bg-white px-3 border-top" style={{ paddingTop: 12, paddingBottom: 16 }}>
+            <div className="filter-modal__footer">
               <button
                 onClick={() => setShowFilterPanel(false)}
-                className="w-100 fw-bold border-0"
-                style={{ padding: 13, borderRadius: 10, background: '#FCAF1A', color: '#fff', fontSize: 15, cursor: 'pointer' }}
+                className="btn btn--primary w-100"
               >
                 {t.filtriApply}{activeFiltersCount > 0 ? ` (${activeFiltersCount})` : ''}
               </button>
@@ -556,33 +516,31 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
         </>
       )}
 
-      {/* Spinner */}
+      {/* ── Spinner ── */}
       {loading && (
-        <div className="d-flex flex-column align-items-center gap-2 py-5">
-          <div className="rounded-circle" style={{ width: 38, height: 38, border: '3px solid #eee', borderTop: '3px solid #1E73BE', animation: 'spin 0.8s linear infinite' }} />
-          <span style={{ color: '#888', fontSize: 13 }}>{t.loading}</span>
+        <div className="step1-loading">
+          <div className="step1-loading__spinner" />
+          <span className="step1-loading__label">{t.loading}</span>
         </div>
       )}
 
-      {/* Errore */}
+      {/* ── Errore ── */}
       {!loading && error && (
-        <div className="text-center mb-3 px-3 py-4" style={{ background: '#fff5f5', border: '1px solid #f5c6cb', borderRadius: 12 }}>
-          <p className="fw-bold mb-2" style={{ color: '#c0392b' }}>{t.errTitle}</p>
-          <p className="mb-3" style={{ fontSize: 13, color: '#888' }}>{error}</p>
+        <div className="banner banner--error banner--stack">
+          <p className="banner__title">{t.errTitle}</p>
+          <p className="banner__text">{error}</p>
           {checkIn && checkOut && (
-            <button onClick={fetchOffers} style={retryBtn}>{t.retry}</button>
+            <button onClick={fetchOffers} className="btn btn--secondary">{t.retry}</button>
           )}
         </div>
       )}
 
-      {/* Nessun risultato */}
+      {/* ── Nessun risultato ── */}
       {!loading && !error && filteredRoomOffers.length === 0 && (
-        <div className="text-center mb-3 px-3 py-4" style={{ background: '#f5f5f5', borderRadius: 12 }}>
-          <p className="m-0" style={{ color: '#888', fontSize: 14 }}>{t.noResults}</p>
-        </div>
+        <div className="step1-empty-state">{t.noResults}</div>
       )}
 
-      {/* Lista card rooms */}
+      {/* ── Lista card rooms ── */}
       {!loading && !error && filteredRoomOffers.length > 0 && (
         <div className="d-flex flex-column gap-3 mb-4">
           {filteredRoomOffers.map(ro => {
@@ -592,50 +550,43 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
             const coverUrl = coverUrls[room.roomId];
 
             return (
-              <div key={room.roomId} style={{
-                border: `2px solid ${isRoomPicked ? 'var(--color-primary)' : '#e5e7eb'}`,
-                borderRadius: 16, overflow: 'hidden', background: '#fff',
-                boxShadow: isRoomPicked ? '0 0 0 3px rgba(30,115,190,0.12)' : '0 1px 4px rgba(0,0,0,0.06)',
-                transition: 'all 0.15s',
-              }}>
+              <div key={room.roomId} className={`step1-room-card${isRoomPicked ? ' is-selected' : ''}`}>
+                <div className="step1-room-card__row">
 
-                {/* ── Layout VRBO: 3 colonne su desktop, verticale su mobile ── */}
-                <div className="s5-card-row">
-
-                  {/* COL 1: Foto — solo WizardLibero */}
+                  {/* COL 1: Foto (solo multi-room) */}
                   {!isSingleRoom && (
-                    <div className="s5-card-photo" style={{ background: '#f0f4f8', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
+                    <div className="step1-room-card__photo">
                       <div
                         onClick={e => { e.stopPropagation(); router.push(`/${locale}/residenze/${room.slug}`); }}
-                        style={{ display: 'block', width: '100%', height: '100%', cursor: 'pointer' }}
+                        className="step1-room-card__photo-link"
                       >
                         {coverUrl ? (
-                          <img src={coverUrl} alt={room.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} loading="lazy" />
+                          <img src={coverUrl} alt={room.name} className="step1-room-card__photo-img" loading="lazy" />
                         ) : (
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#ccc', fontSize: 24 }}>🏠</div>
+                          <div className="step1-room-card__photo-placeholder">🏠</div>
                         )}
                       </div>
-                      <span style={{ position: 'absolute', top: 10, left: 10, background: 'rgba(0,0,0,0.55)', color: '#fff', fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 20, pointerEvents: 'none' }}>
+                      <span className="badge-overlay step1-room-card__floor">
                         {getFloorLabel(room, loc)}
                       </span>
                     </div>
                   )}
 
                   {/* COL 2: Nome + dettagli */}
-                  <div className="s5-card-details" style={{ flex: 1, minWidth: 0, padding: '16px', borderBottom: '1px solid #f0f0f0' }}>
-                    <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--color-primary)', marginBottom: 8 }}>{room.name}</div>
-                    {isSingleRoom && <span style={{ fontSize: 11, color: '#888', background: '#f0f0f0', borderRadius: 6, padding: '2px 8px', marginBottom: 8, display: 'inline-block' }}>{room.type}</span>}
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                      <span style={chip}>🛏️ {room.bedrooms} {t.camere}</span>
-                      <span style={chip}>👥 {t.maxPers} {room.maxPeople} {t.persone}</span>
-                      <span style={chip}>📐 {room.sqm} mq</span>
-                      <span style={chip}>{getPoolLabel(room, t)}</span>
-                      <span style={chip}>📍 {getLocationLabel(room, t)}</span>
+                  <div className="step1-room-card__details">
+                    <div className="step1-room-card__name">{room.name}</div>
+                    {isSingleRoom && <span className="badge-feature">{room.type}</span>}
+                    <div className="step1-room-card__meta-chips">
+                      <span className="badge-feature">🛏️ {room.bedrooms} {t.camere}</span>
+                      <span className="badge-feature">👥 {t.maxPers} {room.maxPeople} {t.persone}</span>
+                      <span className="badge-feature">📐 {room.sqm} mq</span>
+                      <span className="badge-feature">{getPoolLabel(room, t)}</span>
+                      <span className="badge-feature">📍 {getLocationLabel(room, t)}</span>
                     </div>
                   </div>
 
                   {/* COL 3: Tariffe */}
-                  <div className="s5-card-offers">
+                  <div className="step1-room-card__offers">
                     {(() => {
                       const availOffers = ro.offers.filter(o => o.unitsAvailable > 0);
                       const minOffer = availOffers.length > 0
@@ -653,39 +604,34 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                             const desc = OFFER_DESC[String(offer.offerId)];
                             const avail = offer.unitsAvailable > 0;
                             return (
-                              <button key={offer.offerId}
+                              <button
+                                key={offer.offerId}
                                 onClick={() => avail && pick(room.roomId, offer.offerId)}
                                 disabled={!avail}
-                                style={{
-                                  width: '100%', textAlign: 'left',
-                                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                                  padding: '10px 14px', marginBottom: 6, borderRadius: 10,
-                                  border: isPicked ? '2px solid #1E73BE' : '1.5px solid #e5e7eb',
-                                  background: isPicked ? '#EEF5FC' : '#fff',
-                                  cursor: avail ? 'pointer' : 'default',
-                                  opacity: avail ? 1 : 0.4, transition: 'all 0.12s',
-                                }}>
-                                <div style={{ flex: 1, marginRight: 10, minWidth: 0 }}>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                    <span style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>{name}</span>
-                                    {isPicked && <span style={{ fontSize: 11, color: 'var(--color-primary)', fontWeight: 700 }}>{t.selezionata}</span>}
+                                className={`step1-offer-option${isPicked ? ' is-selected' : ''}`}
+                              >
+                                <div className="step1-offer-option__info">
+                                  <div className="step1-offer-option__name-row">
+                                    <span className="step1-offer-option__name">{name}</span>
+                                    {isPicked && <span className="step1-offer-option__selected-tag">{t.selezionata}</span>}
                                   </div>
-                                  {desc && <p style={{ margin: '2px 0 0', fontSize: 11, color: '#666', lineHeight: 1.3 }}>{desc}</p>}
-                                  {!avail && <span style={{ fontSize: 11, color: '#e74c3c', display: 'block', marginTop: 2 }}>{t.nonDisp}</span>}
+                                  {desc && <p className="step1-offer-option__desc">{desc}</p>}
+                                  {!avail && <span className="step1-offer-option__unavail">{t.nonDisp}</span>}
                                 </div>
-                                <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                                  <div style={{ fontSize: 19, fontWeight: 800, color: 'var(--color-primary)', lineHeight: 1 }}>{fmt(offer.price + touristTax)}</div>
-                                  {perNight > 0 && <div style={{ fontSize: 11, color: '#999', marginTop: 1 }}>{fmt(perNight)}{t.perNight}</div>}
-                                  <div style={{ fontSize: 10, color: '#bbb', marginTop: 1 }}>{t.total}</div>
+                                <div className="step1-offer-option__price-col">
+                                  <div className="step1-offer-option__price">{fmt(offer.price + touristTax)}</div>
+                                  {perNight > 0 && <div className="step1-offer-option__per-night">{fmt(perNight)}{t.perNight}</div>}
+                                  <div className="step1-offer-option__total-label">{t.total}</div>
                                 </div>
                               </button>
                             );
                           })}
-                          {/* Bottone espandi/comprimi — solo desktop, solo se ci sono più tariffe */}
+                          {/* Espandi/comprimi — solo desktop, se più tariffe */}
                           {isDesk && ro.offers.length > 1 && !isRoomPicked && (
                             <button
                               onClick={() => setExpandedRoomId(expandedRoomId === room.roomId ? null : room.roomId)}
-                              style={{ width: '100%', background: 'none', border: 'none', color: 'var(--color-primary)', fontSize: 12, fontWeight: 600, cursor: 'pointer', padding: '4px 0', minHeight: 'var(--touch-target)', textAlign: 'center' }}>
+                              className="step1-offer-expand-btn"
+                            >
                               {isExpanded
                                 ? (locale === 'it' ? 'Meno tariffe ▴' : locale === 'de' ? 'Weniger ▴' : locale === 'pl' ? 'Mniej ▴' : 'Less ▴')
                                 : (locale === 'it' ? `Vedi tutte le tariffe (${ro.offers.length}) ▾` : locale === 'de' ? `Alle Tarife (${ro.offers.length}) ▾` : locale === 'pl' ? `Wszystkie taryfy (${ro.offers.length}) ▾` : `View all rates (${ro.offers.length}) ▾`)}
@@ -694,102 +640,30 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                         </>
                       );
                     })()}
-                  </div>{/* fine s5-card-offers */}
+                  </div>
 
-                </div>{/* fine s5-card-row */}
+                </div>
               </div>
             );
           })}
         </div>
       )}
 
-      {/* CTA mobile */}
-      {/* ← Indietro */}
-      <button
-        onClick={onBack ?? prevStep}
-        className="btn d-block"
-        style={{ color: 'var(--color-primary)', fontSize: 14, padding: '12px 0 80px' }}
-      >
+      {/* ── Indietro ── */}
+      <button onClick={onBack ?? prevStep} className="step1-back-link">
         {t.indietro}
       </button>
 
-      {/* CTA mobile sticky */}
-      <div
-        className="position-fixed bottom-0 start-0 end-0 bg-white border-top step1-cta-mobile"
-        style={{ paddingTop: 12, paddingLeft: 16, paddingRight: 16, paddingBottom: 16, zIndex: 50 }}
-      >
+      {/* ── CTA mobile sticky ── */}
+      <div className="layout-sticky-mobile-bar">
         <button
           onClick={handleContinua}
           disabled={!canContinue}
-          className="w-100 fw-bold border-0"
-          style={{
-            padding: 15,
-            borderRadius: 12,
-            fontSize: 16,
-            background: canContinue ? '#FCAF1A' : '#e0e0e0',
-            color: canContinue ? '#fff' : '#999',
-            cursor: canContinue ? 'pointer' : 'not-allowed',
-          }}
+          className="btn btn--primary w-100"
         >
           {t.continua}
         </button>
       </div>
-      <style>{'@media (min-width: 768px) { .step1-cta-mobile { display: none !important; } }'}</style>
-
-      <style>{`
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* MOBILE default: verticale */
-        .s5-card-row { display: flex; flex-direction: column; }
-        .s5-card-photo { width: 100%; height: 180px; }
-        .s5-card-details { border-right: none; }
-        .s5-card-offers { padding: 8px 12px 14px; }
-
-        /* DESKTOP: VRBO 3 colonne */
-        @media (min-width: 768px) {
-          .s5-card-row { flex-direction: row; align-items: stretch; }
-          .s5-card-photo { width: 220px; height: auto; min-height: 180px; }
-          .s5-card-details { border-bottom: none !important; border-right: 1px solid #f0f0f0; flex: 1; }
-          .s5-card-offers { width: 260px; flex-shrink: 0; padding: 16px 14px; display: flex; flex-direction: column; justify-content: center; }
-        }
-      `}</style>
     </div>
   );
 }
-
-const chipActiveStyle: React.CSSProperties = {
-  display: 'flex', alignItems: 'center', gap: 5,
-  padding: '6px 11px', minHeight: 'var(--touch-target)', borderRadius: 20, flexShrink: 0,
-  border: '1.5px solid #1E73BE', background: '#EEF5FC',
-  color: 'var(--color-primary)', fontSize: 12, fontWeight: 600, cursor: 'pointer',
-};
-const sectionStyle: React.CSSProperties = {
-  paddingTop: 14, paddingBottom: 10,
-};
-const sectionTitleStyle: React.CSSProperties = {
-  fontWeight: 700, fontSize: 13, color: '#111', marginBottom: 10,
-};
-const radioRowStyle: React.CSSProperties = {
-  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-  width: '100%', padding: '9px 0', minHeight: 'var(--touch-target)',
-  background: 'none', border: 'none',
-  borderBottom: '1px solid #f0f0f0', cursor: 'pointer', textAlign: 'left',
-};
-const dividerStyle: React.CSSProperties = {
-  height: 1, background: '#e5e7eb',
-};
-const pillStyle = (active: boolean): React.CSSProperties => ({
-  padding: '7px 14px', minHeight: 'var(--touch-target)', borderRadius: 8,
-  fontSize: 13, cursor: 'pointer', fontWeight: active ? 600 : 400,
-  border: `1.5px solid ${active ? 'var(--color-primary)' : '#e5e7eb'}`,
-  background: active ? '#EEF5FC' : '#f5f5f5',
-  color: active ? 'var(--color-primary)' : '#555',
-});
-
-const chip: React.CSSProperties = {
-  fontSize: 11, color: '#555', background: '#f5f5f5', borderRadius: 6, padding: '3px 8px',
-};
-const retryBtn: React.CSSProperties = {
-  padding: '8px 20px', borderRadius: 8, border: '1px solid #1E73BE',
-  background: '#fff', color: 'var(--color-primary)', fontSize: 14, cursor: 'pointer',
-};
