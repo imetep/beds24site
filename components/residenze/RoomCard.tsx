@@ -77,7 +77,6 @@ export default function RoomCard({ room, locale, coverUrl }: Props) {
       {/* Foto cliccabile → scheda appartamento */}
       <div className="position-relative">
         <CardPhotoGallery
-          cloudinaryFolder={room.cloudinaryFolder}
           coverUrl={coverUrl}
           roomName={room.name}
           noPhotoLabel={t.noPhoto}
