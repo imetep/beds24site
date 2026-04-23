@@ -19,9 +19,8 @@ import path from 'path';
 const BASE_URL   = 'https://beds24.com/api/v2';
 const TOKEN_FILE = path.join(process.cwd(), '.beds24-token');
 
-// Chiavi Redis
-const REDIS_STATE_KEY = 'beds24:tokenState';   // stato completo (token + expiresAt + refreshToken)
-const REDIS_RT_KEY    = 'beds24:refreshToken';  // solo refreshToken (compatibilità)
+// Chiave Redis: stato completo (token + expiresAt + refreshToken)
+const REDIS_STATE_KEY = 'beds24:tokenState';
 
 interface TokenState {
   token:        string;
@@ -95,10 +94,9 @@ async function redisGetState(): Promise<TokenState | null> {
   return null;
 }
 
-/** Salva lo stato completo su Redis (e il solo refreshToken per compatibilità) */
+/** Salva lo stato completo su Redis */
 async function redisSetState(s: TokenState): Promise<void> {
   await redisSet(REDIS_STATE_KEY, JSON.stringify(s));
-  await redisSet(REDIS_RT_KEY,    s.refreshToken);
 }
 
 // ─── Disco (locale) ──────────────────────────────────────────────────────────
@@ -162,12 +160,6 @@ export async function getToken(): Promise<string> {
   } else {
     refreshToken = process.env.BEDS24_REFRESH_TOKEN ?? null;
     console.log('[beds24-token] RefreshToken da .env');
-  }
-
-  // Fallback estremo: prova a leggere il solo refreshToken (chiave legacy)
-  if (!refreshToken) {
-    refreshToken = await redisGet(REDIS_RT_KEY);
-    if (refreshToken) console.log('[beds24-token] RefreshToken da Redis (chiave legacy)');
   }
 
   if (!refreshToken) {
