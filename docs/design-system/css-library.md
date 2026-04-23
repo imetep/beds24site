@@ -408,6 +408,60 @@ Pattern specifici dello step 1 del wizard `/prenota`. Ogni sottoblocco è autono
 
 **CTA finale**: il bottone "Continua" usa `.layout-sticky-mobile-bar` (wrapper) + `.btn .btn--primary` (bottone). Nessuna classe custom.
 
+### 3.11 WizardStep2 — pagamento + dati ospite (Sessione 5)
+
+Pattern specifici dello step 2 del wizard `/prenota`. Copre la colonna form sinistra + accordion mobile header. Il `SidebarContent` legacy e il sub-component `SideRow` (usati solo dall'accordion mobile) **restano fuori scope** — saranno migrati nella futura sessione mobile dedicata.
+
+**Layout + accordion mobile**
+
+| Classe | Ruolo |
+|---|---|
+| `.wizard-step2` | Root wrapper (min-height 100vh) |
+| `.wizard-step2__layout` | Flex row: form + sidebar desktop (gap `--space-xl`) |
+| `.wizard-step2__main` | Colonna form: `flex:1`, `max-width --container-sm` (680px) |
+| `.wizard-step2__sidebar` | Wrapper sidebar desktop; `display:none` ≤767px |
+| `.wizard-step2__summary-accordion` | Cappuccio accordion mobile; `display:block` ≤767px |
+| `.wizard-step2__summary-accordion-btn` | Header cliccabile accordion (totale + chevron) |
+| `.wizard-step2__summary-accordion-chevron` | Chevron; con `.is-open` ruota 180° |
+| `.wizard-step2__summary-accordion-body` | Body accordion (padding, contiene `<SidebarContent />` legacy) |
+
+**Section card** (audit §2.3–§2.4)
+
+| Classe | Ruolo |
+|---|---|
+| `.step2-section-card` | Card bianca con `--shadow-sm` (audit §2.3) |
+| `.step2-section-header` | Flex: number badge + title |
+| `.step2-section-number` | Cerchio blu 28×28 con numero "1"/"2" (fw 800) |
+| `.step2-section-title` | Titolo sezione `--text-md` (15px, audit §2.4 ridotto da 17) |
+
+**Radio pagamento**
+
+| Classe | Ruolo |
+|---|---|
+| `.step2-radio-row` | Card radio metodo pagamento; con `.is-selected` bordo blu + bg primary-soft |
+| `.step2-radio-dot` | Cerchio radio 20×20; bordo blu quando il parent è `.is-selected` |
+| `.step2-radio-dot-inner` | Pallino interno blu 10×10 (visibile solo quando selezionato) |
+| `.step2-radio-label` | Label metodo (Stripe / PayPal) |
+| `.step2-radio-note` | Testo descrittivo sotto la label (grigio) |
+| `.step2-paypal-chip` | Chip "PayPal" brand (navy su light blue) — colori marchio, non token |
+
+**Form**
+
+| Classe | Ruolo |
+|---|---|
+| `.step2-form-grid-2` | Grid 2 colonne sempre (nome/cognome, telefono/paese) |
+| *(riuso)* `.ui-field-wrapper` / `.ui-field-label` / `.ui-field-input` / `.ui-field-textarea` | Campi form — già in libreria (§ UI primitive) |
+
+**CTA + footer**
+
+| Classe | Ruolo |
+|---|---|
+| `.step2-cta` | Modifier di `.btn .btn--primary`: padding/font boost (`--text-lg`, fw 800) per il "Vedi riepilogo" |
+| `.step2-terms` | Testo "Termini e condizioni" centrato sotto CTA |
+| `.step2-back-link` | Link "Indietro" sotto i termini |
+
+**Errore**: usa `.banner .banner--error` (già in libreria §3.3).
+
 ---
 
 ## 4. Come decidere se creare una nuova classe
@@ -484,6 +538,20 @@ Prima del commit:
 ---
 
 ## 9. Changelog
+
+### 2026-04-23 — Sessione 5 — WizardStep2.tsx (v1.3)
+- Aggiunto §3.11 "WizardStep2 — pagamento + dati ospite" con ~20 classi BEM:
+  layout (`.wizard-step2__*`), accordion mobile (cappuccio), section card
+  (`.step2-section-*`), radio pagamento (`.step2-radio-*`, `.step2-paypal-chip`),
+  form grid (`.step2-form-grid-2`), CTA boost (`.step2-cta`), termini
+  (`.step2-terms`), back link (`.step2-back-link`).
+- Applicate patch visive audit §2.2 (titolo via `.section-title-main` fw 800),
+  §2.3 (card shadow `var(--shadow-sm)`), §2.4 (section title 17→15), §2.5
+  (CTA via `.btn .btn--primary`), §2.6 (`#FCAF1A` via `var(--color-cta)`
+  implicito nel `.btn--primary`).
+- Sub-component `Field` riusa i primitivi `.ui-field-*` esistenti.
+- `SidebarContent` legacy + `SideRow` NON migrati (mobile accordion, spec
+  §7 wizard-sidebar-design).
 
 ### 2026-04-23 — Sessione 4 — WizardStep1.tsx (v1.2)
 - Aggiunto §3.10 "WizardStep1 — scelta residenza" con ~40 classi BEM nuove:
