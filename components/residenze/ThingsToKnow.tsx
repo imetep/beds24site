@@ -100,7 +100,7 @@ export default function ThingsToKnow({ locale, checkInStart, checkInEnd, checkOu
   return (
     <div className="card overflow-hidden mb-4" style={{ borderRadius: 16 }}>
 
-      {/* Header colored #1E73BE — UX 3.7 */}
+      {/* Header colored #006CB7 — UX 3.7 */}
       <button
         type="button"
         onClick={() => setOpen(!open)}

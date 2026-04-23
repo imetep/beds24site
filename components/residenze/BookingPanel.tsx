@@ -156,7 +156,7 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
         <p className="text-muted text-center py-3" style={{ fontSize: 14 }}>{t.selectDates}</p>
       ) : loading ? (
         <div className="d-flex align-items-center gap-2 py-3 text-muted" style={{ fontSize: 14 }}>
-          <div className="rounded-circle" style={{ width: 20, height: 20, border: '2px solid #eee', borderTop: '2px solid #1E73BE', animation: 'spin 0.8s linear infinite' }} />
+          <div className="rounded-circle" style={{ width: 20, height: 20, border: '2px solid #eee', borderTop: '2px solid #006CB7', animation: 'spin 0.8s linear infinite' }} />
           {t.loading}
         </div>
       ) : offers.length === 0 ? (

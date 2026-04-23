@@ -298,7 +298,7 @@ function RoomCard({ room, locale, ui }: { room: Room; locale: Locale; ui: UIShap
                 <span
                   className="fw-medium rounded-pill"
                   style={{
-                    background: '#EEF5FC', border: '0.5px solid #1E73BE',
+                    background: '#EEF5FC', border: '0.5px solid #006CB7',
                     padding: '2px 8px', fontSize: 10, color: 'var(--color-primary)',
                   }}
                 >
@@ -323,7 +323,7 @@ function RoomCard({ room, locale, ui }: { room: Room; locale: Locale; ui: UIShap
                 <span
                   className="fw-medium rounded-pill"
                   style={{
-                    background: '#EEF5FC', border: '0.5px solid #1E73BE',
+                    background: '#EEF5FC', border: '0.5px solid #006CB7',
                     padding: '2px 8px', fontSize: 10, color: 'var(--color-primary)',
                   }}
                 >
@@ -425,8 +425,8 @@ export default function BedConfigDisplay({ roomId, locale }: Props) {
         }}
       >
         <svg width="15" height="15" viewBox="0 0 15 15" fill="none" className="flex-shrink-0" style={{ marginTop: 1 }} aria-hidden="true">
-          <circle cx="7.5" cy="7.5" r="6.5" stroke="#1E73BE" strokeWidth="1" />
-          <text x="7.5" y="11.5" textAnchor="middle" fontSize="8" fill="#1E73BE" fontWeight="600">i</text>
+          <circle cx="7.5" cy="7.5" r="6.5" stroke="#006CB7" strokeWidth="1" />
+          <text x="7.5" y="11.5" textAnchor="middle" fontSize="8" fill="#006CB7" fontWeight="600">i</text>
         </svg>
         <span style={{ fontSize: 12, color: '#0c447c', lineHeight: 1.6 }}>
           {ui.configNote}

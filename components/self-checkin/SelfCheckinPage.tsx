@@ -413,7 +413,7 @@ export default function SelfCheckinPage({ locale, wizardHref, contactHref }: Pro
       </div>
 
       {/* ── CTA ─────────────────────────────────────────────────────────────── */}
-      <div style={{ background: '#EEF5FC', margin: '0 0 8px', padding: '24px 20px', borderTop: '2px solid #1E73BE' }}>
+      <div style={{ background: '#EEF5FC', margin: '0 0 8px', padding: '24px 20px', borderTop: '2px solid #006CB7' }}>
         <h2 style={{ fontSize: 18, fontWeight: 700, color: '#0C447C', margin: '0 0 8px' }}>
           {t.ctaTitle}
         </h2>

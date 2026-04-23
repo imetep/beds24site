@@ -401,7 +401,7 @@ Operazione irreversibile.`);
                 className="card mb-2"
                 style={{
                   cursor: item.cancelled ? 'default' : 'pointer',
-                  border: isSel ? '1.5px solid #1E73BE' : '0.5px solid #e5e7eb',
+                  border: isSel ? '1.5px solid #006CB7' : '0.5px solid #e5e7eb',
                   background: item.cancelled ? '#fafafa' : isSel ? '#EEF5FC' : '#fff',
                   opacity: item.cancelled ? 0.6 : 1,
                 }}

@@ -158,7 +158,7 @@ export default function SuccessContent({ locale }: Props) {
         <div style={{
           width: 48, height: 48, margin: '0 auto 24px',
           border: '3px solid #e5e7eb',
-          borderTop: '3px solid #1E73BE',
+          borderTop: '3px solid #006CB7',
           borderRadius: '50%',
           animation: 'spin 0.75s linear infinite',
         }} />
@@ -197,7 +197,7 @@ export default function SuccessContent({ locale }: Props) {
       {displayBookingId && (
         <div style={{
           background: '#EEF5FC',
-          border: '2px solid #1E73BE',
+          border: '2px solid #006CB7',
           borderRadius: 14,
           padding: '16px 28px',
           display: 'inline-block',

@@ -429,9 +429,9 @@ export default function FotoGalleryClient({
                   style={{
                     width:        110, height: 74,
                     borderRadius: 12,
-                    border:       isActive ? '2.5px solid #1E73BE' : '2px solid transparent',
+                    border:       isActive ? '2.5px solid #006CB7' : '2px solid transparent',
                     background:   '#e5e7eb',
-                    boxShadow:    isActive ? '0 0 0 1px #1E73BE' : 'none',
+                    boxShadow:    isActive ? '0 0 0 1px #006CB7' : 'none',
                     transition:   'border 0.15s',
                   }}
                 >
@@ -539,7 +539,7 @@ export default function FotoGalleryClient({
             className="d-inline-flex align-items-center gap-2 text-decoration-none rounded-pill fw-bold"
             style={{
               padding: '12px 28px',
-              border: '1.5px solid #1E73BE', color: 'var(--color-primary)',
+              border: '1.5px solid #006CB7', color: 'var(--color-primary)',
               fontSize: 14,
             }}
           >

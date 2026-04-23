@@ -283,7 +283,7 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
               background: (checkIn) ? '#f0f7ff' : '#fff',
               cursor: 'pointer',
             }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="1.8" className="flex-shrink-0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#006CB7" strokeWidth="1.8" className="flex-shrink-0">
               <rect x="3" y="4" width="18" height="18" rx="3"/>
               <path d="M16 2v4M8 2v4M3 10h18"/>
             </svg>
@@ -320,7 +320,7 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
               background: (checkOut || phase === 'co') ? '#f0f7ff' : '#fff',
               cursor: 'pointer',
             }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E73BE" strokeWidth="1.8" className="flex-shrink-0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#006CB7" strokeWidth="1.8" className="flex-shrink-0">
               <rect x="3" y="4" width="18" height="18" rx="3"/>
               <path d="M16 2v4M8 2v4M3 10h18"/>
             </svg>
@@ -384,7 +384,7 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
       {/* Spinner */}
       {loading && (
         <div className="d-flex align-items-center gap-2 py-3 text-muted" style={{ fontSize: 14 }}>
-          <div className="rounded-circle flex-shrink-0" style={{ width: 20, height: 20, border: '2px solid #eee', borderTop: '2px solid #1E73BE', animation: 'spin 0.8s linear infinite' }} />
+          <div className="rounded-circle flex-shrink-0" style={{ width: 20, height: 20, border: '2px solid #eee', borderTop: '2px solid #006CB7', animation: 'spin 0.8s linear infinite' }} />
           {ui.loading}
         </div>
       )}

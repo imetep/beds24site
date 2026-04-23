@@ -385,7 +385,7 @@ function ItalyMap({ locale }: { locale: Locale }) {
           <line
             key={city.id}
             x1={480} y1={577} x2={city.x} y2={city.y}
-            stroke="#1E73BE"
+            stroke="#006CB7"
             strokeWidth={2}
             fill="none"
             strokeDasharray={city.byPlane ? `6 4 ${ll}` : `${ll}`}
@@ -404,7 +404,7 @@ function ItalyMap({ locale }: { locale: Locale }) {
         const modeLabel = city.byPlane ? t.by_plane : t.by_car;
         return (
           <g key={city.id} opacity={isVisible ? 1 : 0} style={{ transition: 'opacity 0.4s' }}>
-            <circle cx={city.x} cy={city.y} r={6} fill="#1E73BE" />
+            <circle cx={city.x} cy={city.y} r={6} fill="#006CB7" />
             <text
               x={city.x + lbl.ax} y={city.y + lbl.ay - 9}
               textAnchor={lbl.anchor as 'start' | 'end' | 'middle'}
@@ -418,7 +418,7 @@ function ItalyMap({ locale }: { locale: Locale }) {
               x={city.x + lbl.ax} y={city.y + lbl.ay + 8}
               textAnchor={lbl.anchor as 'start' | 'end' | 'middle'}
               fontSize={14}
-              fill="#1E73BE"
+              fill="#006CB7"
               fontFamily="system-ui, sans-serif"
             >
               {city.time} {modeLabel}
