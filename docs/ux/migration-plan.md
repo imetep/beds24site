@@ -105,8 +105,8 @@ L'ordine è ottimizzato per: **rischio crescente** (prima i facili come warm-up 
 |---|---|---|---|---|
 | 2 | Wizard.tsx | migra 5 inline. Include anche la patch visiva §4.3 dell'audit visivo | ✅ |
 | 3 | WizardSidebar.tsx → **ristrutturazione** sidebar booking unificata step 1+2 | vedi §4-bis scomposizione | ✅ 3a/3b/3c |
-| 4 | WizardStep1.tsx | migra 66 inline. Applica §1.1 (titolo nero, non blu) dell'audit visivo | ⏳ |
-| 5 | WizardStep2.tsx | migra 81 inline residui (post 3c). Applica §2.1–2.6 dell'audit visivo | ⏳ |
+| 4 | WizardStep1.tsx | migra 95 inline residui. Applica §1.2–§1.4 audit visivo | ✅ `1a66800`/`89ce18d`/`09a11b4` |
+| 5 | WizardStep2.tsx | migra form+pagamento (43 inline main col). SidebarContent legacy + 55 inline residui restano per sessione mobile dedicata. Applica §2.2–§2.6 | ✅ `1df83d6`/`4e397ad` |
 | 6 | WizardStep3.tsx | migra 32 inline + redesign B single-col condensato + i18n namespace wizardStep3 (era UI inline 150 righe) + rinomina func WizardStep7→WizardStep3 + fetch cover hero. Applica §3.1–§3.7 audit visivo. Logica Stripe/PayPal PRESERVATA byte-identical | ✅ `b4807dc`/`3d28133`/`80f746c` |
 
 **Dopo ogni sessione**: screenshot desktop + mobile del step toccato, confronto con prima, approvazione tua prima di passare alla successiva.
@@ -131,14 +131,16 @@ La spec di dettaglio da seguire è [wizard-sidebar-design.md §6 roadmap](wizard
 
 ### Scheda abitazione (sessioni 7–12)
 
-| # | Sessione | File | Note |
-|---|---|---|---|
-| 7 | File piccoli in un colpo | page + RoomCard + PropertyMap + ThingsToKnow + StickyBookingBar = 19 inline | Batch di file semplici come warm-up dell'area |
-| 8 | BedConfigDisplay + CardPhotoGallery | 38 inline totali | Pattern "card residenza" |
-| 9 | BookingPanel | 25 inline | CTA principale scheda (entry booking) |
-| 10 | PhotoCarousel + PhotoLightbox | 53 inline totali | Gallery + lightbox, pattern condivisi |
-| 11 | AvailabilityCalendar | 33 inline | Calendario complesso, sessione dedicata |
-| 12 | FotoGalleryClient | 34 inline | Pagina foto completa |
+| # | Sessione | File | Note | Stato |
+|---|---|---|---|---|
+| 7 | File piccoli in un colpo | page + RoomCard + PropertyMap + ThingsToKnow + StickyBookingBar = 19 inline | Warm-up area | ✅ `8278a74` (css+doc), `f31ef59` (page), `3265199` (css mini), `469bc45` (RoomCard), `fb52c08` (PropertyMap), `1b0dd8f` (ThingsToKnow), `41b48ee` (StickyBookingBar) |
+| 8 | BedConfigDisplay + CardPhotoGallery | 38 inline totali | Pattern "card residenza" + dead code removal lightbox CardPhotoGallery | ✅ `2956e99` (css mini), `8db427a` (BedConfigDisplay), `9677c53` (CardPhotoGallery dead-code + RoomCard prop), `5bf6b05` (cleanup lightbox CSS) |
+| 9 | BookingPanel | 25 inline | CTA principale scheda (entry booking). Include fix pre-esistente: `#dbeafe` deprecato riga 196 → `var(--color-primary-soft)` | ⏳ |
+| 10 | PhotoCarousel + PhotoLightbox | 53 inline totali | Gallery + lightbox "vero" (duplicava con quello rimosso in Sess 8) | ⏳ |
+| 11 | AvailabilityCalendar | 33 inline | Calendario complesso, sessione dedicata | ⏳ |
+| 12 | FotoGalleryClient | 34 inline | Pagina foto completa | ⏳ |
+
+**Sessioni 7+8 completate** ✅ (2026-04-23, 11 commit) — prossima: 10+11+12 (cluster gallery/calendar/foto), poi 9 per ultima (BookingPanel isolato).
 
 ---
 
@@ -211,6 +213,53 @@ Oggi: `--color-cta = --color-warning = --color-brand-accent = #FCAF1A`.
 
 ### D.Z — Accorpare o separare pattern
 Durante l'audit sessione 0 emergeranno dubbi tipo: "`.card-residenza-list` e `.card-residenza-selected` sono 2 classi o 1 con modifier?". Scelte di nomenclatura da decidere con l'utente.
+
+---
+
+## 6.1 TODO emersi durante checklist Sessione 7+8 (2026-04-23)
+
+Checklist visiva post-push di 9 check funzionali completata (7 ok, 2 ok-con-riserva). TODO raccolti:
+
+### 🎨 Decisioni di design aperte
+
+**T1 — Contrasto titoli neri vs palette brand blu+arancione**
+Checklist §3 e §5: il nero `--color-text` (#111) dei titoli (h1 scheda, header accordion non è impattato) non convince accanto al brand `#006CB7` + `#FCAF1A`. Da decidere una tonalità titolo più armonica (es. blu-nero `#0a1929`, warm-dark `#2a2520`, o mantenere nero con più respiro visivo). Impatta `.section-title-main`, `.section-title-secondary`, potenzialmente `.label-uppercase-muted`. È una decisione design system, non fix puntuale.
+
+**T2 — Blu secondary derivati dal vecchio `#1E73BE` non rigenerati (D.X-1)**
+Dopo D.X il primary è `#006CB7` ma **i blu derivati sono rimasti** (erano calcolati su `#1E73BE`):
+- `#1557a0` — `ContattiClient.tsx:210` gradient second stop (già documentato nel D.X §6 parziale)
+- `#0c447c` — `HomeSearch.tsx:438` gradient + `globals.css:2372` bed-config note text
+- `#b5d4f4` — `globals.css:2364` bed-config note border
+
+Se si vuole D.X piena serve rigenerare questi 3 dal nuovo primary (es. `#004a80` per dark, `#b3d4ee` per light). Visivamente oggi non stridono.
+
+### 🔧 Bug / fix puntuali
+
+**T3 — `.card-room-bed` overflow con contenuto alto**
+Checklist §4: la card "Camera 4" con 2 letti impilabili (contenuto verticale > 220px) produce scroll verticale interno su **desktop** (mobile non visibile). Soluzione: `.card-room-bed { min-height: 220px }` invece di `height: 220px` in `app/globals.css`. Rischio: disuniformità minima di altezza tra card della stessa riga.
+
+**T4 — Sticky bar mobile "non appare in tutte le sezioni"**
+Checklist §6: verifica se è comportamento intenzionale (IntersectionObserver nasconde la bar quando `#booking-panel` è visibile) o bug. Probabilmente intenzionale. Richiede screenshot/descrizione del caso specifico per decidere.
+
+**T5 — Mappa Google pinch-zoom 2 dita sposta la pagina**
+Checklist §8: preesistente alla Sessione 7 (comportamento iframe Google Maps Embed). Non causato da nessun refactor oggi. Fix possibile: passare a Maps JS API con `gestureHandling: 'greedy'`, oppure overlay "tap per interagire" che intercetta il primo touch. Richiede valutazione UX mobile.
+
+**T6 — `#dbeafe` deprecato in `BookingPanel.tsx:196`**
+Bug pre-esistente (globals.css:14 marca `#dbeafe` come deprecato a favore di `var(--color-primary-soft)` = `#EEF5FC`, Caso H dell'audit). Da fixare **durante Sessione 9** (BookingPanel) insieme alla migration inline.
+
+### 🧹 Pulizia (non urgente)
+
+**T7 — `#EEF5FC` hardcoded ovunque → `var(--color-primary-soft)`**
+~30 occorrenze del valore `#EEF5FC` letterale nei sorgenti (wizard, scheda, guest portal, self-checkin, admin). Visivamente corretto (il valore matcha esattamente il token) ma inefficiente. Pulizia fattibile file-per-file durante le rispettive migration oppure con un search-replace globale.
+
+**T8 — `lib/beds24-client.ts` potenzialmente dead code**
+Emerso durante audit `REDIS_RT_KEY`: file parallelo a `lib/beds24-token.ts` che NON usa Redis, solo env+memoria. Non importato da nessuna parte di quelle viste nel grep refreshToken. Richiede grep dedicato per verificare se c'è qualche consumer, poi rimozione.
+
+**T9 — i18n centralizzazione nei file scheda residenza**
+3 dei 7 file di Sessione 7+8 hanno dict `LABELS` hardcoded inline (`page.tsx`, `RoomCard.tsx`, `ThingsToKnow.tsx`) invece di `getTranslations()`. Fuori scope CSS migration. Da fare in sessione i18n dedicata.
+
+**T10 — `DEL beds24:refreshToken` su Upstash**
+Follow-up del commit `6c4c867` (dedup REDIS_RT_KEY): dopo 2-3 giorni di deploy sano, cancellare manualmente la chiave legacy da Upstash Data Browser. Rete di sicurezza rollback non più necessaria passato quel tempo.
 
 ---
 
