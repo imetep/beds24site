@@ -104,7 +104,7 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
 
       {/* Header */}
       <div style={{ background: '#fff', borderBottom: `1px solid ${C.border}`, padding: '0.85rem 1rem' }}>
-        <div style={{ maxWidth: '720px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="page-container d-flex justify-content-between align-items-center">
           <div>
             <h1 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: C.text, letterSpacing: '-0.02em' }}>
               🔐 {tD.title}
@@ -120,7 +120,7 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
       </div>
 
       {/* Contenuto */}
-      <div style={{ maxWidth: '720px', margin: '0 auto', padding: '0.75rem 0.75rem 3rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+      <div className="page-container" style={{ padding: '0.75rem 0.75rem 3rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
 
         {/* UX 3.6 — Stato prenotazione (primo elemento visibile dopo login) */}
         {checkin && (() => {
