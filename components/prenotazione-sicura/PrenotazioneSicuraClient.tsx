@@ -240,7 +240,7 @@ export default function PrenotazioneSicuraClient({
   const t = T[locale];
 
   return (
-    <div className="container pb-5" style={{ maxWidth: 860 }}>
+    <div className="page-container pb-5">
 
       {/* Hero */}
       <section className="text-center py-5">
