@@ -110,21 +110,12 @@ export default function StickyBookingBar({ roomId, locale, roomName }: Props) {
   return (
     <div
       aria-hidden={!show}
-      className="position-fixed start-0 end-0 bottom-0 bg-white border-top shadow-lg"
-      style={{
-        zIndex: 200,
-        transform: show ? 'translateY(0)' : 'translateY(100%)',
-        transition: 'transform 0.25s ease',
-        pointerEvents: show ? 'auto' : 'none',
-      }}
+      className={`sticky-booking-bar${show ? ' is-visible' : ''}`}
     >
-      <div
-        className="container d-flex align-items-center justify-content-between gap-2 px-3 py-2"
-        style={{ maxWidth: 1100 }}
-      >
+      <div className="sticky-booking-bar__inner">
         {/* Sinistra: nome + prezzo */}
-        <div className="flex-fill" style={{ minWidth: 0 }}>
-          <div className="fw-bold text-truncate" style={{ fontSize: 13 }}>
+        <div className="sticky-booking-bar__info">
+          <div className="sticky-booking-bar__name">
             {roomName}
           </div>
 
@@ -134,10 +125,10 @@ export default function StickyBookingBar({ roomId, locale, roomName }: Props) {
                 <span className="small text-muted">…</span>
               ) : lowestTotal ? (
                 <>
-                  <span className="fw-bold text-primary" style={{ fontSize: 17 }}>
+                  <span className="sticky-booking-bar__price">
                     {fmt(lowestTotal)}
                   </span>
-                  <span className="ms-1 small text-muted">{t.totale}</span>
+                  <span className="sticky-booking-bar__price-suffix">{t.totale}</span>
                 </>
               ) : (
                 <span className="small text-muted">
