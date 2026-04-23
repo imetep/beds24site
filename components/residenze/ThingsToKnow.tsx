@@ -98,14 +98,13 @@ export default function ThingsToKnow({ locale, checkInStart, checkInEnd, checkOu
   const t = LABELS[locale] ?? LABELS.it;
 
   return (
-    <div className="card overflow-hidden mb-4" style={{ borderRadius: 16 }}>
+    <div className="things-to-know">
 
-      {/* Header colored #006CB7 — UX 3.7 */}
+      {/* Header primary-colored — UX 3.7 */}
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="d-flex justify-content-between align-items-center w-100 fw-bold px-3 py-3 border-0 text-white"
-        style={{ background: 'var(--color-primary)', fontSize: 17 }}
+        className="things-to-know__header"
         aria-expanded={open}
       >
         <span>
@@ -116,7 +115,7 @@ export default function ThingsToKnow({ locale, checkInStart, checkInEnd, checkOu
 
       {/* Contenuto espandibile */}
       {open && (
-        <div className="p-3 border-top">
+        <div className="things-to-know__body">
 
           {/* Check-in/out */}
           <div className="pb-3 mb-3 border-bottom">
@@ -136,7 +135,7 @@ export default function ThingsToKnow({ locale, checkInStart, checkInEnd, checkOu
             <div className="fw-bold mb-2">
               <i className="bi bi-shield-lock-fill me-1"></i> {t.depositTitle}: €{securityDeposit}
             </div>
-            <p className="small text-secondary mb-1" style={{ lineHeight: 1.6 }}>{t.depositText}</p>
+            <p className="small text-secondary mb-1">{t.depositText}</p>
             <a href={t.depositHref} target="_blank" rel="noopener noreferrer" className="small text-primary text-decoration-none">{t.depositLink}</a>
           </div>
 
@@ -145,7 +144,7 @@ export default function ThingsToKnow({ locale, checkInStart, checkInEnd, checkOu
             <div className="fw-bold mb-2">
               <i className="bi bi-lightning-fill me-1"></i> {t.energyTitle}
             </div>
-            <p className="small text-secondary mb-1" style={{ lineHeight: 1.6 }}>{t.energyText}</p>
+            <p className="small text-secondary mb-1">{t.energyText}</p>
             <a href={t.energyHref} target="_blank" rel="noopener noreferrer" className="small text-primary text-decoration-none">{t.energyLink}</a>
           </div>
 
@@ -154,7 +153,7 @@ export default function ThingsToKnow({ locale, checkInStart, checkInEnd, checkOu
             <div className="fw-bold mb-2">
               <i className="bi bi-bank2 me-1"></i> {t.taxTitle}
             </div>
-            <p className="small text-secondary mb-0" style={{ lineHeight: 1.6 }}>{t.taxText}</p>
+            <p className="small text-secondary mb-0">{t.taxText}</p>
           </div>
 
           {/* Regole */}
