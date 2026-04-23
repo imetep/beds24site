@@ -48,36 +48,50 @@ async function redisGet(key: string): Promise<string | null> {
   }
 }
 
+// Anti-stampede: worker paralleli del build Next.js che chiedono la stessa
+// folder riusano la Promise in volo invece di colpire Cloudinary N volte.
+const fotoPhotosInflight = new Map<string, Promise<string[]>>();
+
 async function getRoomPhotos(folder: string): Promise<string[]> {
-  const redisKey = `cloudinary:foto-photos:${folder}`;
+  const existing = fotoPhotosInflight.get(folder);
+  if (existing) return existing;
 
-  const cached = await redisGet(redisKey);
-  if (cached) {
+  const promise = (async (): Promise<string[]> => {
+    const redisKey = `cloudinary:foto-photos:${folder}`;
+
+    const cached = await redisGet(redisKey);
+    if (cached) {
+      try {
+        const arr = JSON.parse(cached);
+        if (Array.isArray(arr)) return arr as string[];
+      } catch { /* corrotto → ricarica */ }
+    }
+
     try {
-      const arr = JSON.parse(cached);
-      if (Array.isArray(arr)) return arr as string[];
-    } catch { /* corrotto → ricarica */ }
-  }
+      const result = await cloudinary.search
+        .expression(`folder:${folder}`)
+        .sort_by('public_id', 'asc')
+        .max_results(50)
+        .execute();
+      const urls = result.resources.map((r: any) =>
+        cloudinary.url(r.public_id, { width: 1200, crop: 'limit', quality: 'auto', fetch_format: 'auto' })
+      );
+      await redisSet(
+        redisKey,
+        JSON.stringify(urls),
+        urls.length > 0 ? TTL_PHOTOS_SECONDS : TTL_FALLBACK_SECONDS,
+      );
+      return urls;
+    } catch {
+      await redisSet(redisKey, JSON.stringify([]), TTL_FALLBACK_SECONDS).catch(() => {});
+      return [];
+    }
+  })().finally(() => {
+    fotoPhotosInflight.delete(folder);
+  });
 
-  try {
-    const result = await cloudinary.search
-      .expression(`folder:${folder}`)
-      .sort_by('public_id', 'asc')
-      .max_results(50)
-      .execute();
-    const urls = result.resources.map((r: any) =>
-      cloudinary.url(r.public_id, { width: 1200, crop: 'limit', quality: 'auto', fetch_format: 'auto' })
-    );
-    await redisSet(
-      redisKey,
-      JSON.stringify(urls),
-      urls.length > 0 ? TTL_PHOTOS_SECONDS : TTL_FALLBACK_SECONDS,
-    );
-    return urls;
-  } catch {
-    await redisSet(redisKey, JSON.stringify([]), TTL_FALLBACK_SECONDS).catch(() => {});
-    return [];
-  }
+  fotoPhotosInflight.set(folder, promise);
+  return promise;
 }
 
 export default async function FotoPage({ params }: Props) {
