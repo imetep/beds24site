@@ -1048,6 +1048,12 @@ body {
   padding: 3px var(--space-sm);
   border-radius: var(--radius-pill);
 }
+/* Posizionamento top-left per badge-overlay sopra foto (es. RoomCard floor) */
+.badge-overlay--corner-tl {
+  top: var(--space-md);
+  left: var(--space-md);
+  pointer-events: none;
+}
 
 .badge-configurabile {
   display: inline-flex;
