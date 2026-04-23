@@ -19,10 +19,10 @@ export default function PropertyMap({ latitude, longitude, name, locale = 'it' }
 
   return (
     <div className="mb-5">
-      <h2 className="fs-4 fw-bold mb-3" style={{ color: '#222' }}>
+      <h2 className="room-map__title">
         📍 {label}
       </h2>
-      <div className="overflow-hidden border shadow-sm" style={{ borderRadius: 16 }}>
+      <div className="room-map__frame">
         <iframe
           src={mapUrl}
           width="100%"
