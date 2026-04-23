@@ -98,6 +98,7 @@
   /* Container max-width scale — sostituisce maxWidth hardcoded (1100, 680, 1024 sparsi) */
   --container-sm: 680px;           /* Form, single-column reading (legali, wizard step) */
   --container-md: 1024px;          /* Layout standard desktop */
+  --container-page: 1100px;        /* Scheda abitazione, sticky bar scheda */
   --container-lg: 1200px;          /* Hero, gallerie, pagine marketing wide */
 
   /* Z-index scale — evita numeri magici sparsi */
@@ -2123,6 +2124,402 @@ body {
   font-size: var(--text-base);
   padding: var(--space-md) 0 80px;
   cursor: pointer;
+}
+
+/* ==========================================================================
+   Scheda abitazione — parte statica (Session 7)
+   File: page.tsx, RoomCard.tsx, PropertyMap.tsx, ThingsToKnow.tsx,
+   StickyBookingBar.tsx
+   ========================================================================== */
+
+/* ── Page shell scheda abitazione ── */
+.room-page {
+  max-width: var(--container-page);
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-base) 120px;  /* 120px bottom = safe-area sticky CTA */
+}
+.room-page__meta {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-md);
+}
+.room-page__description {
+  color: var(--color-text-subtle);
+  line-height: var(--line-height-relaxed);
+  white-space: pre-line;
+}
+.room-feature-card__num {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+/* Row servizio (grid .services-grid → flex icon+label) */
+.room-services__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 4px 0;
+  font-size: var(--text-base);
+}
+.room-services__icon {
+  color: var(--color-primary);
+  flex-shrink: 0;
+  font-size: var(--text-lg);
+}
+
+/* ── PropertyMap ── */
+.room-map__title {
+  font-size: 1.5rem;  /* = fs-4 Bootstrap */
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--space-md);
+}
+.room-map__frame {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-lg);
+}
+
+/* ── ThingsToKnow (accordion scheda) ── */
+.things-to-know {
+  overflow: hidden;
+  margin-bottom: var(--space-base);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+}
+.things-to-know__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-weight: 700;
+  padding: var(--space-md) var(--space-base);
+  border: none;
+  color: var(--color-on-dark);
+  background: var(--color-primary);
+  font-size: var(--text-lg);
+  cursor: pointer;
+}
+.things-to-know__body {
+  padding: var(--space-md);
+  border-top: 1px solid var(--color-border);
+}
+/* Tutti i <p> dentro il body accordion hanno line-height relaxed */
+.things-to-know__body p {
+  line-height: 1.6;
+}
+
+/* ── StickyBookingBar (scheda residenza) ── */
+.sticky-booking-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-bg);
+  border-top: 1px solid var(--color-border);
+  box-shadow: var(--shadow-lg);
+  z-index: 200;
+  transform: translateY(100%);
+  transition: transform 0.25s ease;
+  pointer-events: none;
+}
+.sticky-booking-bar.is-visible {
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.sticky-booking-bar__inner {
+  max-width: var(--container-page);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+}
+.sticky-booking-bar__info {
+  flex: 1;
+  min-width: 0;
+}
+.sticky-booking-bar__name {
+  font-weight: 700;
+  font-size: var(--text-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sticky-booking-bar__price {
+  font-weight: 700;
+  color: var(--color-primary);
+  font-size: var(--text-md);
+}
+.sticky-booking-bar__price-suffix {
+  margin-left: 4px;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   BedConfigDisplay + CardPhotoGallery (Session 8)
+   File: BedConfigDisplay.tsx, CardPhotoGallery.tsx
+   ========================================================================== */
+
+/* ── BedConfigDisplay: estensioni di .card-room-bed (già in libreria) ── */
+.bed-card__badge-top {
+  position: absolute;
+  top: -1px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  background: var(--color-cta);
+  color: #4a2f00;  /* dark-brown on orange — no token equivalent */
+  padding: 2px var(--space-sm);
+  border-radius: 0 0 6px 6px;
+  letter-spacing: 0.03em;
+}
+.bed-card__badge-top--soft {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-text);
+  font-weight: 500;
+  border: 0.5px solid #fcd87a;  /* warning border variant — no token equivalent */
+  border-top: none;
+}
+.bed-card__room-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.bed-card__bed-label {
+  color: var(--color-text);
+  font-size: var(--text-xs);
+  line-height: 1.3;
+}
+
+/* Sommier/impilabile: pill primary (blu) + OR + pill secondary (grigio) */
+.bed-option-pills {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  margin-top: var(--space-xs);
+}
+.bed-option-pill {
+  font-weight: 500;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary-soft);
+  border: 0.5px solid var(--color-primary);
+  padding: 2px var(--space-sm);
+  font-size: 10px;
+  color: var(--color-primary);
+}
+.bed-option-pill--secondary {
+  font-weight: 400;
+  background: #f5f5f5;  /* grigio chiaro alternativo a --color-bg-muted */
+  border-color: var(--color-border);
+  color: var(--color-text-subtle);
+}
+.bed-option-separator {
+  padding-left: 4px;
+  font-size: 10px;
+  color: #aaa;  /* grigio più chiaro di --color-text-muted per "OR" subtle */
+}
+
+/* Scroll orizzontale mobile / grid desktop */
+.bed-config__scroll {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: var(--space-sm);
+  padding-bottom: 4px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.bed-config__scroll-hint-text {
+  font-size: 11px;
+  color: var(--color-primary);
+}
+
+/* Nota "configurabile al portale" in fondo alla sezione */
+.bed-config__note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  background: var(--color-primary-soft);
+  border: 0.5px solid #b5d4f4;  /* variante chiara di blue-border — no token */
+}
+.bed-config__note-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.bed-config__note-text {
+  font-size: var(--text-xs);
+  color: #0c447c;  /* blu scuro leggibile su primary-soft — no token */
+  line-height: 1.6;
+}
+
+/* ── CardPhotoGallery ── */
+.card-gallery {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  height: 220px;
+  background: #f0f0f0;  /* grigio neutro placeholder — diverso da --color-bg-muted */
+  text-decoration: none;
+}
+.card-gallery--clickable {
+  cursor: pointer;
+}
+.card-gallery__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+.card-gallery:hover .card-gallery__img {
+  transform: scale(1.04);
+}
+.card-gallery__no-photo {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bbb;
+  font-size: var(--text-sm);
+}
+
+/* Lightbox fullscreen (gallery modale con swipe/keys) */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.97);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.lightbox__top-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-base) var(--space-lg);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent);
+  z-index: 2;
+}
+.lightbox__title {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: var(--text-md);
+  font-weight: 600;
+}
+.lightbox__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-base);
+}
+.lightbox__counter {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: var(--text-base);
+}
+.lightbox__close-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-on-dark);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-lg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lightbox__loading {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: var(--text-md);
+}
+.lightbox__empty {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: var(--text-md);
+}
+.lightbox__stage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: env(safe-area-inset-top, 80px) 80px env(safe-area-inset-bottom, 80px);
+}
+.lightbox__img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+}
+.lightbox__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-on-dark);
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-pill);
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+}
+.lightbox__arrow--left  { left: var(--space-base); }
+.lightbox__arrow--right { right: var(--space-base); }
+.lightbox__thumbs {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--space-md) var(--space-base);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  justify-content: center;
+}
+.lightbox__thumb-btn {
+  flex-shrink: 0;
+  width: 48px;
+  height: 36px;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.5;
+  background: none;
+}
+.lightbox__thumb-btn.is-active {
+  border-color: var(--color-cta);
+  opacity: 1;
+}
+.lightbox__thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 /* ==========================================================================

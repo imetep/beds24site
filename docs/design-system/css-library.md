@@ -462,6 +462,96 @@ Pattern specifici dello step 2 del wizard `/prenota`. Copre la colonna form sini
 
 **Errore**: usa `.banner .banner--error` (già in libreria §3.3).
 
+### 3.12 Scheda abitazione — parte statica (Sessione 7)
+
+Pattern della pagina `/[locale]/residenze/[slug]` + card list + mappa + accordion "Cose da sapere" + sticky CTA.
+
+**Page shell**
+
+| Classe | Ruolo |
+|---|---|
+| `.room-page` | Main container scheda: `max-width --container-page` (1100), padding responsive con safe-area 120px bottom per sticky CTA |
+| `.room-page__meta` | Sottotitolo distance + floor (text-xs muted) |
+| `.room-page__description` | Testo descrizione lunga (text-subtle, line-height relaxed, white-space pre-line) |
+| `.room-feature-card__num` | Numero grande dentro card feature (text-lg bold primary) |
+| `.room-services__item` | Row servizio (icon + label, text-base) |
+| `.room-services__icon` | Icona servizio (text-lg primary) |
+
+**PropertyMap**
+
+| Classe | Ruolo |
+|---|---|
+| `.room-map__title` | H2 mappa con emoji |
+| `.room-map__frame` | Wrapper iframe con bordo + shadow + radius-lg |
+
+**ThingsToKnow (accordion)**
+
+| Classe | Ruolo |
+|---|---|
+| `.things-to-know` | Card accordion (radius-lg, border, overflow hidden) |
+| `.things-to-know__header` | Button header blu pieno (text-lg, bianco su `--color-primary`) |
+| `.things-to-know__body` | Container corpo espanso |
+| `.things-to-know__body p` | line-height 1.6 su tutti i paragrafi interni (selettore contestuale) |
+
+**StickyBookingBar**
+
+| Classe | Ruolo |
+|---|---|
+| `.sticky-booking-bar` | Bar fissa bottom (z 200, transform translateY(100%) di default, transition) |
+| `.sticky-booking-bar.is-visible` | Stato visibile: transform 0 + pointer-events auto |
+| `.sticky-booking-bar__inner` | Container max-width-page, flex tra info e CTA |
+| `.sticky-booking-bar__info` | Colonna sinistra (flex-1, min-w-0 per truncate) |
+| `.sticky-booking-bar__name` | Nome residenza (text-sm fw 700 truncate) |
+| `.sticky-booking-bar__price` | Prezzo totale (text-md fw 700 primary) |
+| `.sticky-booking-bar__price-suffix` | Suffisso "totale" (text-xs muted) |
+
+### 3.13 BedConfigDisplay + CardPhotoGallery (Sessione 8)
+
+Estensioni dei pattern card residenza (letti) e gallery foto (cover + lightbox).
+
+**BedConfigDisplay** — riusa `.card-room-bed` (§3.2) e `.badge-warning-chip` (§3.4) già in libreria. Classi aggiuntive:
+
+| Classe | Ruolo |
+|---|---|
+| `.bed-card__badge-top` | Badge "Configurabile" pieno arancio (top-right della card) |
+| `.bed-card__badge-top--soft` | Variante soft (bg `--color-accent-soft`) |
+| `.bed-card__room-label` | Label uppercase della camera (es. "CAMERA 1") |
+| `.bed-card__bed-label` | Testo descrittivo del letto |
+| `.bed-option-pills` | Container flex-column delle due opzioni sommier/impilabile |
+| `.bed-option-pill` | Pill primary (blu — opzione corrente) |
+| `.bed-option-pill--secondary` | Pill grigio (opzione alternativa) |
+| `.bed-option-separator` | "OR" / "oppure" tra le due opzioni |
+| `.bed-config__scroll` | Flex horizontal scroll mobile |
+| `.bed-config__scroll-hint-text` | Testo hint "scrolla" mobile |
+| `.bed-config__note` | Box info "configurabile al portale" (fondo sezione) |
+| `.bed-config__note-icon` / `.bed-config__note-text` | Elementi interni box |
+
+**CardPhotoGallery** (cover clickable + lightbox fullscreen)
+
+| Classe | Ruolo |
+|---|---|
+| `.card-gallery` | Wrapper cover 220px bg grigio (Link o div) |
+| `.card-gallery--clickable` | Modifier cursor pointer (quando apre lightbox, non Link) |
+| `.card-gallery__img` | Img cover object-fit cover con hover scale 1.04 |
+| `.card-gallery__no-photo` | Placeholder "Foto in arrivo" centrato |
+| `.lightbox` | Overlay fullscreen nero semitrasparente, flex column |
+| `.lightbox__top-bar` | Top bar gradient con titolo + counter + close |
+| `.lightbox__title` | Nome residenza in top bar |
+| `.lightbox__actions` | Container counter+close (flex gap) |
+| `.lightbox__counter` | Contatore "3 / 12" |
+| `.lightbox__close-btn` | Btn tondo ✕ semitrasparente |
+| `.lightbox__loading` / `.lightbox__empty` | Stati testuali durante caricamento / vuoto |
+| `.lightbox__stage` | Area centrale img (padding safe-area) |
+| `.lightbox__img` | Main image con max-w/h + radius + shadow |
+| `.lightbox__arrow` | Btn freccia base (tondo 48 con backdrop-blur) |
+| `.lightbox__arrow--left` / `.lightbox__arrow--right` | Posizionamento left/right |
+| `.lightbox__thumbs` | Container thumbnails bottom gradient |
+| `.lightbox__thumb-btn` | Singolo thumbnail button (48×36) |
+| `.lightbox__thumb-btn.is-active` | Stato selezionato (border arancio `--color-cta` + opacity 1) |
+| `.lightbox__thumb-img` | Img dentro thumb |
+
+**Token aggiunti**: `--container-page: 1100px` (nuovo, usato da `.room-page` e `.sticky-booking-bar__inner`).
+
 ---
 
 ## 4. Come decidere se creare una nuova classe
@@ -538,6 +628,18 @@ Prima del commit:
 ---
 
 ## 9. Changelog
+
+### 2026-04-23 — Sessioni 7+8 — Scheda abitazione statica (v1.4)
+- Aggiunti §3.12 "Scheda abitazione statica" e §3.13 "BedConfigDisplay +
+  CardPhotoGallery" con ~50 classi BEM nuove:
+  page shell (`.room-page__*`, `.room-feature-card__num`, `.room-services__*`),
+  map (`.room-map__*`), accordion (`.things-to-know__*`), sticky bar
+  (`.sticky-booking-bar[.is-visible] + __*`), bed-card extras
+  (`.bed-card__badge-top`, `.bed-option-pill(s)`, `.bed-config__*`),
+  gallery (`.card-gallery`, `.lightbox__*`).
+- Riusi: `.card-room-bed` (§3.2), `.badge-warning-chip` (§3.4), `.badge-overlay`
+  (§3.4), `.services-grid` (§3.8 pre-esistente).
+- Token nuovo: `--container-page: 1100px` per max-width scheda residenza.
 
 ### 2026-04-23 — Sessione 5 — WizardStep2.tsx (v1.3)
 - Aggiunto §3.11 "WizardStep2 — pagamento + dati ospite" con ~20 classi BEM:
