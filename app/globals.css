@@ -2297,6 +2297,10 @@ body {
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
+/* margin-top quando sopra c'è il badge top (hasSommier | hasConfigurable | hasDivano) */
+.bed-card__room-label--pushed {
+  margin-top: var(--space-sm);
+}
 .bed-card__bed-label {
   color: var(--color-text);
   font-size: var(--text-xs);
