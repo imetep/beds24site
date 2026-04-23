@@ -180,14 +180,28 @@ Checklist rigida da completare **prima** del push finale di ogni sessione:
 
 ## 6. Decisioni aperte (non bloccanti per iniziare, da risolvere in corsa)
 
-### D.X — Unificare il blu
-Oggi: `--color-primary = #1E73BE` (sito) ≠ `#006cb7` (logo). Sono percepibilmente diversi.
-Tre opzioni (come nello spec logo):
-- **A** Allineare sito al logo (`--color-primary: #006cb7`): impatta tutto il sito, ma allinea al brand
+### D.X — Unificare il blu ⚠️ risolta parzialmente (2026-04-23)
+
+**Decisione: opzione A** — allineato il sito al logo (`--color-primary: #006CB7`).
+
+Tre opzioni erano state considerate:
+- **A** ✅ Allineare sito al logo (`--color-primary: #006cb7`): impatta tutto il sito, ma allinea al brand
 - **B** Allineare logo al sito: toccare `public/logo.svg`, ma si disallinea dal PDF/stampati
 - **C** 2 token distinti: `--color-primary` (sito) + `--color-brand-blue` (logo)
 
-**Da decidere prima della sessione 7** (scheda abitazione usa `--color-primary` intensivamente).
+**Eseguito** in 2 commit:
+- `92e4500` — `app/globals.css`: 5 punti (token `--color-primary`, `--bs-primary`, `--bs-primary-rgb`, `--focus-ring`, e l'rgba `0 0 0 3px rgba(30,115,190,0.12)` su `.step1-room-card.is-selected`).
+- `3301921` — 10 file sorgente: replace letterale `#1E73BE` → `#006CB7` (20 occorrenze) in `BookingPanel`, `BedConfigDisplay`, `AvailabilityCalendar`, `FotoGalleryClient`, `ThingsToKnow`, `AdminCheckin`, `ContattiClient`, `DoveSiamoClient`, `SelfCheckinPage`, `SuccessContent`.
+
+**⚠️ Parziale — residuo non risolto**:
+
+In `components/contatti/ContattiClient.tsx:210` sopravvive un blu secondary non allineato al nuovo token:
+```jsx
+background: 'linear-gradient(135deg, #006CB7 0%, #1557a0 100%)'
+```
+Il primo stop è stato aggiornato al nuovo blu logo, ma il **second stop `#1557a0`** (blu più scuro, ex-derivato di `#1E73BE`) è rimasto intatto perché non era `#1E73BE` letterale e il replace sed non lo ha catturato. Il gradient ora va da blu-logo a un blu-più-scuro-non-canonico — visivamente coerente ma non allineato a un token del design system.
+
+**Da decidere in futuro**: mantenere `#1557a0` come variante scura ad-hoc, oppure introdurre un token `--color-primary-dark` derivato da `#006CB7` (circa `#004a80`) e usarlo come second stop. Impatta solo questo gradient in ContattiClient — non pressante.
 
 ### D.Y — Separazione semantica arancione
 Oggi: `--color-cta = --color-warning = --color-brand-accent = #FCAF1A`.
