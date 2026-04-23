@@ -448,7 +448,7 @@ export default function DoveSiamoClient({
   const [activeTab, setActiveTab] = useState<Tab>('car');
 
   return (
-    <div className="container pb-5" style={{ maxWidth: 900 }}>
+    <div className="page-container pb-5">
 
       {/* Hero */}
       <section className="text-center py-5">
