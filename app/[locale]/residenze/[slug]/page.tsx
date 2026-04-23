@@ -222,7 +222,7 @@ export default async function RoomPage({ params }: Props) {
   const featureCodes = PROPERTY_FEATURES[property.propertyId] ?? [];
 
   return (
-    <main className="container pb-5" style={{ maxWidth: 1100, paddingTop: 20, paddingBottom: 120 }}>
+    <main className="room-page">
 
       {/* Breadcrumb — UX 3.7 */}
       <nav aria-label="breadcrumb" className="mb-3">
@@ -238,10 +238,10 @@ export default async function RoomPage({ params }: Props) {
       </nav>
 
       {/* Titolo */}
-      <h1 className="fw-bold mb-1" style={{ fontSize: 26, color: '#222' }}>
+      <h1 className="section-title-main mb-1">
         {room.name}
       </h1>
-      <div className="small text-muted mb-3">
+      <div className="room-page__meta">
         {property.distanceLabel} · {floorLabel}
       </div>
 
@@ -264,7 +264,7 @@ export default async function RoomPage({ params }: Props) {
               <div className="card-body text-center p-2">
                 <i className={`bi ${stat.icon} fs-3 text-primary d-block mb-1`}></i>
                 {stat.num !== null && (
-                  <div className="fw-bold text-primary" style={{ fontSize: 20 }}>{stat.num}</div>
+                  <div className="room-feature-card__num">{stat.num}</div>
                 )}
                 <div className="small text-muted">{stat.label}</div>
               </div>
@@ -277,7 +277,7 @@ export default async function RoomPage({ params }: Props) {
       {description && (
         <div className="mb-4">
           <h2 className="fs-4 fw-bold mb-3">{t.description}</h2>
-          <p className="text-secondary" style={{ lineHeight: 1.7, whiteSpace: 'pre-line' }}>
+          <p className="room-page__description">
             {description}
           </p>
         </div>
@@ -294,8 +294,8 @@ export default async function RoomPage({ params }: Props) {
             const feature = FEATURE_LABELS[code];
             if (!feature) return null;
             return (
-              <div key={code} className="d-flex align-items-center gap-2 py-1" style={{ fontSize: 14 }}>
-                <i className={`bi ${feature.icon} text-primary flex-shrink-0`} style={{ fontSize: 18 }}></i>
+              <div key={code} className="room-services__item">
+                <i className={`bi ${feature.icon} room-services__icon`}></i>
                 <span className="lh-sm">{feature[locale as keyof typeof feature] ?? feature.it}</span>
               </div>
             );
