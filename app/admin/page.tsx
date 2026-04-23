@@ -46,8 +46,19 @@ function LoginForm({ onLogin }: { onLogin: () => void }) {
   );
 }
 
+type Sezione = {
+  icon:    string;
+  title:   string;
+  desc:    string;
+  color:   string;
+  href?:   string;
+  action?: () => Promise<void> | void;
+};
+
 export default function AdminPage() {
   const [authed, setAuthed] = useState<boolean | null>(null);
+  const [cacheBusy, setCacheBusy] = useState(false);
+  const [cacheMsg,  setCacheMsg]  = useState<{ kind: 'ok' | 'err'; text: string } | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -61,6 +72,21 @@ export default function AdminPage() {
     setAuthed(false);
   }
 
+  async function invalidateCloudinary() {
+    if (cacheBusy) return;
+    setCacheBusy(true); setCacheMsg(null);
+    try {
+      const res  = await fetch('/api/cloudinary/invalidate', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error ?? 'Errore');
+      setCacheMsg({ kind: 'ok', text: `Cache svuotata (${data.redisKeysDeleted}/${data.redisKeysScanned} chiavi Redis). Le nuove foto appariranno alla prossima visita.` });
+    } catch (err) {
+      setCacheMsg({ kind: 'err', text: `Errore: ${(err as Error).message}` });
+    } finally {
+      setCacheBusy(false);
+    }
+  }
+
   if (authed === null) {
     return <div className="text-center text-muted py-5">Caricamento…</div>;
   }
@@ -68,7 +94,7 @@ export default function AdminPage() {
     return <LoginForm onLogin={() => setAuthed(true)} />;
   }
 
-  const sezioni = [
+  const sezioni: Sezione[] = [
     {
       icon: 'bi-check-circle-fill',
       title: 'Check-in online',
@@ -97,6 +123,13 @@ export default function AdminPage() {
       href: '/admin/buchi',
       color: '#9333ea',
     },
+    {
+      icon: 'bi-arrow-clockwise',
+      title: cacheBusy ? 'Aggiornamento in corso…' : 'Aggiorna foto sito',
+      desc: 'Dopo aver caricato nuove foto su Cloudinary, clicca qui per farle apparire sul sito. Svuota le cache (Redis + Next.js).',
+      action: invalidateCloudinary,
+      color: '#ea580c',
+    },
   ];
 
   return (
@@ -115,8 +148,9 @@ export default function AdminPage() {
       <div className="d-flex flex-column gap-3">
         {sezioni.map(s => (
           <button
-            key={s.href}
-            onClick={() => router.push(s.href)}
+            key={s.href ?? s.title}
+            onClick={() => s.action ? s.action() : router.push(s.href!)}
+            disabled={s.action ? cacheBusy : false}
             className="card text-start border-0 shadow-sm p-3"
           >
             <div className="d-flex align-items-start gap-3">
@@ -131,6 +165,16 @@ export default function AdminPage() {
           </button>
         ))}
       </div>
+
+      {cacheMsg && (
+        <div
+          className={`alert ${cacheMsg.kind === 'ok' ? 'alert-success' : 'alert-danger'} mt-3 mb-0`}
+          role="alert"
+        >
+          <i className={`bi ${cacheMsg.kind === 'ok' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'} me-2`}></i>
+          {cacheMsg.text}
+        </div>
+      )}
     </div>
   );
 }
