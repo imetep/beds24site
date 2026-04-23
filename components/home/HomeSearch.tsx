@@ -448,7 +448,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
         </div>
       </section>
 
-      <div style={{ maxWidth: 1100, margin: '0 auto', width: '100%' }}>
+      <div className="page-container">
 
       {/* ── Barra ricerca ─────────────────────────────────────────────────── */}
       <div style={{ maxWidth: isDesk ? 900 : 600, margin: '0 auto', padding: '1.5rem 16px 0', boxSizing: 'border-box', position: 'relative' }}>
