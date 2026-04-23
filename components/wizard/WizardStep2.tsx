@@ -503,74 +503,68 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="min-vh-100" style={{ fontFamily: 'sans-serif' }}>
-      <h2 className="fw-bold text-dark mb-3" style={{ fontSize: 22 }}>{t.title}</h2>
+    <div className="wizard-step2">
+      <h2 className="section-title-main">{t.title}</h2>
 
-      <div className="d-flex align-items-start" style={{ gap: 32 }}>
+      <div className="wizard-step2__layout">
 
         {/* ── Colonna sinistra: form ── */}
-        <div className="flex-fill min-w-0" style={{ maxWidth: 'var(--container-sm)' }}>
+        <div className="wizard-step2__main">
 
           {/* Mobile: accordion riepilogo */}
-          <div
-            className="wizard-summary-mobile border mb-4 overflow-hidden"
-            style={{ display: 'none', borderRadius: 14 }}
-          >
+          <div className="wizard-step2__summary-accordion">
             <button
               onClick={() => setSummaryOpen(o => !o)}
-              className="w-100 d-flex justify-content-between align-items-center px-3 py-3 fw-semibold text-dark border-0"
-              style={{ background: '#f9fafb', fontSize: 14, cursor: 'pointer' }}
+              className="wizard-step2__summary-accordion-btn"
             >
               <span>{t.summaryTitle} — {fmt(totalDisplay)}</span>
-              <span style={{ fontSize: 18, transition: 'transform 0.2s', transform: summaryOpen ? 'rotate(180deg)' : 'none' }}>›</span>
+              <span className={`wizard-step2__summary-accordion-chevron${summaryOpen ? ' is-open' : ''}`}>›</span>
             </button>
             {summaryOpen && (
-              <div style={{ padding: '0 16px 16px' }}>
+              <div className="wizard-step2__summary-accordion-body">
                 <SidebarContent />
               </div>
             )}
           </div>
 
           {/* Sezione 1: Pagamento */}
-          <div style={sectionCard}>
-            <div className="d-flex align-items-center gap-2 mb-3">
-              <div
-                className="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                style={{ width: 28, height: 28, background: 'var(--color-primary)' }}
-              >
-                <span className="text-white fw-bolder" style={{ fontSize: 13 }}>1</span>
-              </div>
-              <p style={{ ...sectionTitle, margin: 0 }}>{t.sec1title.replace('1. ', '')}</p>
+          <div className="step2-section-card">
+            <div className="step2-section-header">
+              <div className="step2-section-number">1</div>
+              <p className="step2-section-title">{t.sec1title.replace('1. ', '')}</p>
             </div>
 
-            <label style={radioRow(paymentMethod === 'stripe')} onClick={() => setPaymentMethod('stripe')}>
-              <div style={radioOuter(paymentMethod === 'stripe')}>
-                {paymentMethod === 'stripe' && <div style={radioInner} />}
+            <label
+              className={`step2-radio-row${paymentMethod === 'stripe' ? ' is-selected' : ''}`}
+              onClick={() => setPaymentMethod('stripe')}
+            >
+              <div className="step2-radio-dot">
+                {paymentMethod === 'stripe' && <div className="step2-radio-dot-inner" />}
               </div>
               <div>
-                <p className="m-0 fw-semibold text-dark" style={{ fontSize: 15 }}>
+                <p className="step2-radio-label">
                   {stripeRadioLabel}
                   {stripeRadioAmount !== null && ` · ${fmt(stripeRadioAmount)}`}
                 </p>
                 {stripeRadioNote && (
-                  <p className="mb-0" style={{ marginTop: 2, fontSize: 13, color: '#888' }}>{stripeRadioNote}</p>
+                  <p className="step2-radio-note">{stripeRadioNote}</p>
                 )}
               </div>
             </label>
 
-            <label style={radioRow(paymentMethod === 'paypal')} onClick={() => setPaymentMethod('paypal')}>
-              <div style={radioOuter(paymentMethod === 'paypal')}>
-                {paymentMethod === 'paypal' && <div style={radioInner} />}
+            <label
+              className={`step2-radio-row${paymentMethod === 'paypal' ? ' is-selected' : ''}`}
+              onClick={() => setPaymentMethod('paypal')}
+            >
+              <div className="step2-radio-dot">
+                {paymentMethod === 'paypal' && <div className="step2-radio-dot-inner" />}
               </div>
               <div>
                 <div className="d-flex align-items-center gap-2">
-                  <p className="m-0 fw-semibold text-dark" style={{ fontSize: 15 }}>{t.payInstall}</p>
-                  <span
-                    className="fw-bold"
-                    style={{ fontSize: 12, color: '#003087', background: '#e8f0fb', padding: '2px 8px', borderRadius: 4 }}
-                  >PayPal</span>
+                  <p className="step2-radio-label">{t.payInstall}</p>
+                  <span className="step2-paypal-chip">PayPal</span>
                 </div>
-                <p className="mb-0" style={{ marginTop: 2, fontSize: 13, color: '#888' }}>
+                <p className="step2-radio-note">
                   {isFlexOffer
                     ? (t as any).paypalFlexVaultNote ?? t.paypalFlexNote
                     : (PAY_INSTALL_NOTE[loc]?.(installment) ?? '')}
@@ -595,45 +589,37 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
 
           {/* Sezione 2: Dati ospite */}
-          <div style={sectionCard}>
-            <div className="d-flex align-items-center gap-2 mb-3">
-              <div
-                className="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                style={{ width: 28, height: 28, background: 'var(--color-primary)' }}
-              >
-                <span className="text-white fw-bolder" style={{ fontSize: 13 }}>2</span>
-              </div>
-              <p style={{ ...sectionTitle, margin: 0 }}>{t.sec3title.replace('2. ', '')}</p>
+          <div className="step2-section-card">
+            <div className="step2-section-header">
+              <div className="step2-section-number">2</div>
+              <p className="step2-section-title">{t.sec3title.replace('2. ', '')}</p>
             </div>
 
-            <div className="d-grid mb-2" style={{ gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            <div className="step2-form-grid-2">
               <Field label={t.firstName} value={guestFirstName} onChange={v => setGuestField('guestFirstName', v)} autoComplete="given-name" />
               <Field label={t.lastName}  value={guestLastName}  onChange={v => setGuestField('guestLastName', v)}  autoComplete="family-name" />
             </div>
-            <Field label={t.email}   value={guestEmail}   onChange={v => setGuestField('guestEmail', v)}   type="email"   autoComplete="email" style={{ marginBottom: 10 }} />
-            <div className="d-grid mb-2" style={{ gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            <Field label={t.email}   value={guestEmail}   onChange={v => setGuestField('guestEmail', v)}   type="email"   autoComplete="email" />
+            <div className="step2-form-grid-2">
               <Field label={t.phone}   value={guestPhone}   onChange={v => setGuestField('guestPhone', v)}   type="tel" autoComplete="tel" />
               <Field label={t.country} value={guestCountry} onChange={v => setGuestField('guestCountry', v)} autoComplete="country-name" />
             </div>
-            <Field label={t.arrivalTime} value={guestArrivalTime} onChange={v => setGuestField('guestArrivalTime', v)} type="time" style={{ marginBottom: 10 }} />
-            <div className="mb-0">
-              <label style={labelStyle}>{t.comments}</label>
+            <Field label={t.arrivalTime} value={guestArrivalTime} onChange={v => setGuestField('guestArrivalTime', v)} type="time" />
+            <div className="ui-field-wrapper">
+              <label className="ui-field-label">{t.comments}</label>
               <textarea
                 value={guestComments}
                 onChange={e => setGuestField('guestComments', e.target.value)}
-                style={{ ...inputStyle, minHeight: 80, resize: 'vertical' }}
+                className="ui-field-input ui-field-textarea"
               />
             </div>
           </div>
 
           {/* Errore */}
           {error && (
-            <div
-              className="border mb-3"
-              style={{ background: '#fff5f5', borderColor: '#f5c6cb', borderRadius: 10, padding: '12px 16px' }}
-            >
-              <p className="m-0 fw-semibold" style={{ color: '#c0392b', fontSize: 14 }}>{t.errTitle}</p>
-              <p className="mb-0" style={{ marginTop: 4, fontSize: 13, color: '#888' }}>{error}</p>
+            <div className="banner banner--error">
+              <p className="banner__title">{t.errTitle}</p>
+              <p className="banner__text">{error}</p>
             </div>
           )}
 
@@ -641,36 +627,24 @@ export default function WizardStep2({ locale = 'it' }: Props) {
           <button
             onClick={handleVediRiepilogo}
             disabled={!formValid}
-            className="w-100 fw-bolder border-0 mb-2"
-            style={{
-              padding: 16, borderRadius: 12,
-              fontSize: 17,
-              background: formValid ? '#FCAF1A' : '#e0e0e0',
-              color: formValid ? '#fff' : '#999',
-              cursor: formValid ? 'pointer' : 'not-allowed',
-              transition: 'background 0.15s',
-            }}
+            className="btn btn--primary step2-cta"
           >
             {isFlexOffer
               ? t.vediRiepilogoFlex
               : `${t.vediRiepilogo} → ${fmt(amountToChargeDisplay || totalDisplay)}`}
           </button>
 
-          <p className="text-center mb-3" style={{ fontSize: 12, color: '#aaa' }}>
+          <p className="step2-terms">
             {t.terms}{' '}
-            <a href={`/${locale}/condizioni`} style={{ color: 'var(--color-primary)' }} target="_blank" rel="noopener noreferrer">{t.termsLink}</a>
+            <a href={`/${locale}/condizioni`} target="_blank" rel="noopener noreferrer">{t.termsLink}</a>
           </p>
-          <button
-            onClick={handleBack}
-            className="btn d-block p-0"
-            style={{ color: 'var(--color-primary)', fontSize: 14, minHeight: 'var(--touch-target)' }}
-          >
+          <button onClick={handleBack} className="step2-back-link">
             {t.back}
           </button>
         </div>
 
         {/* ── Sidebar destra (desktop) — usa BookingSidebar con slot voucher+extras ── */}
-        <div className="wizard-summary-sidebar flex-shrink-0">
+        <div className="wizard-step2__sidebar">
           <BookingSidebar
             locale={locale}
             step={2}
@@ -755,12 +729,6 @@ export default function WizardStep2({ locale = 'it' }: Props) {
         </div>
       </div>
 
-      <style>{`
-        @media (max-width: 767px) {
-          .wizard-summary-sidebar { display: none !important; }
-          .wizard-summary-mobile { display: block !important; }
-        }
-      `}</style>
     </div>
   );
 }
@@ -783,34 +751,26 @@ function SideRow({ label, value, onEdit, editLabel }: { label: string; value: st
   );
 }
 
-function Field({ label, value, onChange, type = 'text', autoComplete, style: extraStyle }: {
+function Field({ label, value, onChange, type = 'text', autoComplete }: {
   label: string; value: string; onChange: (v: string) => void;
-  type?: string; autoComplete?: string; style?: React.CSSProperties;
+  type?: string; autoComplete?: string;
 }) {
   return (
-    <div style={extraStyle}>
-      <label style={labelStyle}>{label}</label>
+    <div className="ui-field-wrapper">
+      <label className="ui-field-label">{label}</label>
       <input
         type={type}
         value={value}
         onChange={e => onChange(e.target.value)}
         autoComplete={autoComplete}
-        style={inputStyle}
+        className="ui-field-input"
       />
     </div>
   );
 }
 
-// ─── Stili ────────────────────────────────────────────────────────────────────
-const sectionCard: React.CSSProperties = {
-  border: '1px solid #e5e7eb', borderRadius: 'var(--radius-lg)',
-  padding: 'var(--space-base)', marginBottom: 'var(--space-base)',
-  background: '#fff',
-  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-};
-const sectionTitle: React.CSSProperties = {
-  fontSize: 17, fontWeight: 700, color: '#111', margin: '0 0 16px',
-};
+// ─── Stili legacy (usati solo da SidebarContent + SideRow, out of scope Session 5) ─
+// Saranno migrati a classi BEM nella "sessione mobile dedicata".
 const divider: React.CSSProperties = {
   height: 1, background: '#e5e7eb', margin: '14px 0',
 };
@@ -818,28 +778,4 @@ const sideLabel: React.CSSProperties = {
   fontSize: 12, fontWeight: 700, color: '#374151',
   textTransform: 'uppercase', letterSpacing: '0.06em',
   margin: '0 0 8px',
-};
-const labelStyle: React.CSSProperties = {
-  display: 'block', fontSize: 12, fontWeight: 600, color: '#6b7280', marginBottom: 4,
-};
-const inputStyle: React.CSSProperties = {
-  width: '100%', padding: '9px 12px', fontSize: 14,
-  border: '1.5px solid #e5e7eb', borderRadius: 8,
-  outline: 'none', boxSizing: 'border-box', color: '#111',
-};
-const radioRow = (active: boolean): React.CSSProperties => ({
-  display: 'flex', alignItems: 'flex-start', gap: 14,
-  padding: '14px', marginBottom: 8, cursor: 'pointer',
-  border: `2px solid ${active ? 'var(--color-primary)' : '#e5e7eb'}`,
-  borderRadius: 12, background: active ? '#EEF5FC' : '#fff',
-  transition: 'all 0.15s',
-});
-const radioOuter = (active: boolean): React.CSSProperties => ({
-  width: 20, height: 20, borderRadius: '50%', flexShrink: 0, marginTop: 2,
-  border: `2px solid ${active ? 'var(--color-primary)' : '#ccc'}`,
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-  background: '#fff',
-});
-const radioInner: React.CSSProperties = {
-  width: 10, height: 10, borderRadius: '50%', background: 'var(--color-primary)',
 };
