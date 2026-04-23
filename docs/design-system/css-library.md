@@ -526,29 +526,15 @@ Estensioni dei pattern card residenza (letti) e gallery foto (cover + lightbox).
 | `.bed-config__note` | Box info "configurabile al portale" (fondo sezione) |
 | `.bed-config__note-icon` / `.bed-config__note-text` | Elementi interni box |
 
-**CardPhotoGallery** (cover clickable + lightbox fullscreen)
+**CardPhotoGallery** (cover cliccabile verso la scheda residenza)
 
 | Classe | Ruolo |
 |---|---|
-| `.card-gallery` | Wrapper cover 220px bg grigio (Link o div) |
-| `.card-gallery--clickable` | Modifier cursor pointer (quando apre lightbox, non Link) |
-| `.card-gallery__img` | Img cover object-fit cover con hover scale 1.04 |
+| `.card-gallery` | Wrapper cover 220px bg grigio (Link alla scheda) |
+| `.card-gallery__img` | Img cover object-fit cover con hover scale 1.04 (via selettore `:hover` del parent) |
 | `.card-gallery__no-photo` | Placeholder "Foto in arrivo" centrato |
-| `.lightbox` | Overlay fullscreen nero semitrasparente, flex column |
-| `.lightbox__top-bar` | Top bar gradient con titolo + counter + close |
-| `.lightbox__title` | Nome residenza in top bar |
-| `.lightbox__actions` | Container counter+close (flex gap) |
-| `.lightbox__counter` | Contatore "3 / 12" |
-| `.lightbox__close-btn` | Btn tondo ✕ semitrasparente |
-| `.lightbox__loading` / `.lightbox__empty` | Stati testuali durante caricamento / vuoto |
-| `.lightbox__stage` | Area centrale img (padding safe-area) |
-| `.lightbox__img` | Main image con max-w/h + radius + shadow |
-| `.lightbox__arrow` | Btn freccia base (tondo 48 con backdrop-blur) |
-| `.lightbox__arrow--left` / `.lightbox__arrow--right` | Posizionamento left/right |
-| `.lightbox__thumbs` | Container thumbnails bottom gradient |
-| `.lightbox__thumb-btn` | Singolo thumbnail button (48×36) |
-| `.lightbox__thumb-btn.is-active` | Stato selezionato (border arancio `--color-cta` + opacity 1) |
-| `.lightbox__thumb-img` | Img dentro thumb |
+
+**Nota storica**: `CardPhotoGallery.tsx` aveva originariamente anche una modalità "lightbox fullscreen" attivata quando `linkHref` era omesso, con le relative classi `.lightbox__*`. Era dead code (nessuno la invocava mai) e duplicava il lightbox vero di `PhotoLightbox.tsx` (Sessione 10). Rimossa nel cleanup di Sessione 8 (commit `9677c53` per il TSX, commit cleanup CSS per le classi).
 
 **Token aggiunti**: `--container-page: 1100px` (nuovo, usato da `.room-page` e `.sticky-booking-bar__inner`).
 
@@ -631,12 +617,19 @@ Prima del commit:
 
 ### 2026-04-23 — Sessioni 7+8 — Scheda abitazione statica (v1.4)
 - Aggiunti §3.12 "Scheda abitazione statica" e §3.13 "BedConfigDisplay +
-  CardPhotoGallery" con ~50 classi BEM nuove:
+  CardPhotoGallery" con ~35 classi BEM nuove:
   page shell (`.room-page__*`, `.room-feature-card__num`, `.room-services__*`),
   map (`.room-map__*`), accordion (`.things-to-know__*`), sticky bar
   (`.sticky-booking-bar[.is-visible] + __*`), bed-card extras
-  (`.bed-card__badge-top`, `.bed-option-pill(s)`, `.bed-config__*`),
-  gallery (`.card-gallery`, `.lightbox__*`).
+  (`.bed-card__badge-top`, `.bed-card__room-label[--pushed]`,
+  `.bed-option-pill(s)`, `.bed-config__*`), gallery cover (`.card-gallery`
+  + `.card-gallery__img` + `.card-gallery__no-photo`), modifier utilitario
+  `.badge-overlay--corner-tl`.
+- **Dead code cleanup**: rimosse ~15 classi `.lightbox__*` e
+  `.card-gallery--clickable` inizialmente aggiunte in commit `8278a74` ma
+  rese non necessarie dal rimuovere la modalità lightbox di
+  `CardPhotoGallery.tsx` (era dead code). Il lightbox vero vive in
+  `PhotoLightbox.tsx` (Sessione 10).
 - Riusi: `.card-room-bed` (§3.2), `.badge-warning-chip` (§3.4), `.badge-overlay`
   (§3.4), `.services-grid` (§3.8 pre-esistente).
 - Token nuovo: `--container-page: 1100px` per max-width scheda residenza.
