@@ -95,10 +95,10 @@
   --bp-md: 768px;
   --bp-lg: 1024px;
 
-  /* Container max-width scale — sostituisce maxWidth hardcoded (1100, 680, 1024 sparsi) */
+  /* Container max-width scale — larghezza pagina unificata a 1200px (vedi .page-container) */
   --container-sm: 680px;           /* Form, single-column reading (legali, wizard step) */
   --container-md: 1024px;          /* Layout standard desktop */
-  --container-page: 1100px;        /* Scheda abitazione, sticky bar scheda */
+  --container-page: 1200px;        /* Wrapper pagina unificato (era 1100, ora allineato a --container-lg) */
   --container-lg: 1200px;          /* Hero, gallerie, pagine marketing wide */
 
   /* Z-index scale — evita numeri magici sparsi */
@@ -115,6 +115,14 @@
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+/* ── Wrapper pagina unificato — usa su ogni page wrapper per coerenza larghezza desktop ── */
+.page-container {
+  width: 100%;
+  max-width: var(--container-lg);
+  margin-inline: auto;
+  padding-inline: 16px;
 }
 
 /* Accessibilità — rispetta preferenza utente per ridurre animazioni */
