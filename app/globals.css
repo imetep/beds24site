@@ -1006,6 +1006,14 @@ body {
   align-items: flex-start;
   gap: var(--space-sm);
 }
+/* Layout verticale centrato (errore step 1: titolo + testo + retry stacked) */
+.banner--stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-sm);
+}
 
 /* ── Badge (Caso B audit — 5 classi separate, no base condivisa) ── */
 .badge-selected {
@@ -1796,6 +1804,11 @@ body {
 }
 .filter-modal__section {
   padding: 14px 0 10px;
+}
+/* Banner contestuale dentro una sezione del modale (es. info piscina sotto i
+   pill): spacing verticale rispetto ai pill senza toccare la classe .banner. */
+.filter-modal__section > .banner {
+  margin-top: var(--space-sm);
 }
 .filter-modal__section-title {
   font-weight: 700;

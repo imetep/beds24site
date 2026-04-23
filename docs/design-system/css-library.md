@@ -147,6 +147,7 @@ Tutti i banner/alert hanno triple `bg/border/text` per coerenza cromatica.
 | `.banner--success` | Verde (voucher applicato, successo) |
 | `.banner--error` | Rosa (errore Stripe, errore generico) |
 | `.banner--with-icon` | Modifier layout: flex + gap per icon/emoji |
+| `.banner--stack` | Modifier layout: flex-column centrato (es. errore step 1 con titolo + testo + retry stacked) |
 
 **Esempi:**
 
