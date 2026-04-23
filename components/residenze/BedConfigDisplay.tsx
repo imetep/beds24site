@@ -229,55 +229,23 @@ function RoomCard({ room, locale, ui }: { room: Room; locale: Locale; ui: UIShap
   // La camera contiene divani (sempre opzionali — mostrano il badge anche senza canConfigure)
   const hasDivano = room.beds.some(b => b.variant === 'divano')
 
+  const hasBadge = hasSommier || hasConfigurable || hasDivano
   return (
-    <div
-      className="bed-card bg-white d-flex flex-column gap-2 flex-shrink-0 position-relative"
-      style={{
-        border: hasSommier ? '2px solid #FCAF1A' : '0.5px solid #e5e7eb',
-        borderRadius: 12,
-        padding: '14px 14px 12px',
-        width: 200,
-        height: 220,
-        boxSizing: 'border-box',
-      }}
-    >
+    <div className={`card-room-bed d-flex flex-column gap-2 flex-shrink-0${hasSommier ? ' is-configurable' : ''}`}>
       {/* Badge */}
       {hasSommier && (
-        <div
-          className="position-absolute fw-semibold"
-          style={{
-            top: -1, right: 10,
-            background: '#FCAF1A', color: '#4a2f00',
-            fontSize: 10, padding: '2px 8px',
-            borderRadius: '0 0 6px 6px', letterSpacing: '0.03em',
-          }}
-        >
+        <div className="bed-card__badge-top">
           {ui.configurabile}
         </div>
       )}
       {!hasSommier && (hasConfigurable || hasDivano) && (
-        <div
-          className="position-absolute fw-medium"
-          style={{
-            top: -1, right: 10,
-            background: '#FFF8EC', color: '#B07820',
-            border: '0.5px solid #fcd87a', borderTop: 'none',
-            fontSize: 10, padding: '2px 8px',
-            borderRadius: '0 0 6px 6px',
-          }}
-        >
+        <div className="bed-card__badge-top bed-card__badge-top--soft">
           {ui.configurabile}
         </div>
       )}
 
       {/* Room label */}
-      <div
-        className="fw-semibold text-uppercase"
-        style={{
-          fontSize: 11, color: '#888', letterSpacing: '0.05em',
-          marginTop: hasSommier || hasConfigurable || hasDivano ? 8 : 0,
-        }}
-      >
+      <div className={`bed-card__room-label${hasBadge ? ' bed-card__room-label--pushed' : ''}`}>
         {room.label[locale]}
       </div>
 
@@ -287,31 +255,19 @@ function RoomCard({ room, locale, ui }: { room: Room; locale: Locale; ui: UIShap
           <div key={bed.id} className="d-flex flex-column gap-1">
             <div className="d-flex align-items-center gap-2">
               <BedIcon bed={bed} />
-              <span className="text-dark" style={{ fontSize: 12, lineHeight: 1.3 }}>
+              <span className="bed-card__bed-label">
                 {bedLabel(bed, locale)}
               </span>
             </div>
 
             {/* Sommier: due pill esclusivi */}
             {bed.variant === 'sommier' && bed.configOptions && (
-              <div className="d-flex flex-column align-items-start mt-1" style={{ gap: 3 }}>
-                <span
-                  className="fw-medium rounded-pill"
-                  style={{
-                    background: '#EEF5FC', border: '0.5px solid #006CB7',
-                    padding: '2px 8px', fontSize: 10, color: 'var(--color-primary)',
-                  }}
-                >
+              <div className="bed-option-pills">
+                <span className="bed-option-pill">
                   {shortLabel(bed.configOptions.closed.label[locale])}
                 </span>
-                <span className="ps-1" style={{ fontSize: 10, color: '#aaa' }}>{ui.or}</span>
-                <span
-                  className="rounded-pill"
-                  style={{
-                    background: '#f5f5f5', border: '0.5px solid #e5e7eb',
-                    padding: '2px 8px', fontSize: 10, color: '#555',
-                  }}
-                >
+                <span className="bed-option-separator">{ui.or}</span>
+                <span className="bed-option-pill bed-option-pill--secondary">
                   {shortLabel(bed.configOptions.open.label[locale])}
                 </span>
               </div>
@@ -319,24 +275,12 @@ function RoomCard({ room, locale, ui }: { room: Room; locale: Locale; ui: UIShap
 
             {/* Impilabile: stessa logica pill */}
             {bed.variant === 'impilabile' && bed.configOptions && (
-              <div className="d-flex flex-column align-items-start mt-1" style={{ gap: 3 }}>
-                <span
-                  className="fw-medium rounded-pill"
-                  style={{
-                    background: '#EEF5FC', border: '0.5px solid #006CB7',
-                    padding: '2px 8px', fontSize: 10, color: 'var(--color-primary)',
-                  }}
-                >
+              <div className="bed-option-pills">
+                <span className="bed-option-pill">
                   {shortLabel(bed.configOptions.closed.label[locale])}
                 </span>
-                <span className="ps-1" style={{ fontSize: 10, color: '#aaa' }}>{ui.or}</span>
-                <span
-                  className="rounded-pill"
-                  style={{
-                    background: '#f5f5f5', border: '0.5px solid #e5e7eb',
-                    padding: '2px 8px', fontSize: 10, color: '#555',
-                  }}
-                >
+                <span className="bed-option-separator">{ui.or}</span>
+                <span className="bed-option-pill bed-option-pill--secondary">
                   {shortLabel(bed.configOptions.open.label[locale])}
                 </span>
               </div>
@@ -345,17 +289,11 @@ function RoomCard({ room, locale, ui }: { room: Room; locale: Locale; ui: UIShap
         ))}
       </div>
 
-      {/* Non oscurabile */}
+      {/* Non oscurabile — riuso .badge-warning-chip della libreria */}
       {hasNonOscurabile && (
-        <div
-          className="rounded-pill"
-          style={{
-            fontSize: 10, color: '#B07820', background: '#fde8a0',
-            padding: '2px 8px', width: 'fit-content',
-          }}
-        >
+        <span className="badge-warning-chip">
           {ui.nonOscurabile}
-        </div>
+        </span>
       )}
     </div>
   )
@@ -393,19 +331,12 @@ export default function BedConfigDisplay({ roomId, locale }: Props) {
   return (
     <div className="mb-4">
       {/* Section title — stesso stile degli altri h2 in page.tsx */}
-      <h2 className="fs-4 fw-bold mb-3" style={{ color: '#222' }}>
+      <h2 className="fs-4 fw-bold mb-3 room-map__title">
         {ui.sectionTitle}
       </h2>
 
       {/* Cards — grid uniforme su desktop, scroll orizzontale su mobile */}
-      <div
-        className="bed-config-scroll bed-scroll-container d-flex flex-nowrap align-items-stretch gap-2 pb-1"
-        style={{
-          overflowX: 'auto',
-          WebkitOverflowScrolling: 'touch',
-          scrollbarWidth: 'none',
-        }}
-      >
+      <div className="bed-config-scroll bed-scroll-container bed-config__scroll">
         {config.rooms.map(room => (
           <RoomCard key={room.id} room={room} locale={locale} ui={ui} />
         ))}
@@ -413,22 +344,16 @@ export default function BedConfigDisplay({ roomId, locale }: Props) {
 
       {/* Scroll hint — visibile solo su mobile via CSS */}
       <div className="bed-scroll-hint-mobile">
-        <span style={{ fontSize: 11, color: 'var(--color-primary)' }}>{ui.scroll}</span>
+        <span className="bed-config__scroll-hint-text">{ui.scroll}</span>
       </div>
 
       {/* Nota config portale */}
-      <div
-        className="d-flex align-items-start gap-2 mt-3 px-3 py-2 rounded"
-        style={{
-          background: '#EEF5FC',
-          border: '0.5px solid #b5d4f4',
-        }}
-      >
-        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" className="flex-shrink-0" style={{ marginTop: 1 }} aria-hidden="true">
+      <div className="bed-config__note">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" className="bed-config__note-icon" aria-hidden="true">
           <circle cx="7.5" cy="7.5" r="6.5" stroke="#006CB7" strokeWidth="1" />
           <text x="7.5" y="11.5" textAnchor="middle" fontSize="8" fill="#006CB7" fontWeight="600">i</text>
         </svg>
-        <span style={{ fontSize: 12, color: '#0c447c', lineHeight: 1.6 }}>
+        <span className="bed-config__note-text">
           {ui.configNote}
         </span>
       </div>
