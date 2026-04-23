@@ -116,7 +116,7 @@ export default function StatusCheckin({ locale }: { locale: Locale }) {
 
   // ── Form ricerca ─────────────────────────────────────────────────────────
   if (!data) return (
-    <div className="mx-auto px-3 py-5" style={{ maxWidth: 500 }}>
+    <div className="page-container py-5">
       <div className="text-center mb-4">
         <div className="mb-2" style={{ fontSize: 40 }}>🔍</div>
         <h1 className="fw-bold mb-1" style={{ fontSize: 22, color: '#111' }}>
@@ -152,7 +152,7 @@ export default function StatusCheckin({ locale }: { locale: Locale }) {
   const sc = statusLabels[data.status] ?? statusLabels.PENDING;
 
   return (
-    <div className="mx-auto px-3 pt-4 pb-5" style={{ maxWidth: 600 }}>
+    <div className="page-container pt-4 pb-5">
 
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
