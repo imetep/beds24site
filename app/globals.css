@@ -2,15 +2,15 @@
 @import "bootstrap-icons/font/bootstrap-icons.css";
 
 :root {
-  --bs-primary: #1E73BE;
-  --bs-primary-rgb: 30,115,190;
+  --bs-primary: #006CB7;
+  --bs-primary-rgb: 0,108,183;
   --bs-warning: #FCAF1A;
   --bs-warning-rgb: 252,175,26;
   --background: #ffffff;
   --foreground: #171717;
 
   /* Design tokens — prefisso --color-* per non collidere con --bs-* */
-  --color-primary: #1E73BE;
+  --color-primary: #006CB7;
   --color-primary-soft: #EEF5FC;      /* Blu selezione unificato (deprecato #dbeafe, Caso H audit) */
   --color-warning: #F59E0B;           /* Warning semantico — più giallo, distinto da --color-cta (Caso G audit) */
   --color-cta: #FCAF1A;               /* CTA arancione — separato da warning per semantica */
@@ -107,7 +107,7 @@
   --z-toast: 100;                  /* Notifiche, toast */
 
   /* Focus ring — usato dai primitivi UI */
-  --focus-ring: 0 0 0 3px rgba(30, 115, 190, 0.25);
+  --focus-ring: 0 0 0 3px rgba(0, 108, 183, 0.25);
   --focus-ring-error: 0 0 0 3px rgba(220, 38, 38, 0.25);
 }
 
@@ -1941,7 +1941,7 @@ body {
 }
 .step1-room-card.is-selected {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(30, 115, 190, 0.12);
+  box-shadow: 0 0 0 3px rgba(0, 108, 183, 0.12);
 }
 .step1-room-card__row {
   display: flex;
