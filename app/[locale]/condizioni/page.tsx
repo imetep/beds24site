@@ -219,7 +219,7 @@ export default async function CondizioniPage({ params }: Props) {
   const { h1, subtitle, sections } = getContent(locale);
 
   return (
-    <div className="container py-5" style={{ maxWidth: 800 }}>
+    <div className="page-container py-5">
       <h1 className="fs-1 fw-bold mb-1">{h1}</h1>
       <p className="text-muted mb-4">{subtitle}</p>
       {sections.map(({ title, body }) => (
