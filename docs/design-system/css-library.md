@@ -538,6 +538,135 @@ Estensioni dei pattern card residenza (letti) e gallery foto (cover + lightbox).
 
 **Token aggiunti**: `--container-page: 1100px` (nuovo, usato da `.room-page` e `.sticky-booking-bar__inner`).
 
+### 3.14 PhotoCarousel + PhotoLightbox + AvailabilityCalendar (Sessione 10+11)
+
+Pattern gallery foto (preview desktop + preview touch + lightbox fullscreen) e calendario disponibilità. Tutto il lightbox è costruito sopra `.layout-fullscreen-overlay` (Sessione 1).
+
+**Photo preview (PhotoCarousel + PhotoLightbox)**
+
+| Classe | Ruolo |
+|---|---|
+| `.photo-preview--touch` | Container foto singola touch (aspect 4:3, max-h 60vh, cursor pointer) |
+| `.photo-preview--touch__img` | Img cover absolute inset 0 |
+| `.photo-preview-grid` | Griglia desktop base (radius-lg, height 420, cursor pointer) |
+| `.photo-preview-grid--5` | Modifier: `2fr 1fr 1fr` (PhotoCarousel, hero + 4 tile) |
+| `.photo-preview-grid--2` | Modifier: `2fr 1fr` (PhotoLightbox, hero + 4 tile su 2 colonne) |
+| `.photo-preview-grid__hero` | Cella hero (`grid-row: 1/3`) con hover scale 1.03 sull'img figlio |
+| `.photo-preview-grid__cell` | Cella tile secondaria con hover scale 1.05 sull'img figlio |
+| `.photo-preview-grid__cell-empty` | Placeholder grigio scuro quando `photos[i]` mancante |
+| `.photo-preview-grid__img` | Img cover con transition 0.4s ease |
+| `.photo-count-badge` | Pill overlay scura bottom-right con icon camera + count (mobile) |
+| `.photo-count-badge--prominent` | Modifier desktop: padding maggiorato, posizione più distante dal bordo |
+
+**Navigazione carousel touch (solo PhotoCarousel)**
+
+| Classe | Ruolo |
+|---|---|
+| `.photo-nav-tap-zone` | Area invisibile 60px laterale (`position:absolute, z-index:2`) |
+| `.photo-nav-tap-zone--left` / `--right` | Posizionamento e padding interno |
+| `.photo-nav-mini` | Pill round 36×36 traslucida scura con chevron |
+
+**Dot indicators (PhotoCarousel + PhotoLightbox)**
+
+| Classe | Ruolo |
+|---|---|
+| `.photo-dots` | Container flex center gap 6 |
+| `.photo-dots__dot` | Dot base 8×8 grigio (`#d1d5db`) |
+| `.photo-dots__dot.is-active` | Attivo → width 20 + bg `--color-primary` |
+| `.photo-dots__dot.is-edge` | Dot sentinella ai bordi (width 5) |
+| `.photo-dots--dark` | Modifier: dot bg `rgba(white, 0.5)`; `.is-active` → bg `--color-cta` |
+
+**Lightbox fullscreen (condiviso)**
+
+| Classe | Ruolo |
+|---|---|
+| *(riuso)* `.layout-fullscreen-overlay` | Base (fixed inset 0, z-modal, bg `--color-overlay-gallery`) |
+| `.lightbox--touch-lock` | Modifier: `touch-action: none` (PhotoLightbox mobile swipe) |
+| `.lightbox-photo` | Img fullscreen absolute inset 0 object-contain |
+| `.lightbox-photo--centered` | Variante per wrapper flex center (PhotoLightbox) |
+| `.lightbox-photo-centered-wrap` | Wrapper absolute inset 0 flex center per img `--centered` |
+| `.lightbox-topbar` | Barra superiore absolute con gradient `rgba(0,0,0,0.72) → transparent` |
+| `.lightbox-topbar__title` | Nome residenza (white, fw 600, text-md) |
+| `.lightbox-topbar__actions` | Flex gap tra counter e close |
+| `.lightbox-topbar__counter` | "N / total" (white 70%, text-base) |
+| `.lightbox-close-btn` | Bottone round touch-target, bg translucent + border |
+| `.lightbox-arrow` | Bottone frecce circolare absolute middle (bg translucent + blur) |
+| `.lightbox-arrow--sm` | 44×44, font 24 (PhotoLightbox) |
+| `.lightbox-arrow--lg` | 52×52, font 22 (PhotoCarousel) |
+| `.lightbox-arrow--left` / `--right` | Posizione laterale (offset `--space-sm`) |
+| `.lightbox-arrow--left-lg` / `--right-lg` | Variante offset `--space-base` per `--lg` |
+| `.lightbox-thumbs` | Strip thumbnail bottom con gradient dark-to-transparent |
+| `.lightbox-thumbs--center` | Modifier: `justify-content: center` (≤ 10 foto) |
+| `.lightbox-thumbs--scroll` | Modifier: `justify-content: flex-start` (> 10 foto, scroll x) |
+| `.lightbox-thumb` | Thumb bottone 56×40 radius 5 opacity 0.5 |
+| `.lightbox-thumb.is-active` | Bordo `--color-cta` + opacity 1 |
+| `.lightbox-thumb__img` | Img cover dentro thumb |
+| `.lightbox-dots-bar` | Container bottom per dots touch con gradient |
+
+**AvailabilityCalendar**
+
+Legenda e cards:
+
+| Classe | Ruolo |
+|---|---|
+| `.avail-legend` | Flex gap `--space-lg` |
+| `.avail-legend__item` | Riga icon+label (text-xs) |
+| `.avail-legend__item--muted` | Modifier color `--color-text-muted` |
+| `.avail-legend__free` | Quadratino 24×24 con bordo, "15" dentro (gg libero) |
+| `.avail-legend__busy` | "15" strike-through grigio (gg occupato) |
+| `.avail-date-cards-row` | Flex gap + mb-md |
+| `.avail-date-card` | Button card CI/CO (border + shadow-sm + radius 14 + padding md) |
+| `.avail-date-card.is-active` | Bordo primary + bg `--color-info-bg` |
+| `.avail-date-card__icon-calendar` | SVG color `--color-primary` (usa `stroke="currentColor"`) |
+| `.avail-date-card__icon-chevron` | SVG color `#bbb` |
+| `.avail-date-card__body` | Colonna centrale flex 1 |
+| `.avail-date-card__label` | "CHECK-IN" uppercase letter-spacing |
+| `.avail-date-card__value` | Data (text-base fw 600 truncate) |
+| `.avail-date-card__value.is-placeholder` | Color `#bbb` per il trattino "—" |
+| `.avail-date-clear-btn` | Bottone "✕" align-self center (clear date) |
+| `.avail-hint` | Testo istruzione "seleziona check-in/out" (text-sm muted) |
+
+Calendario:
+
+| Classe | Ruolo |
+|---|---|
+| `.avail-cal` | Frame bianco + border + radius-lg + padding responsive (mobile 16/12; desktop ≥640px 20/28) |
+| `.avail-cal__header` | Flex between row con nav buttons + titoli |
+| `.avail-cal__nav-btn` | Button freccia `‹`/`›` (font 28 fw 300 no-bg) |
+| `.avail-cal__nav-btn.is-disabled` / `:disabled` | Color `#ddd` + cursor default |
+| `.avail-cal__titles-desktop` | Container 2 titoli mese (desktop) |
+| `.avail-cal__month-title` | Titolo "Aprile 2026" (text-md fw 700) |
+| `.avail-cal__month-title--mobile` | Modifier flex-1 + text-center (1 solo titolo mobile) |
+| `.avail-cal__months` | Flex dei mesi (gap 0 mobile, 40 desktop) |
+| `.avail-cal__month` | Singolo mese (flex-1 min-w-0) |
+| `.avail-cal__divider` | Linea verticale 1px `#f0f0f0` tra i 2 mesi desktop |
+| `.avail-cal__weekdays` | Grid 7 col per header L/M/M/G/V/S/D |
+| `.avail-cal__weekday` | Sigla giorno (font 11 fw 600 color `#bbb`) |
+| `.avail-cal__days` | Grid 7 col gap 2 per le celle |
+| `.avail-cal__day-empty` | Cella vuota (solo height 36) |
+| `.avail-cal__day` | Cella base (h 36, radius 6, fw 400) |
+| `.avail-cal__day.is-past` | Opacity 0.4 + color `#ccc` |
+| `.avail-cal__day.is-occupied` | Line-through + color `#ccc` |
+| `.avail-cal__day.is-today` | Fw 700 |
+| `.avail-cal__day.is-clickable` | Cursor pointer |
+| `.avail-cal__day.is-check-in` | Bg primary + bianco + radius `6px 0 0 6px` |
+| `.avail-cal__day.is-check-out` | Bg primary + bianco + radius `0 6px 6px 0` |
+| `.avail-cal__day.is-in-range` | Bg `--color-primary-soft` + radius 0 (**T7 applicato**: era `#EEF5FC` letterale) |
+| `.avail-cal__day.is-hover-range` | Bg `--color-info-bg` (hover preview dates) |
+| `.avail-cal__today-dot` | Pallino 4×4 primary sotto il numero "oggi" |
+
+**Riusi**:
+- `.banner .banner--accent .banner--with-icon` + `.banner__title` / `.banner__text` (min-stay box) — Sessione 1
+- `.wizard-loading` + `.wizard-loading-spinner` (spinner caricamento) — Sessione 1
+- `.section-title-main` (titolo "Disponibilità") — Sessione 1
+- `.layout-fullscreen-overlay` (base lightbox) — Sessione 1
+
+**Emoji sostituite con Bootstrap Icons** (memoria utente):
+- 📷 → `<i className="bi bi-camera-fill" />` (count foto su preview)
+- 🌙 → `<i className="bi bi-moon-stars-fill" />` (min-stay banner)
+
+**Nessun token nuovo**: l'intera sessione ha riusato i token esistenti (`--color-primary-soft`, `--color-overlay-dark`, `--color-cta`, `--color-info-bg`, `--radius-*`, `--space-*`, `--touch-target`, `--text-*`, `--z-modal`). Gli rgba rimasti hardcoded (`rgba(255,255,255,0.13)` su controls traslucidi del lightbox, `rgba(0,0,0,0.72)` sui gradient overlay) sono valori una-tantum contestuali al lightbox e non rientrano nel design system semantico.
+
 ---
 
 ## 4. Come decidere se creare una nuova classe
@@ -614,6 +743,36 @@ Prima del commit:
 ---
 
 ## 9. Changelog
+
+### 2026-04-24 — Sessioni 10+11 — Gallery + lightbox + calendar (v1.5)
+- Aggiunto §3.14 con ~45 classi BEM nuove:
+  preview foto (`.photo-preview--touch`, `.photo-preview-grid` + `--5`/`--2`
+  + `__hero`/`__cell`/`__img`), badge count (`.photo-count-badge`
+  + `--prominent`), navigazione carousel touch (`.photo-nav-tap-zone`
+  + `--left`/`--right`, `.photo-nav-mini`), dot indicators unificati
+  (`.photo-dots` + `__dot` + `--dark` + `.is-active`/`.is-edge`),
+  lightbox fullscreen (`.lightbox-photo` + `--centered` + wrapper,
+  `.lightbox-topbar` + `__title`/`__actions`/`__counter`,
+  `.lightbox-close-btn`, `.lightbox-arrow` + `--sm`/`--lg`
+  + `--left`/`--right`(`-lg`), `.lightbox-thumbs` + `--center`/`--scroll`,
+  `.lightbox-thumb` + `__img` + `.is-active`, `.lightbox-dots-bar`),
+  touch-lock modifier (`.lightbox--touch-lock`).
+- Calendar: `.avail-legend` + `__item`/`__free`/`__busy`, `.avail-date-card`
+  + `__icon-calendar`/`__icon-chevron`/`__body`/`__label`/`__value`
+  + `.is-active`/`.is-placeholder`, `.avail-date-clear-btn`, `.avail-hint`,
+  `.avail-cal` + `__header`/`__nav-btn`/`__titles-desktop`/`__month-title`
+  + `--mobile`/`__months`/`__month`/`__divider`/`__weekdays`/`__weekday`
+  /`__days`/`__day-empty`/`__day` + 8 stati (`.is-past/.is-occupied/.is-today
+  /.is-clickable/.is-check-in/.is-check-out/.is-in-range/.is-hover-range`)
+  + `__today-dot`.
+- Riusi: `.banner .banner--accent .banner--with-icon` + `.banner__title/__text`
+  (min-stay), `.wizard-loading` + `.wizard-loading-spinner` (spinner),
+  `.section-title-main`, `.layout-fullscreen-overlay`.
+- Emoji sostituite con Bootstrap Icons (📷 → `bi-camera-fill`, 🌙 →
+  `bi-moon-stars-fill`).
+- **T7 applicato**: `#EEF5FC` letterale di `AvailabilityCalendar.tsx:192`
+  ora va via token `--color-primary-soft` in `.avail-cal__day.is-in-range`.
+- Nessun token nuovo.
 
 ### 2026-04-23 — Sessioni 7+8 — Scheda abitazione statica (v1.4)
 - Aggiunti §3.12 "Scheda abitazione statica" e §3.13 "BedConfigDisplay +
