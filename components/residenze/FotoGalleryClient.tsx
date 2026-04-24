@@ -295,7 +295,7 @@ export default function FotoGalleryClient({
               onClick={() => setBannerDismissed(true)}
               className="fotogallery-ios-banner__close"
               aria-label={ui.close}
-            >✕</button>
+            ><i className="bi bi-x-lg" aria-hidden="true" /></button>
           </div>
         </div>
       )}

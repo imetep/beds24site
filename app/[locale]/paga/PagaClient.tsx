@@ -373,7 +373,17 @@ export default function PagaClient({ locale }: Props) {
                 background: payMethod === m ? 'var(--color-primary-soft)' : 'var(--color-bg)',
                 fontWeight: 600, fontSize: 14, color: payMethod === m ? 'var(--color-primary)' : '#555',
               }}>
-              {m === 'stripe' ? '💳 Carta' : '🅿️ PayPal'}
+              {m === 'stripe' ? (
+                <>
+                  <i className="bi bi-credit-card-fill me-1" aria-hidden="true" />
+                  Carta
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-paypal me-1" aria-hidden="true" />
+                  PayPal
+                </>
+              )}
             </button>
           ))}
         </div>
@@ -397,7 +407,17 @@ export default function PagaClient({ locale }: Props) {
               cursor: phase === 'paying' ? 'not-allowed' : 'pointer',
               boxShadow: phase === 'paying' ? 'none' : '0 4px 14px rgba(252,175,26,0.4)',
             }}>
-            {phase === 'paying' ? `⏳ ${t.paying}` : `💳 ${t.payBtn} · ${fmt(depositAmount)}`}
+            {phase === 'paying' ? (
+              <>
+                <i className="bi bi-hourglass-split me-1" aria-hidden="true" />
+                {t.paying}
+              </>
+            ) : (
+              <>
+                <i className="bi bi-credit-card-fill me-1" aria-hidden="true" />
+                {t.payBtn} · {fmt(depositAmount)}
+              </>
+            )}
           </button>
         )}
 

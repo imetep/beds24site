@@ -368,7 +368,7 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
           <p style={{ margin: '0 0 20px', fontSize: 14, color: '#6b7280', lineHeight: 1.6 }}>{t.step2Sub}</p>
 
           {/* ── Capogruppo ── */}
-          <SectionHeader label={t.mainGuest} icon="👤" />
+          <SectionHeader label={t.mainGuest} icon="bi-person-fill" />
 
           <Row>
             <div style={half}>
@@ -538,7 +538,7 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
           </div>
 
           {/* Capogruppo docs */}
-          <SectionHeader label={`${capo.lastName} ${capo.firstName}`} icon="👤" />
+          <SectionHeader label={`${capo.lastName} ${capo.firstName}`} icon="bi-person-fill" />
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
             {docs.map((doc, idx) => (
               <div key={doc.label} style={{ flex: '1 1 240px' }}>
@@ -553,7 +553,7 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
           {/* Altri ospiti docs */}
           {altri.map((a, idx) => (
             <div key={idx}>
-              <SectionHeader label={`${a.lastName} ${a.firstName}`} icon="👤" />
+              <SectionHeader label={`${a.lastName} ${a.firstName}`} icon="bi-person-fill" />
               <div style={{ marginBottom: 20 }}>
                 {altriDocs[idx] && (
                   <DocSlot doc={altriDocs[idx]}

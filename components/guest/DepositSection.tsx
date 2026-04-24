@@ -155,7 +155,12 @@ export default function DepositSection({ locale, t, bookId, amount, deposit, onD
           } catch { setError(tD.errorNetwork); setLoading(false); }
         }}
       >
-        {loading ? tD.btnPayLoading : `🔒 ${tD.btnPay}`}
+        {loading ? tD.btnPayLoading : (
+          <>
+            <i className="bi bi-lock-fill me-1" aria-hidden="true" />
+            {tD.btnPay}
+          </>
+        )}
       </button>
       <p className="text-center mt-2 mb-0" style={{ fontSize: '0.79rem', color: C.textMuted }}>{tD.stripeNote}</p>
     </div>

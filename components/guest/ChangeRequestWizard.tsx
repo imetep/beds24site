@@ -109,7 +109,7 @@ export default function ChangeRequestWizard({ locale, t, booking }: Props) {
         </h3>
         <button onClick={() => { setOpen(false); reset(); }}
           className="btn p-0"
-          style={{ fontSize: '1.2rem', color: C.textMuted }}>✕</button>
+          style={{ fontSize: '1.2rem', color: C.textMuted }} aria-label="Chiudi"><i className="bi bi-x-lg" aria-hidden="true" /></button>
       </div>
 
       {/* ── Step 1 — cosa vuoi modificare ────────────────────────────────── */}
@@ -285,7 +285,9 @@ export default function ChangeRequestWizard({ locale, t, booking }: Props) {
       {/* ── Conferma inviata ─────────────────────────────────────────────── */}
       {status === 'sent' && (
         <div className="text-center py-4">
-          <div className="mb-2" style={{ fontSize: '2.5rem' }}>✅</div>
+          <div className="mb-2" style={{ fontSize: '2.5rem', color: 'var(--color-success, #16a34a)' }}>
+            <i className="bi bi-check-circle-fill" aria-hidden="true" />
+          </div>
           <p className="fw-bold mb-1" style={{ fontSize: '1rem', color: C.text }}>{tC.sentTitle}</p>
           <p className="mb-3" style={{ fontSize: '0.88rem', color: C.textMid }}>{tC.sentSub}</p>
           <button

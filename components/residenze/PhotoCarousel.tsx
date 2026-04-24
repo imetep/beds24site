@@ -230,7 +230,7 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
                 onClick={closeLightbox}
                 className="lightbox-close-btn"
                 aria-label={ui.close}
-              >✕</button>
+              ><i className="bi bi-x-lg" aria-hidden="true" /></button>
             </div>
           </div>
 

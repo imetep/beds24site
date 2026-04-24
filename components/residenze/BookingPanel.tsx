@@ -176,6 +176,7 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
                       <span className="booking-panel__offer-name">{name}</span>
                       {isPicked && (
                         <span className="booking-panel__offer-pill-selected">
+                          <i className="bi bi-check-lg me-1" aria-hidden="true" />
                           {t.selezionata}
                         </span>
                       )}

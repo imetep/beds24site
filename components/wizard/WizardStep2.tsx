@@ -330,7 +330,12 @@ export default function WizardStep2({ locale = 'it' }: Props) {
           disabled={!voucherInput.trim()}
           className={`wizard-step2-mobile__voucher-btn${voucherApplied ? ' is-applied' : ''}`}
         >
-          {voucherApplied ? '✓ Applicato' : t.voucherApply}
+          {voucherApplied ? (
+            <>
+              <i className="bi bi-check-lg me-1" aria-hidden="true" />
+              {tSidebar.voucherApplied}
+            </>
+          ) : t.voucherApply}
         </button>
       </div>
       {voucherError && <p className="wizard-step2-mobile__voucher-error">{voucherError}</p>}
@@ -658,7 +663,12 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                     disabled={!voucherInput.trim()}
                     className={`voucher-block__apply-btn${voucherApplied ? ' is-applied' : ''}`}
                   >
-                    {voucherApplied ? tSidebar.voucherApplied : t.voucherApply}
+                    {voucherApplied ? (
+                      <>
+                        <i className="bi bi-check-lg me-1" aria-hidden="true" />
+                        {tSidebar.voucherApplied}
+                      </>
+                    ) : t.voucherApply}
                   </button>
                 </div>
                 {voucherError && <p className="voucher-block__error">{voucherError}</p>}

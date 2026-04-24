@@ -101,6 +101,7 @@ export default function UtenzeClient({ locale }: Props) {
               color: isWinter ? '#0C447C' : '#6b7280',
             }}
           >
+            <i className="bi bi-snow me-1" aria-hidden="true" />
             {t.seasonWinter}
           </button>
           <button
@@ -111,6 +112,7 @@ export default function UtenzeClient({ locale }: Props) {
               color: !isWinter ? '#633806' : '#6b7280',
             }}
           >
+            <i className="bi bi-sun-fill me-1" aria-hidden="true" />
             {t.seasonSummer}
           </button>
         </div>

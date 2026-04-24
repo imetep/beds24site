@@ -287,7 +287,10 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
             <i className="bi bi-whatsapp me-1" aria-hidden="true" />
             WhatsApp
           </a>
-            <a href="mailto:contattolivingapple@gmail.com" style={supportLink}>✉️ Email</a>
+            <a href="mailto:contattolivingapple@gmail.com" style={supportLink}>
+              <i className="bi bi-envelope-fill me-1" aria-hidden="true" />
+              Email
+            </a>
           </div>
         </div>
       </div>

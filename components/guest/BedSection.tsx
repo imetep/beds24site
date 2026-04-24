@@ -355,7 +355,10 @@ function PersonCounter({ current, total, lc }: { current: number; total: number;
 function CribSection({ cribs, onChange, t }: { cribs: number; onChange: (n: number) => void; t: any }) {
   return (
     <div style={{ marginBottom: '1.25rem', padding: '1rem', background: C.bg, borderRadius: '12px', border: `1px solid ${C.border}` }}>
-      <p style={{ margin: '0 0 3px', fontSize: '0.88rem', fontWeight: 700, color: C.text }}>🍼 {t.cribTitle}</p>
+      <p style={{ margin: '0 0 3px', fontSize: '0.88rem', fontWeight: 700, color: C.text }}>
+        <i className="bi bi-egg-fill me-1" aria-hidden="true" />
+        {t.cribTitle}
+      </p>
       <p style={{ margin: '0 0 10px', fontSize: '0.78rem', color: C.textMuted, lineHeight: 1.5 }}>{t.cribDesc}</p>
       <div style={{ display: 'flex', gap: '6px' }}>
         {[{ n: 0, l: t.cribNo }, { n: 1, l: t.crib1 }, { n: 2, l: t.crib2 }].map(({ n, l }) => (
@@ -447,7 +450,7 @@ export default function BedSection({ locale, t, numGuests }: { locale: string; t
   return (
     <div className="bg-white border shadow-sm" style={card}>
       <div className="d-flex align-items-center gap-2 mb-1">
-        <span style={{ fontSize: '1.1rem' }}>🛏</span>
+        <i className="bi bi-door-closed-fill" style={{ fontSize: '1.1rem', color: 'var(--color-primary)' }} aria-hidden="true" />
         <h3 className="m-0 fw-bold" style={{ fontSize: '1rem', color: C.text }}>{t.title}</h3>
       </div>
       <p className="mb-3" style={{ fontSize: '0.84rem', color: C.textMid, lineHeight: 1.6 }}>{t.subtitle}</p>
@@ -463,7 +466,12 @@ export default function BedSection({ locale, t, numGuests }: { locale: string; t
         <button onClick={save} disabled={!allConfirmed || status === 'saving' || status === 'saved'}
           className="text-white fw-bold border-0"
           style={{ background: status === 'saved' ? C.success : allConfirmed ? C.blue : C.gray, borderRadius: 10, padding: '0.65rem 1.5rem', fontSize: '0.88rem', cursor: !allConfirmed || status === 'saving' || status === 'saved' ? 'not-allowed' : 'pointer', transition: 'background .2s' }}>
-          {status === 'saving' ? t.saving : status === 'saved' ? `✓ ${t.saved}` : t.save}
+          {status === 'saving' ? t.saving : status === 'saved' ? (
+            <>
+              <i className="bi bi-check-lg me-1" aria-hidden="true" />
+              {t.saved}
+            </>
+          ) : t.save}
         </button>
         {status === 'error' && <span style={{ fontSize: '0.82rem', color: '#dc2626' }}>{t.errorSave}</span>}
         {!allConfirmed && status !== 'saved' && <span style={{ fontSize: '0.8rem', color: C.textMuted }}>{t.saveHint}</span>}

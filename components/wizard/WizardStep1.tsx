@@ -633,7 +633,7 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                                 <div className="step1-offer-option__info">
                                   <div className="step1-offer-option__name-row">
                                     <span className="step1-offer-option__name">{name}</span>
-                                    {isPicked && <span className="step1-offer-option__selected-tag">{t.selezionata}</span>}
+                                    {isPicked && <span className="step1-offer-option__selected-tag" aria-hidden="true"><i className="bi bi-check-lg" /></span>}
                                   </div>
                                   {desc && <p className="step1-offer-option__desc">{desc}</p>}
                                   {!avail && <span className="step1-offer-option__unavail">{t.nonDisp}</span>}

@@ -279,7 +279,7 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
           {/* Bottone cancella date */}
           {(checkIn || checkOut) && (
             <button onClick={clearDates} className="avail-date-clear-btn" aria-label={ui.clear}>
-              ✕
+              <i className="bi bi-x-lg" aria-hidden="true" />
             </button>
           )}
         </div>

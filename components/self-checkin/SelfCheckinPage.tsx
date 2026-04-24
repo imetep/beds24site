@@ -394,7 +394,7 @@ export default function SelfCheckinPage({ locale, wizardHref, contactHref }: Pro
               borderBottom: i < t.needs.length - 1 ? '0.5px solid #f3f4f6' : 'none',
               fontSize: 14, color: '#4b5563', lineHeight: 1.55,
             }}>
-              <span style={{ color: 'var(--color-primary)', flexShrink: 0, fontWeight: 700 }}>✓</span>
+              <i className="bi bi-check-lg" style={{ color: 'var(--color-primary)', flexShrink: 0, fontWeight: 700 }} aria-hidden="true" />
               {need}
             </li>
           ))}

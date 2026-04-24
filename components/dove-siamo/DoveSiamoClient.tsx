@@ -494,14 +494,15 @@ export default function DoveSiamoClient({
         <ul className="nav nav-tabs mb-3">
           {(['plane', 'train', 'car'] as Tab[]).map((tab) => {
             const labels = { plane: t.tab_plane, train: t.tab_train, car: t.tab_car };
-            const icons  = { plane: '✈️', train: '🚂', car: '🚗' };
+            const icons  = { plane: 'bi-airplane-fill', train: 'bi-train-front-fill', car: 'bi-car-front-fill' };
             return (
               <li key={tab} className="nav-item">
                 <button
                   className={`nav-link ${activeTab === tab ? 'active' : ''}`}
                   onClick={() => setActiveTab(tab)}
                 >
-                  {icons[tab]} {labels[tab]}
+                  <i className={`bi ${icons[tab]} me-1`} aria-hidden="true" />
+                  {labels[tab]}
                 </button>
               </li>
             );
@@ -536,12 +537,18 @@ export default function DoveSiamoClient({
                   key={i}
                   className="d-flex justify-content-between align-items-center bg-light border rounded p-2"
                 >
-                  <span className="text-secondary">🚉 {route.label}</span>
+                  <span className="text-secondary">
+                    <i className="bi bi-train-front-fill me-1" aria-hidden="true" />
+                    {route.label}
+                  </span>
                   <span className="fw-semibold text-primary">{route.time}</span>
                 </div>
               ))}
             </div>
-            <p className="small text-muted lh-base mb-0">ℹ️ {t.train_note}</p>
+            <p className="small text-muted lh-base mb-0">
+              <i className="bi bi-info-circle-fill me-1" aria-hidden="true" />
+              {t.train_note}
+            </p>
           </div>
         )}
 
@@ -554,7 +561,10 @@ export default function DoveSiamoClient({
             >
               {t.car_from.map((item, i) => (
                 <div key={i} className="bg-light border rounded p-3 text-center">
-                  <p className="fw-bold mb-1">🚗 {item.city}</p>
+                  <p className="fw-bold mb-1">
+                    <i className="bi bi-car-front-fill me-1" aria-hidden="true" />
+                    {item.city}
+                  </p>
                   <p className="fs-5 fw-semibold text-primary mb-1">{item.time}</p>
                   <p className="small text-muted mb-0">{item.detail}</p>
                 </div>
