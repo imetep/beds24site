@@ -194,19 +194,13 @@ export default function FotoGalleryClient({
     return (
       <div
         ref={immersiveRef}
-        className="position-fixed top-0 start-0 overflow-hidden"
-        style={{
-          // Dimensioni congelate in px al momento dell'entrata in landscape.
-          // Né 100vh né 100dvh risolvono stabilmente il problema della toolbar
-          // su Safari iOS e Chrome Android: 100vh è statico ma sbagliato,
-          // 100dvh si aggiorna ma causa resize continui ad ogni tap.
-          // window.innerHeight catturato una volta sola è l'unica soluzione stabile.
-          width:      frozenW || '100vw',
-          height:     frozenH || '100vh',
-          background: '#000',
-          zIndex:     9999,
-          cursor:     controlsVisible ? 'default' : 'none',
-        }}
+        className={`fotogallery-immersive ${controlsVisible ? '' : 'is-controls-hidden'}`}
+        // Dimensioni congelate in px al momento dell'entrata in landscape.
+        // Né 100vh né 100dvh risolvono stabilmente il problema della toolbar
+        // su Safari iOS e Chrome Android: 100vh è statico ma sbagliato,
+        // 100dvh si aggiorna ma causa resize continui ad ogni tap.
+        // window.innerHeight catturato una volta sola è l'unica soluzione stabile.
+        style={{ width: frozenW || '100vw', height: frozenH || '100vh' }}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
@@ -215,64 +209,24 @@ export default function FotoGalleryClient({
           key={current}
           src={photos[current]}
           alt={`${roomName} ${current + 1}`}
-          className="position-absolute top-0 start-0 w-100 h-100 d-block"
-          style={{ objectFit: 'contain' }}
+          className="fotogallery-immersive__img"
         />
 
         {/* ── Overlay controls — stile YouTube ──
              Visibili 3s, poi spariscono. Tap per richiamarli.        */}
-        <div
-          className="position-absolute top-0 start-0 w-100 h-100"
-          style={{
-            zIndex:     2,
-            opacity:    controlsVisible ? 1 : 0,
-            transition: 'opacity 0.3s ease',
-            pointerEvents: controlsVisible ? 'auto' : 'none',
-          }}
-        >
+        <div className={`fotogallery-immersive__controls ${controlsVisible ? '' : 'is-hidden'}`}>
 
           {/* Gradient top */}
-          <div
-            className="position-absolute top-0 start-0 end-0"
-            style={{
-              height:     90,
-              background: 'linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, transparent 100%)',
-            }}
-          />
+          <div className="fotogallery-immersive__gradient-top" />
 
           {/* Gradient bottom */}
-          <div
-            className="position-absolute bottom-0 start-0 end-0"
-            style={{
-              height:     90,
-              background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%)',
-            }}
-          />
+          <div className="fotogallery-immersive__gradient-bottom" />
 
           {/* Top left — nome residenza */}
-          <div
-            className="position-absolute text-white fw-semibold"
-            style={{
-              top:        'max(16px, env(safe-area-inset-top))',
-              left:       'max(16px, env(safe-area-inset-left))',
-              fontSize:   15,
-              textShadow: '0 1px 4px rgba(0,0,0,0.6)',
-            }}
-          >
-            {roomName}
-          </div>
+          <div className="fotogallery-immersive__title">{roomName}</div>
 
           {/* Top right — contatore N / totale */}
-          <div
-            className="position-absolute fw-medium"
-            style={{
-              top:        'max(16px, env(safe-area-inset-top))',
-              right:      'max(16px, env(safe-area-inset-right))',
-              color:      'rgba(255,255,255,0.85)',
-              fontSize:   14,
-              textShadow: '0 1px 4px rgba(0,0,0,0.6)',
-            }}
-          >
+          <div className="fotogallery-immersive__counter">
             {current + 1} / {photos.length}
           </div>
 
@@ -280,17 +234,8 @@ export default function FotoGalleryClient({
           {photos.length > 1 && (
             <button
               onTouchEnd={e => { e.preventDefault(); e.stopPropagation(); prev(); showControls(); }}
-              className="btn position-absolute rounded-circle text-white d-flex align-items-center justify-content-center"
-              style={{
-                left:        'max(12px, env(safe-area-inset-left))',
-                top:         '50%',
-                transform:   'translateY(-50%)',
-                background:  'rgba(255,255,255,0.15)',
-                border:      '1px solid rgba(255,255,255,0.25)',
-                backdropFilter: 'blur(6px)',
-                width:       48, height: 48,
-                fontSize:    24,
-              }}
+              className="fotogallery-immersive__arrow fotogallery-immersive__arrow--left"
+              aria-label="Precedente"
             >‹</button>
           )}
 
@@ -298,36 +243,18 @@ export default function FotoGalleryClient({
           {photos.length > 1 && (
             <button
               onTouchEnd={e => { e.preventDefault(); e.stopPropagation(); next(); showControls(); }}
-              className="btn position-absolute rounded-circle text-white d-flex align-items-center justify-content-center"
-              style={{
-                right:       'max(12px, env(safe-area-inset-right))',
-                top:         '50%',
-                transform:   'translateY(-50%)',
-                background:  'rgba(255,255,255,0.15)',
-                border:      '1px solid rgba(255,255,255,0.25)',
-                backdropFilter: 'blur(6px)',
-                width:       48, height: 48,
-                fontSize:    24,
-              }}
+              className="fotogallery-immersive__arrow fotogallery-immersive__arrow--right"
+              aria-label="Successivo"
             >›</button>
           )}
 
           {/* Bottom center — barra progressione dot minimale */}
-          <div
-            className="position-absolute start-0 end-0 d-flex justify-content-center"
-            style={{
-              bottom:         'max(16px, env(safe-area-inset-bottom))',
-              gap:            4,
-            }}
-          >
+          <div className="fotogallery-immersive__progress">
             {photos.map((_, i) => (
-              <div key={i} style={{
-                width:        i === current ? 20 : 6,
-                height:       4,
-                borderRadius: 2,
-                background:   i === current ? '#FCAF1A' : 'rgba(255,255,255,0.35)',
-                transition:   'all 0.2s',
-              }} />
+              <div
+                key={i}
+                className={`fotogallery-immersive__progress-dot ${i === current ? 'is-active' : ''}`}
+              />
             ))}
           </div>
         </div>
@@ -339,129 +266,74 @@ export default function FotoGalleryClient({
   // PORTRAIT — layout normale: top bar sticky + foto verticali
   // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div className="bg-white min-vh-100">
+    <div className="fotogallery-page">
 
       {/* ── Banner browser non supportato ── */}
+      {/* ⚠️ Visibile solo su Chrome iOS (CriOS) e Firefox iOS (FxiOS).
+           Emoji 📷 mantenuta (NON sostituita con Bootstrap Icon) per ridurre
+           rischi cross-browser su ambienti già problematici. */}
       {isUnsupportedBrowser && !bannerDismissed && (
-        <div
-          className="position-sticky top-0 d-flex align-items-center justify-content-between gap-2 px-3 py-2"
-          style={{ zIndex: 200, background: 'var(--color-primary)' }}
-        >
-          <div className="d-flex align-items-center gap-2 flex-fill min-w-0">
-            <span className="flex-shrink-0" style={{ fontSize: 18 }}>📷</span>
-            <span className="text-white fw-medium" style={{ fontSize: 13, lineHeight: 1.3 }}>
+        <div className="fotogallery-ios-banner">
+          <div className="fotogallery-ios-banner__content">
+            <span className="fotogallery-ios-banner__emoji">📷</span>
+            <span className="fotogallery-ios-banner__text">
               Per la galleria immersiva usa Safari
             </span>
           </div>
-          <div className="d-flex align-items-center gap-2 flex-shrink-0">
+          <div className="fotogallery-ios-banner__actions">
             <a
               href={`safari-https://${typeof window !== 'undefined' ? window.location.host + window.location.pathname : ''}`}
-              className="bg-white fw-bold text-decoration-none text-nowrap rounded-pill"
-              style={{
-                color: 'var(--color-primary)',
-                fontSize: 12,
-                padding: '6px 12px',
-              }}
+              className="fotogallery-ios-banner__safari-btn"
             >
               Apri in Safari
             </a>
             <button
               onClick={() => setBannerDismissed(true)}
-              className="btn rounded-circle text-white d-flex align-items-center justify-content-center border-0"
-              style={{
-                background: 'rgba(255,255,255,0.20)',
-                width: 28, height: 28,
-                fontSize: 14,
-              }}
+              className="fotogallery-ios-banner__close"
+              aria-label="Chiudi"
             >✕</button>
           </div>
         </div>
       )}
 
       {/* ── Top bar sticky ── */}
-      <div
-        className="position-sticky top-0 bg-white border-bottom shadow-sm"
-        style={{ zIndex: 100 }}
-      >
+      <div className="fotogallery-topbar">
 
         {/* Riga 1: ← + nome + conteggio */}
-        <div className="d-flex align-items-center gap-2 px-3 pt-3 pb-2">
+        <div className="fotogallery-topbar__title-row">
           <Link
             href={`/${locale}/residenze/${slug}`}
-            className="d-flex align-items-center justify-content-center rounded-circle border text-decoration-none flex-shrink-0"
-            style={{
-              width: 40, height: 40,
-              background: '#f5f5f5',
-              color: '#111', fontSize: 20,
-            }}
+            className="fotogallery-topbar__back-btn"
+            aria-label="Indietro"
           >←</Link>
           <div>
-            <div className="fw-bold text-dark" style={{ fontSize: 16, lineHeight: 1.2 }}>
-              {roomName}
-            </div>
-            <div style={{ fontSize: 12, color: '#888', marginTop: 2 }}>
-              {allPhotosLabel}
-            </div>
+            <div className="fotogallery-topbar__title">{roomName}</div>
+            <div className="fotogallery-topbar__subtitle">{allPhotosLabel}</div>
           </div>
         </div>
 
         {/* Riga 2: card-foto residenze scroll orizzontale */}
-        <div
-          className="d-flex gap-2 px-3 pb-3"
-          style={{
-            overflowX: 'auto',
-            scrollSnapType: 'x mandatory',
-            WebkitOverflowScrolling: 'touch' as any,
-            msOverflowStyle: 'none', scrollbarWidth: 'none' as any,
-          }}
-        >
+        <div className="fotogallery-topbar__rooms-scroll">
           {rooms.map(r => {
             const isActive = r.slug === slug;
             return (
               <Link
                 key={r.slug}
                 href={`/${locale}/residenze/${r.slug}/foto`}
-                className="flex-shrink-0 d-block text-decoration-none"
-                style={{ scrollSnapAlign: 'start' }}
+                className={`fotogallery-room-thumb ${isActive ? 'is-active' : ''}`}
               >
-                <div
-                  className="position-relative overflow-hidden"
-                  style={{
-                    width:        110, height: 74,
-                    borderRadius: 12,
-                    border:       isActive ? '2.5px solid #006CB7' : '2px solid transparent',
-                    background:   '#e5e7eb',
-                    boxShadow:    isActive ? '0 0 0 1px #006CB7' : 'none',
-                    transition:   'border 0.15s',
-                  }}
-                >
+                <div className="fotogallery-room-thumb__frame">
                   {r.coverUrl ? (
                     <img
-                      src={r.coverUrl} alt={r.name}
-                      className="w-100 h-100 d-block"
-                      style={{ objectFit: 'cover' }}
+                      src={r.coverUrl}
+                      alt={r.name}
+                      className="fotogallery-room-thumb__img"
                     />
                   ) : (
-                    <div className="w-100 h-100" style={{ background: '#d1d5db' }} />
+                    <div className="fotogallery-room-thumb__empty" />
                   )}
-                  {/* Gradient + label */}
-                  <div
-                    className="position-absolute bottom-0 start-0 end-0"
-                    style={{
-                      height: '55%',
-                      background: 'linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%)',
-                    }}
-                  />
-                  <div
-                    className="position-absolute start-0 end-0 text-center text-white fw-bold"
-                    style={{
-                      bottom: 6,
-                      fontSize: 11, lineHeight: 1.2,
-                      padding: '0 4px', textShadow: '0 1px 3px rgba(0,0,0,0.5)',
-                    }}
-                  >
-                    {r.name}
-                  </div>
+                  <div className="fotogallery-room-thumb__gradient" />
+                  <div className="fotogallery-room-thumb__label">{r.name}</div>
                 </div>
               </Link>
             );
@@ -470,58 +342,51 @@ export default function FotoGalleryClient({
       </div>
 
       {/* ── Foto verticali ── */}
-      <div className="page-container pb-5 position-relative" style={{ paddingTop: 4 }}>
+      <div className="page-container fotogallery-photos-list">
 
         {photos.length === 0 ? (
-          <div className="text-center py-5 px-3" style={{ color: '#999', fontSize: 15 }}>
-            Nessuna foto disponibile.
-          </div>
+          <div className="fotogallery-empty">Nessuna foto disponibile.</div>
         ) : (
           <>
             {photos.map((url, i) => (
               <div
                 key={i}
-                className={`w-100 overflow-hidden${i === 0 ? ' position-relative' : ''}`}
-                style={{
-                  marginBottom: 4,
-                  background:  '#f0f0f0', aspectRatio: '4/3',
-                }}
+                className={`fotogallery-photo-item${i === 0 ? ' fotogallery-photo-item--first' : ''}`}
               >
                 <img
                   src={url}
                   alt={`${roomName} ${i + 1}`}
                   loading={i < 3 ? 'eager' : 'lazy'}
-                  className="w-100 h-100 d-block"
-                  style={{ objectFit: 'cover' }}
+                  className="fotogallery-photo-item__img"
                 />
 
                 {/* ── Floating hint SOLO sulla prima foto ── */}
                 {i === 0 && (
-                  <div
-                    className="position-absolute d-flex align-items-center gap-2 text-nowrap rounded-pill"
-                    style={{
-                      bottom:    16,
-                      left:      '50%',
-                      transform: 'translateX(-50%)',
-                      background: 'rgba(0,0,0,0.62)',
-                      backdropFilter: 'blur(8px)',
-                      border:    '1px solid rgba(255,255,255,0.20)',
-                      padding:   '8px 18px',
-                      pointerEvents: 'none',
-                    }}
-                  >
+                  <div className="fotogallery-rotate-hint">
                     {/* Icona rotazione */}
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.90)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <svg
+                      width="18" height="18" viewBox="0 0 24 24"
+                      fill="none" stroke="currentColor"
+                      strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
+                      className="fotogallery-rotate-hint__icon"
+                      aria-hidden="true"
+                    >
                       <rect x="4" y="2" width="16" height="20" rx="2"/>
                       <path d="M12 18h.01"/>
                       {/* Freccia rotazione */}
                       <path d="M8 22c2.5 1.5 7 1.5 9.5-1" strokeDasharray="2 1"/>
                     </svg>
-                    <span className="text-white fw-semibold" style={{ fontSize: 13, letterSpacing: '0.01em' }}>
+                    <span className="fotogallery-rotate-hint__text">
                       Gira il telefono per la galleria immersiva
                     </span>
                     {/* Icona landscape */}
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.90)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <svg
+                      width="18" height="18" viewBox="0 0 24 24"
+                      fill="none" stroke="currentColor"
+                      strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
+                      className="fotogallery-rotate-hint__icon"
+                      aria-hidden="true"
+                    >
                       <rect x="2" y="6" width="20" height="12" rx="2"/>
                       <path d="M18 12h.01"/>
                     </svg>
@@ -533,15 +398,10 @@ export default function FotoGalleryClient({
         )}
 
         {/* Torna indietro in fondo */}
-        <div className="text-center px-3 pt-4">
+        <div className="fotogallery-back-link-wrap">
           <Link
             href={`/${locale}/residenze/${slug}`}
-            className="d-inline-flex align-items-center gap-2 text-decoration-none rounded-pill fw-bold"
-            style={{
-              padding: '12px 28px',
-              border: '1.5px solid #006CB7', color: 'var(--color-primary)',
-              fontSize: 14,
-            }}
+            className="fotogallery-back-link"
           >
             ← {backLabel}
           </Link>
