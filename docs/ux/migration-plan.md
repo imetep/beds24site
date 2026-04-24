@@ -222,27 +222,36 @@ Checklist visiva post-push di 9 check funzionali completata (7 ok, 2 ok-con-rise
 
 ### 🎨 Decisioni di design aperte
 
-**T1 — Contrasto titoli neri vs palette brand blu+arancione**
-Checklist §3 e §5: il nero `--color-text` (#111) dei titoli (h1 scheda, header accordion non è impattato) non convince accanto al brand `#006CB7` + `#FCAF1A`. Da decidere una tonalità titolo più armonica (es. blu-nero `#0a1929`, warm-dark `#2a2520`, o mantenere nero con più respiro visivo). Impatta `.section-title-main`, `.section-title-secondary`, potenzialmente `.label-uppercase-muted`. È una decisione design system, non fix puntuale.
+**T1 — Contrasto titoli neri vs palette brand blu+arancione** ✅ risolto (2026-04-26, 6 commit)
+Il nero `--color-text: #111` era stridente vs brand `#006CB7` + `#FCAF1A`. Decisione utente (basata su mock HTML mobile): **Opzione A — blu-notte `#0d1b2a`** (HSL 210° 52% 11%, contrasto 17.2:1 AAA, H=210° armonizza con primary H=203°).
+Modifiche applicate in 3 tranche (M1/M2/M3):
+- **M1 (`a812478`)** — `--color-text: #111` → `#0d1b2a` + 2 nuovi token `--color-text-disabled: #9ca3af` e `--color-text-accent: #C5881F` (darken #FCAF1A L=45%, 4.6:1 AA).
+- **M2 (`0113b75` globals.css + `783d962` HomeSearch + `f47a7ae` GuestPortal)** — 9 hex grigi hardcoded (#333/#444/#666/#888/#999/#aaa/#bbb/#ccc/#ddd) consolidati a 4 token semantici. Impatto: 46 occorrenze di grigi → token (29 in globals.css, 16 in HomeSearch, 1 in GuestPortal).
+- **M3 (`b4be8c6` + `ac731fb`)** — arancione accent applicato a 5 selector di prezzo totale: `.ui-booking-summary-price-total`, `.booking-sidebar__total-value`, `.wizard-step3__total-value`, `.sticky-booking-bar__price`, `.wizard-step2-mobile__total-new` (era `var(--color-primary)`). Best practice hospitality: il prezzo totale è il valore chiave di conversione, valorizzato con l'accento warm del brand.
 
-**T2 — Blu secondary derivati dal vecchio `#1E73BE` non rigenerati (D.X-1)**
-Dopo D.X il primary è `#006CB7` ma **i blu derivati sono rimasti** (erano calcolati su `#1E73BE`):
-- `#1557a0` — `ContattiClient.tsx:210` gradient second stop (già documentato nel D.X §6 parziale)
-- `#0c447c` — `HomeSearch.tsx:438` gradient + `globals.css:2372` bed-config note text
-- `#b5d4f4` — `globals.css:2364` bed-config note border
+Mock HTML di decisione: creato temporaneo in `public/t1-text-colors-mock.html` (commit `694f228`), rimosso dopo scelta utente (`9a4a1e4`).
 
-Se si vuole D.X piena serve rigenerare questi 3 dal nuovo primary (es. `#004a80` per dark, `#b3d4ee` per light). Visivamente oggi non stridono.
+**T2 — Blu secondary derivati dal vecchio `#1E73BE` non rigenerati (D.X-1)** ✅ risolto (2026-04-26, 3 commit)
+Decisione utente: introdurre 2 nuovi token in `:root` e sostituire tutte le 4 occorrenze.
+- **`2778952`** — `app/globals.css`: aggiunti `--color-primary-dark: #004a80` e `--color-primary-soft-border: #b3d4ee`. Sostituite 2 occorrenze interne (`.bed-config__note` border + `.bed-config__note-text` color).
+- **`55847b8`** — `ContattiClient.tsx:210`: gradient hero `#1557a0` → `var(--color-primary-dark)`.
+- **`1e7e62f`** — `HomeSearch.tsx:438`: gradient fallback `#0c447c` → `var(--color-primary-dark)`.
+
+D.X ora pienamente chiusa (nessun residuo ex-#1E73BE).
 
 ### 🔧 Bug / fix puntuali
 
-**T3 — `.card-room-bed` overflow con contenuto alto**
-Checklist §4: la card "Camera 4" con 2 letti impilabili (contenuto verticale > 220px) produce scroll verticale interno su **desktop** (mobile non visibile). Soluzione: `.card-room-bed { min-height: 220px }` invece di `height: 220px` in `app/globals.css`. Rischio: disuniformità minima di altezza tra card della stessa riga.
+**T3 — `.card-room-bed` overflow con contenuto alto** ✅ risolto (commit `caed4d4`, 2026-04-26)
+`app/globals.css:957` — `height: 220px` → `min-height: 220px`. La card "Camera 4" con 2 letti impilabili non produce più scroll verticale interno su desktop. Le card mono-letto mantengono altezza uniforme 220px per coerenza visiva.
 
-**T4 — Sticky bar mobile "non appare in tutte le sezioni"**
-Checklist §6: verifica se è comportamento intenzionale (IntersectionObserver nasconde la bar quando `#booking-panel` è visibile) o bug. Probabilmente intenzionale. Richiede screenshot/descrizione del caso specifico per decidere.
+**T4 — Sticky bar mobile "non appare in tutte le sezioni"** ✅ risolto (commit `542bb1a` + `bfdddd8`, 2026-04-26)
+Decisione utente: bar sempre visibile oltre 350px scroll (prima veniva nascosta quando `#booking-panel` era a schermo via IntersectionObserver). Rimosso lo state `panelVisible`, l'useEffect con IO e l'import `useRef` inutilizzato.
+Best practice UX hospitality (Booking.com / Airbnb / Expedia / Vrbo): la sticky CTA bar mobile è sempre visibile dopo il primo scroll, mai nascosta. Il CTA primary deve essere sempre a portata di pollice per ridurre friction e massimizzare conversioni. La ridondanza col BookingPanel quando è a schermo è accettabile (CTA identico = non confonde).
 
-**T5 — Mappa Google pinch-zoom 2 dita sposta la pagina**
-Checklist §8: preesistente alla Sessione 7 (comportamento iframe Google Maps Embed). Non causato da nessun refactor oggi. Fix possibile: passare a Maps JS API con `gestureHandling: 'greedy'`, oppure overlay "tap per interagire" che intercetta il primo touch. Richiede valutazione UX mobile.
+**T5 — Mappa Google pinch-zoom 2 dita sposta la pagina** 🟡 decisione: **Opzione A** scelta, implementazione rinviata (2026-04-26)
+Decisione utente: passare a **Maps JavaScript API con `gestureHandling: 'greedy'`** (l'implementazione richiede setup Google Cloud Console — abilitare Maps JS API, verificare billing — difficile da remoto, quindi sessione dedicata in futuro).
+**Note costi**: Maps JS API ha free tier $200/mese credito con **28.500 load/mese gratis**. Per traffico LivingApple stimato (~200-800 load/mese solo su scheda residenza), resta dentro il free tier anche con picchi stagionali 10× → **$0/mese**.
+**Scope sessione futura** (~2h): abilitare Maps JavaScript API su Google Cloud Console, riscrivere `PropertyMap.tsx` da iframe Embed a componente React con `@googlemaps/js-api-loader`, configurare `gestureHandling: 'greedy'`, ripristinare marker custom + styling mappa, test mobile touch.
 
 **T6 — `#dbeafe` deprecato in `BookingPanel.tsx:196`** ✅ risolto (2026-04-24)
 Applicato durante Sessione 9: `.booking-panel__offer-pill-selected` usa ora `var(--color-primary-soft)` (commit `fc10a0e`).
@@ -323,29 +332,20 @@ distanceLabel: { it: '...', en: '...', de: '...', pl: '...' },
 
 ---
 
-**T13 — Chrome violation "unload is not allowed"** 🟡 probabilmente non del sito (scoperto 2026-04-26)
+**T13 — Chrome violation "unload is not allowed"** 🟡 aperto — da verificare con estensioni disabilitate (scoperto 2026-04-26)
 Warning console su `/it/residenze/fuji`: `nuanria.Chrome.js:70 [Violation] Permissions policy violation: unload is not allowed in this document.`
-Il file `nuanria.Chrome.js` NON è codice del sito — è un'estensione Chrome installata dall'utente (probabilmente "Claude in Chrome" / simile). Il warning segnala che un listener `unload` (evento deprecato in Chrome moderni) è registrato dall'estensione, non dal nostro codice.
-**Azione consigliata**: testare in Incognito (senza estensioni) per confermare che il warning sparisce. Se sparisce → falso positivo da estensione, da ignorare. Se persiste → indagare origine.
+Il file `nuanria.Chrome.js` NON è codice del sito — è un'estensione Chrome installata dall'utente (probabilmente "Claude in Chrome" / simile). Il warning segnala che un listener `unload` (evento deprecato in Chrome moderni) è registrato dall'estensione.
+**Test Incognito (2026-04-26)**: il warning persiste. Plausibile causa: estensione abilitata per Incognito ("Allow in incognito" ON in `chrome://extensions`). **Azione consigliata**: aprire `chrome://extensions`, disattivare "Allow in incognito" sull'estensione che inietta `nuanria.Chrome.js`, rifare test su `/it/residenze/fuji`. Se sparisce → confermato estensione. Se persiste → indagare origine (improbabile ma da verificare).
 
-**T14 — Runtime error "message port closed" su contatti** 🟡 probabilmente non del sito (scoperto 2026-04-26)
-Errore console su `/it/contatti`: `Unchecked runtime.lastError: The message port closed before a response was received.`
-Messaggio tipico di `chrome.runtime.sendMessage` usato in estensioni Chrome (quando il sendMessage finisce senza che il listener abbia chiamato `sendResponse`). Il codice del sito NON usa `chrome.runtime` API.
-**Azione consigliata**: come T13, testare in Incognito per confermare falso positivo da estensione.
+**T14 — Runtime error "message port closed" su contatti** ✅ falso positivo da estensione (chiuso 2026-04-26)
+Errore console `/it/contatti`: `Unchecked runtime.lastError: The message port closed before a response was received.`
+Confermato in test Incognito (2026-04-26, utente): in Incognito `/it/contatti` è pulito → era `chrome.runtime.sendMessage` di un'estensione Chrome (Claude-in-Chrome o simile), non del sito.
 
-**T15 — 401 loggato come errore su `/api/portal/booking`** 🟢 behavior normale, da silenziare (scoperto 2026-04-26)
-Sul Guest Portal quando l'utente NON è loggato, la fetch iniziale a `/api/portal/booking` restituisce 401 che appare come errore nella console. È il comportamento corretto (l'auth guard protegge l'endpoint), ma l'errore rumoroso in console non è ideale.
-**Fix**: intercettare il 401 nel client (`GuestPortal.tsx` o file auth) come "non autenticato → redirect login silenzioso", senza propagare come errore console.
-**Scope**: piccolo, 1 file, ~10 min.
+**T15 — 401 loggato come errore su `/api/portal/booking`** ✅ risolto (2026-04-26)
+Fix client-only in 2 commit (`dca5eeb` + `3897a25`): introdotto hint `localStorage.guest_portal_session` settato al login e rimosso al logout. `GuestPortal.loadBooking` skippa la fetch se il hint è assente → zero 401 in console per visitatori non autenticati. Cookie `guest_session` è httpOnly, quindi serviva un marker client separato. Edge case accettato: utente con cookie valido ma localStorage resettato (Incognito/privacy) dovrà rifare login. Bonus: fix typo `\api\portal\auth` → `/api/portal/auth` nel logout DELETE.
 
-**T16 — 🔴 Traduzione EN errata: "Sommier" → "Divan bed"** (scoperto 2026-04-26, bug user-facing)
-`components/residenze/BedConfigDisplay.tsx:40`:
-```ts
-'sommier': { it: 'Sommier', en: 'Divan bed', de: 'Sommier', pl: 'Sommier' },
-```
-**Problema**: "Divan bed" in inglese britannico significa **divano letto** (una base letto con cassetti sotto, tipo IKEA Malm). Il sommier italiano è invece la **base letto con doghe/molle** (l'elemento sotto al materasso). Traduzione confusa per utenti EN → rischio che pensino di affittare un divano letto invece di un letto vero.
-**Fix proposto**: `en: 'Bed base'` (termine corretto per bed frame con doghe) oppure `en: 'Sommier'` (termine francese usato anche in EN tecnico). Preferito **"Bed base"** (più naturale per nativi EN).
-**Scope**: 1 riga, file `BedConfigDisplay.tsx`. DE e PL già corretti (usano "Sommier").
+**T16 — 🔴 Traduzione EN errata: "Sommier" → "Divan bed"** ✅ risolto (commit `e6d214a`, 2026-04-26)
+`components/residenze/BedConfigDisplay.tsx:40`: `en: 'Divan bed'` → `en: 'Bed base'`. "Divan bed" in EN britannico = divano letto; "Bed base" = base letto con doghe (significato corretto del sommier IT).
 
 ---
 
@@ -449,7 +449,7 @@ Regola **"no emoji decorative, sempre Bootstrap Icons"** applicata a tutto il si
 
 **Commit sweep** (8 commit, 2026-04-24): `a9e1ba4` WizardStep1 · `172d03e` FAQ icons + ContattiClient · `da2628b` pool values + consumer · `97bbd52` 4 pagine pubbliche root · `6c05f3e` 8 marketing · `38be518` 6 guest portal · `c9deb46` 3 self-checkin · `4f1ebc0` sweep residui finale.
 
-**Prossimi passi — aggiornato 2026-04-24 post-task T8+T12+T9**:
+**Prossimi passi — aggiornato 2026-04-26 post-sessione T1/T2/T3/T4/T13/T14/T15/T16**:
 
 | # | Cosa | Prio | Effort | Stato |
 |---|------|------|--------|-------|
@@ -458,11 +458,16 @@ Regola **"no emoji decorative, sempre Bootstrap Icons"** applicata a tutto il si
 | 3 | ~~Sessione mobile WizardStep2~~ | 🟡 | 2-3h | ✅ risolto 2026-04-24 (commit `ed5db23` css + `4ce08c0` refactor). 48 inline → 0, SidebarContent + SideRow + 2 CSSProp legacy a BEM `.wizard-step2-mobile__*`. 4 emoji decorative → Bootstrap Icons (🛏️ mantenuta). **🏁 piano programmato chiuso** |
 | 4 | ~~Consolidamento LABELS dict Session 7 (T9 residuo)~~ | ⚪ | ~2h | ✅ risolto 2026-04-24 (commit `4b9d791` chiavi, `35b5100` RoomCard, `e24a6c7` ThingsToKnow, `8807a74` page.tsx). 48 chiavi × 4 locale aggiunte in namespace `components.roomCard/roomPage/thingsToKnow`. Bonus: 9 emoji decorative → bi-* (🛏️🚿👥📐 RoomCard badge + 🏊🌊🏖️ pool + 🐾🚭 rules) + 2 eccezioni residue chiuse (🛏️ WizardStep2 extras, 📷 FotoGalleryClient banner iOS). FEATURE_LABELS di page.tsx RESTA inline (catalogo structured) |
 | 5 | ~~T10 cleanup Redis key legacy~~ | ⚪ | ~5min | ✅ eseguito manualmente (2026-04-26, utente via Upstash Data Browser) |
-| 7 | **T13** Chrome unload violation su /residenze/[slug] | 🟡 | 5min | Test in Incognito. Probabilmente falso positivo da estensione `nuanria.Chrome.js`. Se persiste → indagare |
-| 8 | **T14** Runtime error "message port closed" su /contatti | 🟡 | 5min | Stesso pattern di T13 (estensione Chrome chrome.runtime.sendMessage). Test Incognito |
-| 9 | **T15** 401 loggato come errore su `/api/portal/booking` non autenticato | 🟢 | ~10min | Intercettare 401 nel client come redirect login silenzioso (non error) |
-| 10 | **T16** 🔴 EN "Divan bed" (sbagliato per Sommier) | 🔴 | ~2min | Fix `BedConfigDisplay.tsx:40` → `en: 'Bed base'`. Bug user-facing EN, rischio confusione ospiti |
 | 6 | ~~WizardStep1 emoji decorative~~ + **sweep globale emoji tutto il sito** | ⚪ | completato | ✅ risolto 2026-04-24 (sweep globale, ~30 file toccati). Regola 'no emoji decorative' applicata uniformemente tranne admin (escluso da utente) e commenti di sviluppo. Sommario in [§8.2 qui sotto](#82-sweep-emoji-2026-04-24) |
+| 7 | ~~T16 EN "Divan bed" (sbagliato per Sommier)~~ | 🔴 | ~2min | ✅ risolto 2026-04-26 (commit `e6d214a`): `en: 'Bed base'` |
+| 8 | ~~T15 401 rumoroso su `/api/portal/booking`~~ | 🟢 | ~10min | ✅ risolto 2026-04-26 (commit `dca5eeb` + `3897a25`): localStorage hint `guest_portal_session` skip fetch se non loggato, + fix typo path logout |
+| 9 | ~~T3 `.card-room-bed` overflow scroll desktop~~ | 🟢 | ~2min | ✅ risolto 2026-04-26 (commit `caed4d4`): `height: 220px` → `min-height: 220px` |
+| 10 | ~~T2 blu secondary derivati #1E73BE non rigenerati~~ | 🟡 | ~15min | ✅ risolto 2026-04-26 (3 commit): 2 nuovi token `--color-primary-dark: #004a80` + `--color-primary-soft-border: #b3d4ee`, 4 sostituzioni. D.X ora piena |
+| 11 | ~~T4 sticky bar mobile nascosta quando #booking-panel visibile~~ | 🟡 | ~5min | ✅ risolto 2026-04-26 (commit `542bb1a` + `bfdddd8` cleanup useRef): bar sempre visibile oltre 350px scroll, rimosso IntersectionObserver. Best practice hospitality: CTA sempre a portata di pollice |
+| 12 | ~~T1 contrasto titoli neri vs palette brand~~ | 🟡 | ~2h | ✅ risolto 2026-04-26 (6 commit M1+M2+M3). `--color-text: #0d1b2a` blu-notte, 46 grigi hardcoded consolidati a 4 token, 5 prezzi totali in `--color-text-accent` #C5881F. Dettagli in §6.1 sopra |
+| 13 | **T14 message port closed /contatti** | ⚪ | — | ✅ chiuso 2026-04-26 come falso positivo estensione Chrome (confermato test Incognito) |
+| 14 | **T13 Chrome unload violation /residenze/fuji** | 🟡 | 5min | Ancora aperto. Test Incognito (2026-04-26) = warning persiste → probabile "Allow in incognito" attivo sull'estensione. Azione: disabilitare toggle "Allow in incognito" in chrome://extensions e ripetere test |
+| 15 | **T5 Google Maps pinch-zoom → Opzione A (Maps JS API)** | 🟡 | ~2h | Decisione presa (2026-04-26): migrare a Maps JS API con `gestureHandling: 'greedy'`. Implementazione rinviata perché richiede setup Google Cloud Console (abilitare API + verificare billing) difficile da remoto. Costi: $0/mese per il traffico stimato LivingApple (dentro 28.500 load/mese free tier) |
 
 ---
 
