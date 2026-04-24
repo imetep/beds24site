@@ -25,10 +25,12 @@ export default function StickyBookingBar({ roomId, locale, roomName }: Props) {
 
   const { checkIn, checkOut, numAdult, numChild, childrenAges } = useWizardStore();
 
-  // Visibilità: true solo se l'utente ha scrollato oltre la soglia
-  // E il #booking-panel NON è visibile a schermo
-  const [scrolledPast, setScrolledPast]   = useState(false);
-  const [panelVisible, setPanelVisible]   = useState(false);
+  // Visibilità: sempre visibile una volta che l'utente ha scrollato oltre la soglia.
+  // Best practice UX (Booking.com/Airbnb/Expedia): sticky CTA bar sempre presente
+  // su mobile dopo il primo scroll, per ridurre friction del "torna su per prenotare"
+  // e massimizzare conversioni. La ridondanza col BookingPanel quando è a schermo
+  // è accettabile: CTA identica, semplice backup visivo, l'utente non si confonde.
+  const [scrolledPast, setScrolledPast] = useState(false);
 
   // Prezzo totale (con tassa soggiorno) — identico a BookingPanel
   const [lowestTotal, setLowestTotal] = useState<number | null>(null);
@@ -37,24 +39,12 @@ export default function StickyBookingBar({ roomId, locale, roomName }: Props) {
 
   const touristTax = calculateTouristTax(numAdult, childrenAges, nights);
 
-  // ── 1. Scroll threshold: appare dopo 350px (oltre la foto) ──────────────
+  // ── Scroll threshold: appare dopo 350px (oltre la foto) ──────────────
   useEffect(() => {
     const onScroll = () => setScrolledPast(window.scrollY > 350);
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  // ── 2. IntersectionObserver: si nasconde quando #booking-panel è visibile
-  useEffect(() => {
-    const target = document.getElementById('booking-panel');
-    if (!target) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => setPanelVisible(entry.isIntersecting),
-      { threshold: 0.1 }
-    );
-    obs.observe(target);
-    return () => obs.disconnect();
   }, []);
 
   // ── 3. Fetch autonomo offerte (solo se ci sono date) ────────────────────
@@ -105,7 +95,7 @@ export default function StickyBookingBar({ roomId, locale, roomName }: Props) {
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  const show = scrolledPast && !panelVisible;
+  const show = scrolledPast;
 
   return (
     <div
