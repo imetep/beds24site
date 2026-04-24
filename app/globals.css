@@ -12,6 +12,8 @@
   /* Design tokens — prefisso --color-* per non collidere con --bs-* */
   --color-primary: #006CB7;
   --color-primary-soft: #EEF5FC;      /* Blu selezione unificato (deprecato #dbeafe, Caso H audit) */
+  --color-primary-dark: #004a80;      /* darken(#006CB7, L=25%) — gradient 2° stop hero, testo leggibile su primary-soft (9:1 AA) */
+  --color-primary-soft-border: #b3d4ee; /* lighten(#006CB7, L=82%) — border complementare a --color-primary-soft */
   --color-warning: #F59E0B;           /* Warning semantico — più giallo, distinto da --color-cta (Caso G audit) */
   --color-cta: #FCAF1A;               /* CTA arancione — separato da warning per semantica */
   --color-brand-accent: var(--color-cta); /* Identità brand (logo, bordi accent) — alias di --color-cta */
@@ -2369,7 +2371,7 @@ body {
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-sm);
   background: var(--color-primary-soft);
-  border: 0.5px solid #b5d4f4;  /* variante chiara di blue-border — no token */
+  border: 0.5px solid var(--color-primary-soft-border);
 }
 .bed-config__note-icon {
   flex-shrink: 0;
@@ -2377,7 +2379,7 @@ body {
 }
 .bed-config__note-text {
   font-size: var(--text-xs);
-  color: #0c447c;  /* blu scuro leggibile su primary-soft — no token */
+  color: var(--color-primary-dark);
   line-height: 1.6;
 }
 
