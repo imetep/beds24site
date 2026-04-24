@@ -48,9 +48,7 @@
     "step4": {
       "title": "Gdzie chcecie się zatrzymać?",
       "campagna": "LivingApple — Na wsi",
-      "campagna_desc": "1,5 km od morza, otoczone naturą",
       "mare": "LivingApple Beach — Przy morzu",
-      "mare_desc": "3 minuty pieszo do plaży",
       "next": "Dalej",
       "back": "Wstecz"
     },
@@ -404,8 +402,6 @@
       "deposit": "Kaucja wymagana — zwracana przy wymeldowaniu",
       "prof1": "Profesjonalizm nas wyróżnia",
       "prof2": "Luksus w dobrej cenie",
-      "nature": "1,5 km od morza, otoczony naturą",
-      "beach": "250 metrów od morza",
       "poolNote": "Zaledwie 250m od morza — basen może nie być potrzebny",
       "propertySection": "Twój lokal",
       "priceSection": "Szczegóły ceny",

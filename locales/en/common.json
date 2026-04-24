@@ -48,9 +48,7 @@
     "step4": {
       "title": "Where would you like to stay?",
       "campagna": "LivingApple — Countryside",
-      "campagna_desc": "1.5 km from the sea, surrounded by nature",
       "mare": "LivingApple Beach — Seaside",
-      "mare_desc": "3-minute walk to the beach",
       "next": "Continue",
       "back": "Back"
     },
@@ -404,8 +402,6 @@
       "deposit": "Security deposit required — refunded at check-out",
       "prof1": "Professionalism sets us apart",
       "prof2": "Luxury at the right price",
-      "nature": "1.5km from the sea, surrounded by nature",
-      "beach": "250 metres from the sea",
       "poolNote": "Just 250m from the sea — you may not need a pool at all",
       "propertySection": "Your accommodation",
       "priceSection": "Price breakdown",

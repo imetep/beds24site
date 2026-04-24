@@ -48,9 +48,7 @@
     "step4": {
       "title": "Wo möchten Sie übernachten?",
       "campagna": "LivingApple — Landlage",
-      "campagna_desc": "1,5 km vom Meer, umgeben von Natur",
       "mare": "LivingApple Beach — Meeresnähe",
-      "mare_desc": "3 Minuten Fußweg zum Strand",
       "next": "Weiter",
       "back": "Zurück"
     },
@@ -404,8 +402,6 @@
       "deposit": "Kaution erforderlich — Rückgabe bei Check-out",
       "prof1": "Professionalität macht uns besonders",
       "prof2": "Luxus zum richtigen Preis",
-      "nature": "1,5 km vom Meer, eingebettet in die Natur",
-      "beach": "250 Meter vom Meer",
       "poolNote": "Nur 250m vom Meer — ein Pool ist vielleicht gar nicht nötig",
       "propertySection": "Deine Unterkunft",
       "priceSection": "Preisdetails",

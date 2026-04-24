@@ -48,9 +48,7 @@
     "step4": {
       "title": "Dove volete soggiornare?",
       "campagna": "LivingApple — Campagna",
-      "campagna_desc": "1.5 km dal mare, immerso nella natura",
       "mare": "LivingApple Beach — Mare",
-      "mare_desc": "3 minuti a piedi dalla spiaggia",
       "next": "Continua",
       "back": "Indietro"
     },
@@ -404,8 +402,6 @@
       "deposit": "Deposito cauzionale richiesto — rimborsabile al check-out",
       "prof1": "La professionalità ci rende diversi",
       "prof2": "Lusso al giusto prezzo",
-      "nature": "A 1,5 km dal mare, immerso nella natura",
-      "beach": "A 250 metri dal mare",
       "poolNote": "A 250 metri dal mare la piscina non è necessaria — il mare è a portata di mano",
       "propertySection": "Il tuo alloggio",
       "priceSection": "Dettagli del prezzo",
