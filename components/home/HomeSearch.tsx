@@ -154,7 +154,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
       <div style={{ flex: 1 }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', marginBottom: 4 }}>
           {dys.map(d => (
-            <div key={d} style={{ textAlign: 'center', fontSize: 10, fontWeight: 600, color: '#bbb', paddingBottom: 4 }}>{d}</div>
+            <div key={d} style={{ textAlign: 'center', fontSize: 10, fontWeight: 600, color: 'var(--color-text-disabled)', paddingBottom: 4 }}>{d}</div>
           ))}
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)' }}>
@@ -174,7 +174,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
                   height: 36, width: '100%', border: 'none', outline: 'none',
                   borderRadius: (isStart || isEnd) ? '50%' : 0,
                   background: (isStart || isEnd) ? 'var(--color-primary)' : inRange ? 'var(--color-primary-soft)' : 'transparent',
-                  color: (isStart || isEnd) ? 'var(--color-on-dark)' : isPast ? '#ccc' : 'var(--color-text)',
+                  color: (isStart || isEnd) ? 'var(--color-on-dark)' : isPast ? 'var(--color-text-disabled)' : 'var(--color-text)',
                   fontSize: 13, fontWeight: (isStart || isEnd) ? 700 : 400,
                   cursor: isPast ? 'default' : 'pointer',
                   textDecoration: isPast ? 'line-through' : 'none',
@@ -236,8 +236,8 @@ export default function HomeSearch({ locale }: { locale: string }) {
                 border: `2px solid ${v ? 'var(--color-primary)' : 'var(--color-border)'}`,
                 background: v ? 'var(--color-primary-soft)' : 'var(--color-bg-muted)',
               }}>
-                <div style={{ fontSize: 9, fontWeight: 700, color: '#888', textTransform: 'uppercase' }}>{l}</div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: v ? 'var(--color-primary)' : '#aaa' }}>{v ? fmtDate(v, locale, monthsShort) : '—'}</div>
+                <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>{l}</div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: v ? 'var(--color-primary)' : 'var(--color-text-disabled)' }}>{v ? fmtDate(v, locale, monthsShort) : '—'}</div>
               </div>
             ))}
           </div>
@@ -278,7 +278,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
               <button
                 onClick={() => { if (!isPrevDis) { const p = addM(vy, vm, -1); setVY(p.y); setVM(p.m); }}}
                 disabled={isPrevDis}
-                style={{ background: 'none', border: 'none', fontSize: 24, cursor: isPrevDis ? 'default' : 'pointer', color: isPrevDis ? '#ddd' : '#333', padding: '0 12px 0 0', flexShrink: 0 }}>
+                style={{ background: 'none', border: 'none', fontSize: 24, cursor: isPrevDis ? 'default' : 'pointer', color: isPrevDis ? 'var(--color-text-disabled)' : 'var(--color-text)', padding: '0 12px 0 0', flexShrink: 0 }}>
                 ‹
               </button>
               <div style={{ flex: 1, display: 'flex' }}>
@@ -291,7 +291,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
               </div>
               <button
                 onClick={() => { const n = addM(vy, vm, 1); setVY(n.y); setVM(n.m); }}
-                style={{ background: 'none', border: 'none', fontSize: 24, cursor: 'pointer', color: '#333', padding: '0 0 0 12px', flexShrink: 0 }}>
+                style={{ background: 'none', border: 'none', fontSize: 24, cursor: 'pointer', color: 'var(--color-text)', padding: '0 0 0 12px', flexShrink: 0 }}>
                 ›
               </button>
             </div>
@@ -303,7 +303,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 14 }}>
               <button onClick={() => { setCheckIn(''); setCheckOut(''); setSelectingCheckout(false); }}
-                style={{ background: 'none', border: 'none', color: '#888', fontSize: 12, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>
+                style={{ background: 'none', border: 'none', color: 'var(--color-text-muted)', fontSize: 12, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>
                 {ui.cancel}
               </button>
               <button onClick={() => setPanel('none')}
@@ -333,7 +333,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
               zIndex: 10,
             }}>
               <button onClick={() => { setCheckIn(''); setCheckOut(''); setSelectingCheckout(false); }}
-                style={{ background: 'none', border: 'none', color: '#888', fontSize: 12, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>
+                style={{ background: 'none', border: 'none', color: 'var(--color-text-muted)', fontSize: 12, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>
                 {ui.cancel}
               </button>
               <button onClick={() => setPanel('none')}
@@ -365,12 +365,12 @@ export default function HomeSearch({ locale }: { locale: string }) {
           <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0', borderBottom: '1px solid #f0f0f0' }}>
             <div>
               <div style={{ fontSize: 15, fontWeight: 500 }}>{label}</div>
-              <div style={{ fontSize: 12, color: '#999' }}>{sub}</div>
+              <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>{sub}</div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
               <button onClick={() => set(val - 1)} disabled={val <= min}
                 style={{ width: 34, height: 34, borderRadius: '50%', border: `1.5px solid ${val <= min ? 'var(--color-border)' : 'var(--color-primary)'}`,
-                  background: 'var(--color-bg)', color: val <= min ? '#ccc' : 'var(--color-primary)', fontSize: 18, cursor: val <= min ? 'not-allowed' : 'pointer',
+                  background: 'var(--color-bg)', color: val <= min ? 'var(--color-text-disabled)' : 'var(--color-primary)', fontSize: 18, cursor: val <= min ? 'not-allowed' : 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 −
               </button>
@@ -474,8 +474,8 @@ export default function HomeSearch({ locale }: { locale: string }) {
                 <path d="M16 2v4M8 2v4M3 10h18"/>
               </svg>
               <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{ui.dates}</div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: datesLabel ? 'var(--color-text)' : '#aaa', marginTop: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{ui.dates}</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: datesLabel ? 'var(--color-text)' : 'var(--color-text-disabled)', marginTop: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {datesLabel ?? `${ui.checkin} – ${ui.checkout}`}
                 </div>
                 {nightsLabel && (
@@ -498,7 +498,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
                 <path d="M5.5 21c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" strokeLinecap="round"/>
               </svg>
               <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{ui.guests}</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{ui.guests}</div>
                 <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text)', marginTop: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {guestsLabel ?? `${numAdult} ${locale === 'it' ? 'adulti' : 'adults'}`}
                 </div>
@@ -543,10 +543,10 @@ export default function HomeSearch({ locale }: { locale: string }) {
                 <path d="M16 2v4M8 2v4M3 10h18"/>
               </svg>
               <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>
                   {ui.dates}
                 </div>
-                <div style={{ fontSize: 15, fontWeight: 600, color: datesLabel ? 'var(--color-text)' : '#bbb', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div style={{ fontSize: 15, fontWeight: 600, color: datesLabel ? 'var(--color-text)' : 'var(--color-text-disabled)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {datesLabel ?? `${ui.checkin} – ${ui.checkout}`}
                 </div>
                 {nightsLabel && (
@@ -577,7 +577,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
                 <path d="M5.5 21c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" strokeLinecap="round"/>
               </svg>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>
                   {ui.guests}
                 </div>
                 <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
