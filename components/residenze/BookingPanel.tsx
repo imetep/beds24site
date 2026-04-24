@@ -104,12 +104,7 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
         {/* Selezione età bambini */}
         {numChild > 0 && (
           <div className="mt-3 px-3 py-3 border booking-panel__children-ages">
-            <p className="mb-2 booking-panel__children-hint">
-              {locale === 'it' ? 'Per mostrarti i prezzi esatti, dobbiamo conoscere l’età dei bambini.'
-               : locale === 'de' ? 'Für genaue Preise benötigen wir das Alter der Kinder.'
-               : locale === 'pl' ? 'Potrzebujemy znać wiek dzieci, aby pokazać dokładne ceny.'
-               : 'To show exact prices, we need to know the children’s ages.'}
-            </p>
+            <p className="mb-2 booking-panel__children-hint">{t.childrenHint}</p>
             <div
               className="booking-panel__children-grid"
               style={{ gridTemplateColumns: numChild === 1 ? '1fr' : '1fr 1fr' }}
@@ -117,19 +112,19 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
               {Array.from({ length: numChild }, (_, i) => (
                 <div key={i}>
                   <label className="booking-panel__children-age-label">
-                    {locale === 'it' ? `Età bambino ${i + 1}` : locale === 'de' ? `Alter Kind ${i + 1}` : locale === 'pl' ? `Wiek dziecka ${i + 1}` : `Child ${i + 1} age`}
+                    {t.childAgeLabel.replace('{n}', String(i + 1))}
                   </label>
                   <select
                     value={childrenAges[i] ?? -1}
                     onChange={e => setChildAge(i, Number(e.target.value))}
                     className={`form-select booking-panel__children-age-select${(childrenAges[i] ?? -1) < 0 ? ' is-missing' : ''}`}
                   >
-                    <option value={-1}>{locale === 'it' ? 'Seleziona età' : locale === 'de' ? 'Alter wählen' : locale === 'pl' ? 'Wybierz wiek' : 'Select age'}</option>
+                    <option value={-1}>{t.selectAge}</option>
                     {Array.from({ length: 18 }, (_, age) => (
                       <option key={age} value={age}>
-                        {age === 0 ? (locale === 'it' ? '0 anni' : locale === 'de' ? '0 Jahre' : locale === 'pl' ? '0 lat' : '0 years')
-                         : age === 1 ? (locale === 'it' ? '1 anno' : locale === 'de' ? '1 Jahr' : locale === 'pl' ? '1 rok' : '1 year')
-                         : `${age} ${locale === 'it' ? 'anni' : locale === 'de' ? 'Jahre' : locale === 'pl' ? 'lata' : 'years'}`}
+                        {age === 0 ? t.yearsLabel0
+                         : age === 1 ? t.yearsLabel1
+                         : t.yearsLabelN.replace('{n}', String(age))}
                       </option>
                     ))}
                   </select>
@@ -142,7 +137,7 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
         {overCapacity && (
           <p className="mt-2 mb-0 text-danger booking-panel__overcapacity-warning">
             <i className="bi bi-exclamation-triangle-fill me-1" />
-            Massimo {maxPeople} {maxPeople === 1 ? 'persona' : 'persone'} per questo appartamento.
+            {(maxPeople === 1 ? t.maxPeopleOne : t.maxPeopleMany).replace('{n}', String(maxPeople))}
           </p>
         )}
       </div>
