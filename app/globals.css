@@ -2659,10 +2659,6 @@ body {
   /* hero + 4 tiles (PhotoCarousel desktop) */
   grid-template-columns: 2fr 1fr 1fr;
 }
-.photo-preview-grid--2 {
-  /* hero + 2 tiles su 2 righe (PhotoLightbox desktop) */
-  grid-template-columns: 2fr 1fr;
-}
 .photo-preview-grid__hero {
   grid-row: 1 / 3;
   overflow: hidden;
@@ -2771,12 +2767,6 @@ body {
 .photo-dots__dot.is-edge {
   width: 5px;
 }
-.photo-dots--dark .photo-dots__dot {
-  background: rgba(255, 255, 255, 0.50);
-}
-.photo-dots--dark .photo-dots__dot.is-active {
-  background: var(--color-cta);
-}
 
 /* ── Lightbox fullscreen (base wrapper = .layout-fullscreen-overlay) ── */
 .lightbox-photo {
@@ -2786,19 +2776,6 @@ body {
   height: 100%;
   object-fit: contain;
   display: block;
-}
-.lightbox-photo--centered {
-  /* Variante PhotoLightbox: img centrata dentro wrapper flex */
-  position: static;
-  max-width: 100%;
-  max-height: 100%;
-}
-.lightbox-photo-centered-wrap {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .lightbox-topbar {
@@ -2860,20 +2837,12 @@ body {
   padding: 0;
   z-index: 3;
 }
-.lightbox-arrow--sm {
-  width: var(--touch-target);
-  height: var(--touch-target);
-  font-size: 24px;
-  line-height: 1;
-}
 .lightbox-arrow--lg {
   width: 52px;
   height: 52px;
   font-size: 22px;
   line-height: 1;
 }
-.lightbox-arrow--left  { left: var(--space-sm); }
-.lightbox-arrow--right { right: var(--space-sm); }
 .lightbox-arrow--left-lg  { left: var(--space-base); }
 .lightbox-arrow--right-lg { right: var(--space-base); }
 
@@ -2913,21 +2882,6 @@ body {
   height: 100%;
   object-fit: cover;
   display: block;
-}
-
-.lightbox-dots-bar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding-bottom: max(var(--space-base), env(safe-area-inset-bottom));
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.60) 0%, transparent 100%);
-  z-index: 2;
-}
-
-/* Lock gesture browser (pinch/swipe back) dentro il lightbox con swipe orizzontale */
-.lightbox--touch-lock {
-  touch-action: none;
 }
 
 /* ==========================================================================
