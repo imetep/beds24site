@@ -88,7 +88,7 @@ function SectionHeader({ label, icon }: { label: string; icon: string }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '20px 0 14px', paddingTop: 4,
       borderTop: '1.5px solid #f3f4f6' }}>
-      <span style={{ fontSize: 16 }}>{icon}</span>
+      <i className={`bi ${icon}`} style={{ fontSize: 16, color: 'var(--color-primary)' }} aria-hidden="true" />
       <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-primary)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
         {label}
       </span>
@@ -261,18 +261,20 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
     const isEn = locale === 'en';
     const statusUrl = `/it/self-checkin/wizard/status?bookId=${booking!.bookId}`;
     const steps = isEn ? [
-      { icon: '📧', title: 'Deposit link incoming', text: "You will shortly receive an email with the link to authorize the security deposit. Check your inbox (and spam)." },
-      { icon: '🔍', title: 'Document review', text: 'We will verify your documents within 24 hours.' },
-      { icon: '✅', title: 'Approval email', text: 'You will receive a confirmation email with the outcome of your request.' },
+      { icon: 'bi-envelope-fill',       title: 'Deposit link incoming', text: "You will shortly receive an email with the link to authorize the security deposit. Check your inbox (and spam)." },
+      { icon: 'bi-search',              title: 'Document review',       text: 'We will verify your documents within 24 hours.' },
+      { icon: 'bi-check-circle-fill',   title: 'Approval email',        text: 'You will receive a confirmation email with the outcome of your request.' },
     ] : [
-      { icon: '📧', title: 'Link deposito in arrivo', text: "A breve riceverai un'email con il link per autorizzare il deposito cauzionale. Controlla la casella (e lo spam)." },
-      { icon: '🔍', title: 'Verifica documenti', text: 'Verificheremo i tuoi documenti entro 24 ore.' },
-      { icon: '✅', title: 'Email di approvazione', text: "Riceverai una email con l'esito della tua richiesta." },
+      { icon: 'bi-envelope-fill',       title: 'Link deposito in arrivo', text: "A breve riceverai un'email con il link per autorizzare il deposito cauzionale. Controlla la casella (e lo spam)." },
+      { icon: 'bi-search',              title: 'Verifica documenti',      text: 'Verificheremo i tuoi documenti entro 24 ore.' },
+      { icon: 'bi-check-circle-fill',   title: 'Email di approvazione',   text: "Riceverai una email con l'esito della tua richiesta." },
     ];
     return (
       <div className="page-container pt-4 pb-5">
         <div className="text-center mb-4">
-          <div className="mb-3" style={{ fontSize: 52 }}>✅</div>
+          <div className="mb-3" style={{ fontSize: 52, color: 'var(--color-success, #16a34a)' }}>
+            <i className="bi bi-check-circle-fill" aria-hidden="true" />
+          </div>
           <h1 className="fw-bold mb-2" style={{ fontSize: 22, color: '#111' }}>
             {isEn ? 'Request submitted' : 'Richiesta inviata'}
           </h1>
@@ -291,7 +293,9 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
           </p>
           {steps.map((s, i) => (
             <div key={i} className="d-flex align-items-start" style={{ gap: 14, marginBottom: i < steps.length - 1 ? 16 : 0 }}>
-              <div className="flex-shrink-0" style={{ fontSize: 20, marginTop: 1 }}>{s.icon}</div>
+              <div className="flex-shrink-0" style={{ fontSize: 20, marginTop: 1, color: 'var(--color-primary)' }}>
+                <i className={`bi ${s.icon}`} aria-hidden="true" />
+              </div>
               <div>
                 <p className="fw-bold mb-1" style={{ fontSize: 14, color: '#111' }}>{s.title}</p>
                 <p className="m-0" style={{ fontSize: 13, color: '#6b7280', lineHeight: 1.6 }}>{s.text}</p>
@@ -338,7 +342,10 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
           {verifyErr && <p style={{ fontSize: 13, color: '#dc2626', marginBottom: 12 }}>{verifyErr}</p>}
           {booking ? (<>
             <div style={{ background: '#EAF3DE', borderRadius: 10, padding: '14px 16px', marginBottom: 20, border: '1px solid #C0DD97' }}>
-              <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 700, color: '#27500A' }}>{t.foundTitle} ✓</p>
+              <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 700, color: '#27500A' }}>
+                <i className="bi bi-check-lg me-1" aria-hidden="true" />
+                {t.foundTitle}
+              </p>
               <p style={{ margin: '0 0 2px', fontSize: 13, color: '#3B6D11' }}>{t.propLabel}: <strong>{booking.roomName}</strong></p>
               <p style={{ margin: '0 0 2px', fontSize: 13, color: '#3B6D11' }}>{t.checkinLabel}: <strong>{booking.checkIn}</strong> — {t.checkoutLabel}: <strong>{booking.checkOut}</strong></p>
               <p style={{ margin: 0, fontSize: 13, color: '#3B6D11' }}>{t.guestsLabel}: <strong>{booking.numAdult}</strong></p>
@@ -382,7 +389,10 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
               tabIndex={3} value={capo.email}
               onChange={e => setCapo(c => ({ ...c, email: e.target.value }))} />
             <div style={{ marginTop: 6, background: '#FFF9E6', border: '1px solid #FDE68A', borderRadius: 8, padding: '8px 12px' }}>
-              <p style={{ margin: 0, fontSize: 12, color: '#713f12' }}>⚠️ {t.emailNote}</p>
+              <p style={{ margin: 0, fontSize: 12, color: '#713f12' }}>
+                <i className="bi bi-exclamation-triangle-fill me-1" aria-hidden="true" />
+                {t.emailNote}
+              </p>
             </div>
           </div>
 
@@ -439,7 +449,7 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
 
           {/* ── Altri ospiti ── */}
           {altri.length > 0 && (
-            <SectionHeader label={t.otherGuests} icon="👥" />
+            <SectionHeader label={t.otherGuests} icon="bi-people-fill" />
           )}
 
           {altri.map((a, idx) => (
@@ -520,7 +530,10 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
           <p style={{ margin: '0 0 16px', fontSize: 14, color: '#6b7280', lineHeight: 1.6 }}>{t.step3Sub}</p>
 
           <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 10, padding: '12px 14px', marginBottom: 20 }}>
-            <p style={{ margin: '0 0 4px', fontSize: 12, fontWeight: 700, color: '#991B1B' }}>⚠️ {t.docWarning}</p>
+            <p style={{ margin: '0 0 4px', fontSize: 12, fontWeight: 700, color: '#991B1B' }}>
+              <i className="bi bi-exclamation-triangle-fill me-1" aria-hidden="true" />
+              {t.docWarning}
+            </p>
             <p style={{ margin: 0, fontSize: 12, color: '#7f1d1d' }}>{t.gdprNote}</p>
           </div>
 

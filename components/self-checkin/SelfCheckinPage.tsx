@@ -311,7 +311,8 @@ export default function SelfCheckinPage({ locale, wizardHref, contactHref }: Pro
             }}
           >
             <span style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>
-              📰 {t.sourcesTitle}
+              <i className="bi bi-newspaper me-1" aria-hidden="true" />
+              {t.sourcesTitle}
             </span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
               stroke="#9ca3af" strokeWidth="2.5"
@@ -365,7 +366,8 @@ export default function SelfCheckinPage({ locale, wizardHref, contactHref }: Pro
           borderRadius: 10, padding: '12px 16px',
         }}>
           <p style={{ margin: 0, fontSize: 13, color: '#713f12', lineHeight: 1.65 }}>
-            ⚖️ {t.legalNote}
+            <i className="bi bi-bank2 me-1" aria-hidden="true" />
+            {t.legalNote}
           </p>
         </div>
       </div>

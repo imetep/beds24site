@@ -109,16 +109,18 @@ export default function StatusCheckin({ locale }: { locale: Locale }) {
   }
 
   const statusLabels: Record<string, { label: string; note: string; bg: string; color: string; icon: string }> = {
-    PENDING:  { label: t.statusPending,  note: t.pendingNote,  bg: '#FEF9C3', color: '#713f12', icon: '⏳' },
-    APPROVED: { label: t.statusApproved, note: t.approvedNote, bg: '#DCFCE7', color: '#14532d', icon: '✅' },
-    REJECTED: { label: t.statusRejected, note: '',             bg: '#FEE2E2', color: '#7f1d1d', icon: '❌' },
+    PENDING:  { label: t.statusPending,  note: t.pendingNote,  bg: '#FEF9C3', color: '#713f12', icon: 'bi-hourglass-split' },
+    APPROVED: { label: t.statusApproved, note: t.approvedNote, bg: '#DCFCE7', color: '#14532d', icon: 'bi-check-circle-fill' },
+    REJECTED: { label: t.statusRejected, note: '',             bg: '#FEE2E2', color: '#7f1d1d', icon: 'bi-x-circle-fill' },
   };
 
   // ── Form ricerca ─────────────────────────────────────────────────────────
   if (!data) return (
     <div className="page-container py-5">
       <div className="text-center mb-4">
-        <div className="mb-2" style={{ fontSize: 40 }}>🔍</div>
+        <div className="mb-2" style={{ fontSize: 40, color: 'var(--color-primary)' }}>
+          <i className="bi bi-search" aria-hidden="true" />
+        </div>
         <h1 className="fw-bold mb-1" style={{ fontSize: 22, color: '#111' }}>
           {t.pageTitle}
         </h1>
@@ -169,7 +171,7 @@ export default function StatusCheckin({ locale }: { locale: Locale }) {
 
       <div className="mb-3" style={{ ...card, background: sc.bg, border: `1px solid ${sc.color}30` }}>
         <div className="d-flex align-items-center gap-2">
-          <span style={{ fontSize: 24 }}>{sc.icon}</span>
+          <i className={`bi ${sc.icon}`} style={{ fontSize: 24, color: sc.color }} aria-hidden="true" />
           <div>
             <p className="fw-bold mb-1" style={{ fontSize: 16, color: sc.color }}>
               {sc.label}
