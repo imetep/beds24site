@@ -2619,13 +2619,13 @@ body {
 }
 
 /* ==========================================================================
-   Session 10 — PhotoCarousel + PhotoLightbox (scheda residenza)
-   Pattern condivisi: preview grid desktop, preview touch, lightbox fullscreen
-   (top bar + frecce + thumbs/dots), dot indicators, badge foto count, tap
-   zone laterali. Base lightbox riusa .layout-fullscreen-overlay (§ gallery).
+   Session 10 — PhotoCarousel (scheda residenza)
+   Preview grid desktop, preview touch mobile, lightbox fullscreen (top bar +
+   frecce + thumbs/dots), dot indicators, badge foto count, tap zone laterali.
+   Base lightbox riusa .layout-fullscreen-overlay (§ gallery).
    ========================================================================== */
 
-/* ── Preview touch: singola foto con overlay (PhotoCarousel mobile, PhotoLightbox mobile) ── */
+/* ── Preview touch: singola foto con overlay (PhotoCarousel mobile) ── */
 .photo-preview--touch {
   position: relative;
   width: 100%;
