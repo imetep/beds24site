@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useWizardStore } from '@/store/wizard-store';
 import { calculateTouristTax } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
