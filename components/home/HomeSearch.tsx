@@ -435,7 +435,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
           height: isDesk ? 320 : 220,
           background: heroBg
             ? `linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url(${heroBg}) center/cover no-repeat`
-            : 'linear-gradient(135deg, var(--color-primary) 0%, #0c447c 100%)',
+            : 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%)',
         }}
       >
         <div className="container text-center px-3" style={{ maxWidth: 900 }}>
