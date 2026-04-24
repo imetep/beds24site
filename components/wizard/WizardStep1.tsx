@@ -440,7 +440,7 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                 </div>
                 {poolPreference !== 'none' && (
                   <div className="banner banner--accent banner--with-icon">
-                    <span>🏊</span>
+                    <i className="bi bi-water" aria-hidden="true" />
                     <span>
                       {locale === 'it' ? 'La piscina è aperta indicativamente da fine maggio a metà ottobre.' :
                        locale === 'de' ? 'Der Pool ist voraussichtlich von Ende Mai bis Mitte Oktober geöffnet.' :
@@ -563,7 +563,9 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                         {coverUrl ? (
                           <img src={coverUrl} alt={room.name} className="step1-room-card__photo-img" loading="lazy" />
                         ) : (
-                          <div className="step1-room-card__photo-placeholder">🏠</div>
+                          <div className="step1-room-card__photo-placeholder">
+                            <i className="bi bi-house-fill" aria-hidden="true" />
+                          </div>
                         )}
                       </div>
                       <span className="badge-overlay step1-room-card__floor">
@@ -577,11 +579,23 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                     <div className="step1-room-card__name">{room.name}</div>
                     {isSingleRoom && <span className="badge-feature">{room.type}</span>}
                     <div className="step1-room-card__meta-chips">
-                      <span className="badge-feature">🛏️ {room.bedrooms} {t.camere}</span>
-                      <span className="badge-feature">👥 {t.maxPers} {room.maxPeople} {t.persone}</span>
-                      <span className="badge-feature">📐 {room.sqm} mq</span>
+                      <span className="badge-feature">
+                        <i className="bi bi-door-closed-fill me-1" aria-hidden="true" />
+                        {room.bedrooms} {t.camere}
+                      </span>
+                      <span className="badge-feature">
+                        <i className="bi bi-people-fill me-1" aria-hidden="true" />
+                        {t.maxPers} {room.maxPeople} {t.persone}
+                      </span>
+                      <span className="badge-feature">
+                        <i className="bi bi-aspect-ratio me-1" aria-hidden="true" />
+                        {room.sqm} mq
+                      </span>
                       <span className="badge-feature">{getPoolLabel(room, t)}</span>
-                      <span className="badge-feature">📍 {getLocationLabel(room, t)}</span>
+                      <span className="badge-feature">
+                        <i className="bi bi-geo-alt-fill me-1" aria-hidden="true" />
+                        {getLocationLabel(room, t)}
+                      </span>
                     </div>
                   </div>
 
