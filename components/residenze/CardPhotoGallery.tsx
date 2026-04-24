@@ -15,7 +15,8 @@ interface Props {
  *
  * NOTE: questo componente aveva anche una modalità "lightbox fullscreen"
  * attivata quando `linkHref` era omesso. Era dead code — nessuno lo invocava
- * mai senza `linkHref`. Il lightbox vero vive in `PhotoLightbox.tsx`.
+ * mai senza `linkHref`. Il lightbox vero vive in `PhotoCarousel.tsx` (ramo
+ * desktop fullscreen con topbar + frecce + thumbs).
  * Blocco rimosso nel commit di Sessione 8 per ridurre duplicazione.
  */
 export default function CardPhotoGallery({ coverUrl, roomName, noPhotoLabel, linkHref }: Props) {
