@@ -257,11 +257,55 @@ Applicato durante Sessione 11 (`AvailabilityCalendar.tsx:192` — `.is-in-range`
 **T8 — `lib/beds24-client.ts` potenzialmente dead code**
 Emerso durante audit `REDIS_RT_KEY`: file parallelo a `lib/beds24-token.ts` che NON usa Redis, solo env+memoria. Non importato da nessuna parte di quelle viste nel grep refreshToken. Richiede grep dedicato per verificare se c'è qualche consumer, poi rimozione.
 
-**T9 — i18n centralizzazione nei file scheda residenza**
+**T9 — i18n centralizzazione nei file scheda residenza** 🟡 ampliato post-Session 10+11
 3 dei 7 file di Sessione 7+8 hanno dict `LABELS` hardcoded inline (`page.tsx`, `RoomCard.tsx`, `ThingsToKnow.tsx`) invece di `getTranslations()`. Fuori scope CSS migration. Da fare in sessione i18n dedicata.
+
+**Scope aggiuntivo emerso durante Session 10+11 (aria-label nuovi introdotti hardcoded in italiano)**:
+- `PhotoCarousel.tsx`: `aria-label="Chiudi"`, `"Precedente"`, `"Successivo"` (3 occorrenze)
+- `PhotoLightbox.tsx`: `aria-label="Chiudi"`, `"Precedente"`, `"Successivo"` (3 occorrenze) — ⚠️ se conserviamo il file; vedi §6.1-T11
+- `AvailabilityCalendar.tsx`: `aria-label="Mese precedente"`, `"Mese successivo"` (×2 per mobile/desktop), `"Cancella date"`
+- `PhotoCarousel.tsx` + `PhotoLightbox.tsx`: testo `"N foto"` (pre-esistente, string concatenation) — dopo `<i class="bi bi-camera-fill">` serve label tradotta
+
+**Residui i18n non-aria** da portare via getTranslations:
+- `components.availabilityCalendar.clear` esiste già in `locales/*/common.json` ma non è usato (il bottone ✕ non ha testo visibile)
+- aggiungere chiavi nuove: `components.photoCarousel.photoCount` (`"{n} foto"`), `.close`, `.prev`, `.next`; `components.availabilityCalendar.prevMonth`, `.nextMonth`, `.clear` (riuso già esistente come aria-label)
+
+**Approccio sessione i18n dedicata**: grep di tutti gli hardcoded italiani in `components/residenze/**`, aggiungere chiavi mancanti nei 4 locale (it/en/de/pl), sostituire con `getTranslations()` + `aria-label={ui.close}` ecc.
 
 **T10 — `DEL beds24:refreshToken` su Upstash**
 Follow-up del commit `6c4c867` (dedup REDIS_RT_KEY): dopo 2-3 giorni di deploy sano, cancellare manualmente la chiave legacy da Upstash Data Browser. Rete di sicurezza rollback non più necessaria passato quel tempo.
+
+**T12 — `distanceLabel` in `config/properties.ts` hardcoded IT (bug i18n scheda residenza + wizard)** 🔴 scoperto 2026-04-24
+
+**Impatto**: utenti EN/DE/PL vedono il testo in italiano in 2 punti visibili.
+
+**Origine**: `config/properties.ts:41` dichiara `distanceLabel: string` (stringa singola); le 2 properties hardcodano il valore IT:
+- `config/properties.ts:55` (LivingApple, propId 46487): `'A 1.5 km dal mare, immerso nella natura'`
+- `config/properties.ts:226` (LivingApple Beach, propId 46871): `'Vicino al mare, a 250m dalla spiaggia'`
+
+**Consumer**:
+- `app/[locale]/residenze/[slug]/page.tsx:255` — sotto il titolo `H1` della scheda (`{property.distanceLabel} · {floorLabel}`)
+- `components/wizard/BookingSidebar.tsx:183` — sidebar wizard step 1 (`{property.name} · {property.distanceLabel}`)
+
+**Duplicati orfani già in `locales/*/common.json`** (traduzioni fatte ma mai cablate alla scheda — da consolidare):
+- `:51 campagna_desc` — `"1.5 km dal mare, immerso nella natura"` + versioni EN/DE/PL
+- `:407 nature` — `"A 1,5 km dal mare, immerso nella natura"` (variante con virgola)
+- `:9 description` — `"10 appartamenti immersi nella campagna, a 1.5 km dal mare."` (usata solo in Home, non scheda)
+
+**Soluzione consigliata — pattern già in uso nello stesso file** (`OFFER_INFO.name` / `.conditions` riga 378/379 sono `Record<string, string>`):
+```ts
+// config/properties.ts
+distanceLabel: { it: '...', en: '...', de: '...', pl: '...' },
+// Consumer: property.distanceLabel[locale] (fallback a .it se locale mancante)
+```
+
+**Scope intervento**:
+- `config/properties.ts`: tipo `Property.distanceLabel` → `Record<string, string>` + 2 properties × 4 locale = 8 stringhe
+- `app/[locale]/residenze/[slug]/page.tsx:255`: `{property.distanceLabel[locale] ?? property.distanceLabel.it}`
+- `components/wizard/BookingSidebar.tsx:183`: idem (+ verificare se ha già `locale` nello scope)
+- Cleanup: eliminare le chiavi duplicate `campagna_desc` / `nature` / `natura` in `locales/*/common.json` se non consumate altrove (grep prima)
+
+**Da fare insieme alla sessione i18n dedicata** (vedi T9).
 
 ---
 
