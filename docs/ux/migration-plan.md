@@ -106,7 +106,7 @@ L'ordine è ottimizzato per: **rischio crescente** (prima i facili come warm-up 
 | 2 | Wizard.tsx | migra 5 inline. Include anche la patch visiva §4.3 dell'audit visivo | ✅ |
 | 3 | WizardSidebar.tsx → **ristrutturazione** sidebar booking unificata step 1+2 | vedi §4-bis scomposizione | ✅ 3a/3b/3c |
 | 4 | WizardStep1.tsx | migra 95 inline residui. Applica §1.2–§1.4 audit visivo | ✅ `1a66800`/`89ce18d`/`09a11b4` |
-| 5 | WizardStep2.tsx | migra form+pagamento (43 inline main col). SidebarContent legacy + 55 inline residui restano per sessione mobile dedicata. Applica §2.2–§2.6 | ✅ `1df83d6`/`4e397ad` |
+| 5 | WizardStep2.tsx | migra form+pagamento (43 inline main col). SidebarContent legacy + 55 inline residui restano per sessione mobile dedicata. Applica §2.2–§2.6 | ✅ `1df83d6`/`4e397ad` + ✅ `ed5db23`/`4ce08c0` (sessione mobile chiude i 48 residui SidebarContent/SideRow/CSSProp legacy a 0 — 2026-04-24) |
 | 6 | WizardStep3.tsx | migra 32 inline + redesign B single-col condensato + i18n namespace wizardStep3 (era UI inline 150 righe) + rinomina func WizardStep7→WizardStep3 + fetch cover hero. Applica §3.1–§3.7 audit visivo. Logica Stripe/PayPal PRESERVATA byte-identical | ✅ `b4807dc`/`3d28133`/`80f746c` |
 
 **Dopo ogni sessione**: screenshot desktop + mobile del step toccato, confronto con prima, approvazione tua prima di passare alla successiva.
@@ -353,33 +353,34 @@ distanceLabel: { it: '...', en: '...', de: '...', pl: '...' },
 | 11 | AvailabilityCalendar | 33 | 57 ✅ |
 | 12 | FotoGalleryClient | 33 (34 → 1 dinamico) | 24 ✅ |
 | 9 | BookingPanel | 24 (25 → 1 dinamico giustificato) | 0 ✅ |
+| mob | Sessione mobile WizardStep2 | 48 | 0 ✅ (2026-04-24, piano programmato chiuso) |
 
-### 8.1 Metriche finali misurate (2026-04-24, 🏁 Fase B chiusa)
+### 8.1 Metriche finali misurate (2026-04-24, 🏁 Piano programmato COMPLETATO)
 
-Numeri da `grep 'style={{' components/` + `grep 'style={{' app/` post-Session 9.
+Numeri da `grep 'style={{' components/` + `grep 'style={{' app/` post-sessione mobile-WizardStep2.
 
-**Scope Fase B (16 file, era 17 pre-delete PhotoLightbox):**
+**Scope Fase B + post-B programmato (16 file, era 17 pre-delete PhotoLightbox):**
 
 | Categoria | # file | Note |
 |---|---|---|
-| File a **zero inline** | 13 | 5 wizard (Wizard, BookingSidebar, WizardStep1, WizardStep3) + 8 scheda (page, RoomCard, PropertyMap, ThingsToKnow, StickyBookingBar, CardPhotoGallery, BedConfigDisplay, PhotoCarousel, AvailabilityCalendar) |
+| File a **zero inline** | 14 | 5 wizard (Wizard, BookingSidebar, WizardStep1, **WizardStep2**, WizardStep3) + 9 scheda (page, RoomCard, PropertyMap, ThingsToKnow, StickyBookingBar, CardPhotoGallery, BedConfigDisplay, PhotoCarousel, AvailabilityCalendar) |
 | File con **1 inline dinamico giustificato** | 2 | `BookingPanel.tsx` (gridTemplateColumns numChild 1/2) + `FotoGalleryClient.tsx` (frozenW/H iOS fix) |
-| File con **debito programmato** | 1 | `WizardStep2.tsx` (48 residui SidebarContent legacy — Sessione mobile dedicata post-Fase-B) |
+| File con **debito programmato** | 0 | Tutti chiusi ✅ |
 
-**Inline eliminati Fase B (misurati):**
+**Inline eliminati Fase B + post-B (misurati):**
 
 | | Prima (plan) | Dopo (grep reale) | Eliminati |
 |---|---|---|---|
-| Wizard (5 file) | 213 | 48 (tutti in WizardStep2 residuo) | 165 |
+| Wizard (5 file) | 213 | 0 | 213 |
 | Scheda abitazione (12→11 file) | 200 | 2 (dinamici giustificati) | 198 |
-| **Totale Fase B** | **~413** | **50** | **363 style eliminati** |
+| **Totale** | **~413** | **2** | **411 style eliminati** |
 
-**Debito residuo repo-wide (al 2026-04-24):**
+**Debito residuo repo-wide (al 2026-04-24, post sessione mobile):**
 
-| Area | File | `style={{}}` | In scope Fase B? |
+| Area | File | `style={{}}` | In scope? |
 |---|---|---|---|
 | `components/residenze/` (BookingPanel, FotoGalleryClient) | 2 | 2 | ✅ dinamici giustificati |
-| `components/wizard/WizardStep2.tsx` | 1 | 48 | 🟡 programmato (Sessione mobile dedicata post-Fase-B) |
+| `components/wizard/WizardStep2.tsx` | 1 | 0 | ✅ chiuso 2026-04-24 |
 | `app/[locale]/paga/PagaClient.tsx` | 1 | 34 | ❌ Fase 3 opportunistica |
 | `app/[locale]/prenota/successo/SuccessContent.tsx` | 1 | 12 | ❌ Fase 3 |
 | `components/self-checkin/*` (3 file: WizardCheckin, SelfCheckinPage, StatusCheckin) | 3 | 179 | ❌ Fase 3 |
@@ -389,9 +390,9 @@ Numeri da `grep 'style={{' components/` + `grep 'style={{' app/` post-Session 9.
 | `components/contatti`, `dove-siamo`, `animali`, `deposito`, `prenotazione-sicura`, `utenze`, `HeaderClient` | 7 | 124 | ❌ Fase 3 |
 | `components/ui/*` (primitive Card, Button) | 2 | 2 | ❌ Fase 3 |
 | `app/[locale]/*/page.tsx` + `layout.tsx` (shells + legali + lista residenze + successo/page + prenota/page + condizioni + privacy + trattamento-dati + admin/page + paga/page) | 9 | 27 | ❌ Fase 3 |
-| **Totale repo** | **38 file** | **816** | |
+| **Totale repo** | **37 file** | **768** | |
 
-**Rapporto inline eliminati / totale progetto**: 363 / (363 + 816) = **~31%** del debito inline storico smaltito nella Fase B, con **100% delle pagine-utente del funnel booking coperte** (scheda residenza + wizard 1/2/3 a zero inline, pagamento resta in stato corrente).
+**Rapporto inline eliminati / totale progetto**: 411 / (411 + 768) = **~35%** del debito inline storico smaltito nella Fase B + sessione mobile, con **100% delle pagine-utente del funnel booking coperte** (scheda residenza + wizard 1/2/3 incluso accordion mobile a zero inline, pagamento resta in stato corrente).
 
 **Prossimi passi — aggiornato 2026-04-24 post-task T8+T12+T9**:
 
@@ -399,7 +400,7 @@ Numeri da `grep 'style={{' components/` + `grep 'style={{' app/` post-Session 9.
 |---|------|------|--------|-------|
 | 1 | ~~T8 `lib/beds24-client.ts` dead code~~ | ⚪ | ~15min | ✅ risolto (commit `ce3fbf7`, -316 righe dead) |
 | 2 | ~~Sessione i18n T9 (parte consumer Session 9-12 + T12 assorbito)~~ | 🔴🟡 | ~3h | ✅ risolto 7 commit (`a261189` T12 core, `4b53fb4` locales cleanup, `dd41baa` 22 chiavi × 4 locale, `1f75eaa` BookingPanel, `3523184` PhotoCarousel, `d1bef50` AvailabilityCalendar, `144413c` FotoGalleryClient). Fix accessibilità bonus: bookingPanel.maxPeople prima IT-only ora 4 locale |
-| 3 | **Sessione mobile WizardStep2** | 🟡 | 2-3h | 48 inline residui SidebarContent legacy + accordion mobile. Ultima fetta CSS migration |
+| 3 | ~~Sessione mobile WizardStep2~~ | 🟡 | 2-3h | ✅ risolto 2026-04-24 (commit `ed5db23` css + `4ce08c0` refactor). 48 inline → 0, SidebarContent + SideRow + 2 CSSProp legacy a BEM `.wizard-step2-mobile__*`. 4 emoji decorative → Bootstrap Icons (🛏️ mantenuta). **🏁 piano programmato chiuso** |
 | 4 | **Consolidamento LABELS dict Session 7 (T9 residuo)** | ⚪ | ~2h | `page.tsx` + `RoomCard.tsx` + `ThingsToKnow.tsx`: dict `LABELS` già funzionanti ma duplicati con common.json. Consolidamento opportunistico (quando i file vengono toccati per altri motivi) |
 | 5 | **T10** cleanup Redis key legacy | ⚪ | ~5min | Blocco temporale: dopo 2-3 giorni di deploy sano → dal **2026-04-26** |
 

@@ -909,7 +909,76 @@ Prima del commit:
 
 ---
 
+### 3.17 Session mobile-WizardStep2 — Accordion riepilogo mobile (post-Fase-B)
+
+Dopo la Session 3c il WizardStep2 ha **2 sidebar**: quella desktop (destra, usa `BookingSidebar` unificato) e l'accordion mobile (in alto nella colonna main, contiene `SidebarContent` legacy). Fino a questa sessione, `SidebarContent` + `SideRow` + 2 CSSProperties const (`divider`, `sideLabel`) avevano **48 inline residui** — ora tutti migrati a BEM con prefisso `.wizard-step2-mobile__*`.
+
+**Hero foto + nome appartamento**
+
+| Classe | Ruolo |
+|---|---|
+| `.wizard-step2-mobile__hero` | Wrapper radius-md, overflow hidden, position relative |
+| `.wizard-step2-mobile__hero-img` | Img 100%×160 object-cover |
+| `.wizard-step2-mobile__hero-placeholder` | Placeholder 100px bg `#f0f4f8` + icona `bi-house-fill` (font 40) quando coverUrl null |
+| `.wizard-step2-mobile__hero-info` | Padding label container (10px 4px 0) |
+| `.wizard-step2-mobile__hero-name` | Nome appartamento font 16 fw 700 |
+| `.wizard-step2-mobile__hero-type` | Tipo alloggio font 12 color #888 |
+
+**Energy box** (con icona `bi-lightning-fill`)
+
+| Classe | Ruolo |
+|---|---|
+| `.wizard-step2-mobile__energy` | Box bg `#f0f7ff` + border `#bfdbfe` + radius 10 |
+| `.wizard-step2-mobile__energy-title` | Titolo fw 700 color `#1e40af` |
+| `.wizard-step2-mobile__energy-text` | Testo font 12 color `#374151` lh 1.5 |
+
+**Divider + section label riusabili** (sostituiscono `divider`/`sideLabel` CSSProp)
+
+| Classe | Ruolo |
+|---|---|
+| `.wizard-step2-mobile__divider` | Riga orizzontale 1px `--color-border` margin 14px 0 |
+| `.wizard-step2-mobile__divider--sm` | Modifier: margin 10px 0 |
+| `.wizard-step2-mobile__section-label` | Label uppercase (font 12 fw 700 color #374151 letter-spacing 0.06em) |
+
+**Voucher** / **Price rows** / **Extras upsell stepper** / **Totale** / **Deposito** / **Cancellazione** / **SideRow**
+
+~25 classi aggiuntive documentate nel codice con commento in `globals.css` (prefisso `.wizard-step2-mobile__*`). Pattern principali: `__voucher-row/-input/-btn` + `.is-applied`, `__price-row/-discount-row`, `__extras-list/__extra-item` + stepper con 3 modifier stati (`.is-active-minus/-plus/.is-disabled-plus`), `__total-row/-label/-new/-old`, `__deposit` (bg `--color-warning-bg`), `__side-row/-edit`.
+
+**Emoji → Bootstrap Icons** (coerente memoria "icone Bootstrap, mai emoji decorative"):
+- 🏠 (hero placeholder) → `bi-house-fill`
+- ⚡ (energy) → `bi-lightning-fill`
+- 🏷️ (sconto voucher) → `bi-tag-fill`
+- 🔐 (deposito) → `bi-shield-lock-fill`
+- 🛏️ (extras) **mantenuta** — no Bootstrap equivalent, eccezione documentata come 📷 Session 12
+
+**Nessun token nuovo**. Riuso `--color-primary(-soft)`, `--color-warning-bg/-border`, `--color-border`, `--color-text(-muted)`, `--radius-md/sm`, `--space-sm/md/base`, `--text-xs/sm/base/md`, `--touch-target`.
+
+**Grigi non-semantic hardcoded** (coerenti Session 9-12): `#111`, `#374151`, `#444`, `#555`, `#888`, `#999`, `#aaa`, `#ccc`, `#d1d5db`, `#f0f4f8/f7ff/fdf4/5/5/afafa`, `#16a34a/bbf7d0/bfdbfe/1e40af/78350f/92610a/e74c3c`. Font-size hardcoded residui: 11/16/18/20/32/40px.
+
+---
+
 ## 9. Changelog
+
+### 2026-04-24 — Sessione mobile-WizardStep2 (v1.9) — 🏁 Piano programmato COMPLETATO
+
+Ultima fetta CSS migration del piano ratificato. Con questa sessione tutti
+i 16 file target Fase B + il debito residuo WizardStep2 (SidebarContent
+legacy + accordion mobile) sono a **zero inline style** (salvo i 2
+dinamici giustificati di BookingPanel + FotoGalleryClient).
+
+- Aggiunto §3.17 con ~35 classi BEM prefisso `.wizard-step2-mobile__*`:
+  hero foto, energy box, divider/section-label riusabili, voucher,
+  price rows, discount row, extras upsell stepper (con 3 modifier
+  stepper-btn), totale + tourist-tax-note, deposito (usa token warning),
+  cancellation, SideRow sub-component.
+- **4 emoji decorative → Bootstrap Icons**: 🏠/⚡/🏷️/🔐 →
+  `bi-house-fill`/`bi-lightning-fill`/`bi-tag-fill`/`bi-shield-lock-fill`.
+- **1 emoji conservata**: 🛏️ (extras upsell) — eccezione deliberata.
+- Riuso token warning: `--color-warning-bg` + `--color-warning-border`.
+- 2 CSSProperties const eliminati (`divider`, `sideLabel`) — ora classi.
+- Nessun token nuovo.
+- Zero cambio logico (fetch /api/upsells, voucher-check, useWizardStore,
+  Stripe/PayPal flow byte-identical).
 
 ### 2026-04-24 — Sessione 9 — BookingPanel (v1.8) — 🏁 Fase B COMPLETATA
 
