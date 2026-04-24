@@ -135,12 +135,12 @@ La spec di dettaglio da seguire è [wizard-sidebar-design.md §6 roadmap](wizard
 |---|---|---|---|---|
 | 7 | File piccoli in un colpo | page + RoomCard + PropertyMap + ThingsToKnow + StickyBookingBar = 19 inline | Warm-up area | ✅ `8278a74` (css+doc), `f31ef59` (page), `3265199` (css mini), `469bc45` (RoomCard), `fb52c08` (PropertyMap), `1b0dd8f` (ThingsToKnow), `41b48ee` (StickyBookingBar) |
 | 8 | BedConfigDisplay + CardPhotoGallery | 38 inline totali | Pattern "card residenza" + dead code removal lightbox CardPhotoGallery | ✅ `2956e99` (css mini), `8db427a` (BedConfigDisplay), `9677c53` (CardPhotoGallery dead-code + RoomCard prop), `5bf6b05` (cleanup lightbox CSS) |
-| 9 | BookingPanel | 25 inline | CTA principale scheda (entry booking). Include fix pre-esistente: `#dbeafe` deprecato riga 196 → `var(--color-primary-soft)` | ⏳ |
+| 9 | BookingPanel | 25 inline | CTA principale scheda (entry booking). Applicato T6 (`#dbeafe` deprecato riga 196 → `var(--color-primary-soft)`), T7 (`#EEF5FC` riga 185 → token), emoji ⚠️ → `bi-exclamation-triangle-fill`, riuso `.wizard-loading-spinner`. 1 inline dinamico residuo giustificato (gridTemplateColumns 1fr/1fr 1fr) | ✅ `b226e5d` (css), `fc10a0e` (BookingPanel) |
 | 10 | PhotoCarousel + PhotoLightbox | 53 inline totali | Gallery + lightbox "vero" (duplicava con quello rimosso in Sess 8). **NB**: post-Session 12 è emerso che `PhotoLightbox.tsx` era dead code orfano dal 2026-03-29; rimosso in cleanup (commit `93e11b0` tsx + `4e938bb` 9 classi CSS). Il lightbox vero vive in `PhotoCarousel.tsx` | ✅ `49a0081` (css shared), `8ab3be4` (PhotoCarousel), `49d4448` (css touch-lock), `b98ddea` (PhotoLightbox — poi eliminato) |
 | 11 | AvailabilityCalendar | 33 inline | Calendario complesso, sessione dedicata. Applicato T7 (#EEF5FC → token) | ✅ `9c93916` |
 | 12 | FotoGalleryClient | 34 inline | Pagina foto completa (portrait + landscape immersivo). Banner iOS CriOS/FxiOS preservato byte-identical, emoji 📷 mantenuta (eccezione deliberata compat. cross-browser). Applicato T2 | ✅ `8f6fbb0` (css), `4513f15` (FotoGalleryClient, 1 inline residuo: frozenW/H dinamici iOS) |
 
-**Sessione 12 completata** ✅ (2026-04-24, 2 commit) + **cleanup PhotoLightbox dead code** ✅ (2026-04-24, commit `93e11b0` + `4e938bb` + aggiornamento doc) — prossima e **ultima Fase B**: Sessione 9 (BookingPanel 🔴 25 inline — entry booking, sessione isolata). Sessione mobile dedicata WizardStep2 SidebarContent a seguire.
+**🏁 Fase B COMPLETATA** ✅ (2026-04-24) — Sessione 9 BookingPanel chiusa come ultima (commit `b226e5d` css + `fc10a0e` refactor). Tutti i 16 file target (era 17, dopo delete PhotoLightbox) sono a **zero inline style** (eccezione: 1 valore dinamico per file quando matematicamente necessario, documentato). Sessione mobile dedicata WizardStep2 SidebarContent + Sessione i18n T9 a seguire (fuori Fase B).
 
 ---
 
@@ -244,23 +244,23 @@ Checklist §6: verifica se è comportamento intenzionale (IntersectionObserver n
 **T5 — Mappa Google pinch-zoom 2 dita sposta la pagina**
 Checklist §8: preesistente alla Sessione 7 (comportamento iframe Google Maps Embed). Non causato da nessun refactor oggi. Fix possibile: passare a Maps JS API con `gestureHandling: 'greedy'`, oppure overlay "tap per interagire" che intercetta il primo touch. Richiede valutazione UX mobile.
 
-**T6 — `#dbeafe` deprecato in `BookingPanel.tsx:196`**
-Bug pre-esistente (globals.css:14 marca `#dbeafe` come deprecato a favore di `var(--color-primary-soft)` = `#EEF5FC`, Caso H dell'audit). Da fixare **durante Sessione 9** (BookingPanel) insieme alla migration inline.
+**T6 — `#dbeafe` deprecato in `BookingPanel.tsx:196`** ✅ risolto (2026-04-24)
+Applicato durante Sessione 9: `.booking-panel__offer-pill-selected` usa ora `var(--color-primary-soft)` (commit `fc10a0e`).
 
 ### 🧹 Pulizia (non urgente)
 
 **T7 — `#EEF5FC` hardcoded ovunque → `var(--color-primary-soft)`** 🟡 in corso
 ~30 occorrenze del valore `#EEF5FC` letterale nei sorgenti (wizard, scheda, guest portal, self-checkin, admin). Visivamente corretto (il valore matcha esattamente il token) ma inefficiente. Pulizia fattibile file-per-file durante le rispettive migration oppure con un search-replace globale.
 
-Applicato durante Sessione 11 (`AvailabilityCalendar.tsx:192` — `.is-in-range` usa ora `var(--color-primary-soft)`). Residui: `BookingPanel.tsx:185`, `BedConfigDisplay.tsx:113`, più altri fuori scope Fase B. Da spuntare man mano durante le sessioni successive.
+Applicato durante Sessione 11 (`AvailabilityCalendar.tsx:192` — `.is-in-range` usa ora `var(--color-primary-soft)`) e Sessione 9 (`BookingPanel.tsx:185` — `.booking-panel__offer.is-picked` usa ora `var(--color-primary-soft)`). Residui: `BedConfigDisplay.tsx:113`, più altri fuori scope Fase B. Da spuntare man mano.
 
 **T8 — `lib/beds24-client.ts` potenzialmente dead code**
 Emerso durante audit `REDIS_RT_KEY`: file parallelo a `lib/beds24-token.ts` che NON usa Redis, solo env+memoria. Non importato da nessuna parte di quelle viste nel grep refreshToken. Richiede grep dedicato per verificare se c'è qualche consumer, poi rimozione.
 
-**T9 — i18n centralizzazione nei file scheda residenza** 🟡 ampliato post-Session 10+11
+**T9 — i18n centralizzazione nei file scheda residenza** 🟡 ampliato post-Session 9+10+11+12
 3 dei 7 file di Sessione 7+8 hanno dict `LABELS` hardcoded inline (`page.tsx`, `RoomCard.tsx`, `ThingsToKnow.tsx`) invece di `getTranslations()`. Fuori scope CSS migration. Da fare in sessione i18n dedicata.
 
-**Scope aggiuntivo emerso durante Session 10+11+12 (aria-label nuovi introdotti hardcoded in italiano)**:
+**Scope aggiuntivo emerso durante Session 9+10+11+12 (aria-label/testi hardcoded in italiano)**:
 - `PhotoCarousel.tsx`: `aria-label="Chiudi"`, `"Precedente"`, `"Successivo"` (3 occorrenze)
 - ~~`PhotoLightbox.tsx`~~: file eliminato nel cleanup post-Session 12 (commit `93e11b0`), scope i18n non più applicabile
 - `AvailabilityCalendar.tsx`: `aria-label="Mese precedente"`, `"Mese successivo"` (×2 per mobile/desktop), `"Cancella date"`
@@ -271,6 +271,12 @@ Emerso durante audit `REDIS_RT_KEY`: file parallelo a `lib/beds24-token.ts` che 
   - `"Gira il telefono per la galleria immersiva"` (hint floating)
   - `"Nessuna foto disponibile."` (empty state)
 - `PhotoCarousel.tsx`: testo `"N foto"` (pre-esistente, string concatenation) — dopo `<i class="bi bi-camera-fill">` serve label tradotta
+- `BookingPanel.tsx` (**emerso Session 9**, preservato byte-identical): stringhe IT/DE/PL/EN hardcoded inline invece di `getTranslations()`:
+  - righe 110-114: hint "Per mostrarti i prezzi esatti, dobbiamo conoscere l'età dei bambini" (4 locale)
+  - righe 119-120: "Età bambino N" (4 locale)
+  - righe 132-137: "Seleziona età" + "N anni/anno/lat/rok/year/years/Jahr/Jahre/lata" (4 locale)
+  - riga 149: `"Massimo {maxPeople} {persona|persone} per questo appartamento"` (solo IT, manca traduzione per en/de/pl) ⚠️ accessibilità peggiore per utenti non-italiani
+  - Aggiungere in `locales/*/common.json` sotto `components.bookingPanel.*`
 
 **Residui i18n non-aria** da portare via getTranslations:
 - `components.availabilityCalendar.clear` esiste già in `locales/*/common.json` ma non è usato (il bottone ✕ non ha testo visibile)
@@ -344,9 +350,9 @@ distanceLabel: { it: '...', en: '...', de: '...', pl: '...' },
 | 10 | PhotoCarousel + PhotoLightbox (quest'ultimo poi eliminato) | 53 | 90 ✅ |
 | 11 | AvailabilityCalendar | 33 | 57 ✅ |
 | 12 | FotoGalleryClient | 33 (34 → 1 dinamico) | 24 ✅ |
-| 9 | BookingPanel | 25 | 0 ✅ (teorico, c'è un off-by-2 nei conti originali) |
+| 9 | BookingPanel | 24 (25 → 1 dinamico giustificato) | 0 ✅ |
 
-A fine piano: **17 file a zero inline**, **413 style eliminati**, **35% del debito inline totale del progetto smaltito** con **100% delle pagine-utente coperte**.
+A fine piano: **16 file a zero inline** (17 originali − 1 PhotoLightbox eliminato), **~411 style eliminati** (413 stimati − 2 di piccoli aggiustamenti di conteggio), **35% del debito inline totale del progetto smaltito** con **100% delle pagine-utente coperte**. 🏁 Fase B completata 2026-04-24.
 
 ---
 

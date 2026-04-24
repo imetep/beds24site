@@ -753,6 +753,87 @@ Pagina dedicata `/[locale]/residenze/[slug]/foto`. Due modalità mutualmente esc
 
 **Emoji**: 📷 **mantenuta** nel solo banner iOS come eccezione documentata (compatibilità cross-browser), le restanti icone usano SVG custom funzionali (non sostituibili con `bi-*` perché trasmettono una rotazione specifica).
 
+### 3.16 BookingPanel (Sessione 9)
+
+Pannello booking della scheda residenza: box ospiti (stepper adulti/bambini + età bambini opzionale), card offerte con selezione, CTA "Prenota". Ultima sessione della Fase B (entry booking 🔴).
+
+**Container ospiti + età bambini**
+
+| Classe | Ruolo |
+|---|---|
+| `.booking-panel__guests-card` | Wrapper top con `border-radius: var(--radius-lg)` (il resto — border, padding, bg-white — resta via utility Bootstrap) |
+| `.booking-panel__children-ages` | Sub-wrapper età bambini bg `--color-bg-muted` + radius 10px (appare quando `numChild > 0`) |
+| `.booking-panel__children-hint` | Testo hint "conoscere età bambini" font 12 color #666 line-height 1.5 |
+| `.booking-panel__children-grid` | Grid display con gap `--space-sm`. `grid-template-columns` inline dinamico (`'1fr'` se numChild=1, `'1fr 1fr'` altrimenti) — unica eccezione dinamica giustificata della sessione |
+| `.booking-panel__children-age-label` | Label select età font 11 color `--color-text-muted` fw 600 |
+| `.booking-panel__children-age-select` | Select età border 1.5px `--color-border` color `--color-text` |
+| `.booking-panel__children-age-select.is-missing` | Modifier stato "non selezionato": border `--color-warning` + color #9ca3af |
+
+**Warning over-capacity**
+
+| Classe | Ruolo |
+|---|---|
+| `.booking-panel__overcapacity-warning` | font 13 (`--text-sm`). L'icona `bi-exclamation-triangle-fill` sostituisce la precedente emoji ⚠️ decorativa (coerenza "icone Bootstrap, mai emoji decorative") |
+
+**Stati empty / loading**
+
+| Classe | Ruolo |
+|---|---|
+| `.booking-panel__empty` | Stati "Seleziona date" / "Nessuna offerta" font 14 (Bootstrap `text-muted` per colore) |
+| `.booking-panel__loading` | Riga "Caricamento offerte" font 14 flex center |
+| *(riuso)* `.wizard-loading-spinner` | Spinner 22×22 riusato (non duplicato) — da `globals.css:483`, include `@keyframes wizard-spin` |
+
+**Card offerta (button clickabile)**
+
+| Classe | Ruolo |
+|---|---|
+| `.booking-panel__offer` | Button base: flex space-between padding md border 1.5px `--color-border` radius `--radius-md` bg white transition 0.12s |
+| `.booking-panel__offer.is-picked` | Modifier selezionato: border 2px `--color-primary` + bg `--color-primary-soft` (T7 applicato, prima era `#EEF5FC` letterale) |
+| `.booking-panel__offer.is-unavailable` | Modifier non disponibile: opacity 0.45 + cursor default |
+| `.booking-panel__offer-name` | Nome offerta fw 700 color `--color-text` font 14 |
+| `.booking-panel__offer-pill-selected` | Pill "Selezionata" fw 700 radius pill color `--color-primary` bg `--color-primary-soft` (T6 applicato, prima era `#dbeafe` deprecato) |
+| `.booking-panel__offer-unavail-label` | Label "Non disponibile" font 11 (eredita `text-danger` Bootstrap) |
+| `.booking-panel__offer-desc` | Descrizione offerta font 12 color #666 line-height 1.4 |
+| `.booking-panel__offer-price` | Prezzo principale fw 800 font 20 color `--color-primary` line-height 1 |
+| `.booking-panel__offer-per-night` | Prezzo notte font 11 color #999 |
+| `.booking-panel__offer-total-label` | Label "Totale" font 10 color #bbb |
+
+**CTA "Prenota"**
+
+| Classe | Ruolo |
+|---|---|
+| `.booking-panel__cta` | Bottone primario: width 100% padding `--space-base` radius `--radius-md` fw 700 font 16 bg `--color-cta` color white |
+| `.booking-panel__cta:disabled` | Stato disabilitato: bg #e0e0e0 + color #999 + cursor not-allowed |
+
+**GuestRow (sub-component stepper)**
+
+| Classe | Ruolo |
+|---|---|
+| `.guest-row` | Flex space-between con `--space-sm` py + border-bottom `--color-border` |
+| `.guest-row__label` | Label riga fw 500 font 14 |
+| `.guest-row__sub` | Sub-label color `--color-text-muted` font 12 |
+| `.guest-row__counter` | Contatore fw 600 font 15 min-width 24 center |
+| `.guest-row__stepper-btn` | Bottone round `--touch-target` × `--touch-target` border 1px `--color-border` bg white color #333 font 20 |
+| `.guest-row__stepper-btn:disabled` | Modifier disabled: bg #f5f5f5 + color #ccc + cursor not-allowed |
+
+**T6 + T7 applicati**: `.booking-panel__offer.is-picked` (background) e `.booking-panel__offer-pill-selected` (background) usano entrambi `var(--color-primary-soft)` — prima erano `#EEF5FC` letterale (riga 185) e `#dbeafe` deprecato (riga 196).
+
+**Emoji → Bootstrap Icon**: `⚠️` (warning over-capacity) sostituita con `<i className="bi bi-exclamation-triangle-fill">`.
+
+**Riuso**: `.wizard-loading-spinner` invece di duplicare spinner custom + `@keyframes spin` inline.
+
+**Nessun token nuovo**. Riuso di `--color-primary(-soft)`, `--color-cta`, `--color-warning`, `--color-bg-muted`, `--color-border`, `--color-text(-muted)`, `--radius-lg/md/pill`, `--space-*`, `--text-*`, `--touch-target`.
+
+**Grigi non-semantic hardcoded** (pattern già in uso nelle Sessioni 10-12): `#666`, `#999`, `#bbb`, `#ccc`, `#333`, `#f5f5f5`, `#e0e0e0`, `#9ca3af`.
+
+**Hardcoded font-size residui**: `11px`, `20px`, `16px`, `10px` — dimensioni specifiche non mappabili alla scala `--text-*` attuale, coerente con Sessioni 10-12.
+
+**i18n hardcoded lasciato in place** (fuori scope CSS migration, scope T9 dedicato):
+- righe 110-114: hint età bambini IT/DE/PL/EN
+- righe 119-120: "Età bambino N" IT/DE/PL/EN
+- righe 132-137: "Seleziona età" / "N anni" IT/DE/PL/EN
+- riga 149: "Massimo N persone per questo appartamento" IT solo
+
 ---
 
 ## 4. Come decidere se creare una nuova classe
@@ -829,6 +910,35 @@ Prima del commit:
 ---
 
 ## 9. Changelog
+
+### 2026-04-24 — Sessione 9 — BookingPanel (v1.8) — 🏁 Fase B COMPLETATA
+
+Ultima sessione della Fase B (entry booking 🔴). Con questa il wizard
++ scheda abitazione (16 file dopo delete PhotoLightbox) sono a **zero
+inline style**.
+
+- Aggiunto §3.16 con ~25 classi BEM per `BookingPanel.tsx`: container
+  ospiti (`.booking-panel__guests-card`), selezione età bambini
+  (`.booking-panel__children-ages/__hint/__grid/__age-label/__age-select`
+  + `.is-missing`), warning over-capacity
+  (`.booking-panel__overcapacity-warning`), stati empty/loading
+  (`.booking-panel__empty/__loading`), card offerta
+  (`.booking-panel__offer` + `.is-picked`/`.is-unavailable`
+  + `__name/__pill-selected/__unavail-label/__desc/__price/__per-night/__total-label`),
+  CTA `.booking-panel__cta` + `:disabled`, GuestRow `.guest-row`
+  + `__label/__sub/__counter/__stepper-btn` + `:disabled`.
+- **T6 + T7 applicati nei token**: `.booking-panel__offer.is-picked` e
+  `.booking-panel__offer-pill-selected` usano entrambi
+  `var(--color-primary-soft)` (prima erano `#EEF5FC` letterale riga 185
+  e `#dbeafe` deprecato riga 196).
+- **Emoji → Bootstrap Icon**: `⚠️` (warning over-capacity) sostituita
+  con `<i class="bi bi-exclamation-triangle-fill">` per coerenza con
+  il resto del sito.
+- **Riuso**: `.wizard-loading-spinner` esistente (globals.css:483) +
+  `@keyframes wizard-spin` invece di duplicare spinner custom.
+- Nessun token nuovo.
+- 1 inline residuo giustificato: `gridTemplateColumns` dinamico riga
+  116 (1fr/1fr 1fr in base a numChild).
 
 ### 2026-04-24 — Cleanup post-Session 12 — delete PhotoLightbox (v1.7)
 - Rimosso `components/residenze/PhotoLightbox.tsx` (235 righe, commit `93e11b0`):
