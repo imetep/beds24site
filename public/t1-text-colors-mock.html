@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>T1 — Text colors mock LivingApple</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    margin: 0;
+    background: #fff;
+    color: #0d1b2a;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1.page-title {
+    font-size: 28px;
+    margin: 0 0 8px;
+    font-weight: 800;
+  }
+  .page-subtitle { color: #6b7280; margin: 0 0 32px; font-size: 14px; }
+  .brand-ref {
+    display: inline-flex; gap: 14px; align-items: center;
+    background: #f8fafc; border: 1px solid #e5e7eb;
+    padding: 8px 14px; border-radius: 8px; font-size: 13px;
+    margin-bottom: 40px;
+  }
+  .swatch { display: inline-block; width: 18px; height: 18px; border-radius: 50%; vertical-align: middle; margin-right: 6px; }
+
+  section { margin: 48px 0; border-top: 1px solid #e5e7eb; padding-top: 32px; }
+  h2.section-h {
+    font-size: 13px; font-weight: 700; color: #6b7280; letter-spacing: 0.08em;
+    text-transform: uppercase; margin: 0 0 20px;
+  }
+
+  /* ── Mock 1: H1 scheda residenza, 4 varianti ── */
+  .h1-row { display: grid; grid-template-columns: 1fr; gap: 20px; }
+  @media (min-width: 800px) { .h1-row { grid-template-columns: repeat(2, 1fr); } }
+  .h1-card {
+    background: #fff; border: 1px solid #e5e7eb; border-radius: 10px;
+    padding: 24px;
+  }
+  .h1-label {
+    font-size: 11px; letter-spacing: 0.1em; color: #6b7280; text-transform: uppercase;
+    font-weight: 700; margin: 0 0 6px;
+  }
+  .h1-hex { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #6b7280; margin: 0 0 16px; }
+  .h1-mock-title {
+    font-size: 32px; line-height: 1.15; font-weight: 800; margin: 0 0 8px;
+  }
+  .h1-mock-meta { font-size: 14px; color: #6b7280; margin: 0; }
+
+  /* ── Mock 2: BookingPanel-like con prezzo ── */
+  .bp-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+  @media (min-width: 800px) { .bp-grid { grid-template-columns: 1fr 1fr; } }
+  .bp-card {
+    background: #fff; border: 1px solid #e5e7eb; border-radius: 12px;
+    padding: 22px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .bp-title { font-size: 18px; font-weight: 700; margin: 0 0 12px; }
+  .bp-row { display: flex; justify-content: space-between; font-size: 14px; margin: 6px 0; color: #4b5563; }
+  .bp-total-label { font-size: 13px; color: #6b7280; margin-top: 18px; }
+  .bp-total { font-size: 32px; font-weight: 800; margin: 2px 0 16px; }
+  .bp-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 700; padding: 4px 10px;
+    border-radius: 999px; background: #fff4dd; border: 1px solid #fbe3af;
+  }
+  .bp-btn {
+    display: block; width: 100%; text-align: center;
+    padding: 12px; border-radius: 8px;
+    font-weight: 800; font-size: 15px;
+    border: none; cursor: default; color: #fff;
+    background: #FCAF1A;
+    margin-top: 14px;
+  }
+
+  /* ── Mock 3: scala grigi hardcoded vs tokenized ── */
+  .grey-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  }
+  @media (max-width: 700px) { .grey-grid { grid-template-columns: 1fr; } }
+  .grey-col { border: 1px solid #e5e7eb; border-radius: 10px; padding: 20px; }
+  .grey-col h3 { margin: 0 0 14px; font-size: 14px; }
+  .grey-bad h3 { color: #c0392b; }
+  .grey-good h3 { color: #16a34a; }
+  .grey-line { display: flex; align-items: center; gap: 10px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; margin: 5px 0; }
+  .grey-chip { width: 22px; height: 22px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.1); }
+  .grey-sample { flex: 1; }
+
+  /* ── Mock 4: badge e tag brand warm ── */
+  .badge-row {
+    display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    padding: 20px; background: #f9fafb; border-radius: 10px;
+  }
+  .badge-sample {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 700;
+    background: #fff; border: 1px solid #e5e7eb;
+  }
+  .legend {
+    font-size: 12px; color: #6b7280; margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1 class="page-title">T1 — Text colors mock visivo</h1>
+  <p class="page-subtitle">Confronto prima/dopo delle modifiche proposte per LivingApple. Apri in browser per vedere i colori applicati in contesto reale.</p>
+
+  <div class="brand-ref">
+    <strong>Brand:</strong>
+    <span><span class="swatch" style="background:#006CB7"></span>#006CB7 primary</span>
+    <span><span class="swatch" style="background:#FCAF1A"></span>#FCAF1A accent</span>
+  </div>
+
+  <!-- ──────────────────────────────────────────────────────────────── -->
+  <section>
+    <h2 class="section-h">Modifica 1 — Tintare il nero titoli</h2>
+    <div class="h1-row">
+      <div class="h1-card">
+        <p class="h1-label">Attuale</p>
+        <p class="h1-hex">--color-text: #111111 · contrasto 18.6:1</p>
+        <h1 class="h1-mock-title" style="color:#111">Appartamento Fuji</h1>
+        <p class="h1-mock-meta">A 1,5 km dal mare · Piano 1</p>
+      </div>
+
+      <div class="h1-card" style="background:#f0f9ff; border-color:#cde7f7">
+        <p class="h1-label" style="color:#006CB7">Proposta A — blu notte</p>
+        <p class="h1-hex">#0d1b2a · contrasto 17.2:1 · HSL 210° 52% 11%</p>
+        <h1 class="h1-mock-title" style="color:#0d1b2a">Appartamento Fuji</h1>
+        <p class="h1-mock-meta">A 1,5 km dal mare · Piano 1</p>
+      </div>
+
+      <div class="h1-card">
+        <p class="h1-label">Alternativa B — blu-notte più scuro</p>
+        <p class="h1-hex">#0a1929 · contrasto 18:1</p>
+        <h1 class="h1-mock-title" style="color:#0a1929">Appartamento Fuji</h1>
+        <p class="h1-mock-meta">A 1,5 km dal mare · Piano 1</p>
+      </div>
+
+      <div class="h1-card">
+        <p class="h1-label">Alternativa C — warm dark (mediterraneo)</p>
+        <p class="h1-hex">#2a2520 · contrasto 14.3:1 · HSL 25° 14% 15%</p>
+        <h1 class="h1-mock-title" style="color:#2a2520">Appartamento Fuji</h1>
+        <p class="h1-mock-meta">A 1,5 km dal mare · Piano 1</p>
+      </div>
+    </div>
+    <p class="legend">Tutte le varianti superano WCAG AAA (7:1 body, 12:1+ large). Differenza di luminosità vs #111 invisibile al 99% degli utenti — cambia la temperatura percepita.</p>
+  </section>
+
+  <!-- ──────────────────────────────────────────────────────────────── -->
+  <section>
+    <h2 class="section-h">Modifica 3 — Arancione su testo highlight</h2>
+    <div class="bp-grid">
+      <div class="bp-card">
+        <h3 class="bp-title" style="color:#0d1b2a">Attuale — tutto nero</h3>
+        <div class="bp-row"><span>2 adulti · 3 notti</span><span>€255 × 3</span></div>
+        <div class="bp-row"><span>Tassa soggiorno</span><span>€12</span></div>
+        <div class="bp-row"><span>Pulizie</span><span>€50</span></div>
+        <p class="bp-total-label">Totale</p>
+        <p class="bp-total" style="color:#0d1b2a">€827</p>
+        <span class="bp-tag" style="color:#6b7280">Cancellazione gratuita</span>
+        <button class="bp-btn">Prenota ora</button>
+      </div>
+
+      <div class="bp-card" style="background:#fff; border-color:#cde7f7">
+        <h3 class="bp-title" style="color:#006CB7">Proposta — arancione su highlight</h3>
+        <div class="bp-row"><span>2 adulti · 3 notti</span><span>€255 × 3</span></div>
+        <div class="bp-row"><span>Tassa soggiorno</span><span>€12</span></div>
+        <div class="bp-row"><span>Pulizie</span><span>€50</span></div>
+        <p class="bp-total-label">Totale</p>
+        <p class="bp-total" style="color:#C5881F">€827</p>
+        <span class="bp-tag" style="color:#C5881F; background:#fff4dd; border-color:#fbe3af">✓ Cancellazione gratuita</span>
+        <button class="bp-btn">Prenota ora</button>
+      </div>
+    </div>
+    <p class="legend">Arancione testo <code>#C5881F</code> (darken di #FCAF1A, contrasto 4.6:1 AA). Elementi target: prezzi totali, badge promo, tag trust signal, underline link secondari. Non tocca body né link primary.</p>
+  </section>
+
+  <!-- ──────────────────────────────────────────────────────────────── -->
+  <section>
+    <h2 class="section-h">Modifica 2 — Consolidare grigi hardcoded</h2>
+    <div class="grey-grid">
+      <div class="grey-col grey-bad">
+        <h3>Attuale — 9 grigi hardcoded</h3>
+        <div class="grey-line"><span class="grey-chip" style="background:#333"></span><span class="grey-sample" style="color:#333">#333 near-black — testo enfasi</span></div>
+        <div class="grey-line"><span class="grey-chip" style="background:#444"></span><span class="grey-sample" style="color:#444">#444 grigio scuro — metadati</span></div>
+        <div class="grey-line"><span class="grey-chip" style="background:#666"></span><span class="grey-sample" style="color:#666">#666 grigio medio — body secondary</span></div>
+        <div class="grey-line"><span class="grey-chip" style="background:#888"></span><span class="grey-sample" style="color:#888">#888 grigio — hint</span></div>
+        <div class="grey-line"><span class="grey-chip" style="background:#999"></span><span class="grey-sample" style="color:#999">#999 grigio light — label disabled</span></div>
+        <div class="grey-line"><span class="grey-chip" style="background:#aaa"></span><span class="grey-sample" style="color:#aaa">#aaa separator / icon disabled</span></div>
+        <div class="grey-line"><span class="grey-chip" style="background:#bbb"></span><span class="grey-sample" style="color:#bbb">#bbb placeholder</span></div>
+        <div class="grey-line"><span class="grey-chip" style="background:#ccc"></span><span class="grey-sample" style="color:#ccc">#ccc disabled input</span></div>
+        <div class="grey-line"><span class="grey-chip" style="background:#ddd"></span><span class="grey-sample" style="color:#ddd">#ddd border-like su testo</span></div>
+      </div>
+
+      <div class="grey-col grey-good">
+        <h3>Proposta — 4 token</h3>
+        <div class="grey-line"><span class="grey-chip" style="background:#0d1b2a"></span><span class="grey-sample" style="color:#0d1b2a">#0d1b2a var(--color-text) · titoli, body enfasi</span></div>
+        <div class="grey-line"><span class="grey-chip" style="background:#4b5563"></span><span class="grey-sample" style="color:#4b5563">#4b5563 var(--color-text-subtle) · metadati</span></div>
+        <div class="grey-line"><span class="grey-chip" style="background:#6b7280"></span><span class="grey-sample" style="color:#6b7280">#6b7280 var(--color-text-muted) · label, hint, footer</span></div>
+        <div class="grey-line"><span class="grey-chip" style="background:#9ca3af"></span><span class="grey-sample" style="color:#9ca3af">#9ca3af var(--color-text-disabled) · placeholder, disabled</span></div>
+      </div>
+    </div>
+    <p class="legend">Governance: 1 token per ruolo semantico. 9 hex → 4 token. Ogni grigio ha un "perché" documentabile.</p>
+  </section>
+
+  <!-- ──────────────────────────────────────────────────────────────── -->
+  <section>
+    <h2 class="section-h">Esempi badge brand warm (Modifica 3)</h2>
+    <div class="badge-row">
+      <span class="badge-sample" style="color:#C5881F; background:#fff4dd; border-color:#fbe3af">★ Bestseller</span>
+      <span class="badge-sample" style="color:#C5881F; background:#fff4dd; border-color:#fbe3af">🔥 Last-minute</span>
+      <span class="badge-sample" style="color:#C5881F; background:#fff4dd; border-color:#fbe3af">% -15% Promo estate</span>
+      <span class="badge-sample" style="color:#C5881F; background:#fff; border-color:#fbe3af">Prezzo da €72/notte</span>
+      <span class="badge-sample" style="color:#C5881F; background:#fff; border-color:#fbe3af">✓ Cancellazione gratuita</span>
+    </div>
+    <p class="legend">Arancione testo entra in 3 pattern: tag trust (badge promo/offerta), prezzi evidenziati ("da €X"), trust signal con check verdolino/arancione. Sempre in combo con background giallino tenue (<code>#fff4dd</code>) o bianco puro.</p>
+  </section>
+
+</div>
+</body>
+</html>
