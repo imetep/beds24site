@@ -310,7 +310,12 @@ function ProgressBar({ confirmed, total, t }: { confirmed: number; total: number
     <div style={{ marginBottom: '1rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
         <p style={{ margin: 0, fontSize: '0.8rem', color: done ? C.success : C.textMid, fontWeight: done ? 700 : 400 }}>
-          {done ? `🎉 ${t.allConfirmed}` : `${confirmed} ${t.progressOf} ${total} ${t.progressLabel}`}
+          {done ? (
+            <>
+              <i className="bi bi-check-circle-fill me-1" aria-hidden="true" />
+              {t.allConfirmed}
+            </>
+          ) : `${confirmed} ${t.progressOf} ${total} ${t.progressLabel}`}
         </p>
         <p style={{ margin: 0, fontSize: '0.78rem', color: C.textMuted }}>{pct}%</p>
       </div>
@@ -330,14 +335,18 @@ function PersonCounter({ current, total, lc }: { current: number; total: number;
   const bg     = tooFew ? '#FFF8EC' : exact ? '#f0fdf4' : C.bg;
   const bdr    = tooFew ? C.orange : exact ? '#86efac' : C.border;
   const text: Record<LC, string> = {
-    it: `🛏 ${current} ${current === 1 ? 'posto' : 'posti'} su ${total} ospiti${tooFew ? ` — mancano ${total - current}` : ''}${exact ? ' ✓' : ''}`,
-    en: `🛏 ${current} of ${total} ${total === 1 ? 'guest' : 'guests'} placed${tooFew ? ` — ${total - current} more needed` : ''}${exact ? ' ✓' : ''}`,
-    de: `🛏 ${current} von ${total} ${total === 1 ? 'Gast' : 'Gästen'}${tooFew ? ` — noch ${total - current} fehlend` : ''}${exact ? ' ✓' : ''}`,
-    pl: `🛏 ${current} z ${total} ${total === 1 ? 'gościa' : 'gości'}${tooFew ? ` — brakuje ${total - current}` : ''}${exact ? ' ✓' : ''}`,
+    it: `${current} ${current === 1 ? 'posto' : 'posti'} su ${total} ospiti${tooFew ? ` — mancano ${total - current}` : ''}`,
+    en: `${current} of ${total} ${total === 1 ? 'guest' : 'guests'} placed${tooFew ? ` — ${total - current} more needed` : ''}`,
+    de: `${current} von ${total} ${total === 1 ? 'Gast' : 'Gästen'}${tooFew ? ` — noch ${total - current} fehlend` : ''}`,
+    pl: `${current} z ${total} ${total === 1 ? 'gościa' : 'gości'}${tooFew ? ` — brakuje ${total - current}` : ''}`,
   };
   return (
     <div style={{ padding: '9px 12px', background: bg, border: `1px solid ${bdr}`, borderRadius: '10px', marginBottom: '1rem' }}>
-      <span style={{ fontSize: '0.84rem', fontWeight: tooFew || exact ? 700 : 400, color }}>{text[lc]}</span>
+      <span style={{ fontSize: '0.84rem', fontWeight: tooFew || exact ? 700 : 400, color }}>
+        <i className="bi bi-door-closed-fill me-1" aria-hidden="true" />
+        {text[lc]}
+        {exact && <i className="bi bi-check-lg ms-1" aria-hidden="true" />}
+      </span>
     </div>
   );
 }

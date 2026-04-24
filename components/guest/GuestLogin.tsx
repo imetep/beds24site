@@ -67,11 +67,16 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
     return (
       <div className="d-flex align-items-center justify-content-center px-3 py-4" style={wrap}>
         <div className="bg-white shadow-lg" style={card}>
-          <div className="text-center mb-3" style={{ fontSize: '2.5rem' }}>⏱️</div>
+          <div className="text-center mb-3" style={{ fontSize: '2.5rem', color: C.textMid }}>
+            <i className="bi bi-clock-fill" aria-hidden="true" />
+          </div>
           <h2 className="text-center mb-2" style={{ fontSize: '1.2rem', color: C.text }}>{tL.rateLimited}</h2>
           <p className="text-center mb-4" style={{ color: C.textMid, fontSize: '0.9rem', lineHeight: 1.6 }}>{tL.rateLimitedMsg}</p>
           <div className="text-center">
-            <a href="https://wa.me/393283131500" style={supportLink}>💬 WhatsApp</a>
+            <a href="https://wa.me/393283131500" style={supportLink}>
+              <i className="bi bi-whatsapp me-1" aria-hidden="true" />
+              WhatsApp
+            </a>
           </div>
         </div>
       </div>
@@ -85,9 +90,9 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
         <div className="text-center mb-4">
           <div
             className="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
-            style={{ width: 56, height: 56, background: C.blueLight, fontSize: '1.6rem' }}
+            style={{ width: 56, height: 56, background: C.blueLight, fontSize: '1.6rem', color: 'var(--color-primary)' }}
           >
-            🔐
+            <i className="bi bi-shield-lock-fill" aria-hidden="true" />
           </div>
           <h1
             className="fw-bolder mb-2"
@@ -170,8 +175,14 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
         >
           <p className="mb-2" style={{ fontSize: '0.82rem', color: C.textMuted }}>{tL.noBooking}</p>
           <div className="d-flex justify-content-center" style={{ gap: '1.5rem' }}>
-            <a href="https://wa.me/393283131500" style={supportLink}>💬 WhatsApp</a>
-            <a href="mailto:contattolivingapple@gmail.com" style={supportLink}>✉️ Email</a>
+            <a href="https://wa.me/393283131500" style={supportLink}>
+              <i className="bi bi-whatsapp me-1" aria-hidden="true" />
+              WhatsApp
+            </a>
+            <a href="mailto:contattolivingapple@gmail.com" style={supportLink}>
+              <i className="bi bi-envelope-fill me-1" aria-hidden="true" />
+              Email
+            </a>
           </div>
         </div>
       </div>

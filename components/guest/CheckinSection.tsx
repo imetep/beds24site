@@ -31,9 +31,9 @@ export default function CheckinSection({ locale, t, bookId, checkin }: Props) {
   const [sendError, setSendError] = useState('');
 
   const statusConfig = {
-    PENDING:  { label: tC.statusPending,  color: C.orangeDark, bg: C.orangePale, icon: '⏳' },
-    APPROVED: { label: tC.statusApproved, color: C.success,    bg: C.successBg,  icon: '✅' },
-    REJECTED: { label: tC.statusRejected, color: C.error,      bg: C.errorBg,    icon: '❌' },
+    PENDING:  { label: tC.statusPending,  color: C.orangeDark, bg: C.orangePale, icon: 'bi-hourglass-split' },
+    APPROVED: { label: tC.statusApproved, color: C.success,    bg: C.successBg,  icon: 'bi-check-circle-fill' },
+    REJECTED: { label: tC.statusRejected, color: C.error,      bg: C.errorBg,    icon: 'bi-x-circle-fill' },
   };
   const st = statusConfig[checkin.status] ?? statusConfig.PENDING;
 
@@ -53,7 +53,7 @@ export default function CheckinSection({ locale, t, bookId, checkin }: Props) {
   return (
     <div className="bg-white border shadow-sm" style={sectionCard}>
       <div className="d-flex align-items-center gap-2 mb-3">
-        <span style={{ fontSize: '1.1rem' }}>🏠</span>
+        <i className="bi bi-house-fill" style={{ fontSize: '1.1rem', color: 'var(--color-primary)' }} aria-hidden="true" />
         <h3 className="m-0 fw-bold" style={{ fontSize: '1rem', color: C.text }}>{tC.title}</h3>
       </div>
 
@@ -62,7 +62,7 @@ export default function CheckinSection({ locale, t, bookId, checkin }: Props) {
         className="d-inline-flex align-items-center gap-2 mb-3 rounded-pill"
         style={{ padding: '0.4rem 0.9rem', background: st.bg }}
       >
-        <span>{st.icon}</span>
+        <i className={`bi ${st.icon}`} style={{ color: st.color }} aria-hidden="true" />
         <span className="fw-bold" style={{ fontSize: '0.85rem', color: st.color }}>{st.label}</span>
       </div>
 
@@ -84,7 +84,10 @@ export default function CheckinSection({ locale, t, bookId, checkin }: Props) {
           href={`/${locale}/self-checkin/wizard`}
           className="d-block fw-bold text-center text-decoration-none mb-2"
           style={btnOrange}
-        >📋 {tC.wizardBtn}</a>
+        >
+          <i className="bi bi-clipboard-fill me-1" aria-hidden="true" />
+          {tC.wizardBtn}
+        </a>
       )}
 
       {/* Thread messaggi */}
@@ -93,7 +96,8 @@ export default function CheckinSection({ locale, t, bookId, checkin }: Props) {
           className="fw-bold text-uppercase mb-2"
           style={{ fontSize: '0.82rem', color: C.textMid, letterSpacing: '0.05em' }}
         >
-          💬 {tC.messagesTitle}
+          <i className="bi bi-chat-fill me-1" aria-hidden="true" />
+          {tC.messagesTitle}
         </p>
 
         {messages.length === 0 ? (

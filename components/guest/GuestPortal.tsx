@@ -93,12 +93,14 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
       {/* Banner Stripe return */}
       {depositResult === 'success' && (
         <div style={{ background: '#d1fae5', borderBottom: '1px solid #6ee7b7', padding: '0.85rem 1.5rem', textAlign: 'center', color: '#065f46', fontWeight: 700, fontSize: '0.88rem' }}>
-          ✅ {tD.depositSuccess}
+          <i className="bi bi-check-circle-fill me-1" aria-hidden="true" />
+          {tD.depositSuccess}
         </div>
       )}
       {depositResult === 'cancel' && (
         <div style={{ background: C.blueLight, borderBottom: `1px solid #bfdbfe`, padding: '0.85rem 1.5rem', textAlign: 'center', color: C.blue, fontWeight: 700, fontSize: '0.88rem' }}>
-          ℹ️ {tD.depositCancel}
+          <i className="bi bi-info-circle-fill me-1" aria-hidden="true" />
+          {tD.depositCancel}
         </div>
       )}
 
@@ -107,7 +109,8 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
         <div className="page-container d-flex justify-content-between align-items-center">
           <div>
             <h1 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: C.text, letterSpacing: '-0.02em' }}>
-              🔐 {tD.title}
+              <i className="bi bi-shield-lock-fill me-2" aria-hidden="true" />
+              {tD.title}
             </h1>
             <p style={{ margin: '0.15rem 0 0', fontSize: '0.79rem', color: C.textMuted }}>
               {tD.hi} {booking.guestName.split(' ')[0]} · #{booking.bookId}
@@ -189,17 +192,25 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
                   {booking.numAdult} {tD.adults}{booking.numChild > 0 ? ` · ${booking.numChild} ${tD.children}` : ''}
                 </p>
               </div>
-              <div style={{ background: C.blueLight, borderRadius: '50%', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem' }}>👥</div>
+              <div style={{ background: C.blueLight, borderRadius: '50%', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', color: 'var(--color-primary)' }}>
+                <i className="bi bi-people-fill" aria-hidden="true" />
+              </div>
             </div>
 
             {/* Pagamenti */}
             {booking.totalCharged > 0 && (
               <>
-                <p style={{ margin: '0 0 0.5rem', fontSize: '0.7rem', fontWeight: 600, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.07em' }}>💰 {tD.payments}</p>
+                <p style={{ margin: '0 0 0.5rem', fontSize: '0.7rem', fontWeight: 600, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+                  <i className="bi bi-cash-coin me-1" aria-hidden="true" />
+                  {tD.payments}
+                </p>
                 {booking.isAirbnb ? (
                   <>
                     <PayRow label={tD.total} value={`€ ${booking.totalCharged.toFixed(2)}`} />
-                    <div style={{ marginTop: '0.4rem', fontSize: '0.82rem', color: C.success, fontWeight: 600 }}>✅ {tD.paidViaAirbnb}</div>
+                    <div style={{ marginTop: '0.4rem', fontSize: '0.82rem', color: C.success, fontWeight: 600 }}>
+                      <i className="bi bi-check-circle-fill me-1" aria-hidden="true" />
+                      {tD.paidViaAirbnb}
+                    </div>
                   </>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
@@ -216,7 +227,10 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
                       <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#B07820' }}>{tD.balanceDue}</span>
                       <span style={{ fontSize: '1rem', fontWeight: 700, color: booking.balanceDue === 0 ? C.success : '#B07820' }}>€ {booking.balanceDue.toFixed(2)}</span>
                     </div>
-                    {booking.balanceDue === 0 && <div style={{ fontSize: '0.82rem', color: C.success, fontWeight: 600, textAlign: 'center', paddingTop: '0.25rem' }}>✅ {tD.fullyPaid}</div>}
+                    {booking.balanceDue === 0 && <div style={{ fontSize: '0.82rem', color: C.success, fontWeight: 600, textAlign: 'center', paddingTop: '0.25rem' }}>
+                      <i className="bi bi-check-circle-fill me-1" aria-hidden="true" />
+                      {tD.fullyPaid}
+                    </div>}
                   </div>
                 )}
               </>
@@ -250,7 +264,7 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
         {/* 4. FAQ */}
         <div style={card}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-            <span>❓</span>
+            <i className="bi bi-question-circle-fill" style={{ color: 'var(--color-primary)' }} aria-hidden="true" />
             <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: C.text }}>{tFQ.title}</h3>
           </div>
           {faqs.map((faq, i) => (
@@ -269,7 +283,10 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
         <div style={{ textAlign: 'center', paddingTop: '0.25rem' }}>
           <p style={{ margin: '0 0 0.6rem', fontSize: '0.82rem', color: C.textMuted }}>{tD.needHelp}</p>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem' }}>
-            <a href="https://wa.me/393283131500" style={supportLink}>💬 WhatsApp</a>
+            <a href="https://wa.me/393283131500" style={supportLink}>
+            <i className="bi bi-whatsapp me-1" aria-hidden="true" />
+            WhatsApp
+          </a>
             <a href="mailto:contattolivingapple@gmail.com" style={supportLink}>✉️ Email</a>
           </div>
         </div>

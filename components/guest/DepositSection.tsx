@@ -53,14 +53,15 @@ export default function DepositSection({ locale, t, bookId, amount, deposit, onD
 
     return (
       <div className="bg-white border shadow-sm" style={sectionCard}>
-        <SectionHeader icon="💳" title={tD.title} />
+        <SectionHeader icon="bi-credit-card-fill" title={tD.title} />
         <div className="d-flex align-items-center mb-3" style={{ gap: '0.75rem' }}>
           <span className="fw-bolder" style={{ fontSize: '1.5rem', color: C.text }}>€ {deposit.amount.toFixed(2)}</span>
           <span className="fw-bold rounded-pill" style={{ ...badge, color: st.color, background: st.bg }}>{st.label}</span>
         </div>
         {deposit.status === 'pending' && deposit.url && (
           <a href={deposit.url} target="_blank" rel="noopener noreferrer" className="d-block w-100 fw-bold text-center text-decoration-none border-0" style={btnOrange}>
-            🔗 {tD.completePayment}
+            <i className="bi bi-link-45deg me-1" aria-hidden="true" />
+            {tD.completePayment}
           </a>
         )}
         {deposit.status === 'authorized' && (
@@ -77,13 +78,13 @@ export default function DepositSection({ locale, t, bookId, amount, deposit, onD
   if (mode === 'choose') {
     return (
       <div className="bg-white border shadow-sm" style={sectionCard}>
-        <SectionHeader icon="💳" title={tD.title} badge={amount ? `€ ${amount}` : undefined} />
+        <SectionHeader icon="bi-credit-card-fill" title={tD.title} badge={amount ? `€ ${amount}` : undefined} />
         <p className="mb-3" style={{ color: C.textMid, fontSize: '0.88rem', lineHeight: 1.65 }}>
           {tD.description}
         </p>
         <div className="d-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.85rem' }}>
-          <ChoiceCard icon="🏷️" title={tD.offlineTitle} sub={tD.offlineSub} onClick={() => setMode('offline')} />
-          {amount && <ChoiceCard icon="💳" title={tD.onlineTitle} sub={tD.onlineSub} onClick={() => setMode('online')} highlight />}
+          <ChoiceCard icon="bi-tag-fill" title={tD.offlineTitle} sub={tD.offlineSub} onClick={() => setMode('offline')} />
+          {amount && <ChoiceCard icon="bi-credit-card-fill" title={tD.onlineTitle} sub={tD.onlineSub} onClick={() => setMode('online')} highlight />}
         </div>
       </div>
     );
@@ -94,7 +95,7 @@ export default function DepositSection({ locale, t, bookId, amount, deposit, onD
     return (
       <div className="bg-white border shadow-sm" style={sectionCard}>
         <BackBtn label={tD.back} onClick={() => setMode('choose')} />
-        <SectionHeader icon="🏷️" title={tD.offlineTitle} />
+        <SectionHeader icon="bi-tag-fill" title={tD.offlineTitle} />
         <div className="border" style={infoBox}>
           <p className="fw-bold mb-2" style={{ color: C.text, fontSize: '0.9rem' }}>{tD.offlineHowTitle}</p>
           <ol className="mb-0" style={{ paddingLeft: '1.3rem', lineHeight: 1.9, color: C.textMid, fontSize: '0.88rem' }}>
@@ -113,12 +114,15 @@ export default function DepositSection({ locale, t, bookId, amount, deposit, onD
   return (
     <div className="bg-white border shadow-sm" style={sectionCard}>
       <BackBtn label={tD.back} onClick={() => setMode('choose')} />
-      <SectionHeader icon="💳" title={tD.onlineTitle} />
+      <SectionHeader icon="bi-credit-card-fill" title={tD.onlineTitle} />
       <div
         className="border mb-3"
         style={{ background: C.blueLight, borderColor: '#bfdbfe', borderRadius: 12, padding: '1.1rem 1.2rem' }}
       >
-        <p className="fw-bold mb-2" style={{ color: C.blue, fontSize: '0.88rem' }}>🔒 {tD.stripeTitle}</p>
+        <p className="fw-bold mb-2" style={{ color: C.blue, fontSize: '0.88rem' }}>
+          <i className="bi bi-lock-fill me-1" aria-hidden="true" />
+          {tD.stripeTitle}
+        </p>
         <ul className="mb-0" style={{ paddingLeft: '1.2rem', color: C.text, fontSize: '0.84rem', lineHeight: 1.8 }}>
           <li>{tD.stripeBullet1}</li>
           <li>{tD.stripeBullet2}</li>
@@ -163,7 +167,7 @@ export default function DepositSection({ locale, t, bookId, amount, deposit, onD
 function SectionHeader({ icon, title, badge: b }: { icon: string; title: string; badge?: string }) {
   return (
     <div className="d-flex align-items-center gap-2 mb-3">
-      <span style={{ fontSize: '1.1rem' }}>{icon}</span>
+      <i className={`bi ${icon}`} style={{ fontSize: '1.1rem', color: 'var(--color-primary)' }} aria-hidden="true" />
       <h3 className="m-0 fw-bold" style={{ fontSize: '1rem', color: '#111111' }}>{title}</h3>
       {b && <span className="ms-auto fw-bolder" style={{ fontSize: '1.1rem', color: 'var(--color-primary)' }}>{b}</span>}
     </div>
@@ -177,7 +181,9 @@ function ChoiceCard({ icon, title, sub, onClick, highlight }: { icon: string; ti
       className="text-start"
       style={{ background: highlight ? '#EEF5FC' : '#f9fafb', border: `2px solid ${highlight ? 'var(--color-primary)' : '#e5e7eb'}`, borderRadius: 14, padding: '1.25rem', cursor: 'pointer' }}
     >
-      <div className="mb-2" style={{ fontSize: '1.75rem' }}>{icon}</div>
+      <div className="mb-2" style={{ fontSize: '1.75rem', color: 'var(--color-primary)' }}>
+        <i className={`bi ${icon}`} aria-hidden="true" />
+      </div>
       <div className="fw-bold mb-1" style={{ color: '#111111', fontSize: '0.92rem' }}>{title}</div>
       <div style={{ fontSize: '0.8rem', color: '#555555', lineHeight: 1.5 }}>{sub}</div>
     </button>

@@ -94,7 +94,8 @@ export default function ChangeRequestWizard({ locale, t, booking }: Props) {
           borderRadius: 12, cursor: 'pointer',
           fontSize: '0.88rem', color: C.blue,
         }}>
-        ✏️ {tC.btnOpen}
+        <i className="bi bi-pencil-fill me-1" aria-hidden="true" />
+        {tC.btnOpen}
       </button>
     );
   }
@@ -103,7 +104,8 @@ export default function ChangeRequestWizard({ locale, t, booking }: Props) {
     <div className="bg-white border shadow-sm" style={card}>
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h3 className="m-0 fw-bold" style={{ fontSize: '1rem', color: C.text }}>
-          ✏️ {tC.title}
+          <i className="bi bi-pencil-fill me-1" aria-hidden="true" />
+          {tC.title}
         </h3>
         <button onClick={() => { setOpen(false); reset(); }}
           className="btn p-0"
@@ -116,9 +118,9 @@ export default function ChangeRequestWizard({ locale, t, booking }: Props) {
           <p style={{ margin: '0 0 1rem', fontSize: '0.88rem', color: C.textMid }}>{tC.step1Hint}</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '1.25rem' }}>
             {([
-              { key: 'dates',     icon: '📅', label: tC.optDates     },
-              { key: 'guests',    icon: '👥', label: tC.optGuests    },
-              { key: 'apartment', icon: '🏠', label: tC.optApartment },
+              { key: 'dates',     icon: 'bi-calendar-fill', label: tC.optDates     },
+              { key: 'guests',    icon: 'bi-people-fill',   label: tC.optGuests    },
+              { key: 'apartment', icon: 'bi-house-fill',    label: tC.optApartment },
             ] as { key: ChangeType; icon: string; label: string }[]).map(({ key, icon, label }) => {
               const active = types.has(key);
               return (
@@ -131,9 +133,9 @@ export default function ChangeRequestWizard({ locale, t, booking }: Props) {
                   color: active ? C.blue : C.text,
                   transition: 'all .15s',
                 }}>
-                  <span style={{ fontSize: '1.2rem' }}>{icon}</span>
+                  <i className={`bi ${icon}`} style={{ fontSize: '1.2rem' }} aria-hidden="true" />
                   {label}
-                  {active && <span style={{ marginLeft: 'auto', fontSize: '1rem' }}>✓</span>}
+                  {active && <i className="bi bi-check-lg" style={{ marginLeft: 'auto', fontSize: '1rem' }} aria-hidden="true" />}
                 </button>
               );
             })}
@@ -159,7 +161,10 @@ export default function ChangeRequestWizard({ locale, t, booking }: Props) {
 
           {types.has('dates') && (
             <div style={{ marginBottom: '1rem', padding: '1rem', background: C.bg, borderRadius: '10px' }}>
-              <p style={{ margin: '0 0 0.6rem', fontSize: '0.78rem', fontWeight: 700, color: C.textMid, textTransform: 'uppercase' }}>📅 {tC.optDates}</p>
+              <p style={{ margin: '0 0 0.6rem', fontSize: '0.78rem', fontWeight: 700, color: C.textMid, textTransform: 'uppercase' }}>
+                <i className="bi bi-calendar-fill me-1" aria-hidden="true" />
+                {tC.optDates}
+              </p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
                 <label style={{ fontSize: '0.82rem', color: C.textMid }}>
                   {tC.labelArrival}
@@ -179,7 +184,10 @@ export default function ChangeRequestWizard({ locale, t, booking }: Props) {
 
           {types.has('guests') && (
             <div style={{ marginBottom: '1rem', padding: '1rem', background: C.bg, borderRadius: '10px' }}>
-              <p style={{ margin: '0 0 0.6rem', fontSize: '0.78rem', fontWeight: 700, color: C.textMid, textTransform: 'uppercase' }}>👥 {tC.optGuests}</p>
+              <p style={{ margin: '0 0 0.6rem', fontSize: '0.78rem', fontWeight: 700, color: C.textMid, textTransform: 'uppercase' }}>
+                <i className="bi bi-people-fill me-1" aria-hidden="true" />
+                {tC.optGuests}
+              </p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
                 {[
                   { key: 'numAdult', label: tC.labelAdults,   min: 1 },
@@ -202,7 +210,10 @@ export default function ChangeRequestWizard({ locale, t, booking }: Props) {
 
           {types.has('apartment') && (
             <div style={{ marginBottom: '1rem', padding: '1rem', background: C.bg, borderRadius: '10px' }}>
-              <p style={{ margin: '0 0 0.6rem', fontSize: '0.78rem', fontWeight: 700, color: C.textMid, textTransform: 'uppercase' }}>🏠 {tC.optApartment}</p>
+              <p style={{ margin: '0 0 0.6rem', fontSize: '0.78rem', fontWeight: 700, color: C.textMid, textTransform: 'uppercase' }}>
+                <i className="bi bi-house-fill me-1" aria-hidden="true" />
+                {tC.optApartment}
+              </p>
               <textarea
                 value={apt}
                 onChange={e => setApt(e.target.value)}
@@ -242,15 +253,15 @@ export default function ChangeRequestWizard({ locale, t, booking }: Props) {
           <div style={{ background: C.bg, borderRadius: '10px', padding: '1rem', marginBottom: '1.25rem', fontSize: '0.88rem', color: C.text, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             <div><b>#{booking.bookId}</b> — {booking.roomName}</div>
             {types.has('dates') && (
-              <div>📅 {tC.optDates}: {dates.checkIn} → {dates.checkOut}</div>
+              <div><i className="bi bi-calendar-fill me-1" aria-hidden="true" />{tC.optDates}: {dates.checkIn} → {dates.checkOut}</div>
             )}
             {types.has('guests') && (
-              <div>👥 {tC.optGuests}: {guests.numAdult} {tC.labelAdults} · {guests.numChild} {tC.labelChildren}</div>
+              <div><i className="bi bi-people-fill me-1" aria-hidden="true" />{tC.optGuests}: {guests.numAdult} {tC.labelAdults} · {guests.numChild} {tC.labelChildren}</div>
             )}
             {types.has('apartment') && apt && (
-              <div>🏠 {tC.optApartment}: {apt}</div>
+              <div><i className="bi bi-house-fill me-1" aria-hidden="true" />{tC.optApartment}: {apt}</div>
             )}
-            {notes && <div>📝 {notes}</div>}
+            {notes && <div><i className="bi bi-sticky-fill me-1" aria-hidden="true" />{notes}</div>}
           </div>
 
           {status === 'error' && (
