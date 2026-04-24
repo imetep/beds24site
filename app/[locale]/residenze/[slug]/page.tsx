@@ -5,6 +5,7 @@ import { unstable_cache } from 'next/cache';
 import { redisSet } from '@/lib/cloudinary-covers';
 import { getRoomBySlug, getPropertyForRoom, PROPERTIES } from '@/config/properties';
 import { locales, isValidLocale, type Locale } from '@/config/i18n';
+import { getTranslations } from '@/lib/i18n';
 import ThingsToKnow from '@/components/residenze/ThingsToKnow';
 import PhotoCarousel from '@/components/residenze/PhotoCarousel';
 import PropertyMap from '@/components/residenze/PropertyMap';
@@ -157,53 +158,6 @@ async function getRoomDescription(propId: number, roomId: number, lang: string):
   }
 }
 
-const LABELS: Record<string, Record<string, string>> = {
-  it: {
-    bedroom: 'camera',  bedrooms: 'camere',
-    bathroom: 'bagno',  bathrooms: 'bagni',
-    guest: 'ospite',    maxPeople: 'ospiti', sqm: 'mq',
-    floorGround: 'Piano terra', floor: 'Piano',
-    privatePool: 'Piscina privata', sharedPool: 'Piscina condivisa', noPool: '250m dal mare',
-    services: 'Servizi', description: 'La residenza',
-    checkIn: 'Check-in', checkOut: 'Check-out',
-    prenota: 'Prenota ora', back: 'Residenze', breadcrumbHome: 'Home',
-    deposit: 'Deposito cauzionale', depositText: 'Richiesto al check-in con Carta di Credito (no Debit Card) · Rimborsato alla partenza',
-  },
-  en: {
-    bedroom: 'bedroom', bedrooms: 'bedrooms',
-    bathroom: 'bathroom', bathrooms: 'bathrooms',
-    guest: 'guest',     maxPeople: 'guests', sqm: 'sqm',
-    floorGround: 'Ground floor', floor: 'Floor',
-    privatePool: 'Private pool', sharedPool: 'Shared pool', noPool: '250m from sea',
-    services: 'Amenities', description: 'The residence',
-    checkIn: 'Check-in', checkOut: 'Check-out',
-    prenota: 'Book now', back: 'Residences', breadcrumbHome: 'Home',
-    deposit: 'Security deposit', depositText: 'Required at check-in by Credit Card (no Debit Card) · Refunded at departure',
-  },
-  de: {
-    bedroom: 'Schlafzimmer', bedrooms: 'Schlafzimmer',
-    bathroom: 'Bad',          bathrooms: 'Bäder',
-    guest: 'Gast',            maxPeople: 'Gäste', sqm: 'qm',
-    floorGround: 'Erdgeschoss', floor: 'Etage',
-    privatePool: 'Privater Pool', sharedPool: 'Gemeinschaftspool', noPool: '250m vom Meer',
-    services: 'Ausstattung', description: 'Die Residenz',
-    checkIn: 'Check-in', checkOut: 'Check-out',
-    prenota: 'Jetzt buchen', back: 'Residenzen', breadcrumbHome: 'Startseite',
-    deposit: 'Kaution', depositText: 'Beim Check-in per Kreditkarte (keine Debitkarte) · Bei Abreise zurückerstattet',
-  },
-  pl: {
-    bedroom: 'sypialnia', bedrooms: 'sypialnie',
-    bathroom: 'łazienka', bathrooms: 'łazienki',
-    guest: 'osoba',       maxPeople: 'gości', sqm: 'mkw',
-    floorGround: 'Parter', floor: 'Piętro',
-    privatePool: 'Prywatny basen', sharedPool: 'Wspólny basen', noPool: '250m od morza',
-    services: 'Udogodnienia', description: 'Rezydencja',
-    checkIn: 'Check-in', checkOut: 'Check-out',
-    prenota: 'Zarezerwuj', back: 'Rezydencje', breadcrumbHome: 'Strona główna',
-    deposit: 'Kaucja', depositText: 'Wymagana przy zameldowaniu kartą kredytową (bez kart debetowych) · Zwracana przy wyjeździe',
-  },
-};
-
 function plLabel(t: Record<string, string>, singular: string, plural: string, count: number): string {
   return count === 1 ? (t[singular] ?? '') : (t[plural] ?? '');
 }
@@ -218,7 +172,7 @@ export default async function RoomPage({ params }: Props) {
   const property = getPropertyForRoom(room.roomId);
   if (!property) notFound();
 
-  const t = LABELS[locale] ?? LABELS.it;
+  const t = getTranslations(locale as Locale).components.roomPage;
 
   const [photos, description] = await Promise.all([
     getRoomPhotos(room.cloudinaryFolder),
