@@ -352,7 +352,51 @@ distanceLabel: { it: '...', en: '...', de: '...', pl: '...' },
 | 12 | FotoGalleryClient | 33 (34 → 1 dinamico) | 24 ✅ |
 | 9 | BookingPanel | 24 (25 → 1 dinamico giustificato) | 0 ✅ |
 
-A fine piano: **16 file a zero inline** (17 originali − 1 PhotoLightbox eliminato), **~411 style eliminati** (413 stimati − 2 di piccoli aggiustamenti di conteggio), **35% del debito inline totale del progetto smaltito** con **100% delle pagine-utente coperte**. 🏁 Fase B completata 2026-04-24.
+### 8.1 Metriche finali misurate (2026-04-24, 🏁 Fase B chiusa)
+
+Numeri da `grep 'style={{' components/` + `grep 'style={{' app/` post-Session 9.
+
+**Scope Fase B (16 file, era 17 pre-delete PhotoLightbox):**
+
+| Categoria | # file | Note |
+|---|---|---|
+| File a **zero inline** | 13 | 5 wizard (Wizard, BookingSidebar, WizardStep1, WizardStep3) + 8 scheda (page, RoomCard, PropertyMap, ThingsToKnow, StickyBookingBar, CardPhotoGallery, BedConfigDisplay, PhotoCarousel, AvailabilityCalendar) |
+| File con **1 inline dinamico giustificato** | 2 | `BookingPanel.tsx` (gridTemplateColumns numChild 1/2) + `FotoGalleryClient.tsx` (frozenW/H iOS fix) |
+| File con **debito programmato** | 1 | `WizardStep2.tsx` (48 residui SidebarContent legacy — Sessione mobile dedicata post-Fase-B) |
+
+**Inline eliminati Fase B (misurati):**
+
+| | Prima (plan) | Dopo (grep reale) | Eliminati |
+|---|---|---|---|
+| Wizard (5 file) | 213 | 48 (tutti in WizardStep2 residuo) | 165 |
+| Scheda abitazione (12→11 file) | 200 | 2 (dinamici giustificati) | 198 |
+| **Totale Fase B** | **~413** | **50** | **363 style eliminati** |
+
+**Debito residuo repo-wide (al 2026-04-24):**
+
+| Area | File | `style={{}}` | In scope Fase B? |
+|---|---|---|---|
+| `components/residenze/` (BookingPanel, FotoGalleryClient) | 2 | 2 | ✅ dinamici giustificati |
+| `components/wizard/WizardStep2.tsx` | 1 | 48 | 🟡 programmato (Sessione mobile dedicata post-Fase-B) |
+| `app/[locale]/paga/PagaClient.tsx` | 1 | 34 | ❌ Fase 3 opportunistica |
+| `app/[locale]/prenota/successo/SuccessContent.tsx` | 1 | 12 | ❌ Fase 3 |
+| `components/self-checkin/*` (3 file: WizardCheckin, SelfCheckinPage, StatusCheckin) | 3 | 179 | ❌ Fase 3 |
+| `components/guest/*` (6 file: BedSection, ChangeRequestWizard, CheckinSection, GuestLogin, DepositSection, GuestPortal) | 6 | 189 | ❌ Fase 3 |
+| `components/admin/*` (4 file: AdminPulizie, AdminCheckin, AdminBuchi, AdminBiancheria) | 4 | 81 | ❌ Fase 3 (solo se decisa) |
+| `components/home/*` (HomeSearch, ResidenzaSlider) | 2 | 118 | ❌ Fase 3 |
+| `components/contatti`, `dove-siamo`, `animali`, `deposito`, `prenotazione-sicura`, `utenze`, `HeaderClient` | 7 | 124 | ❌ Fase 3 |
+| `components/ui/*` (primitive Card, Button) | 2 | 2 | ❌ Fase 3 |
+| `app/[locale]/*/page.tsx` + `layout.tsx` (shells + legali + lista residenze + successo/page + prenota/page + condizioni + privacy + trattamento-dati + admin/page + paga/page) | 9 | 27 | ❌ Fase 3 |
+| **Totale repo** | **38 file** | **816** | |
+
+**Rapporto inline eliminati / totale progetto**: 363 / (363 + 816) = **~31%** del debito inline storico smaltito nella Fase B, con **100% delle pagine-utente del funnel booking coperte** (scheda residenza + wizard 1/2/3 a zero inline, pagamento resta in stato corrente).
+
+**Prossimi passi pianificati (non Fase B, tracciati qui per non perderli):**
+- 🟡 **Sessione mobile dedicata WizardStep2** — 48 inline residui SidebarContent legacy + accordion mobile
+- 🟡 **Sessione i18n T9** — ~20 stringhe IT/DE/PL/EN hardcoded in PhotoCarousel / FotoGalleryClient / AvailabilityCalendar / BookingPanel (scope esploso durante Sessioni 9-12)
+- 🔴 **T12 `distanceLabel`** — 2 properties con `distanceLabel` hardcoded IT visibili a utenti EN/DE/PL in 2 punti (scheda + wizard). Rispetto bug i18n più urgente
+- ⚪ **T10** — delete chiave Redis legacy `beds24:refreshToken` su Upstash dopo 2-3 giorni di deploy sano (post 2026-04-26 circa)
+- ⚪ **T8** — verificare se `lib/beds24-client.ts` è davvero dead code, poi rimuovere
 
 ---
 
