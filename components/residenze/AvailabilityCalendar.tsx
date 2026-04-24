@@ -278,7 +278,7 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
 
           {/* Bottone cancella date */}
           {(checkIn || checkOut) && (
-            <button onClick={clearDates} className="avail-date-clear-btn" aria-label="Cancella date">
+            <button onClick={clearDates} className="avail-date-clear-btn" aria-label={ui.clear}>
               ✕
             </button>
           )}
@@ -334,7 +334,7 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
                   onClick={goToPrev}
                   disabled={isPrevDisabled}
                   className={`avail-cal__nav-btn ${isPrevDisabled ? 'is-disabled' : ''}`}
-                  aria-label="Mese precedente"
+                  aria-label={ui.prevMonth}
                 >‹</button>
 
                 <div className="avail-cal__titles-desktop">
@@ -346,7 +346,7 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
                   </span>
                 </div>
 
-                <button onClick={goToNext} className="avail-cal__nav-btn" aria-label="Mese successivo">›</button>
+                <button onClick={goToNext} className="avail-cal__nav-btn" aria-label={ui.nextMonth}>›</button>
               </>
             ) : (
               <>
@@ -354,12 +354,12 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
                   onClick={goToPrev}
                   disabled={isPrevDisabled}
                   className={`avail-cal__nav-btn ${isPrevDisabled ? 'is-disabled' : ''}`}
-                  aria-label="Mese precedente"
+                  aria-label={ui.prevMonth}
                 >‹</button>
                 <span className="avail-cal__month-title avail-cal__month-title--mobile">
                   {months[viewMonth]} {viewYear}
                 </span>
-                <button onClick={goToNext} className="avail-cal__nav-btn" aria-label="Mese successivo">›</button>
+                <button onClick={goToNext} className="avail-cal__nav-btn" aria-label={ui.nextMonth}>›</button>
               </>
             )}
           </div>
