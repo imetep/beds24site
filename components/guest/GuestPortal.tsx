@@ -312,7 +312,7 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
 function InfoTile({ label, value, icon, sub }: { label: string; value: string; icon: string; sub?: string }) {
   return (
     <div style={{ background: '#f9fafb', borderRadius: '10px', padding: '0.75rem', border: '1px solid #e5e7eb' }}>
-      <p style={{ margin: '0 0 0.25rem', fontSize: '0.72rem', color: '#888888', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{icon} {label}</p>
+      <p style={{ margin: '0 0 0.25rem', fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{icon} {label}</p>
       <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 700, color: '#111111' }}>{value}</p>
       {sub && <p style={{ margin: '0.15rem 0 0', fontSize: '0.75rem', color: '#9ca3af' }}>{sub}</p>}
     </div>
