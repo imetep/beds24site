@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { getTranslations } from '@/lib/i18n';
+import type { Locale } from '@/config/i18n';
 
 interface Props {
   photos: string[];
@@ -12,6 +14,7 @@ interface Props {
 
 export default function PhotoCarousel({ photos, roomName, slug, locale }: Props) {
   const router   = useRouter();
+  const ui       = getTranslations(locale as Locale).components.photoCarousel;
   const [current, setCurrent] = useState(0);
   // ✅ Fix Bug #1 — touch device detection corretta.
   // navigator.maxTouchPoints > 0 è true su iPhone/iPad anche in landscape.
@@ -161,7 +164,7 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
           {/* Badge foto in basso a destra */}
           <div className="photo-count-badge">
             <i className="bi bi-camera-fill" aria-hidden="true" />
-            {photos.length} foto
+            {ui.photoCount.replace('{count}', String(photos.length))}
           </div>
         </div>
 
@@ -226,7 +229,7 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
               <button
                 onClick={closeLightbox}
                 className="lightbox-close-btn"
-                aria-label="Chiudi"
+                aria-label={ui.close}
               >✕</button>
             </div>
           </div>
@@ -237,12 +240,12 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
               <button
                 onClick={lbPrev}
                 className="lightbox-arrow lightbox-arrow--lg lightbox-arrow--left-lg"
-                aria-label="Precedente"
+                aria-label={ui.prev}
               >‹</button>
               <button
                 onClick={lbNext}
                 className="lightbox-arrow lightbox-arrow--lg lightbox-arrow--right-lg"
-                aria-label="Successivo"
+                aria-label={ui.next}
               >›</button>
             </>
           )}
