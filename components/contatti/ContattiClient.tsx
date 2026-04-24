@@ -207,7 +207,7 @@ export default function ContattiClient({ locale, bookHref }: Props) {
       {/* ── Hero con sfondo brand ─────────────────────────────────────────── */}
       <div
         className="px-3 pt-4 pb-4"
-        style={{ background: 'linear-gradient(135deg, #006CB7 0%, #1557a0 100%)' }}
+        style={{ background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%)' }}
       >
         <h1
           className="fw-bolder text-white mb-2"
