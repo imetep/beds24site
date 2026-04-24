@@ -138,9 +138,9 @@ La spec di dettaglio da seguire è [wizard-sidebar-design.md §6 roadmap](wizard
 | 9 | BookingPanel | 25 inline | CTA principale scheda (entry booking). Include fix pre-esistente: `#dbeafe` deprecato riga 196 → `var(--color-primary-soft)` | ⏳ |
 | 10 | PhotoCarousel + PhotoLightbox | 53 inline totali | Gallery + lightbox "vero" (duplicava con quello rimosso in Sess 8) | ✅ `49a0081` (css shared), `8ab3be4` (PhotoCarousel), `49d4448` (css touch-lock), `b98ddea` (PhotoLightbox) |
 | 11 | AvailabilityCalendar | 33 inline | Calendario complesso, sessione dedicata. Applicato T7 (#EEF5FC → token) | ✅ `9c93916` |
-| 12 | FotoGalleryClient | 34 inline | Pagina foto completa | ⏳ |
+| 12 | FotoGalleryClient | 34 inline | Pagina foto completa (portrait + landscape immersivo). Banner iOS CriOS/FxiOS preservato byte-identical, emoji 📷 mantenuta (eccezione deliberata compat. cross-browser). Applicato T2 | ✅ `8f6fbb0` (css), `4513f15` (FotoGalleryClient, 1 inline residuo: frozenW/H dinamici iOS) |
 
-**Sessioni 10+11 completate** ✅ (2026-04-24, 5 commit) — prossima: 12 (FotoGalleryClient 34 inline), poi 9 per ultima (BookingPanel 🔴 isolato). Sessione mobile dedicata WizardStep2 SidebarContent a seguire.
+**Sessione 12 completata** ✅ (2026-04-24, 2 commit) — prossima e **ultima Fase B**: Sessione 9 (BookingPanel 🔴 25 inline — entry booking, sessione isolata). Sessione mobile dedicata WizardStep2 SidebarContent a seguire.
 
 ---
 
@@ -260,10 +260,16 @@ Emerso durante audit `REDIS_RT_KEY`: file parallelo a `lib/beds24-token.ts` che 
 **T9 — i18n centralizzazione nei file scheda residenza** 🟡 ampliato post-Session 10+11
 3 dei 7 file di Sessione 7+8 hanno dict `LABELS` hardcoded inline (`page.tsx`, `RoomCard.tsx`, `ThingsToKnow.tsx`) invece di `getTranslations()`. Fuori scope CSS migration. Da fare in sessione i18n dedicata.
 
-**Scope aggiuntivo emerso durante Session 10+11 (aria-label nuovi introdotti hardcoded in italiano)**:
+**Scope aggiuntivo emerso durante Session 10+11+12 (aria-label nuovi introdotti hardcoded in italiano)**:
 - `PhotoCarousel.tsx`: `aria-label="Chiudi"`, `"Precedente"`, `"Successivo"` (3 occorrenze)
 - `PhotoLightbox.tsx`: `aria-label="Chiudi"`, `"Precedente"`, `"Successivo"` (3 occorrenze) — ⚠️ se conserviamo il file; vedi §6.1-T11
 - `AvailabilityCalendar.tsx`: `aria-label="Mese precedente"`, `"Mese successivo"` (×2 per mobile/desktop), `"Cancella date"`
+- `FotoGalleryClient.tsx`: `aria-label="Precedente"`, `"Successivo"` (frecce immersive), `"Chiudi"` (X banner iOS), `"Indietro"` (back button topbar)
+- `FotoGalleryClient.tsx`: testi IT già pre-esistenti (da tradurre ex-novo nei 4 locale):
+  - `"Per la galleria immersiva usa Safari"` (banner iOS)
+  - `"Apri in Safari"` (CTA banner iOS)
+  - `"Gira il telefono per la galleria immersiva"` (hint floating)
+  - `"Nessuna foto disponibile."` (empty state)
 - `PhotoCarousel.tsx` + `PhotoLightbox.tsx`: testo `"N foto"` (pre-esistente, string concatenation) — dopo `<i class="bi bi-camera-fill">` serve label tradotta
 
 **Residui i18n non-aria** da portare via getTranslations:
@@ -337,7 +343,7 @@ distanceLabel: { it: '...', en: '...', de: '...', pl: '...' },
 | 8 | BedConfig + CardPhotoGallery | 38 | 143 |
 | 10 | PhotoCarousel + PhotoLightbox | 53 | 90 ✅ |
 | 11 | AvailabilityCalendar | 33 | 57 ✅ |
-| 12 | FotoGalleryClient | 34 | 23 |
+| 12 | FotoGalleryClient | 33 (34 → 1 dinamico) | 24 ✅ |
 | 9 | BookingPanel | 25 | 0 ✅ (teorico, c'è un off-by-2 nei conti originali) |
 
 A fine piano: **17 file a zero inline**, **413 style eliminati**, **35% del debito inline totale del progetto smaltito** con **100% delle pagine-utente coperte**.
