@@ -667,6 +667,98 @@ Calendario:
 
 **Nessun token nuovo**: l'intera sessione ha riusato i token esistenti (`--color-primary-soft`, `--color-overlay-dark`, `--color-cta`, `--color-info-bg`, `--radius-*`, `--space-*`, `--touch-target`, `--text-*`, `--z-modal`). Gli rgba rimasti hardcoded (`rgba(255,255,255,0.13)` su controls traslucidi del lightbox, `rgba(0,0,0,0.72)` sui gradient overlay) sono valori una-tantum contestuali al lightbox e non rientrano nel design system semantico.
 
+### 3.15 FotoGalleryClient (Sessione 12)
+
+Pagina dedicata `/[locale]/residenze/[slug]/foto`. Due modalità mutualmente esclusive basate su orientamento schermo: **portrait** (layout verticale standard) e **landscape immersivo** (fullscreen YouTube-style con Fullscreen API iOS).
+
+**⚠️ Banner compatibilità iOS** — pattern isolato, non condiviso:
+
+| Classe | Ruolo |
+|---|---|
+| `.fotogallery-ios-banner` | Sticky top z-200 su `--color-primary`, visibile solo a Chrome iOS (CriOS) / Firefox iOS (FxiOS) |
+| `.fotogallery-ios-banner__content` | Colonna sinistra (icon + testo) |
+| `.fotogallery-ios-banner__emoji` | Wrapper per emoji 📷 **mantenuta intenzionalmente** (non sostituita con Bootstrap Icon) per minimizzare rischi cross-browser |
+| `.fotogallery-ios-banner__text` | Testo bianco fw 500 text-sm |
+| `.fotogallery-ios-banner__actions` | Colonna destra (bottone + X) |
+| `.fotogallery-ios-banner__safari-btn` | Pill bianca con testo primary "Apri in Safari" |
+| `.fotogallery-ios-banner__close` | Bottone X 28×28 bg `rgba(white, 0.20)` |
+
+**Nota design**: questo banner NON usa `.banner --info/--warning/--accent` del design system semantico perché ha sfondo brand (primary blu) e comportamento sticky. Pattern isolato contestuale.
+
+**Page shell portrait**
+
+| Classe | Ruolo |
+|---|---|
+| `.fotogallery-page` | Wrapper bg bianco min-height 100vh |
+
+**Topbar sticky (back + nome + scroll residenze)**
+
+| Classe | Ruolo |
+|---|---|
+| `.fotogallery-topbar` | Sticky top z-100, bianco + border-bottom + shadow-sm |
+| `.fotogallery-topbar__title-row` | Riga 1: flex con back button + titolo + sottotitolo |
+| `.fotogallery-topbar__back-btn` | Cerchio 40×40 bg grigio chiaro con freccia ← |
+| `.fotogallery-topbar__title` | Nome residenza (fw 700, 16px, text-base) |
+| `.fotogallery-topbar__subtitle` | "N foto" (text-xs muted) |
+| `.fotogallery-topbar__rooms-scroll` | Riga 2: flex horizontal scroll-snap x mandatory, scrollbar nascosta (webkit + firefox + IE) |
+
+**Room thumbnail scroll (selettore altre residenze)**
+
+| Classe | Ruolo |
+|---|---|
+| `.fotogallery-room-thumb` | Link flex-shrink-0 |
+| `.fotogallery-room-thumb.is-active` | Applica bordo primary + outline shadow al `.__frame` |
+| `.fotogallery-room-thumb__frame` | Container 110×74 con bordo 2px transparent (hover target) |
+| `.fotogallery-room-thumb__img` | Img cover (quando coverUrl presente) |
+| `.fotogallery-room-thumb__empty` | Placeholder grigio (quando coverUrl mancante) |
+| `.fotogallery-room-thumb__gradient` | Gradient bottom 55% dal dark al trasparente |
+| `.fotogallery-room-thumb__label` | Nome residenza white fw 700 centrato bottom con textShadow |
+
+**Lista foto verticale + hint**
+
+| Classe | Ruolo |
+|---|---|
+| `.fotogallery-photos-list` | Wrapper lista (sotto `.page-container` riuso) |
+| `.fotogallery-photo-item` | Singolo wrapper foto (aspect 4/3, bg #f0f0f0, margin-bottom 4) |
+| `.fotogallery-photo-item--first` | Modifier `position: relative` per ospitare il rotate hint |
+| `.fotogallery-photo-item__img` | Img cover + loading eager sui primi 3 |
+| `.fotogallery-empty` | Fallback "Nessuna foto disponibile." centrato |
+| `.fotogallery-rotate-hint` | Pill scura traslucida sticky bottom center con backdrop blur |
+| `.fotogallery-rotate-hint__text` | Testo "Gira il telefono per la galleria immersiva" |
+| `.fotogallery-rotate-hint__icon` | SVG custom `currentColor` (non Bootstrap Icon: grafica funzionale `rotate` + `landscape` tablet) |
+
+**Back link in fondo**
+
+| Classe | Ruolo |
+|---|---|
+| `.fotogallery-back-link-wrap` | Wrapper text-center con padding top |
+| `.fotogallery-back-link` | Pill outline 1.5px primary + testo primary |
+
+**Landscape immersivo (YouTube-style)**
+
+| Classe | Ruolo |
+|---|---|
+| `.fotogallery-immersive` | Container fullscreen (fixed 0/0, z 9999, bg nero puro `#000`). **width/height inline**: valori DINAMICI `frozenW/frozenH` congelati al primo `orientationchange` per evitare riapparizione toolbar iOS |
+| `.fotogallery-immersive.is-controls-hidden` | `cursor: none` quando i controls YouTube sono nascosti |
+| `.fotogallery-immersive__img` | Foto absolute contain full-container |
+| `.fotogallery-immersive__controls` | Overlay controls (opacity 1, transition 0.3s ease, pointer-events auto) |
+| `.fotogallery-immersive__controls.is-hidden` | Opacity 0 + pointer-events none (auto-hide 3s o tap toggle) |
+| `.fotogallery-immersive__gradient-top` | Gradient dark 90px da top |
+| `.fotogallery-immersive__gradient-bottom` | Gradient dark 90px da bottom |
+| `.fotogallery-immersive__title` | Nome residenza top-left con `env(safe-area-inset-top/left)` + textShadow drop |
+| `.fotogallery-immersive__counter` | "N / total" top-right con safe-area + textShadow |
+| `.fotogallery-immersive__arrow` | Freccia 48×48 round bianca traslucida + blur (NON riusa `.lightbox-arrow`: offset safe-area specifici + dimensione custom) |
+| `.fotogallery-immersive__arrow--left` / `--right` | Posizionamento laterale middle con safe-area |
+| `.fotogallery-immersive__progress` | Container progress bar bottom center con safe-area-inset-bottom |
+| `.fotogallery-immersive__progress-dot` | Rettangolino 6×4 passivo `rgba(white, 0.35)` (YouTube-style, NON rotondo come `.photo-dots`) |
+| `.fotogallery-immersive__progress-dot.is-active` | 20×4 bg `--color-cta` (arancione) |
+
+**Nessun token nuovo** in Session 12: riuso di `--color-primary`, `--color-on-dark`, `--color-border`, `--color-cta`, `--color-bg`, `--color-text`, `--color-text-muted`, `--radius-pill`, `--radius-md`, `--space-*`, `--text-*`, `--shadow-sm`. Hardcoded deliberati contestuali: `#000` puro (fullscreen nero, distinto da `--color-overlay-gallery` #1a1a1a), `#f5f5f5` / `#f0f0f0` / `#d1d5db` / `#888` (grigi neutri fotogallery, stesso spettro di `.card-gallery`), `rgba(255,255,255,0.20)` / `0.15` / `0.25` / `0.85` / `0.90` (trasparenze overlay non semantiche), `rgba(0,0,0,0.62)` / `0.72` / `0.75` (gradient overlay).
+
+**T2 applicato**: `#006CB7` letterale su `.fotogallery-room-thumb.is-active` (border + box-shadow) e `.fotogallery-back-link` (border + color) → `var(--color-primary)`.
+
+**Emoji**: 📷 **mantenuta** nel solo banner iOS come eccezione documentata (compatibilità cross-browser), le restanti icone usano SVG custom funzionali (non sostituibili con `bi-*` perché trasmettono una rotazione specifica).
+
 ---
 
 ## 4. Come decidere se creare una nuova classe
@@ -743,6 +835,36 @@ Prima del commit:
 ---
 
 ## 9. Changelog
+
+### 2026-04-24 — Sessione 12 — FotoGalleryClient (v1.6)
+- Aggiunto §3.15 con ~32 classi BEM per la pagina `/foto` (portrait + landscape
+  immersivo).
+- Banner iOS (CriOS/FxiOS): 7 classi isolate (`.fotogallery-ios-banner`
+  + `__content`/`__emoji`/`__text`/`__actions`/`__safari-btn`/`__close`).
+  Pattern isolato, non riusa `.banner` semantico (sfondo brand `--color-primary`
+  + sticky behavior). **Eccezione deliberata**: emoji 📷 mantenuta (non
+  sostituita con Bootstrap Icon) per minimizzare rischi cross-browser su
+  ambienti iOS già problematici.
+- Portrait (~17 classi): `.fotogallery-page`, `.fotogallery-topbar`
+  + `__title-row`/`__back-btn`/`__title`/`__subtitle`/`__rooms-scroll`,
+  `.fotogallery-room-thumb` + `.is-active` + `__frame`/`__img`/`__empty`
+  /`__gradient`/`__label`, `.fotogallery-photos-list`, `.fotogallery-photo-item`
+  + `--first`/`__img`, `.fotogallery-empty`, `.fotogallery-rotate-hint`
+  + `__text`/`__icon`, `.fotogallery-back-link-wrap` + `.fotogallery-back-link`.
+- Landscape immersivo (~13 classi): `.fotogallery-immersive` (width/height
+  dinamici inline con frozenW/frozenH iOS fix) + `.is-controls-hidden`,
+  `__img`, `__controls` + `.is-hidden`, `__gradient-top`/`__gradient-bottom`,
+  `__title`/`__counter`, `__arrow` + `--left`/`--right` (48×48 dedicate,
+  non riusa `.lightbox-arrow`), `__progress` + `__progress-dot` + `.is-active`
+  (YouTube-style, rettangolari 6×4 / 20×4, active `--color-cta`).
+- **T2 applicato**: `#006CB7` su `.fotogallery-room-thumb.is-active` (border
+  + shadow) e `.fotogallery-back-link` (border + color) → `var(--color-primary)`.
+- Nessun token nuovo. Hardcoded deliberati documentati (`#000` puro per
+  fullscreen nero, grigi `#f5f5f5`/`#f0f0f0`/`#d1d5db`/`#888` non-semantic,
+  rgba overlay non token).
+- SVG custom del rotate hint: sostituito `stroke="rgba(255,255,255,0.90)"`
+  letterale → `stroke="currentColor"` + `.fotogallery-rotate-hint__icon
+  { color: rgba(255,255,255,0.90) }`.
 
 ### 2026-04-24 — Sessioni 10+11 — Gallery + lightbox + calendar (v1.5)
 - Aggiunto §3.14 con ~45 classi BEM nuove:
