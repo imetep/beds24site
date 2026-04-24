@@ -363,6 +363,8 @@
       "checkin": "Check-in",
       "checkout": "Check-out",
       "clear": "Cancella date",
+      "prevMonth": "Mese precedente",
+      "nextMonth": "Mese successivo",
       "selectCheckin": "Seleziona la data di arrivo",
       "selectCheckout": "Seleziona la data di partenza"
     },
@@ -382,7 +384,31 @@
       "total": "totale",
       "selezionata": "✓ Selezionata",
       "nonDisp": "Non disponibile",
-      "selectDates": "Seleziona le date per vedere le tariffe disponibili."
+      "selectDates": "Seleziona le date per vedere le tariffe disponibili.",
+      "childrenHint": "Per mostrarti i prezzi esatti, dobbiamo conoscere l'età dei bambini.",
+      "childAgeLabel": "Età bambino {n}",
+      "selectAge": "Seleziona età",
+      "yearsLabel0": "0 anni",
+      "yearsLabel1": "1 anno",
+      "yearsLabelN": "{n} anni",
+      "maxPeopleOne": "Massimo {n} persona per questo appartamento.",
+      "maxPeopleMany": "Massimo {n} persone per questo appartamento."
+    },
+    "photoCarousel": {
+      "close": "Chiudi",
+      "prev": "Precedente",
+      "next": "Successivo",
+      "photoCount": "{count} foto"
+    },
+    "fotoGallery": {
+      "prev": "Precedente",
+      "next": "Successivo",
+      "close": "Chiudi",
+      "back": "Indietro",
+      "iosBannerText": "Per la galleria immersiva usa Safari",
+      "iosBannerOpenSafari": "Apri in Safari",
+      "rotateHint": "Gira il telefono per la galleria immersiva",
+      "emptyState": "Nessuna foto disponibile."
     },
     "wizardSidebar": {
       "title": "Il tuo soggiorno",

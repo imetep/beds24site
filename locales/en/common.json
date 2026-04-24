@@ -363,6 +363,8 @@
       "checkin": "Check-in",
       "checkout": "Check-out",
       "clear": "Clear dates",
+      "prevMonth": "Previous month",
+      "nextMonth": "Next month",
       "selectCheckin": "Select check-in date",
       "selectCheckout": "Select check-out date"
     },
@@ -382,7 +384,31 @@
       "total": "total",
       "selezionata": "✓ Selected",
       "nonDisp": "Unavailable",
-      "selectDates": "Select dates to see available rates."
+      "selectDates": "Select dates to see available rates.",
+      "childrenHint": "To show exact prices, we need to know the children's ages.",
+      "childAgeLabel": "Child {n} age",
+      "selectAge": "Select age",
+      "yearsLabel0": "0 years",
+      "yearsLabel1": "1 year",
+      "yearsLabelN": "{n} years",
+      "maxPeopleOne": "Maximum {n} person for this apartment.",
+      "maxPeopleMany": "Maximum {n} people for this apartment."
+    },
+    "photoCarousel": {
+      "close": "Close",
+      "prev": "Previous",
+      "next": "Next",
+      "photoCount": "{count} photos"
+    },
+    "fotoGallery": {
+      "prev": "Previous",
+      "next": "Next",
+      "close": "Close",
+      "back": "Back",
+      "iosBannerText": "Use Safari for the immersive gallery",
+      "iosBannerOpenSafari": "Open in Safari",
+      "rotateHint": "Rotate your phone for the immersive gallery",
+      "emptyState": "No photos available."
     },
     "wizardSidebar": {
       "title": "Your stay",

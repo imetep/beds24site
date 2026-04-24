@@ -363,6 +363,8 @@
       "checkin": "Check-in",
       "checkout": "Check-out",
       "clear": "Daten löschen",
+      "prevMonth": "Vorheriger Monat",
+      "nextMonth": "Nächster Monat",
       "selectCheckin": "Check-in wählen",
       "selectCheckout": "Check-out wählen"
     },
@@ -382,7 +384,31 @@
       "total": "gesamt",
       "selezionata": "✓ Ausgewählt",
       "nonDisp": "Nicht verfügbar",
-      "selectDates": "Wählen Sie Daten, um verfügbare Tarife zu sehen."
+      "selectDates": "Wählen Sie Daten, um verfügbare Tarife zu sehen.",
+      "childrenHint": "Für genaue Preise benötigen wir das Alter der Kinder.",
+      "childAgeLabel": "Alter Kind {n}",
+      "selectAge": "Alter wählen",
+      "yearsLabel0": "0 Jahre",
+      "yearsLabel1": "1 Jahr",
+      "yearsLabelN": "{n} Jahre",
+      "maxPeopleOne": "Maximal {n} Person für diese Wohnung.",
+      "maxPeopleMany": "Maximal {n} Personen für diese Wohnung."
+    },
+    "photoCarousel": {
+      "close": "Schließen",
+      "prev": "Zurück",
+      "next": "Weiter",
+      "photoCount": "{count} Fotos"
+    },
+    "fotoGallery": {
+      "prev": "Zurück",
+      "next": "Weiter",
+      "close": "Schließen",
+      "back": "Zurück",
+      "iosBannerText": "Für die Immersive-Galerie Safari verwenden",
+      "iosBannerOpenSafari": "In Safari öffnen",
+      "rotateHint": "Telefon drehen für die Immersive-Galerie",
+      "emptyState": "Keine Fotos verfügbar."
     },
     "wizardSidebar": {
       "title": "Ihr Aufenthalt",

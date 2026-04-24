@@ -363,6 +363,8 @@
       "checkin": "Zameldowanie",
       "checkout": "Wymeldowanie",
       "clear": "Wyczyść daty",
+      "prevMonth": "Poprzedni miesiąc",
+      "nextMonth": "Następny miesiąc",
       "selectCheckin": "Wybierz zameldowanie",
       "selectCheckout": "Wybierz wymeldowanie"
     },
@@ -382,7 +384,31 @@
       "total": "łącznie",
       "selezionata": "✓ Wybrano",
       "nonDisp": "Niedostępne",
-      "selectDates": "Wybierz daty, aby zobaczyć dostępne taryfy."
+      "selectDates": "Wybierz daty, aby zobaczyć dostępne taryfy.",
+      "childrenHint": "Potrzebujemy znać wiek dzieci, aby pokazać dokładne ceny.",
+      "childAgeLabel": "Wiek dziecka {n}",
+      "selectAge": "Wybierz wiek",
+      "yearsLabel0": "0 lat",
+      "yearsLabel1": "1 rok",
+      "yearsLabelN": "{n} lata",
+      "maxPeopleOne": "Maksymalnie {n} osoba w tym apartamencie.",
+      "maxPeopleMany": "Maksymalnie {n} osób w tym apartamencie."
+    },
+    "photoCarousel": {
+      "close": "Zamknij",
+      "prev": "Poprzednie",
+      "next": "Następne",
+      "photoCount": "{count} zdjęć"
+    },
+    "fotoGallery": {
+      "prev": "Poprzednie",
+      "next": "Następne",
+      "close": "Zamknij",
+      "back": "Wstecz",
+      "iosBannerText": "Użyj Safari, aby zobaczyć wciągającą galerię",
+      "iosBannerOpenSafari": "Otwórz w Safari",
+      "rotateHint": "Obróć telefon dla wciągającej galerii",
+      "emptyState": "Brak zdjęć."
     },
     "wizardSidebar": {
       "title": "Twój pobyt",
