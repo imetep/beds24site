@@ -3530,3 +3530,184 @@ body {
   width: 20px;
   background: var(--color-cta);
 }
+
+/* ==========================================================================
+   Session 9 — BookingPanel (scheda residenza)
+   Pannello booking: box ospiti, selezione età bambini, card offerte,
+   CTA "Prenota". GuestRow sub-component per stepper adulti/bambini.
+   Riusa .wizard-loading-spinner per il loading spinner.
+   ========================================================================== */
+
+/* ── Card ospiti (container top) ── */
+.booking-panel__guests-card {
+  border-radius: var(--radius-lg);
+}
+
+/* ── Wrapper età bambini ── */
+.booking-panel__children-ages {
+  background: var(--color-bg-muted);
+  border-radius: 10px;
+}
+.booking-panel__children-hint {
+  font-size: var(--text-xs);
+  color: #666;
+  line-height: 1.5;
+}
+.booking-panel__children-grid {
+  display: grid;
+  gap: var(--space-sm);
+  /* grid-template-columns dinamico inline (1fr se numChild=1, 1fr 1fr altrimenti) */
+}
+.booking-panel__children-age-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: var(--space-xs);
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+.booking-panel__children-age-select {
+  font-size: var(--text-base);
+  border-width: 1.5px;
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+.booking-panel__children-age-select.is-missing {
+  border-color: var(--color-warning);
+  color: #9ca3af;
+}
+
+/* ── Warning over-capacity ── */
+.booking-panel__overcapacity-warning {
+  font-size: var(--text-sm);
+}
+
+/* ── Stati empty/loading ── */
+.booking-panel__empty {
+  font-size: var(--text-base);
+}
+.booking-panel__loading {
+  font-size: var(--text-base);
+}
+
+/* ── Card offerta ── */
+.booking-panel__offer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: start;
+  padding: var(--space-md) var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-border);
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.booking-panel__offer.is-picked {
+  border: 2px solid var(--color-primary);
+  background: var(--color-primary-soft);
+}
+.booking-panel__offer.is-unavailable {
+  cursor: default;
+  opacity: 0.45;
+}
+.booking-panel__offer-name {
+  font-weight: 700;
+  color: var(--color-text);
+  font-size: var(--text-base);
+}
+.booking-panel__offer-pill-selected {
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+  padding: 2px 8px;
+}
+.booking-panel__offer-unavail-label {
+  font-size: 11px;
+}
+.booking-panel__offer-desc {
+  font-size: var(--text-xs);
+  color: #666;
+  line-height: 1.4;
+  margin-top: var(--space-xs);
+  margin-bottom: 0;
+}
+.booking-panel__offer-price {
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--color-primary);
+  line-height: 1;
+}
+.booking-panel__offer-per-night {
+  font-size: 11px;
+  color: #999;
+  margin-top: 1px;
+}
+.booking-panel__offer-total-label {
+  font-size: 10px;
+  color: #bbb;
+  margin-top: 1px;
+}
+
+/* ── CTA "Prenota" ── */
+.booking-panel__cta {
+  width: 100%;
+  margin-top: var(--space-md);
+  font-weight: 700;
+  border: 0;
+  padding: var(--space-base);
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  background: var(--color-cta);
+  color: #fff;
+  cursor: pointer;
+}
+.booking-panel__cta:disabled {
+  background: #e0e0e0;
+  color: #999;
+  cursor: not-allowed;
+}
+
+/* ── GuestRow (sub-component stepper adulti/bambini) ── */
+.guest-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-sm);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+.guest-row__label {
+  font-weight: 500;
+  font-size: var(--text-base);
+}
+.guest-row__sub {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+.guest-row__counter {
+  font-weight: 600;
+  text-align: center;
+  font-size: var(--text-md);
+  min-width: 24px;
+}
+.guest-row__stepper-btn {
+  width: var(--touch-target);
+  height: var(--touch-target);
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: #fff;
+  color: #333;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.guest-row__stepper-btn:disabled {
+  background: #f5f5f5;
+  color: #ccc;
+  cursor: not-allowed;
+}
