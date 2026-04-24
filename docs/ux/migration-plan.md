@@ -323,6 +323,32 @@ distanceLabel: { it: '...', en: '...', de: '...', pl: '...' },
 
 ---
 
+**T13 — Chrome violation "unload is not allowed"** 🟡 probabilmente non del sito (scoperto 2026-04-26)
+Warning console su `/it/residenze/fuji`: `nuanria.Chrome.js:70 [Violation] Permissions policy violation: unload is not allowed in this document.`
+Il file `nuanria.Chrome.js` NON è codice del sito — è un'estensione Chrome installata dall'utente (probabilmente "Claude in Chrome" / simile). Il warning segnala che un listener `unload` (evento deprecato in Chrome moderni) è registrato dall'estensione, non dal nostro codice.
+**Azione consigliata**: testare in Incognito (senza estensioni) per confermare che il warning sparisce. Se sparisce → falso positivo da estensione, da ignorare. Se persiste → indagare origine.
+
+**T14 — Runtime error "message port closed" su contatti** 🟡 probabilmente non del sito (scoperto 2026-04-26)
+Errore console su `/it/contatti`: `Unchecked runtime.lastError: The message port closed before a response was received.`
+Messaggio tipico di `chrome.runtime.sendMessage` usato in estensioni Chrome (quando il sendMessage finisce senza che il listener abbia chiamato `sendResponse`). Il codice del sito NON usa `chrome.runtime` API.
+**Azione consigliata**: come T13, testare in Incognito per confermare falso positivo da estensione.
+
+**T15 — 401 loggato come errore su `/api/portal/booking`** 🟢 behavior normale, da silenziare (scoperto 2026-04-26)
+Sul Guest Portal quando l'utente NON è loggato, la fetch iniziale a `/api/portal/booking` restituisce 401 che appare come errore nella console. È il comportamento corretto (l'auth guard protegge l'endpoint), ma l'errore rumoroso in console non è ideale.
+**Fix**: intercettare il 401 nel client (`GuestPortal.tsx` o file auth) come "non autenticato → redirect login silenzioso", senza propagare come errore console.
+**Scope**: piccolo, 1 file, ~10 min.
+
+**T16 — 🔴 Traduzione EN errata: "Sommier" → "Divan bed"** (scoperto 2026-04-26, bug user-facing)
+`components/residenze/BedConfigDisplay.tsx:40`:
+```ts
+'sommier': { it: 'Sommier', en: 'Divan bed', de: 'Sommier', pl: 'Sommier' },
+```
+**Problema**: "Divan bed" in inglese britannico significa **divano letto** (una base letto con cassetti sotto, tipo IKEA Malm). Il sommier italiano è invece la **base letto con doghe/molle** (l'elemento sotto al materasso). Traduzione confusa per utenti EN → rischio che pensino di affittare un divano letto invece di un letto vero.
+**Fix proposto**: `en: 'Bed base'` (termine corretto per bed frame con doghe) oppure `en: 'Sommier'` (termine francese usato anche in EN tecnico). Preferito **"Bed base"** (più naturale per nativi EN).
+**Scope**: 1 riga, file `BedConfigDisplay.tsx`. DE e PL già corretti (usano "Sommier").
+
+---
+
 ## 7. Gestione rischi
 
 | Rischio | Mitigazione |
@@ -432,6 +458,10 @@ Regola **"no emoji decorative, sempre Bootstrap Icons"** applicata a tutto il si
 | 3 | ~~Sessione mobile WizardStep2~~ | 🟡 | 2-3h | ✅ risolto 2026-04-24 (commit `ed5db23` css + `4ce08c0` refactor). 48 inline → 0, SidebarContent + SideRow + 2 CSSProp legacy a BEM `.wizard-step2-mobile__*`. 4 emoji decorative → Bootstrap Icons (🛏️ mantenuta). **🏁 piano programmato chiuso** |
 | 4 | ~~Consolidamento LABELS dict Session 7 (T9 residuo)~~ | ⚪ | ~2h | ✅ risolto 2026-04-24 (commit `4b9d791` chiavi, `35b5100` RoomCard, `e24a6c7` ThingsToKnow, `8807a74` page.tsx). 48 chiavi × 4 locale aggiunte in namespace `components.roomCard/roomPage/thingsToKnow`. Bonus: 9 emoji decorative → bi-* (🛏️🚿👥📐 RoomCard badge + 🏊🌊🏖️ pool + 🐾🚭 rules) + 2 eccezioni residue chiuse (🛏️ WizardStep2 extras, 📷 FotoGalleryClient banner iOS). FEATURE_LABELS di page.tsx RESTA inline (catalogo structured) |
 | 5 | ~~T10 cleanup Redis key legacy~~ | ⚪ | ~5min | ✅ eseguito manualmente (2026-04-26, utente via Upstash Data Browser) |
+| 7 | **T13** Chrome unload violation su /residenze/[slug] | 🟡 | 5min | Test in Incognito. Probabilmente falso positivo da estensione `nuanria.Chrome.js`. Se persiste → indagare |
+| 8 | **T14** Runtime error "message port closed" su /contatti | 🟡 | 5min | Stesso pattern di T13 (estensione Chrome chrome.runtime.sendMessage). Test Incognito |
+| 9 | **T15** 401 loggato come errore su `/api/portal/booking` non autenticato | 🟢 | ~10min | Intercettare 401 nel client come redirect login silenzioso (non error) |
+| 10 | **T16** 🔴 EN "Divan bed" (sbagliato per Sommier) | 🔴 | ~2min | Fix `BedConfigDisplay.tsx:40` → `en: 'Bed base'`. Bug user-facing EN, rischio confusione ospiti |
 | 6 | ~~WizardStep1 emoji decorative~~ + **sweep globale emoji tutto il sito** | ⚪ | completato | ✅ risolto 2026-04-24 (sweep globale, ~30 file toccati). Regola 'no emoji decorative' applicata uniformemente tranne admin (escluso da utente) e commenti di sviluppo. Sommario in [§8.2 qui sotto](#82-sweep-emoji-2026-04-24) |
 
 ---
