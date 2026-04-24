@@ -56,6 +56,7 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
         setLoading(false);
         return;
       }
+      if (typeof window !== 'undefined') localStorage.setItem('guest_portal_session', '1');
       onLoginSuccess();
     } catch {
       setError(tL.errorNetwork);
