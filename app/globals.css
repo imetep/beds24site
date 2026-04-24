@@ -446,7 +446,7 @@ body {
 .ui-booking-summary-price-total {
   font-size: var(--text-xl);
   font-weight: 800;
-  color: var(--color-primary);
+  color: var(--color-text-accent);
   line-height: var(--line-height-tight);
 }
 .ui-booking-summary-price-pernight {
