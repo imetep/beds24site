@@ -281,34 +281,39 @@ export default function WizardStep2({ locale = 'it' }: Props) {
     <div>
       {/* Foto + nome */}
       {room && (
-        <div style={{ borderRadius: 12, overflow: 'hidden', marginBottom: 16, position: 'relative' }}>
+        <div className="wizard-step2-mobile__hero">
           {coverUrl ? (
             <img
               src={coverUrl}
               alt={room.name}
-              style={{ width: '100%', height: 160, objectFit: 'cover', display: 'block' }}
+              className="wizard-step2-mobile__hero-img"
             />
           ) : (
-            <div style={{ width: '100%', height: 100, background: '#f0f4f8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40 }}>🏠</div>
+            <div className="wizard-step2-mobile__hero-placeholder">
+              <i className="bi bi-house-fill" aria-hidden="true" />
+            </div>
           )}
-          <div style={{ padding: '10px 4px 0' }}>
-            <p style={{ fontSize: 16, fontWeight: 700, color: '#111', margin: '0 0 2px' }}>{room.name}</p>
-            <p style={{ fontSize: 12, color: '#888', margin: 0 }}>{room.type}</p>
+          <div className="wizard-step2-mobile__hero-info">
+            <p className="wizard-step2-mobile__hero-name">{room.name}</p>
+            <p className="wizard-step2-mobile__hero-type">{room.type}</p>
           </div>
         </div>
       )}
 
-      {/* ⚡ Consumi energetici */}
-      <div style={{ background: '#f0f7ff', border: '1px solid #bfdbfe', borderRadius: 10, padding: '12px 14px', marginBottom: 14 }}>
-        <p style={{ fontSize: 13, fontWeight: 700, color: '#1e40af', margin: '0 0 5px' }}>⚡ {t.energyTitle}</p>
-        <p style={{ fontSize: 12, color: '#374151', margin: 0, lineHeight: 1.5 }}>{ENERGY_BOX[locale] ?? ENERGY_BOX.it}</p>
+      {/* Consumi energetici */}
+      <div className="wizard-step2-mobile__energy">
+        <p className="wizard-step2-mobile__energy-title">
+          <i className="bi bi-lightning-fill me-1" aria-hidden="true" />
+          {t.energyTitle}
+        </p>
+        <p className="wizard-step2-mobile__energy-text">{ENERGY_BOX[locale] ?? ENERGY_BOX.it}</p>
       </div>
 
-      <div style={divider} />
+      <div className="wizard-step2-mobile__divider" />
 
       {/* Voucher */}
-      <p style={sideLabel}>{t.voucher}</p>
-      <div style={{ display: 'flex', gap: 6, marginBottom: 6 }}>
+      <p className="wizard-step2-mobile__section-label">{t.voucher}</p>
+      <div className="wizard-step2-mobile__voucher-row">
         <input
           type="text"
           value={voucherInput}
@@ -318,19 +323,19 @@ export default function WizardStep2({ locale = 'it' }: Props) {
           autoCorrect="off"
           autoCapitalize="off"
           spellCheck={false}
-          style={{ flex: 1, padding: '8px 10px', fontSize: 13, border: `1.5px solid ${voucherApplied ? '#16a34a' : '#e5e7eb'}`, borderRadius: 8, outline: 'none' }}
+          className={`wizard-step2-mobile__voucher-input${voucherApplied ? ' is-applied' : ''}`}
         />
         <button
           onClick={handleApplyVoucher}
           disabled={!voucherInput.trim()}
-          style={{ padding: '8px 14px', minHeight: 'var(--touch-target)', borderRadius: 8, border: `1.5px solid ${voucherApplied ? '#16a34a' : 'var(--color-primary)'}`, background: voucherApplied ? '#16a34a' : '#fff', color: voucherApplied ? '#fff' : 'var(--color-primary)', fontSize: 13, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
+          className={`wizard-step2-mobile__voucher-btn${voucherApplied ? ' is-applied' : ''}`}
         >
           {voucherApplied ? '✓ Applicato' : t.voucherApply}
         </button>
       </div>
-      {voucherError && <p style={{ fontSize: 12, color: '#e74c3c', margin: '4px 0 8px' }}>{voucherError}</p>}
+      {voucherError && <p className="wizard-step2-mobile__voucher-error">{voucherError}</p>}
 
-      <div style={divider} />
+      <div className="wizard-step2-mobile__divider" />
 
       {/* Date + Modifica */}
       <SideRow
@@ -339,7 +344,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
         onEdit={() => setCurrentStep(2)}
         editLabel={t.edit}
       />
-      {nights > 0 && <p style={{ fontSize: 12, color: '#9ca3af', margin: '-8px 0 12px' }}>{nights} {nights === 1 ? t.night : t.nights}</p>}
+      {nights > 0 && <p className="wizard-step2-mobile__nights-sub">{nights} {nights === 1 ? t.night : t.nights}</p>}
 
       {/* Ospiti + Modifica */}
       <SideRow
@@ -349,14 +354,14 @@ export default function WizardStep2({ locale = 'it' }: Props) {
         editLabel={t.edit}
       />
 
-      <div style={divider} />
+      <div className="wizard-step2-mobile__divider" />
 
       {/* Dettagli prezzo */}
-      <p style={sideLabel}>{t.priceDetail}</p>
+      <p className="wizard-step2-mobile__section-label">{t.priceDetail}</p>
       {offerPrice > 0 && perNight > 0 && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: '#444', marginBottom: 6 }}>
+        <div className="wizard-step2-mobile__price-row">
           <span>{nights} {nights === 1 ? t.night : t.nights} × {fmt(perNight)}</span>
-          <span style={{ textDecoration: voucherApplied ? 'line-through' : 'none', color: voucherApplied ? '#aaa' : '#444' }}>
+          <span className={voucherApplied ? 'wizard-step2-mobile__price-row-strike' : ''}>
             {fmt(offerPrice)}
           </span>
         </div>
@@ -364,15 +369,18 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
       {/* Riga sconto voucher */}
       {voucherApplied && discountedPrice !== null && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, marginBottom: 6, background: '#f0fdf4', borderRadius: 8, padding: '6px 8px', border: '1px solid #bbf7d0' }}>
-          <span style={{ color: '#16a34a', fontWeight: 600 }}>🏷️ Sconto ({voucherCode})</span>
-          <span style={{ color: '#16a34a', fontWeight: 700 }}>− {fmt(offerPrice - discountedPrice)}</span>
+        <div className="wizard-step2-mobile__discount-row">
+          <span className="wizard-step2-mobile__discount-label">
+            <i className="bi bi-tag-fill me-1" aria-hidden="true" />
+            Sconto ({voucherCode})
+          </span>
+          <span className="wizard-step2-mobile__discount-value">− {fmt(offerPrice - discountedPrice)}</span>
         </div>
       )}
 
       {/* Righe extras selezionati */}
       {selectedExtras.map(extra => (
-        <div key={extra.id} className="price-row" style={{ fontSize: 14, color: '#444', marginBottom: 6 }}>
+        <div key={extra.id} className="wizard-step2-mobile__price-row">
           <span>{extra.name[loc] ?? extra.name.it}{extra.quantity > 1 ? ` ×${extra.quantity}` : ''}</span>
           <span>+{fmt(extra.price * extra.quantity)}</span>
         </div>
@@ -381,72 +389,44 @@ export default function WizardStep2({ locale = 'it' }: Props) {
       {/* Stepper upsell — visibile in sidebar desktop e accordion mobile */}
       {upsellItems.length > 0 && (
         <>
-          <div style={{ height: 1, background: '#e5e7eb', margin: '10px 0 10px' }} />
-          <p style={{ ...sideLabel, marginBottom: 8 }}>{t.sec2title}</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 10 }}>
+          <div className="wizard-step2-mobile__divider wizard-step2-mobile__divider--sm" />
+          <p className="wizard-step2-mobile__section-label">{t.sec2title}</p>
+          <div className="wizard-step2-mobile__extras-list">
             {upsellItems.map(item => {
               const sel = selectedExtras.find(e => e.id === item.id);
               const qty = sel?.quantity ?? 0;
               const MAX_QTY = 4;
               return (
-                <div key={item.id} style={{
-                  display: 'flex', alignItems: 'center', gap: 10,
-                  padding: '10px 12px',
-                  border: `1.5px solid ${qty > 0 ? 'var(--color-primary)' : '#e5e7eb'}`,
-                  borderRadius: 10,
-                  background: qty > 0 ? '#EEF5FC' : '#fafafa',
-                  transition: 'all 0.15s',
-                }}>
-                  <span style={{ fontSize: 20, flexShrink: 0 }}>🛏️</span>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: '#111', lineHeight: 1.3 }}>
+                <div
+                  key={item.id}
+                  className={`wizard-step2-mobile__extra-item${qty > 0 ? ' is-selected' : ''}`}
+                >
+                  <span className="wizard-step2-mobile__extra-icon" aria-hidden="true">🛏️</span>
+                  <div className="wizard-step2-mobile__extra-info">
+                    <p className="wizard-step2-mobile__extra-name">
                       {item.name[loc] ?? item.name.it}
                     </p>
-                    <p style={{ margin: '1px 0 0', fontSize: 11, color: '#888' }}>
+                    <p className="wizard-step2-mobile__extra-price-unit">
                       +{fmt(item.price)} / unità
                     </p>
                   </div>
                   {/* Stepper */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 0, flexShrink: 0 }}>
+                  <div className="wizard-step2-mobile__extra-stepper">
                     <button
                       onClick={() => setExtraQuantity(item, qty - 1)}
                       disabled={qty === 0}
-                      style={{
-                        width: 'var(--touch-target)', height: 'var(--touch-target)', borderRadius: '50%',
-                        border: `1.5px solid ${qty > 0 ? 'var(--color-primary)' : '#d1d5db'}`,
-                        background: '#fff', color: qty > 0 ? 'var(--color-primary)' : '#ccc',
-                        fontSize: 18, fontWeight: 700, cursor: qty > 0 ? 'pointer' : 'not-allowed',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        transition: 'all 0.15s', lineHeight: 1,
-                      }}
+                      className={`wizard-step2-mobile__extra-stepper-btn${qty > 0 ? ' is-active-minus' : ''}`}
                     >−</button>
-                    <span style={{
-                      width: 32, textAlign: 'center', fontSize: 15, fontWeight: 700,
-                      color: qty > 0 ? 'var(--color-primary)' : '#999',
-                    }}>{qty}</span>
+                    <span className={`wizard-step2-mobile__extra-qty${qty > 0 ? ' is-active' : ''}`}>{qty}</span>
                     <button
                       onClick={() => setExtraQuantity(item, qty + 1)}
                       disabled={qty >= MAX_QTY}
-                      style={{
-                        width: 'var(--touch-target)', height: 'var(--touch-target)', borderRadius: '50%',
-                        border: `1.5px solid ${qty < MAX_QTY ? 'var(--color-primary)' : '#d1d5db'}`,
-                        background: qty < MAX_QTY ? 'var(--color-primary)' : '#f5f5f5',
-                        color: qty < MAX_QTY ? '#fff' : '#ccc',
-                        fontSize: 18, fontWeight: 700, cursor: qty < MAX_QTY ? 'pointer' : 'not-allowed',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        transition: 'all 0.15s', lineHeight: 1,
-                      }}
+                      className={`wizard-step2-mobile__extra-stepper-btn${qty < MAX_QTY ? ' is-active-plus' : ' is-disabled-plus'}`}
                     >+</button>
                   </div>
                   <span
                     aria-hidden={qty === 0}
-                    style={{
-                      fontSize: 13, fontWeight: 800, color: 'var(--color-primary)',
-                      flexShrink: 0, minWidth: 40, textAlign: 'right',
-                      // valore dinamico: riserva lo spazio anche con qty=0 per evitare
-                      // che lo stepper si sposti quando si incrementa da 0 a 1
-                      visibility: qty === 0 ? 'hidden' : 'visible',
-                    }}
+                    className={`wizard-step2-mobile__extra-total${qty === 0 ? ' is-hidden' : ''}`}
                   >
                     {fmt(item.price * Math.max(qty, 1))}
                   </span>
@@ -458,33 +438,36 @@ export default function WizardStep2({ locale = 'it' }: Props) {
       )}
 
       {touristTax > 0 && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: '#444', marginBottom: 6 }}>
+        <div className="wizard-step2-mobile__price-row">
           <span>{t.touristTax}</span>
           <span>{fmt(touristTax)}</span>
         </div>
       )}
 
       {/* Totale */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, paddingTop: 8, borderTop: '1px solid #e5e7eb' }}>
-        <span style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>{t.total}</span>
-        <div style={{ textAlign: 'right' }}>
+      <div className="wizard-step2-mobile__total-row">
+        <span className="wizard-step2-mobile__total-label">{t.total}</span>
+        <div className="wizard-step2-mobile__total-wrap">
           {voucherApplied && discountedPrice !== null && (
-            <span style={{ fontSize: 13, color: '#aaa', textDecoration: 'line-through', marginRight: 8 }}>
+            <span className="wizard-step2-mobile__total-old">
               {fmt(offerPrice + touristTax + extrasTotal)}
             </span>
           )}
-          <span style={{ fontSize: 20, fontWeight: 800, color: 'var(--color-primary)' }}>{fmt(totalDisplay)}</span>
+          <span className="wizard-step2-mobile__total-new">{fmt(totalDisplay)}</span>
         </div>
       </div>
       {touristTax > 0 && (
-        <p style={{ fontSize: 11, color: '#9ca3af', margin: '4px 0 0' }}>{formatTouristTaxNote(t.touristTaxNote)}</p>
+        <p className="wizard-step2-mobile__tourist-tax-note">{formatTouristTaxNote(t.touristTaxNote)}</p>
       )}
 
       {/* Deposito cauzionale */}
       {depositAmount && (
-        <div style={{ background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 10, padding: '12px 14px', marginTop: 12 }}>
-          <p style={{ fontSize: 12, fontWeight: 700, color: '#92610a', margin: '0 0 5px' }}>🔐 {t.depositTitle}</p>
-          <p style={{ fontSize: 12, color: '#78350f', margin: 0, lineHeight: 1.5 }}>
+        <div className="wizard-step2-mobile__deposit">
+          <p className="wizard-step2-mobile__deposit-title">
+            <i className="bi bi-shield-lock-fill me-1" aria-hidden="true" />
+            {t.depositTitle}
+          </p>
+          <p className="wizard-step2-mobile__deposit-text">
             {(DEPOSIT_BOX[locale] ?? DEPOSIT_BOX.it)(depositAmount)}
           </p>
         </div>
@@ -493,9 +476,9 @@ export default function WizardStep2({ locale = 'it' }: Props) {
       {/* Politica cancellazione */}
       {cancelPolicy && (
         <>
-          <div style={divider} />
-          <p style={sideLabel}>{t.cancelPolicy}</p>
-          <p style={{ fontSize: 13, color: '#444', margin: '0 0 4px', lineHeight: 1.5 }}>{cancelPolicy}</p>
+          <div className="wizard-step2-mobile__divider" />
+          <p className="wizard-step2-mobile__section-label">{t.cancelPolicy}</p>
+          <p className="wizard-step2-mobile__cancel-text">{cancelPolicy}</p>
         </>
       )}
     </div>
@@ -736,14 +719,14 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 // ─── Sub-components ───────────────────────────────────────────────────────────
 function SideRow({ label, value, onEdit, editLabel }: { label: string; value: string; onEdit: () => void; editLabel: string }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+    <div className="wizard-step2-mobile__side-row">
       <div>
-        <p style={{ fontSize: 13, fontWeight: 700, color: '#111', margin: '0 0 2px' }}>{label}</p>
-        <p style={{ fontSize: 13, color: '#555', margin: 0 }}>{value}</p>
+        <p className="wizard-step2-mobile__side-row-label">{label}</p>
+        <p className="wizard-step2-mobile__side-row-value">{value}</p>
       </div>
       <button
         onClick={onEdit}
-        style={{ fontSize: 12, fontWeight: 600, color: '#111', background: 'none', border: '1px solid #ccc', borderRadius: 8, padding: '4px 10px', minHeight: 'var(--touch-target)', minWidth: 'var(--touch-target)', cursor: 'pointer', flexShrink: 0, marginLeft: 8, textDecoration: 'underline' }}
+        className="wizard-step2-mobile__side-row-edit"
       >
         {editLabel}
       </button>
@@ -769,13 +752,3 @@ function Field({ label, value, onChange, type = 'text', autoComplete }: {
   );
 }
 
-// ─── Stili legacy (usati solo da SidebarContent + SideRow, out of scope Session 5) ─
-// Saranno migrati a classi BEM nella "sessione mobile dedicata".
-const divider: React.CSSProperties = {
-  height: 1, background: '#e5e7eb', margin: '14px 0',
-};
-const sideLabel: React.CSSProperties = {
-  fontSize: 12, fontWeight: 700, color: '#374151',
-  textTransform: 'uppercase', letterSpacing: '0.06em',
-  margin: '0 0 8px',
-};
