@@ -27,6 +27,9 @@ function fmt(price: number) {
 function getPoolLabel(room: Room, ui: { privPool: string; sharedPool: string; noPool: string }) {
   return room.privatePool ? ui.privPool : room.sharedPool ? ui.sharedPool : ui.noPool;
 }
+function getPoolIcon(room: Room): string {
+  return room.privatePool ? 'bi-water' : room.sharedPool ? 'bi-water' : 'bi-umbrella-fill';
+}
 function getLocationLabel(room: Room, ui: { nearSea: string; nature: string }) {
   const prop = getPropertyForRoom(room.roomId);
   return prop?.propertyId === 46871 ? ui.nearSea : ui.nature;
@@ -591,7 +594,10 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                         <i className="bi bi-aspect-ratio me-1" aria-hidden="true" />
                         {room.sqm} mq
                       </span>
-                      <span className="badge-feature">{getPoolLabel(room, t)}</span>
+                      <span className="badge-feature">
+                        <i className={`bi ${getPoolIcon(room)} me-1`} aria-hidden="true" />
+                        {getPoolLabel(room, t)}
+                      </span>
                       <span className="badge-feature">
                         <i className="bi bi-geo-alt-fill me-1" aria-hidden="true" />
                         {getLocationLabel(room, t)}
