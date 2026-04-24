@@ -736,7 +736,7 @@
       "safeBannerBtn": "Safe booking →",
       "faq": [
         {
-          "icon": "🧸",
+          "icon": "bi-emoji-smile",
           "label": "Children",
           "items": [
             {
@@ -754,7 +754,7 @@
           ]
         },
         {
-          "icon": "🗓️",
+          "icon": "bi-calendar-fill",
           "label": "Arrival & departure",
           "items": [
             {
@@ -808,7 +808,7 @@
           ]
         },
         {
-          "icon": "🏊",
+          "icon": "bi-water",
           "label": "Pool",
           "items": [
             {
@@ -834,7 +834,7 @@
           ]
         },
         {
-          "icon": "🏠",
+          "icon": "bi-house-fill",
           "label": "Property & services",
           "items": [
             {
@@ -888,7 +888,7 @@
           ]
         },
         {
-          "icon": "📍",
+          "icon": "bi-geo-alt-fill",
           "label": "Location & surroundings",
           "items": [
             {
@@ -918,7 +918,7 @@
           ]
         },
         {
-          "icon": "💶",
+          "icon": "bi-currency-euro",
           "label": "Prices & payments",
           "items": [
             {

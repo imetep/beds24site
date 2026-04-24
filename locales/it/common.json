@@ -736,7 +736,7 @@
       "safeBannerBtn": "Prenotazione sicura →",
       "faq": [
         {
-          "icon": "🛡️",
+          "icon": "bi-shield-fill",
           "label": "Sicurezza e prenotazione",
           "items": [
             {
@@ -754,7 +754,7 @@
           ]
         },
         {
-          "icon": "🧸",
+          "icon": "bi-emoji-smile",
           "label": "Bambini",
           "items": [
             {
@@ -772,7 +772,7 @@
           ]
         },
         {
-          "icon": "🗓️",
+          "icon": "bi-calendar-fill",
           "label": "Arrivo e partenza",
           "items": [
             {
@@ -826,7 +826,7 @@
           ]
         },
         {
-          "icon": "🏊",
+          "icon": "bi-water",
           "label": "Piscina",
           "items": [
             {
@@ -852,7 +852,7 @@
           ]
         },
         {
-          "icon": "🏠",
+          "icon": "bi-house-fill",
           "label": "Struttura e servizi",
           "items": [
             {
@@ -906,7 +906,7 @@
           ]
         },
         {
-          "icon": "📍",
+          "icon": "bi-geo-alt-fill",
           "label": "Posizione e dintorni",
           "items": [
             {
@@ -936,7 +936,7 @@
           ]
         },
         {
-          "icon": "💶",
+          "icon": "bi-currency-euro",
           "label": "Prezzi e pagamenti",
           "items": [
             {

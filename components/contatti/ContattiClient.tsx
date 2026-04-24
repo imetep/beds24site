@@ -233,7 +233,7 @@ export default function ContattiClient({ locale, bookHref }: Props) {
             >
               {/* Header categoria — blu pieno */}
               <div className="d-flex align-items-center gap-2 px-3 py-2" style={{ background: 'var(--color-primary)' }}>
-                <span style={{ fontSize: 20, lineHeight: 1 }}>{cat.icon}</span>
+                <i className={`bi ${cat.icon} text-white`} style={{ fontSize: 20, lineHeight: 1 }} aria-hidden="true" />
                 <span
                   className="fw-bold text-white"
                   style={{ fontSize: 14, letterSpacing: '0.01em' }}
