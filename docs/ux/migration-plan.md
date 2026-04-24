@@ -254,29 +254,31 @@ Applicato durante Sessione 9: `.booking-panel__offer-pill-selected` usa ora `var
 
 Applicato durante Sessione 11 (`AvailabilityCalendar.tsx:192` — `.is-in-range` usa ora `var(--color-primary-soft)`) e Sessione 9 (`BookingPanel.tsx:185` — `.booking-panel__offer.is-picked` usa ora `var(--color-primary-soft)`). Residui: `BedConfigDisplay.tsx:113`, più altri fuori scope Fase B. Da spuntare man mano.
 
-**T8 — `lib/beds24-client.ts` potenzialmente dead code**
-Emerso durante audit `REDIS_RT_KEY`: file parallelo a `lib/beds24-token.ts` che NON usa Redis, solo env+memoria. Non importato da nessuna parte di quelle viste nel grep refreshToken. Richiede grep dedicato per verificare se c'è qualche consumer, poi rimozione.
+**T8 — `lib/beds24-client.ts` potenzialmente dead code** ✅ risolto (2026-04-24)
+Verifica orfanazione confermata (0 consumer nel grep `.tsx/.ts/.js/.jsx` repo-wide). File rimosso nel commit `ce3fbf7` (316 righe eliminate). Token Beds24 auth vive interamente in `lib/beds24-token.ts` (single source of truth con Redis Upstash).
 
-**T9 — i18n centralizzazione nei file scheda residenza** 🟡 ampliato post-Session 9+10+11+12
-3 dei 7 file di Sessione 7+8 hanno dict `LABELS` hardcoded inline (`page.tsx`, `RoomCard.tsx`, `ThingsToKnow.tsx`) invece di `getTranslations()`. Fuori scope CSS migration. Da fare in sessione i18n dedicata.
+**T9 — i18n centralizzazione nei file scheda residenza** ✅ risolto parzialmente (2026-04-24) — consolidamento LABELS dict Session 7 rinviato
 
-**Scope aggiuntivo emerso durante Session 9+10+11+12 (aria-label/testi hardcoded in italiano)**:
-- `PhotoCarousel.tsx`: `aria-label="Chiudi"`, `"Precedente"`, `"Successivo"` (3 occorrenze)
+**Done** (4 consumer Session 9-12 migrati a `getTranslations()` + 22 chiavi × 4 locale aggiunte in `locales/*/common.json`, commit `dd41baa` + `1f75eaa` + `3523184` + `d1bef50` + `144413c`):
+- BookingPanel: childrenHint, childAgeLabel, selectAge, yearsLabel0/1/N, maxPeopleOne/Many (+ bug fix accessibilità: "Massimo N persone" prima IT-only, ora 4 locale)
+- PhotoCarousel: close/prev/next aria-label + photoCount "{count} foto"
+- AvailabilityCalendar: prevMonth/nextMonth aria-label + riuso `clear` esistente
+- FotoGalleryClient: prev/next/close/back aria-label + iosBannerText/iosBannerOpenSafari/rotateHint/emptyState
+
+**Rinviato** (scope consolidamento LABELS dict già funzionanti ma duplicati con common.json):
+- `app/[locale]/residenze/[slug]/page.tsx` — dict `LABELS` inline (~30 chiavi × 4 locale) + `FEATURE_LABELS` (~10 chiavi × 4 lingue)
+- `components/residenze/RoomCard.tsx` — dict `LABELS` inline
+- `components/residenze/ThingsToKnow.tsx` — dict `LABELS` inline
+- Stato attuale: funzionanti in 4 lingue via dict inline tipo `LABELS[locale] ?? LABELS.it`
+- Perché rinviato: consolidamento stilistico (zero fix funzionale, ~120 traduzioni da duplicare nel JSON + 3 file da refactorare, con rischio regressione)
+- Quando farlo: opportunistic (quando uno di questi file viene toccato per altri motivi)
+
+**Scope consumer migrati** ✅ **RISOLTI 2026-04-24** (commit `dd41baa` chiavi + 4 commit refactor):
+- ✅ `PhotoCarousel.tsx`: aria-label Chiudi/Precedente/Successivo + "N foto" → `components.photoCarousel.*`
+- ✅ `AvailabilityCalendar.tsx`: aria-label Mese precedente/successivo + Cancella date → `components.availabilityCalendar.prevMonth/nextMonth/clear`
+- ✅ `FotoGalleryClient.tsx`: aria-label Precedente/Successivo/Chiudi/Indietro + 4 testi visibili banner iOS / hint rotate / empty state → `components.fotoGallery.*`
+- ✅ `BookingPanel.tsx`: 4 gruppi hint/label/select/warning + fix accessibilità maxPeople (prima IT-only) → `components.bookingPanel.*`
 - ~~`PhotoLightbox.tsx`~~: file eliminato nel cleanup post-Session 12 (commit `93e11b0`), scope i18n non più applicabile
-- `AvailabilityCalendar.tsx`: `aria-label="Mese precedente"`, `"Mese successivo"` (×2 per mobile/desktop), `"Cancella date"`
-- `FotoGalleryClient.tsx`: `aria-label="Precedente"`, `"Successivo"` (frecce immersive), `"Chiudi"` (X banner iOS), `"Indietro"` (back button topbar)
-- `FotoGalleryClient.tsx`: testi IT già pre-esistenti (da tradurre ex-novo nei 4 locale):
-  - `"Per la galleria immersiva usa Safari"` (banner iOS)
-  - `"Apri in Safari"` (CTA banner iOS)
-  - `"Gira il telefono per la galleria immersiva"` (hint floating)
-  - `"Nessuna foto disponibile."` (empty state)
-- `PhotoCarousel.tsx`: testo `"N foto"` (pre-esistente, string concatenation) — dopo `<i class="bi bi-camera-fill">` serve label tradotta
-- `BookingPanel.tsx` (**emerso Session 9**, preservato byte-identical): stringhe IT/DE/PL/EN hardcoded inline invece di `getTranslations()`:
-  - righe 110-114: hint "Per mostrarti i prezzi esatti, dobbiamo conoscere l'età dei bambini" (4 locale)
-  - righe 119-120: "Età bambino N" (4 locale)
-  - righe 132-137: "Seleziona età" + "N anni/anno/lat/rok/year/years/Jahr/Jahre/lata" (4 locale)
-  - riga 149: `"Massimo {maxPeople} {persona|persone} per questo appartamento"` (solo IT, manca traduzione per en/de/pl) ⚠️ accessibilità peggiore per utenti non-italiani
-  - Aggiungere in `locales/*/common.json` sotto `components.bookingPanel.*`
 
 **Residui i18n non-aria** da portare via getTranslations:
 - `components.availabilityCalendar.clear` esiste già in `locales/*/common.json` ma non è usato (il bottone ✕ non ha testo visibile)
@@ -317,7 +319,7 @@ distanceLabel: { it: '...', en: '...', de: '...', pl: '...' },
 - `components/wizard/BookingSidebar.tsx:183`: idem (+ verificare se ha già `locale` nello scope)
 - Cleanup: eliminare le chiavi duplicate `campagna_desc` / `nature` / `natura` in `locales/*/common.json` se non consumate altrove (grep prima)
 
-**Da fare insieme alla sessione i18n dedicata** (vedi T9).
+**Da fare insieme alla sessione i18n dedicata** (vedi T9). ✅ risolto (2026-04-24) — eseguito insieme alla Sessione T9 allargata (commit `a261189` core + `4b53fb4` cleanup chiavi dead in locales).
 
 ---
 
@@ -391,24 +393,15 @@ Numeri da `grep 'style={{' components/` + `grep 'style={{' app/` post-Session 9.
 
 **Rapporto inline eliminati / totale progetto**: 363 / (363 + 816) = **~31%** del debito inline storico smaltito nella Fase B, con **100% delle pagine-utente del funnel booking coperte** (scheda residenza + wizard 1/2/3 a zero inline, pagamento resta in stato corrente).
 
-**Prossimi passi — ordinati per esecuzione** (decisi 2026-04-24, non Fase B):
+**Prossimi passi — aggiornato 2026-04-24 post-task T8+T12+T9**:
 
-| # | Cosa | Prio | Effort | Note operative |
-|---|------|------|--------|----------------|
-| 1 | **T8** `lib/beds24-client.ts` dead code | ⚪ | ~15min | Veloce warm-up. Grep dedicato per consumer, poi delete se orfano |
-| 2 | **Sessione i18n T9 (allargata con T12)** | 🔴🟡 | ~3-4h | Raggruppa T12 + scope emerso Sessioni 7-12. Decisione utente: T12 assorbito dentro T9 per fare un solo giro i18n (invece di patch separata + sessione separata). Scope completo sotto |
+| # | Cosa | Prio | Effort | Stato |
+|---|------|------|--------|-------|
+| 1 | ~~T8 `lib/beds24-client.ts` dead code~~ | ⚪ | ~15min | ✅ risolto (commit `ce3fbf7`, -316 righe dead) |
+| 2 | ~~Sessione i18n T9 (parte consumer Session 9-12 + T12 assorbito)~~ | 🔴🟡 | ~3h | ✅ risolto 7 commit (`a261189` T12 core, `4b53fb4` locales cleanup, `dd41baa` 22 chiavi × 4 locale, `1f75eaa` BookingPanel, `3523184` PhotoCarousel, `d1bef50` AvailabilityCalendar, `144413c` FotoGalleryClient). Fix accessibilità bonus: bookingPanel.maxPeople prima IT-only ora 4 locale |
 | 3 | **Sessione mobile WizardStep2** | 🟡 | 2-3h | 48 inline residui SidebarContent legacy + accordion mobile. Ultima fetta CSS migration |
-| 4 | **T10** cleanup Redis key legacy | ⚪ | ~5min | Blocco temporale: dopo 2-3 giorni di deploy sano → dal **2026-04-26** |
-
-**Scope Sessione i18n T9 allargata** (include T12):
-
-- **T12 assorbito**: `config/properties.ts` `distanceLabel` hardcoded IT → `Record<string,string>` per 4 locale + update 2 consumer (`page.tsx:255`, `BookingSidebar.tsx:183`) + cleanup chiavi duplicate `campagna_desc`/`nature` in `locales/*/common.json`
-- `page.tsx`, `RoomCard.tsx`, `ThingsToKnow.tsx` (Sessione 7): dict `LABELS` hardcoded → `getTranslations()`
-- `PhotoCarousel.tsx` (Sessione 10): aria-label "Chiudi"/"Precedente"/"Successivo" + "N foto" concat
-- `AvailabilityCalendar.tsx` (Sessione 11): aria-label "Mese precedente/successivo" + "Cancella date"
-- `FotoGalleryClient.tsx` (Sessione 12): aria-label frecce + back + banner iOS + hint rotate + empty state + 4 testi banner iOS IT-only
-- `BookingPanel.tsx` (Sessione 9): 4 gruppi di stringhe IT/DE/PL/EN hardcoded inline (hint età bambini, label "Età bambino N", select età, "Massimo N persone")
-- Approccio: grep tutti gli hardcoded in `components/residenze/**` + `config/properties.ts`, aggiungere chiavi mancanti nei 4 locale (it/en/de/pl), sostituire con `getTranslations()` + `aria-label={ui.close}` ecc.
+| 4 | **Consolidamento LABELS dict Session 7 (T9 residuo)** | ⚪ | ~2h | `page.tsx` + `RoomCard.tsx` + `ThingsToKnow.tsx`: dict `LABELS` già funzionanti ma duplicati con common.json. Consolidamento opportunistico (quando i file vengono toccati per altri motivi) |
+| 5 | **T10** cleanup Redis key legacy | ⚪ | ~5min | Blocco temporale: dopo 2-3 giorni di deploy sano → dal **2026-04-26** |
 
 ---
 
