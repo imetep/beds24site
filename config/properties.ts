@@ -38,7 +38,7 @@ export interface Property {
   name: string;
   nameShort: string;
   distanceFromSea: number;  // km
-  distanceLabel: string;    // testo per il cliente
+  distanceLabel: Record<string, string>;    // testo per il cliente, per locale (it/en/de/pl, fallback .it)
   latitude: number;         // coordinate GPS
   longitude: number;
   rooms: Room[];
@@ -52,7 +52,12 @@ export const PROPERTIES: Property[] = [
     name: 'LivingApple',
     nameShort: 'natura',
     distanceFromSea: 1.5,
-    distanceLabel: 'A 1.5 km dal mare, immerso nella natura',
+    distanceLabel: {
+      it: 'A 1.5 km dal mare, immerso nella natura',
+      en: '1.5 km from the sea, surrounded by nature',
+      de: '1,5 km vom Meer entfernt, inmitten der Natur',
+      pl: '1,5 km od morza, w otoczeniu natury',
+    },
     latitude: 41.2624198,
     longitude: 13.7012664,
     rooms: [
@@ -223,7 +228,12 @@ export const PROPERTIES: Property[] = [
     name: 'LivingApple Beach',
     nameShort: 'mare',
     distanceFromSea: 0.25,
-    distanceLabel: 'Vicino al mare, a 250m dalla spiaggia',
+    distanceLabel: {
+      it: 'Vicino al mare, a 250m dalla spiaggia',
+      en: 'Close to the sea, 250m from the beach',
+      de: 'Am Meer, 250m vom Strand entfernt',
+      pl: 'Blisko morza, 250m od plaży',
+    },
     latitude: 41.237587,
     longitude: 13.74424,
     rooms: [

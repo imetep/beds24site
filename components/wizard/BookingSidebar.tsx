@@ -180,7 +180,7 @@ export default function BookingSidebar({
           <ul className="booking-sidebar__feature-list">
             {property && (
               <li className="booking-sidebar__feature-item">
-                {property.name} · {property.distanceLabel}
+                {property.name} · {property.distanceLabel[locale] ?? property.distanceLabel.it}
               </li>
             )}
             <li className="booking-sidebar__feature-item">

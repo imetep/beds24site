@@ -252,7 +252,7 @@ export default async function RoomPage({ params }: Props) {
         {room.name}
       </h1>
       <div className="room-page__meta">
-        {property.distanceLabel} · {floorLabel}
+        {property.distanceLabel[locale] ?? property.distanceLabel.it} · {floorLabel}
       </div>
 
       {/* Foto — edge-to-edge su mobile */}
