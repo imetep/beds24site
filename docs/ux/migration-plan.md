@@ -391,12 +391,24 @@ Numeri da `grep 'style={{' components/` + `grep 'style={{' app/` post-Session 9.
 
 **Rapporto inline eliminati / totale progetto**: 363 / (363 + 816) = **~31%** del debito inline storico smaltito nella Fase B, con **100% delle pagine-utente del funnel booking coperte** (scheda residenza + wizard 1/2/3 a zero inline, pagamento resta in stato corrente).
 
-**Prossimi passi pianificati (non Fase B, tracciati qui per non perderli):**
-- 🟡 **Sessione mobile dedicata WizardStep2** — 48 inline residui SidebarContent legacy + accordion mobile
-- 🟡 **Sessione i18n T9** — ~20 stringhe IT/DE/PL/EN hardcoded in PhotoCarousel / FotoGalleryClient / AvailabilityCalendar / BookingPanel (scope esploso durante Sessioni 9-12)
-- 🔴 **T12 `distanceLabel`** — 2 properties con `distanceLabel` hardcoded IT visibili a utenti EN/DE/PL in 2 punti (scheda + wizard). Rispetto bug i18n più urgente
-- ⚪ **T10** — delete chiave Redis legacy `beds24:refreshToken` su Upstash dopo 2-3 giorni di deploy sano (post 2026-04-26 circa)
-- ⚪ **T8** — verificare se `lib/beds24-client.ts` è davvero dead code, poi rimuovere
+**Prossimi passi — ordinati per esecuzione** (decisi 2026-04-24, non Fase B):
+
+| # | Cosa | Prio | Effort | Note operative |
+|---|------|------|--------|----------------|
+| 1 | **T8** `lib/beds24-client.ts` dead code | ⚪ | ~15min | Veloce warm-up. Grep dedicato per consumer, poi delete se orfano |
+| 2 | **Sessione i18n T9 (allargata con T12)** | 🔴🟡 | ~3-4h | Raggruppa T12 + scope emerso Sessioni 7-12. Decisione utente: T12 assorbito dentro T9 per fare un solo giro i18n (invece di patch separata + sessione separata). Scope completo sotto |
+| 3 | **Sessione mobile WizardStep2** | 🟡 | 2-3h | 48 inline residui SidebarContent legacy + accordion mobile. Ultima fetta CSS migration |
+| 4 | **T10** cleanup Redis key legacy | ⚪ | ~5min | Blocco temporale: dopo 2-3 giorni di deploy sano → dal **2026-04-26** |
+
+**Scope Sessione i18n T9 allargata** (include T12):
+
+- **T12 assorbito**: `config/properties.ts` `distanceLabel` hardcoded IT → `Record<string,string>` per 4 locale + update 2 consumer (`page.tsx:255`, `BookingSidebar.tsx:183`) + cleanup chiavi duplicate `campagna_desc`/`nature` in `locales/*/common.json`
+- `page.tsx`, `RoomCard.tsx`, `ThingsToKnow.tsx` (Sessione 7): dict `LABELS` hardcoded → `getTranslations()`
+- `PhotoCarousel.tsx` (Sessione 10): aria-label "Chiudi"/"Precedente"/"Successivo" + "N foto" concat
+- `AvailabilityCalendar.tsx` (Sessione 11): aria-label "Mese precedente/successivo" + "Cancella date"
+- `FotoGalleryClient.tsx` (Sessione 12): aria-label frecce + back + banner iOS + hint rotate + empty state + 4 testi banner iOS IT-only
+- `BookingPanel.tsx` (Sessione 9): 4 gruppi di stringhe IT/DE/PL/EN hardcoded inline (hint età bambini, label "Età bambino N", select età, "Massimo N persone")
+- Approccio: grep tutti gli hardcoded in `components/residenze/**` + `config/properties.ts`, aggiungere chiavi mancanti nei 4 locale (it/en/de/pl), sostituire con `getTranslations()` + `aria-label={ui.close}` ecc.
 
 ---
 
