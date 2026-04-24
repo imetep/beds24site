@@ -286,7 +286,7 @@ Verifica orfanazione confermata (0 consumer nel grep `.tsx/.ts/.js/.jsx` repo-wi
 
 **Approccio sessione i18n dedicata**: grep di tutti gli hardcoded italiani in `components/residenze/**`, aggiungere chiavi mancanti nei 4 locale (it/en/de/pl), sostituire con `getTranslations()` + `aria-label={ui.close}` ecc.
 
-**T10 — `DEL beds24:refreshToken` su Upstash**
+**T10 — `DEL beds24:refreshToken` su Upstash** ✅ eseguito manualmente (2026-04-26 utente)
 Follow-up del commit `6c4c867` (dedup REDIS_RT_KEY): dopo 2-3 giorni di deploy sano, cancellare manualmente la chiave legacy da Upstash Data Browser. Rete di sicurezza rollback non più necessaria passato quel tempo.
 
 **T12 — `distanceLabel` in `config/properties.ts` hardcoded IT (bug i18n scheda residenza + wizard)** 🔴 scoperto 2026-04-24
@@ -431,7 +431,7 @@ Regola **"no emoji decorative, sempre Bootstrap Icons"** applicata a tutto il si
 | 2 | ~~Sessione i18n T9 (parte consumer Session 9-12 + T12 assorbito)~~ | 🔴🟡 | ~3h | ✅ risolto 7 commit (`a261189` T12 core, `4b53fb4` locales cleanup, `dd41baa` 22 chiavi × 4 locale, `1f75eaa` BookingPanel, `3523184` PhotoCarousel, `d1bef50` AvailabilityCalendar, `144413c` FotoGalleryClient). Fix accessibilità bonus: bookingPanel.maxPeople prima IT-only ora 4 locale |
 | 3 | ~~Sessione mobile WizardStep2~~ | 🟡 | 2-3h | ✅ risolto 2026-04-24 (commit `ed5db23` css + `4ce08c0` refactor). 48 inline → 0, SidebarContent + SideRow + 2 CSSProp legacy a BEM `.wizard-step2-mobile__*`. 4 emoji decorative → Bootstrap Icons (🛏️ mantenuta). **🏁 piano programmato chiuso** |
 | 4 | ~~Consolidamento LABELS dict Session 7 (T9 residuo)~~ | ⚪ | ~2h | ✅ risolto 2026-04-24 (commit `4b9d791` chiavi, `35b5100` RoomCard, `e24a6c7` ThingsToKnow, `8807a74` page.tsx). 48 chiavi × 4 locale aggiunte in namespace `components.roomCard/roomPage/thingsToKnow`. Bonus: 9 emoji decorative → bi-* (🛏️🚿👥📐 RoomCard badge + 🏊🌊🏖️ pool + 🐾🚭 rules) + 2 eccezioni residue chiuse (🛏️ WizardStep2 extras, 📷 FotoGalleryClient banner iOS). FEATURE_LABELS di page.tsx RESTA inline (catalogo structured) |
-| 5 | **T10** cleanup Redis key legacy | ⚪ | ~5min | Blocco temporale: dopo 2-3 giorni di deploy sano → dal **2026-04-26** |
+| 5 | ~~T10 cleanup Redis key legacy~~ | ⚪ | ~5min | ✅ eseguito manualmente (2026-04-26, utente via Upstash Data Browser) |
 | 6 | ~~WizardStep1 emoji decorative~~ + **sweep globale emoji tutto il sito** | ⚪ | completato | ✅ risolto 2026-04-24 (sweep globale, ~30 file toccati). Regola 'no emoji decorative' applicata uniformemente tranne admin (escluso da utente) e commenti di sviluppo. Sommario in [§8.2 qui sotto](#82-sweep-emoji-2026-04-24) |
 
 ---
