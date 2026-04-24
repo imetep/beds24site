@@ -1,6 +1,8 @@
 'use client';
 import { CIN, CIR } from '@/config/properties';
 import { useState } from 'react';
+import { getTranslations } from '@/lib/i18n';
+import type { Locale } from '@/config/i18n';
 
 interface Props {
   locale: string;
@@ -10,92 +12,20 @@ interface Props {
   securityDeposit: number;
 }
 
-const LABELS: Record<string, Record<string, string>> = {
-  it: {
-    title: 'Info e dettagli importanti',
-    checkInTitle: 'Check-in e Check-out',
-    checkIn: 'Check-in',
-    checkOut: 'Check-out',
-    depositTitle: 'Deposito cauzionale',
-    depositText: 'Richiesto al check-in con Carta di Credito (no Debit Card). Verrà rimborsato integralmente alla partenza, salvo danni.',
-    depositLink: 'Come funziona il deposito →',
-    depositHref: '/it/deposito',
-    energyTitle: 'Consumi energetici',
-    energyText: 'I consumi energetici vengono conteggiati in base all\'utilizzo reale, tramite contatori presenti in ogni abitazione. Non si tratta di un costo aggiuntivo per guadagno, ma di una misura per evitare sprechi.',
-    energyLink: 'Tariffe e consigli →',
-    energyHref: '/it/utenze',
-    taxTitle: 'Imposta di soggiorno',
-    taxText: 'Nel Comune di Minturno, in cui si trova la struttura, è prevista un\'imposta di soggiorno di €2,00 a persona al giorno, valida solo per i primi 10 giorni di soggiorno e solo per gli ospiti con più di 12 anni di età.',
-    rulesTitle: 'Regole della casa',
-    noPets: '🐾 Animali non ammessi',
-    noSmoking: '🚭 Vietato fumare',
-    within: 'entro le',
-  },
-  en: {
-    title: 'Info & important details',
-    checkInTitle: 'Check-in & Check-out',
-    checkIn: 'Check-in',
-    checkOut: 'Check-out',
-    depositTitle: 'Security deposit',
-    depositText: 'Required at check-in by Credit Card (no Debit Card). Fully refunded at departure, subject to no damage.',
-    depositLink: 'How the deposit works →',
-    depositHref: '/en/deposito',
-    energyTitle: 'Energy consumption',
-    energyText: 'Energy consumption is calculated based on actual usage, measured through meters installed in each accommodation. This is not an additional charge for profit, but a measure to prevent energy waste.',
-    energyLink: 'Rates and tips →',
-    energyHref: '/en/utilities',
-    taxTitle: 'Tourist tax',
-    taxText: 'A tourist tax of €2.00 per person per day applies, valid only for the first 10 nights and only for guests over 12 years of age.',
-    rulesTitle: 'House rules',
-    noPets: '🐾 No pets allowed',
-    noSmoking: '🚭 No smoking',
-    within: 'by',
-  },
-  de: {
-    title: 'Infos & wichtige Details',
-    checkInTitle: 'Check-in & Check-out',
-    checkIn: 'Check-in',
-    checkOut: 'Check-out',
-    depositTitle: 'Kaution',
-    depositText: 'Beim Check-in per Kreditkarte (keine Debitkarte). Wird bei Abreise vollständig zurückerstattet, sofern keine Schäden vorliegen.',
-    depositLink: 'So funktioniert die Kaution →',
-    depositHref: '/de/deposito',
-    energyTitle: 'Energieverbrauch',
-    energyText: 'Der Energieverbrauch wird auf Grundlage des tatsächlichen Verbrauchs berechnet und über in jeder Unterkunft installierte Zähler erfasst. Dabei handelt es sich nicht um eine zusätzliche Gebühr zur Gewinnerzielung, sondern um eine Maßnahme zur Vermeidung von Energieverschwendung.',
-    energyLink: 'Tarife und Tipps →',
-    energyHref: '/de/energie',
-    taxTitle: 'Kurtaxe',
-    taxText: 'Es wird eine Kurtaxe von €2,00 pro Person und Nacht erhoben, gültig nur für die ersten 10 Nächte und nur für Gäste über 12 Jahre.',
-    rulesTitle: 'Hausregeln',
-    noPets: '🐾 Keine Haustiere',
-    noSmoking: '🚭 Nichtraucher',
-    within: 'bis',
-  },
-  pl: {
-    title: 'Informacje i ważne szczegóły',
-    checkInTitle: 'Check-in i Check-out',
-    checkIn: 'Check-in',
-    checkOut: 'Check-out',
-    depositTitle: 'Kaucja',
-    depositText: 'Wymagana przy zameldowaniu kartą kredytową (bez kart debetowych). Zwracana w całości przy wyjeździe, o ile nie wystąpią szkody.',
-    depositLink: 'Jak działa kaucja →',
-    depositHref: '/pl/deposito',
-    energyTitle: 'Zużycie energii',
-    energyText: 'Zużycie energii jest rozliczane na podstawie rzeczywistego wykorzystania, mierzonego przez liczniki zainstalowane w każdym obiekcie. Nie jest to dodatkowa opłata w celu osiągnięcia zysku, lecz środek mający na celu zapobieganie marnotrawstwu energii.',
-    energyLink: 'Taryfy i wskazówki →',
-    energyHref: '/pl/media',
-    taxTitle: 'Opłata turystyczna',
-    taxText: 'Obowiązuje opłata turystyczna w wysokości €2,00 za osobę za dobę, tylko przez pierwsze 10 nocy i tylko dla gości powyżej 12 roku życia.',
-    rulesTitle: 'Zasady domu',
-    noPets: '🐾 Zakaz zwierząt',
-    noSmoking: '🚭 Zakaz palenia',
-    within: 'do',
-  },
+// URL routing locale-dependent (slug non-traducibili — alcuni cambiano nome per locale).
+// depositHref è uniforme (/{locale}/deposito), energyHref cambia slug.
+const ENERGY_HREFS: Record<string, string> = {
+  it: '/it/utenze',
+  en: '/en/utilities',
+  de: '/de/energie',
+  pl: '/pl/media',
 };
 
 export default function ThingsToKnow({ locale, checkInStart, checkInEnd, checkOutEnd, securityDeposit }: Props) {
   const [open, setOpen] = useState(false);
-  const t = LABELS[locale] ?? LABELS.it;
+  const ui = getTranslations(locale as Locale).components.thingsToKnow;
+  const depositHref = `/${locale}/deposito`;
+  const energyHref  = ENERGY_HREFS[locale] ?? ENERGY_HREFS.it;
 
   return (
     <div className="things-to-know">
@@ -108,7 +38,7 @@ export default function ThingsToKnow({ locale, checkInStart, checkInEnd, checkOu
         aria-expanded={open}
       >
         <span>
-          <i className="bi bi-info-circle-fill me-2"></i>{t.title}
+          <i className="bi bi-info-circle-fill me-2"></i>{ui.title}
         </span>
         <i className={`bi ${open ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
       </button>
@@ -119,50 +49,56 @@ export default function ThingsToKnow({ locale, checkInStart, checkInEnd, checkOu
 
           {/* Check-in/out */}
           <div className="pb-3 mb-3 border-bottom">
-            <div className="fw-bold mb-2"><i className="bi bi-clock me-1"></i> {t.checkInTitle}</div>
+            <div className="fw-bold mb-2"><i className="bi bi-clock me-1"></i> {ui.checkInTitle}</div>
             <div className="d-flex justify-content-between small mb-1">
-              <span className="text-muted">{t.checkIn}</span>
+              <span className="text-muted">{ui.checkIn}</span>
               <span className="fw-semibold">{checkInStart} – {checkInEnd}</span>
             </div>
             <div className="d-flex justify-content-between small">
-              <span className="text-muted">{t.checkOut}</span>
-              <span className="fw-semibold">{t.within} {checkOutEnd}</span>
+              <span className="text-muted">{ui.checkOut}</span>
+              <span className="fw-semibold">{ui.within} {checkOutEnd}</span>
             </div>
           </div>
 
           {/* Deposito */}
           <div className="pb-3 mb-3 border-bottom">
             <div className="fw-bold mb-2">
-              <i className="bi bi-shield-lock-fill me-1"></i> {t.depositTitle}: €{securityDeposit}
+              <i className="bi bi-shield-lock-fill me-1"></i> {ui.depositTitle}: €{securityDeposit}
             </div>
-            <p className="small text-secondary mb-1">{t.depositText}</p>
-            <a href={t.depositHref} target="_blank" rel="noopener noreferrer" className="small text-primary text-decoration-none">{t.depositLink}</a>
+            <p className="small text-secondary mb-1">{ui.depositText}</p>
+            <a href={depositHref} target="_blank" rel="noopener noreferrer" className="small text-primary text-decoration-none">{ui.depositLink}</a>
           </div>
 
           {/* Consumi */}
           <div className="pb-3 mb-3 border-bottom">
             <div className="fw-bold mb-2">
-              <i className="bi bi-lightning-fill me-1"></i> {t.energyTitle}
+              <i className="bi bi-lightning-fill me-1"></i> {ui.energyTitle}
             </div>
-            <p className="small text-secondary mb-1">{t.energyText}</p>
-            <a href={t.energyHref} target="_blank" rel="noopener noreferrer" className="small text-primary text-decoration-none">{t.energyLink}</a>
+            <p className="small text-secondary mb-1">{ui.energyText}</p>
+            <a href={energyHref} target="_blank" rel="noopener noreferrer" className="small text-primary text-decoration-none">{ui.energyLink}</a>
           </div>
 
           {/* Imposta di soggiorno */}
           <div className="pb-3 mb-3 border-bottom">
             <div className="fw-bold mb-2">
-              <i className="bi bi-bank2 me-1"></i> {t.taxTitle}
+              <i className="bi bi-bank2 me-1"></i> {ui.taxTitle}
             </div>
-            <p className="small text-secondary mb-0">{t.taxText}</p>
+            <p className="small text-secondary mb-0">{ui.taxText}</p>
           </div>
 
           {/* Regole */}
           <div className="pb-3 mb-3 border-bottom">
             <div className="fw-bold mb-2">
-              <i className="bi bi-card-list me-1"></i> {t.rulesTitle}
+              <i className="bi bi-card-list me-1"></i> {ui.rulesTitle}
             </div>
-            <div className="small text-secondary">{t.noPets}</div>
-            <div className="small text-secondary">{t.noSmoking}</div>
+            <div className="small text-secondary">
+              <i className="bi bi-x-circle me-1" aria-hidden="true"></i>
+              {ui.noPets}
+            </div>
+            <div className="small text-secondary">
+              <i className="bi bi-x-circle me-1" aria-hidden="true"></i>
+              {ui.noSmoking}
+            </div>
           </div>
 
           {/* CIN / CIR */}
