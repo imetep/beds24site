@@ -136,11 +136,11 @@ La spec di dettaglio da seguire è [wizard-sidebar-design.md §6 roadmap](wizard
 | 7 | File piccoli in un colpo | page + RoomCard + PropertyMap + ThingsToKnow + StickyBookingBar = 19 inline | Warm-up area | ✅ `8278a74` (css+doc), `f31ef59` (page), `3265199` (css mini), `469bc45` (RoomCard), `fb52c08` (PropertyMap), `1b0dd8f` (ThingsToKnow), `41b48ee` (StickyBookingBar) |
 | 8 | BedConfigDisplay + CardPhotoGallery | 38 inline totali | Pattern "card residenza" + dead code removal lightbox CardPhotoGallery | ✅ `2956e99` (css mini), `8db427a` (BedConfigDisplay), `9677c53` (CardPhotoGallery dead-code + RoomCard prop), `5bf6b05` (cleanup lightbox CSS) |
 | 9 | BookingPanel | 25 inline | CTA principale scheda (entry booking). Include fix pre-esistente: `#dbeafe` deprecato riga 196 → `var(--color-primary-soft)` | ⏳ |
-| 10 | PhotoCarousel + PhotoLightbox | 53 inline totali | Gallery + lightbox "vero" (duplicava con quello rimosso in Sess 8) | ⏳ |
-| 11 | AvailabilityCalendar | 33 inline | Calendario complesso, sessione dedicata | ⏳ |
+| 10 | PhotoCarousel + PhotoLightbox | 53 inline totali | Gallery + lightbox "vero" (duplicava con quello rimosso in Sess 8) | ✅ `49a0081` (css shared), `8ab3be4` (PhotoCarousel), `49d4448` (css touch-lock), `b98ddea` (PhotoLightbox) |
+| 11 | AvailabilityCalendar | 33 inline | Calendario complesso, sessione dedicata. Applicato T7 (#EEF5FC → token) | ✅ `9c93916` |
 | 12 | FotoGalleryClient | 34 inline | Pagina foto completa | ⏳ |
 
-**Sessioni 7+8 completate** ✅ (2026-04-23, 11 commit) — prossima: 10+11+12 (cluster gallery/calendar/foto), poi 9 per ultima (BookingPanel isolato).
+**Sessioni 10+11 completate** ✅ (2026-04-24, 5 commit) — prossima: 12 (FotoGalleryClient 34 inline), poi 9 per ultima (BookingPanel 🔴 isolato). Sessione mobile dedicata WizardStep2 SidebarContent a seguire.
 
 ---
 
@@ -249,8 +249,10 @@ Bug pre-esistente (globals.css:14 marca `#dbeafe` come deprecato a favore di `va
 
 ### 🧹 Pulizia (non urgente)
 
-**T7 — `#EEF5FC` hardcoded ovunque → `var(--color-primary-soft)`**
+**T7 — `#EEF5FC` hardcoded ovunque → `var(--color-primary-soft)`** 🟡 in corso
 ~30 occorrenze del valore `#EEF5FC` letterale nei sorgenti (wizard, scheda, guest portal, self-checkin, admin). Visivamente corretto (il valore matcha esattamente il token) ma inefficiente. Pulizia fattibile file-per-file durante le rispettive migration oppure con un search-replace globale.
+
+Applicato durante Sessione 11 (`AvailabilityCalendar.tsx:192` — `.is-in-range` usa ora `var(--color-primary-soft)`). Residui: `BookingPanel.tsx:185`, `BedConfigDisplay.tsx:113`, più altri fuori scope Fase B. Da spuntare man mano durante le sessioni successive.
 
 **T8 — `lib/beds24-client.ts` potenzialmente dead code**
 Emerso durante audit `REDIS_RT_KEY`: file parallelo a `lib/beds24-token.ts` che NON usa Redis, solo env+memoria. Non importato da nessuna parte di quelle viste nel grep refreshToken. Richiede grep dedicato per verificare se c'è qualche consumer, poi rimozione.
@@ -289,10 +291,10 @@ Follow-up del commit `6c4c867` (dedup REDIS_RT_KEY): dopo 2-3 giorni di deploy s
 | 6 | WizardStep3.tsx | 32 | 200 |
 | 7 | 5 file piccoli scheda | 19 | 181 |
 | 8 | BedConfig + CardPhotoGallery | 38 | 143 |
-| 9 | BookingPanel | 25 | 118 |
-| 10 | PhotoCarousel + PhotoLightbox | 53 | 65 |
-| 11 | AvailabilityCalendar | 33 | 32 |
-| 12 | FotoGalleryClient | 34 | 0 ✅ |
+| 10 | PhotoCarousel + PhotoLightbox | 53 | 90 ✅ |
+| 11 | AvailabilityCalendar | 33 | 57 ✅ |
+| 12 | FotoGalleryClient | 34 | 23 |
+| 9 | BookingPanel | 25 | 0 ✅ (teorico, c'è un off-by-2 nei conti originali) |
 
 A fine piano: **17 file a zero inline**, **413 style eliminati**, **35% del debito inline totale del progetto smaltito** con **100% delle pagine-utente coperte**.
 
