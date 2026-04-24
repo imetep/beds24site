@@ -959,6 +959,44 @@ Dopo la Session 3c il WizardStep2 ha **2 sidebar**: quella desktop (destra, usa 
 
 ## 9. Changelog
 
+### 2026-04-24 — T9 consolidamento LABELS Session 7 + emoji uniform cleanup (v1.10)
+
+Chiude il T9 residuo del migration plan + normalizza uniformemente la regola
+"no emoji decorative".
+
+- Aggiunti 3 namespace in `locales/*/common.json` (48 chiavi × 4 locale = 192
+  traduzioni): `components.roomCard`, `components.roomPage`,
+  `components.thingsToKnow`.
+- 3 file Session 7 migrati a `getTranslations()`: `RoomCard.tsx`, `page.tsx`
+  (scheda residenza), `ThingsToKnow.tsx`. Eliminati ~180 righe di dict
+  `LABELS` inline duplicati.
+- **9 emoji decorative sostituite con Bootstrap Icons**:
+  - `RoomCard.tsx` badge row: 🛏️ → `bi-door-closed-fill`, 🚿 →
+    `bi-droplet-fill`, 👥 → `bi-people-fill`, 📐 → `bi-aspect-ratio`
+    (stesso mapping già usato in `page.tsx` FEATURE_LABELS)
+  - `RoomCard.tsx` pool: 🏊 → `bi-water`, 🌊 → `bi-water` (stesso glyph,
+    testo distingue), 🏖️ → `bi-umbrella-fill`
+  - `ThingsToKnow.tsx` rules: 🐾 → `bi-x-circle`, 🚭 → `bi-x-circle`
+- **2 eccezioni residue chiuse** (coerenza uniforme):
+  - `WizardStep2.tsx` extras upsell: 🛏️ → `bi-bag-plus-fill` (semantica
+    "add-on"). 2 occorrenze (accordion mobile + desktop BookingSidebar slot).
+  - `FotoGalleryClient.tsx` banner iOS: 📷 → `bi-camera-fill` (già usata
+    altrove nel sito senza problemi cross-browser, motivazione originale
+    sovra-cauta).
+
+**Regola emoji consolidata** (aggiornata in memoria utente "icone Bootstrap,
+mai emoji decorative"):
+- Le emoji NON sono ammesse come elementi visivi decorativi (badge, icone
+  stato, placeholder, section header, ecc.).
+- Sono ammesse SOLO come **contenuto semantico** (es. reaction, tag esplicito
+  di un sentimento). Nel sito LivingApple non esistono oggi casi ammessi.
+- Nei **commenti di sviluppo** del codice (es. `// ⚠️ nota importante`) le
+  emoji sono ok — non sono UI.
+
+Tracciato come TODO residuo: `WizardStep1.tsx` ha 5 emoji decorative live
+(🏊🏠🛏️👥📐) non toccate in questo task, da rivedere in un'estensione della
+stessa regola.
+
 ### 2026-04-24 — Sessione mobile-WizardStep2 (v1.9) — 🏁 Piano programmato COMPLETATO
 
 Ultima fetta CSS migration del piano ratificato. Con questa sessione tutti

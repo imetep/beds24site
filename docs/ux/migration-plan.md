@@ -401,8 +401,9 @@ Numeri da `grep 'style={{' components/` + `grep 'style={{' app/` post-sessione m
 | 1 | ~~T8 `lib/beds24-client.ts` dead code~~ | ⚪ | ~15min | ✅ risolto (commit `ce3fbf7`, -316 righe dead) |
 | 2 | ~~Sessione i18n T9 (parte consumer Session 9-12 + T12 assorbito)~~ | 🔴🟡 | ~3h | ✅ risolto 7 commit (`a261189` T12 core, `4b53fb4` locales cleanup, `dd41baa` 22 chiavi × 4 locale, `1f75eaa` BookingPanel, `3523184` PhotoCarousel, `d1bef50` AvailabilityCalendar, `144413c` FotoGalleryClient). Fix accessibilità bonus: bookingPanel.maxPeople prima IT-only ora 4 locale |
 | 3 | ~~Sessione mobile WizardStep2~~ | 🟡 | 2-3h | ✅ risolto 2026-04-24 (commit `ed5db23` css + `4ce08c0` refactor). 48 inline → 0, SidebarContent + SideRow + 2 CSSProp legacy a BEM `.wizard-step2-mobile__*`. 4 emoji decorative → Bootstrap Icons (🛏️ mantenuta). **🏁 piano programmato chiuso** |
-| 4 | **Consolidamento LABELS dict Session 7 (T9 residuo)** | ⚪ | ~2h | `page.tsx` + `RoomCard.tsx` + `ThingsToKnow.tsx`: dict `LABELS` già funzionanti ma duplicati con common.json. Consolidamento opportunistico (quando i file vengono toccati per altri motivi) |
+| 4 | ~~Consolidamento LABELS dict Session 7 (T9 residuo)~~ | ⚪ | ~2h | ✅ risolto 2026-04-24 (commit `4b9d791` chiavi, `35b5100` RoomCard, `e24a6c7` ThingsToKnow, `8807a74` page.tsx). 48 chiavi × 4 locale aggiunte in namespace `components.roomCard/roomPage/thingsToKnow`. Bonus: 9 emoji decorative → bi-* (🛏️🚿👥📐 RoomCard badge + 🏊🌊🏖️ pool + 🐾🚭 rules) + 2 eccezioni residue chiuse (🛏️ WizardStep2 extras, 📷 FotoGalleryClient banner iOS). FEATURE_LABELS di page.tsx RESTA inline (catalogo structured) |
 | 5 | **T10** cleanup Redis key legacy | ⚪ | ~5min | Blocco temporale: dopo 2-3 giorni di deploy sano → dal **2026-04-26** |
+| 6 | **WizardStep1 emoji decorative** (emerso post-T9) | ⚪ | ~20min | 5 emoji live in [WizardStep1.tsx:443-582](components/wizard/WizardStep1.tsx): 🏊 (pool badge), 🏠 (photo placeholder), 🛏️👥📐 (badge feature). File già Fase B (Session 4) ma fatto prima della regola 'no emoji'. Decisione utente pendente |
 
 ---
 
