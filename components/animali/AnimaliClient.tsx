@@ -185,7 +185,9 @@ export default function AnimaliClient({ locale }: { locale: Locale }) {
 
       {/* Hero */}
       <section className="text-center py-5">
-        <div className="display-3 mb-2">🐾</div>
+        <div className="display-3 mb-2 text-primary">
+          <i className="bi bi-heart-fill" aria-hidden="true" />
+        </div>
         <h1 className="fw-bold text-primary mb-2" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.2rem)', lineHeight: 1.3 }}>
           {t.hero_title}
         </h1>
@@ -203,7 +205,10 @@ export default function AnimaliClient({ locale }: { locale: Locale }) {
         {/* Card 1 — Quali animali */}
         <div className="card">
           <div className="card-body p-4">
-            <h2 className="fw-semibold text-primary fs-5 mb-3">🐕 {t.s1_title}</h2>
+            <h2 className="fw-semibold text-primary fs-5 mb-3">
+              <i className="bi bi-check-circle-fill me-2" aria-hidden="true" />
+              {t.s1_title}
+            </h2>
             <div className="mb-2">
               <span className="badge rounded-pill bg-warning text-dark fw-bold">{t.max_label}</span>
             </div>
@@ -218,7 +223,10 @@ export default function AnimaliClient({ locale }: { locale: Locale }) {
         {/* Card 2 — Comportamento */}
         <div className="card">
           <div className="card-body p-4">
-            <h2 className="fw-semibold text-primary fs-5 mb-3">📋 {t.s2_title}</h2>
+            <h2 className="fw-semibold text-primary fs-5 mb-3">
+              <i className="bi bi-clipboard-fill me-2" aria-hidden="true" />
+              {t.s2_title}
+            </h2>
             <ul className="ps-3 mb-0">
               {t.s2_items.map((item, i) => (
                 <li key={i} className="mb-2 text-secondary lh-base">{item}</li>
@@ -230,7 +238,10 @@ export default function AnimaliClient({ locale }: { locale: Locale }) {
         {/* Card 3 — Deposito */}
         <div className="card border-primary" style={{ borderWidth: 1.5 }}>
           <div className="card-body p-4">
-            <h2 className="fw-semibold text-primary fs-5 mb-3">💳 {t.s3_title}</h2>
+            <h2 className="fw-semibold text-primary fs-5 mb-3">
+              <i className="bi bi-credit-card-fill me-2" aria-hidden="true" />
+              {t.s3_title}
+            </h2>
             <p className="text-secondary lh-base mb-2">
               {t.s3_text}
             </p>
@@ -264,7 +275,10 @@ export default function AnimaliClient({ locale }: { locale: Locale }) {
             <tbody>
               {RATES(t).map((row, i) => (
                 <tr key={i} className={i % 2 === 0 ? 'table-light' : ''}>
-                  <td className="text-secondary">🌙 {row.nights} notti</td>
+                  <td className="text-secondary">
+                    <i className="bi bi-moon-stars-fill me-1" aria-hidden="true" />
+                    {row.nights} notti
+                  </td>
                   <td className="fw-semibold text-primary">{row.price}</td>
                 </tr>
               ))}
@@ -275,7 +289,10 @@ export default function AnimaliClient({ locale }: { locale: Locale }) {
 
       {/* Firma */}
       <section className="bg-light border rounded-3 p-4 mb-4">
-        <h3 className="fs-6 text-secondary mb-2">✍️ {t.sign_title}</h3>
+        <h3 className="fs-6 text-secondary mb-2">
+          <i className="bi bi-pencil-fill me-2" aria-hidden="true" />
+          {t.sign_title}
+        </h3>
         <p className="small text-secondary lh-base mb-0">
           {t.sign_text}
         </p>

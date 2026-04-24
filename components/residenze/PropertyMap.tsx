@@ -20,7 +20,8 @@ export default function PropertyMap({ latitude, longitude, name, locale = 'it' }
   return (
     <div className="mb-5">
       <h2 className="room-map__title">
-        📍 {label}
+        <i className="bi bi-geo-alt-fill me-1" aria-hidden="true" />
+        {label}
       </h2>
       <div className="room-map__frame">
         <iframe

@@ -58,7 +58,8 @@ export default function DepositoClient({ locale, contactHref, portalHref }: Prop
           className="d-inline-block mb-2 fw-bold rounded-pill"
           style={{ background: '#FFF8E7', color: '#92400e', fontSize: 12, padding: '4px 12px' }}
         >
-          💳 {t.badge}
+          <i className="bi bi-credit-card-fill me-1" aria-hidden="true" />
+          {t.badge}
         </div>
         <h1 className="fs-2 fw-bold text-dark mb-2" style={{ lineHeight: 1.2 }}>
           {t.title}
@@ -84,21 +85,22 @@ export default function DepositoClient({ locale, contactHref, portalHref }: Prop
         {/* Offline */}
         <div className="bg-white p-3">
           <div className="d-flex align-items-center gap-2 mb-3">
-            <span style={{ fontSize: 20 }}>🏨</span>
+            <i className="bi bi-building" style={{ fontSize: 20 }} aria-hidden="true" />
             <h2 className="fs-6 fw-bold text-dark m-0">{t.offlineTitle}</h2>
           </div>
           {t.offlineSteps.map((step, i) => (
             <StepCard key={i} n={i + 1} text={step} />
           ))}
           <p className="mt-3 mb-0 text-muted" style={{ fontSize: 12, lineHeight: 1.5 }}>
-            ℹ️ {t.offlineNote}
+            <i className="bi bi-info-circle-fill me-1" aria-hidden="true" />
+            {t.offlineNote}
           </p>
         </div>
 
         {/* Online */}
         <div className="p-3 border-top border-2" style={{ background: '#EEF5FC', borderColor: 'var(--color-primary)' }}>
           <div className="d-flex align-items-center gap-2 mb-2">
-            <span style={{ fontSize: 20 }}>🔒</span>
+            <i className="bi bi-lock-fill" style={{ fontSize: 20, color: '#0C447C' }} aria-hidden="true" />
             <h2 className="fs-6 fw-bold m-0" style={{ color: '#0C447C' }}>{t.onlineTitle}</h2>
           </div>
           <div
@@ -111,7 +113,8 @@ export default function DepositoClient({ locale, contactHref, portalHref }: Prop
             <StepCard key={i} n={i + 1} text={step} />
           ))}
           <p className="mt-3 mb-0" style={{ fontSize: 12, color: '#185FA5', lineHeight: 1.5 }}>
-            🔐 {t.onlineNote}
+            <i className="bi bi-shield-lock-fill me-1" aria-hidden="true" />
+            {t.onlineNote}
           </p>
         </div>
 
@@ -149,7 +152,8 @@ export default function DepositoClient({ locale, contactHref, portalHref }: Prop
       {/* ── Danni ───────────────────────────────────────────────────────────── */}
       <div className="border p-3 mb-2" style={{ background: '#FFF8E7', borderColor: '#FDE68A' }}>
         <h2 className="fs-6 fw-bold mb-2" style={{ color: '#92400e' }}>
-          ⚠️ {t.damagesTitle}
+          <i className="bi bi-exclamation-triangle-fill me-1" aria-hidden="true" />
+          {t.damagesTitle}
         </h2>
         <p className="m-0 small" style={{ color: '#78350f', lineHeight: 1.7 }}>
           {t.damagesText}

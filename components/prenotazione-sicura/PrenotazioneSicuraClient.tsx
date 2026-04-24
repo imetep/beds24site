@@ -30,11 +30,11 @@ const T: Record<Locale, {
     hero_sub: "Buona idea. Questa pagina esiste esattamente per questo. Ci vorranno 2 minuti, e troverai tutto quello che ti serve per verificarci — senza fidarti della nostra parola.",
     trust_title: 'Verificaci prima di prenotare',
     trust_pills: [
-      { icon: '🏛️', title: 'CIN verificabile', text: `Il Codice Identificativo Nazionale ${CIN} è obbligatorio per legge da settembre 2024 ed è visibile su tutti i nostri annunci. Puoi verificarlo sul portale del Ministero del Turismo.`, link: { label: 'Verifica il CIN →', href: 'https://bdsr.ministeroturismo.gov.it/' } },
-      { icon: '🏢', title: 'P.IVA attiva su Registro Imprese', text: `P.IVA ${PIVA} — codice ATECO 55.20.51 (case e appartamenti vacanze). Puoi verificarla gratuitamente cercando il numero su registroimprese.it o su ufficiocamerale.it: nome, stato attivo e ragione sociale in 30 secondi.`, link: { label: 'Cerca su ufficiocamerale.it →', href: UFFICIOCAMERALE_URL } },
-      { icon: '💳', title: 'Pagamenti tramite Stripe — identificazione bancaria', text: 'Stripe non concede l\'accesso a privati senza P.IVA. Per attivarlo è obbligatoria una procedura KYC con verifica dei documenti e estratti conto. Accettando pagamenti via Stripe, siamo già stati identificati da un soggetto bancario terzo.' },
-      { icon: '⭐', title: 'Presenti su Airbnb e Booking.com con storico verificato', text: 'Siamo su Airbnb (LivingApple) e Booking.com (LivingApple e LivingApple Beach) con recensioni scritte esclusivamente da ospiti con soggiorno completato — impossibile falsificare. Cerca "LivingApple Scauri" su entrambe le piattaforme.', link: { label: 'Vedi il nostro profilo Airbnb →', href: AIRBNB_URL } },
-      { icon: '🛡️', title: 'PayPal "Beni e Servizi" — tutela 180 giorni', text: 'Accettiamo PayPal solo nella modalità "Beni e Servizi", che attiva la Tutela Acquisti: puoi aprire una contestazione entro 180 giorni se il servizio non corrisponde. I truffatori chiedono sempre "Amici e Familiari" — noi no.' },
+      { icon: 'bi-building', title: 'CIN verificabile', text: `Il Codice Identificativo Nazionale ${CIN} è obbligatorio per legge da settembre 2024 ed è visibile su tutti i nostri annunci. Puoi verificarlo sul portale del Ministero del Turismo.`, link: { label: 'Verifica il CIN →', href: 'https://bdsr.ministeroturismo.gov.it/' } },
+      { icon: 'bi-building-fill', title: 'P.IVA attiva su Registro Imprese', text: `P.IVA ${PIVA} — codice ATECO 55.20.51 (case e appartamenti vacanze). Puoi verificarla gratuitamente cercando il numero su registroimprese.it o su ufficiocamerale.it: nome, stato attivo e ragione sociale in 30 secondi.`, link: { label: 'Cerca su ufficiocamerale.it →', href: UFFICIOCAMERALE_URL } },
+      { icon: 'bi-credit-card-fill', title: 'Pagamenti tramite Stripe — identificazione bancaria', text: 'Stripe non concede l\'accesso a privati senza P.IVA. Per attivarlo è obbligatoria una procedura KYC con verifica dei documenti e estratti conto. Accettando pagamenti via Stripe, siamo già stati identificati da un soggetto bancario terzo.' },
+      { icon: 'bi-star-fill', title: 'Presenti su Airbnb e Booking.com con storico verificato', text: 'Siamo su Airbnb (LivingApple) e Booking.com (LivingApple e LivingApple Beach) con recensioni scritte esclusivamente da ospiti con soggiorno completato — impossibile falsificare. Cerca "LivingApple Scauri" su entrambe le piattaforme.', link: { label: 'Vedi il nostro profilo Airbnb →', href: AIRBNB_URL } },
+      { icon: 'bi-shield-fill', title: 'PayPal "Beni e Servizi" — tutela 180 giorni', text: 'Accettiamo PayPal solo nella modalità "Beni e Servizi", che attiva la Tutela Acquisti: puoi aprire una contestazione entro 180 giorni se il servizio non corrisponde. I truffatori chiedono sempre "Amici e Familiari" — noi no.' },
     ],
     guide_title: 'La guida completa — cosa sapere prima di prenotare una casa vacanza',
     guide_sub: 'Fonti: Polizia Postale · Airbnb · Altroconsumo · Commissariato di P.S. Online',
@@ -72,11 +72,11 @@ const T: Record<Locale, {
     hero_sub: "Good idea. This page exists for exactly that reason. It will take 2 minutes, and you'll find everything you need to verify us — without having to take our word for it.",
     trust_title: 'Verify us before you book',
     trust_pills: [
-      { icon: '🏛️', title: 'Verifiable CIN code', text: `The National Identification Code ${CIN} has been mandatory by law since September 2024 and is visible on all our listings. You can verify it on the Italian Ministry of Tourism portal.`, link: { label: 'Verify the CIN →', href: 'https://bdsr.ministeroturismo.gov.it/' } },
-      { icon: '🏢', title: 'Active VAT on Companies Register', text: `VAT ${PIVA} — ATECO code 55.20.51 (holiday homes and apartments). You can verify it for free by searching the number on registroimprese.it or ufficiocamerale.it: name, active status and registered details in 30 seconds.`, link: { label: 'Search on ufficiocamerale.it →', href: UFFICIOCAMERALE_URL } },
-      { icon: '💳', title: 'Stripe payments — banking identification', text: 'Stripe does not grant access to private individuals without a VAT number. Activation requires a mandatory KYC procedure with document and bank statement verification. By accepting Stripe payments, we have already been identified by an independent banking entity.' },
-      { icon: '⭐', title: 'Present on Airbnb and Booking.com with verified history', text: 'We are on Airbnb (LivingApple) and Booking.com (LivingApple and LivingApple Beach) with reviews written exclusively by guests with a completed stay — impossible to fake. Search "LivingApple Scauri" on both platforms.', link: { label: 'See our Airbnb profile →', href: AIRBNB_URL } },
-      { icon: '🛡️', title: 'PayPal "Goods and Services" — 180-day buyer protection', text: 'We only accept PayPal as "Goods and Services", which activates Buyer Protection: you can open a dispute within 180 days if the service does not match. Fraudsters always ask for "Friends and Family" — we never do.' },
+      { icon: 'bi-building', title: 'Verifiable CIN code', text: `The National Identification Code ${CIN} has been mandatory by law since September 2024 and is visible on all our listings. You can verify it on the Italian Ministry of Tourism portal.`, link: { label: 'Verify the CIN →', href: 'https://bdsr.ministeroturismo.gov.it/' } },
+      { icon: 'bi-building-fill', title: 'Active VAT on Companies Register', text: `VAT ${PIVA} — ATECO code 55.20.51 (holiday homes and apartments). You can verify it for free by searching the number on registroimprese.it or ufficiocamerale.it: name, active status and registered details in 30 seconds.`, link: { label: 'Search on ufficiocamerale.it →', href: UFFICIOCAMERALE_URL } },
+      { icon: 'bi-credit-card-fill', title: 'Stripe payments — banking identification', text: 'Stripe does not grant access to private individuals without a VAT number. Activation requires a mandatory KYC procedure with document and bank statement verification. By accepting Stripe payments, we have already been identified by an independent banking entity.' },
+      { icon: 'bi-star-fill', title: 'Present on Airbnb and Booking.com with verified history', text: 'We are on Airbnb (LivingApple) and Booking.com (LivingApple and LivingApple Beach) with reviews written exclusively by guests with a completed stay — impossible to fake. Search "LivingApple Scauri" on both platforms.', link: { label: 'See our Airbnb profile →', href: AIRBNB_URL } },
+      { icon: 'bi-shield-fill', title: 'PayPal "Goods and Services" — 180-day buyer protection', text: 'We only accept PayPal as "Goods and Services", which activates Buyer Protection: you can open a dispute within 180 days if the service does not match. Fraudsters always ask for "Friends and Family" — we never do.' },
     ],
     guide_title: 'The complete guide — what to know before booking a holiday home',
     guide_sub: 'Sources: Polizia Postale · Airbnb · Altroconsumo · Commissariato di P.S. Online',
@@ -114,11 +114,11 @@ const T: Record<Locale, {
     hero_sub: 'Gute Idee. Diese Seite existiert genau dafür. Es dauert 2 Minuten, und Sie finden alles, was Sie brauchen, um uns zu überprüfen — ohne uns beim Wort nehmen zu müssen.',
     trust_title: 'Überprüfen Sie uns vor der Buchung',
     trust_pills: [
-      { icon: '🏛️', title: 'Überprüfbarer CIN-Code', text: `Der nationale Identifikationscode ${CIN} ist seit September 2024 gesetzlich vorgeschrieben und in allen unseren Inseraten sichtbar. Sie können ihn auf dem Portal des italienischen Tourismusministeriums verifizieren.`, link: { label: 'CIN verifizieren →', href: 'https://bdsr.ministeroturismo.gov.it/' } },
-      { icon: '🏢', title: 'Aktive USt-IdNr. im Handelsregister', text: `USt-IdNr. ${PIVA} — ATECO-Code 55.20.51 (Ferienunterkünfte). Kostenlose Überprüfung durch Eingabe der Nummer auf registroimprese.it oder ufficiocamerale.it: Name, aktiver Status und Firmendetails in 30 Sekunden.`, link: { label: 'Auf ufficiocamerale.it suchen →', href: UFFICIOCAMERALE_URL } },
-      { icon: '💳', title: 'Stripe-Zahlungen — Bankenidentifikation', text: 'Stripe gewährt Privatpersonen ohne USt-IdNr. keinen Zugang. Die Aktivierung erfordert ein obligatorisches KYC-Verfahren mit Dokument- und Kontoauszugsverifizierung. Mit der Annahme von Stripe-Zahlungen wurden wir bereits von einem unabhängigen Bankinstitut identifiziert.' },
-      { icon: '⭐', title: 'Auf Airbnb und Booking.com mit verifiziertem Verlauf', text: 'Wir sind auf Airbnb (LivingApple) und Booking.com (LivingApple und LivingApple Beach) mit Bewertungen, die ausschließlich von Gästen mit abgeschlossenem Aufenthalt geschrieben wurden — nicht zu fälschen. Suchen Sie "LivingApple Scauri" auf beiden Plattformen.', link: { label: 'Unser Airbnb-Profil ansehen →', href: AIRBNB_URL } },
-      { icon: '🛡️', title: 'PayPal "Waren und Services" — 180-Tage-Käuferschutz', text: 'Wir akzeptieren PayPal nur als "Waren und Services", das den Käuferschutz aktiviert: Sie können innerhalb von 180 Tagen einen Streitfall eröffnen, wenn der Service nicht übereinstimmt. Betrüger verlangen immer "Freunde und Familie" — wir nie.' },
+      { icon: 'bi-building', title: 'Überprüfbarer CIN-Code', text: `Der nationale Identifikationscode ${CIN} ist seit September 2024 gesetzlich vorgeschrieben und in allen unseren Inseraten sichtbar. Sie können ihn auf dem Portal des italienischen Tourismusministeriums verifizieren.`, link: { label: 'CIN verifizieren →', href: 'https://bdsr.ministeroturismo.gov.it/' } },
+      { icon: 'bi-building-fill', title: 'Aktive USt-IdNr. im Handelsregister', text: `USt-IdNr. ${PIVA} — ATECO-Code 55.20.51 (Ferienunterkünfte). Kostenlose Überprüfung durch Eingabe der Nummer auf registroimprese.it oder ufficiocamerale.it: Name, aktiver Status und Firmendetails in 30 Sekunden.`, link: { label: 'Auf ufficiocamerale.it suchen →', href: UFFICIOCAMERALE_URL } },
+      { icon: 'bi-credit-card-fill', title: 'Stripe-Zahlungen — Bankenidentifikation', text: 'Stripe gewährt Privatpersonen ohne USt-IdNr. keinen Zugang. Die Aktivierung erfordert ein obligatorisches KYC-Verfahren mit Dokument- und Kontoauszugsverifizierung. Mit der Annahme von Stripe-Zahlungen wurden wir bereits von einem unabhängigen Bankinstitut identifiziert.' },
+      { icon: 'bi-star-fill', title: 'Auf Airbnb und Booking.com mit verifiziertem Verlauf', text: 'Wir sind auf Airbnb (LivingApple) und Booking.com (LivingApple und LivingApple Beach) mit Bewertungen, die ausschließlich von Gästen mit abgeschlossenem Aufenthalt geschrieben wurden — nicht zu fälschen. Suchen Sie "LivingApple Scauri" auf beiden Plattformen.', link: { label: 'Unser Airbnb-Profil ansehen →', href: AIRBNB_URL } },
+      { icon: 'bi-shield-fill', title: 'PayPal "Waren und Services" — 180-Tage-Käuferschutz', text: 'Wir akzeptieren PayPal nur als "Waren und Services", das den Käuferschutz aktiviert: Sie können innerhalb von 180 Tagen einen Streitfall eröffnen, wenn der Service nicht übereinstimmt. Betrüger verlangen immer "Freunde und Familie" — wir nie.' },
     ],
     guide_title: 'Der vollständige Leitfaden — Was Sie vor der Buchung eines Ferienhauses wissen sollten',
     guide_sub: 'Quellen: Polizia Postale · Airbnb · Altroconsumo · Commissariato di P.S. Online',
@@ -156,11 +156,11 @@ const T: Record<Locale, {
     hero_sub: 'Dobry pomysł. Ta strona istnieje właśnie po to. Zajmie to 2 minuty i znajdziesz tu wszystko, czego potrzebujesz, aby nas zweryfikować — bez konieczności brania nas za słowo.',
     trust_title: 'Zweryfikuj nas przed rezerwacją',
     trust_pills: [
-      { icon: '🏛️', title: 'Weryfikowalny kod CIN', text: `Narodowy Kod Identyfikacyjny ${CIN} jest obowiązkowy prawnie od września 2024 i widoczny we wszystkich naszych ogłoszeniach. Możesz go zweryfikować w portalu włoskiego Ministerstwa Turystyki.`, link: { label: 'Zweryfikuj CIN →', href: 'https://bdsr.ministeroturismo.gov.it/' } },
-      { icon: '🏢', title: 'Aktywny NIP w Rejestrze Firm', text: `NIP ${PIVA} — kod ATECO 55.20.51 (domy i apartamenty wakacyjne). Możesz zweryfikować bezpłatnie, wpisując numer na registroimprese.it lub ufficiocamerale.it: nazwa, aktywny status i dane firmy w 30 sekund.`, link: { label: 'Szukaj na ufficiocamerale.it →', href: UFFICIOCAMERALE_URL } },
-      { icon: '💳', title: 'Płatności Stripe — identyfikacja bankowa', text: 'Stripe nie udziela dostępu osobom prywatnym bez NIP. Aktywacja wymaga obowiązkowej procedury KYC z weryfikacją dokumentów i wyciągów bankowych. Przyjmując płatności Stripe, zostaliśmy już zidentyfikowani przez niezależny podmiot bankowy.' },
-      { icon: '⭐', title: 'Obecni na Airbnb i Booking.com z zweryfikowaną historią', text: 'Jesteśmy na Airbnb (LivingApple) i Booking.com (LivingApple i LivingApple Beach) z recenzjami napisanymi wyłącznie przez gości z ukończonym pobytem — niemożliwe do sfałszowania. Szukaj "LivingApple Scauri" na obu platformach.', link: { label: 'Zobacz nasz profil Airbnb →', href: AIRBNB_URL } },
-      { icon: '🛡️', title: 'PayPal "Towary i Usługi" — ochrona przez 180 dni', text: 'Akceptujemy PayPal tylko jako "Towary i Usługi", co aktywuje Ochronę Kupującego: możesz otworzyć spór w ciągu 180 dni, jeśli usługa nie jest zgodna z opisem. Oszuści zawsze proszą o "Znajomi i rodzina" — my nigdy.' },
+      { icon: 'bi-building', title: 'Weryfikowalny kod CIN', text: `Narodowy Kod Identyfikacyjny ${CIN} jest obowiązkowy prawnie od września 2024 i widoczny we wszystkich naszych ogłoszeniach. Możesz go zweryfikować w portalu włoskiego Ministerstwa Turystyki.`, link: { label: 'Zweryfikuj CIN →', href: 'https://bdsr.ministeroturismo.gov.it/' } },
+      { icon: 'bi-building-fill', title: 'Aktywny NIP w Rejestrze Firm', text: `NIP ${PIVA} — kod ATECO 55.20.51 (domy i apartamenty wakacyjne). Możesz zweryfikować bezpłatnie, wpisując numer na registroimprese.it lub ufficiocamerale.it: nazwa, aktywny status i dane firmy w 30 sekund.`, link: { label: 'Szukaj na ufficiocamerale.it →', href: UFFICIOCAMERALE_URL } },
+      { icon: 'bi-credit-card-fill', title: 'Płatności Stripe — identyfikacja bankowa', text: 'Stripe nie udziela dostępu osobom prywatnym bez NIP. Aktywacja wymaga obowiązkowej procedury KYC z weryfikacją dokumentów i wyciągów bankowych. Przyjmując płatności Stripe, zostaliśmy już zidentyfikowani przez niezależny podmiot bankowy.' },
+      { icon: 'bi-star-fill', title: 'Obecni na Airbnb i Booking.com z zweryfikowaną historią', text: 'Jesteśmy na Airbnb (LivingApple) i Booking.com (LivingApple i LivingApple Beach) z recenzjami napisanymi wyłącznie przez gości z ukończonym pobytem — niemożliwe do sfałszowania. Szukaj "LivingApple Scauri" na obu platformach.', link: { label: 'Zobacz nasz profil Airbnb →', href: AIRBNB_URL } },
+      { icon: 'bi-shield-fill', title: 'PayPal "Towary i Usługi" — ochrona przez 180 dni', text: 'Akceptujemy PayPal tylko jako "Towary i Usługi", co aktywuje Ochronę Kupującego: możesz otworzyć spór w ciągu 180 dni, jeśli usługa nie jest zgodna z opisem. Oszuści zawsze proszą o "Znajomi i rodzina" — my nigdy.' },
     ],
     guide_title: 'Kompletny przewodnik — co wiedzieć przed rezerwacją domu wakacyjnego',
     guide_sub: 'Źródła: Polizia Postale · Airbnb · Altroconsumo · Commissariato di P.S. Online',
@@ -216,12 +216,18 @@ function Chapter({ chapter, index }: { chapter: typeof T['it']['chapters'][0]; i
           ))}
           {chapter.warn && (
             <div className="alert alert-warning mt-2 mb-0" style={{ background: '#FFF8E7', borderColor: '#FCAF1A' }}>
-              <p className="small mb-0" style={{ color: '#92400e', lineHeight: 1.6 }}>⚠️ {chapter.warn}</p>
+              <p className="small mb-0" style={{ color: '#92400e', lineHeight: 1.6 }}>
+                <i className="bi bi-exclamation-triangle-fill me-1" aria-hidden="true" />
+                {chapter.warn}
+              </p>
             </div>
           )}
           {chapter.tip && (
             <div className="alert alert-primary mt-2 mb-0" style={{ background: '#EEF5FC' }}>
-              <p className="small mb-0" style={{ color: '#1E4E8C', lineHeight: 1.6 }}>💡 {chapter.tip}</p>
+              <p className="small mb-0" style={{ color: '#1E4E8C', lineHeight: 1.6 }}>
+                <i className="bi bi-lightbulb-fill me-1" aria-hidden="true" />
+                {chapter.tip}
+              </p>
             </div>
           )}
         </div>
@@ -263,7 +269,7 @@ export default function PrenotazioneSicuraClient({
           {t.trust_pills.map((pill, i) => (
             <div key={i} className="card">
               <div className="card-body d-flex flex-column gap-2">
-                <span style={{ fontSize: '1.6rem' }}>{pill.icon}</span>
+                <i className={`bi ${pill.icon}`} style={{ fontSize: '1.6rem', color: 'var(--color-primary)' }} aria-hidden="true" />
                 <strong className="text-primary">{pill.title}</strong>
                 <p className="small text-secondary mb-0 flex-fill" style={{ lineHeight: 1.55 }}>{pill.text}</p>
                 {pill.link && (

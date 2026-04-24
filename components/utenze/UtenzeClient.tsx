@@ -182,7 +182,7 @@ export default function UtenzeClient({ locale }: Props) {
         </p>
         <div className="bg-light border rounded p-3">
           <p className="small text-secondary mb-0" style={{ lineHeight: 1.7 }}>
-            ⚠️{' '}
+            <i className="bi bi-exclamation-triangle-fill me-1" aria-hidden="true" />
             {t.honestCaution.split('\n').map((line, i) => (
               <span key={i}>{line}{i < t.honestCaution.split('\n').length - 1 && <br />}</span>
             ))}

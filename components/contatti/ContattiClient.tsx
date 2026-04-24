@@ -150,7 +150,7 @@ function ContactChannels({ t }: { t: ContactT }) {
     >
       {/* Header sezione */}
       <div className="d-flex align-items-center gap-2 px-3 py-3" style={{ background: 'var(--color-primary)' }}>
-        <span style={{ fontSize: 18 }}>💬</span>
+        <i className="bi bi-chat-fill text-white" style={{ fontSize: 18 }} aria-hidden="true" />
         <div>
           <p className="m-0 fw-bold text-white" style={{ fontSize: 14 }}>
             {t.contactTitle}
@@ -267,7 +267,7 @@ export default function ContattiClient({ locale, bookHref }: Props) {
                 className="d-flex align-items-center justify-content-center flex-shrink-0"
                 style={{ width: 40, height: 40, borderRadius: 10, background: '#EEF5FC' }}
               >
-                <span style={{ fontSize: 20 }}>🔍</span>
+                <i className="bi bi-search" style={{ fontSize: 20, color: 'var(--color-primary)' }} aria-hidden="true" />
               </div>
               <span className="fw-medium" style={{ fontSize: 14, color: '#374151', lineHeight: 1.4 }}>
                 {t.safeBannerText}

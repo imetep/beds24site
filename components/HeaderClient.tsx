@@ -158,9 +158,10 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
               { href: `/${locale}/${localeSlugs.residences[locale]}`, label: nav.residences },
               { href: `/${locale}/${localeSlugs.location[locale]}`, label: nav.location },
               { href: `/${locale}/${localeSlugs.contact[locale]}`, label: nav.contact },
-              { href: `/${locale}/guest/portal`, label: '🔐 Area Ospiti' },
-            ].map(({ href, label }) => (
+              { href: `/${locale}/guest/portal`, label: 'Area Ospiti', iconClass: 'bi-shield-lock-fill' },
+            ].map(({ href, label, iconClass }: { href: string; label: string; iconClass?: string }) => (
               <a key={href} href={href} className="d-block fw-semibold text-dark text-decoration-none py-3 border-bottom" style={{ fontSize: '1.1rem' }}>
+                {iconClass && <i className={`bi ${iconClass} me-2`} aria-hidden="true" />}
                 {label}
               </a>
             ))}

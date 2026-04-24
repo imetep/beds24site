@@ -33,10 +33,10 @@ const T: Record<Locale, {
     hero_sub: 'Dove il Lazio incontra il mare, tra natura, storia e sapori autentici del Sud.',
     why_title: 'Perché Scauri',
     pills: [
-      { icon: '🌊', title: 'Mare a pochi passi', text: 'LivingApple campagna è a 1,5 km dalla spiaggia. LivingApple beach è a soli 250 m.' },
-      { icon: '📍', title: 'Posizione strategica', text: 'A 2h da Roma e 1h15 da Napoli in auto, raggiungibile anche in treno.' },
-      { icon: '☀️', title: 'Clima mediterraneo', text: 'Estate lunga e soleggiata da maggio a ottobre, con temperature miti e poca pioggia.' },
-      { icon: '🌿', title: 'Silenzio e natura', text: 'Nessuna folla, nessun caos. Solo mare, campagna e autentica ospitalità laziale.' },
+      { icon: 'bi-water', title: 'Mare a pochi passi', text: 'LivingApple campagna è a 1,5 km dalla spiaggia. LivingApple beach è a soli 250 m.' },
+      { icon: 'bi-geo-alt-fill', title: 'Posizione strategica', text: 'A 2h da Roma e 1h15 da Napoli in auto, raggiungibile anche in treno.' },
+      { icon: 'bi-sun-fill', title: 'Clima mediterraneo', text: 'Estate lunga e soleggiata da maggio a ottobre, con temperature miti e poca pioggia.' },
+      { icon: 'bi-tree-fill', title: 'Silenzio e natura', text: 'Nessuna folla, nessun caos. Solo mare, campagna e autentica ospitalità laziale.' },
     ],
     map_title: 'Quanto siamo lontani?',
     map_sub: 'Scauri è raggiungibile in giornata da tutte le grandi città italiane.',
@@ -74,10 +74,10 @@ const T: Record<Locale, {
     hero_sub: 'Where Lazio meets the sea — nature, history and authentic southern Italian flavours.',
     why_title: 'Why Scauri',
     pills: [
-      { icon: '🌊', title: 'Sea a short walk away', text: 'LivingApple countryside is 1.5 km from the beach. LivingApple beach is just 250 m away.' },
-      { icon: '📍', title: 'Strategic location', text: '2h from Rome and 1h15 from Naples by car, also reachable by train.' },
-      { icon: '☀️', title: 'Mediterranean climate', text: 'Long sunny summers from May to October, with mild temperatures and little rain.' },
-      { icon: '🌿', title: 'Peace and nature', text: 'No crowds, no chaos. Just sea, countryside and genuine hospitality.' },
+      { icon: 'bi-water', title: 'Sea a short walk away', text: 'LivingApple countryside is 1.5 km from the beach. LivingApple beach is just 250 m away.' },
+      { icon: 'bi-geo-alt-fill', title: 'Strategic location', text: '2h from Rome and 1h15 from Naples by car, also reachable by train.' },
+      { icon: 'bi-sun-fill', title: 'Mediterranean climate', text: 'Long sunny summers from May to October, with mild temperatures and little rain.' },
+      { icon: 'bi-tree-fill', title: 'Peace and nature', text: 'No crowds, no chaos. Just sea, countryside and genuine hospitality.' },
     ],
     map_title: 'How far are we?',
     map_sub: 'Scauri is reachable in a day from all major Italian cities.',
@@ -115,10 +115,10 @@ const T: Record<Locale, {
     hero_sub: 'Wo Latium das Meer trifft — Natur, Geschichte und authentische süditalienische Küche.',
     why_title: 'Warum Scauri',
     pills: [
-      { icon: '🌊', title: 'Meer in der Nähe', text: 'LivingApple Landhaus ist 1,5 km vom Strand entfernt. LivingApple Meer nur 250 m.' },
-      { icon: '📍', title: 'Strategische Lage', text: '2h von Rom und 1h15 von Neapel mit dem Auto, auch mit dem Zug erreichbar.' },
-      { icon: '☀️', title: 'Mediterranes Klima', text: 'Langer sonniger Sommer von Mai bis Oktober mit milden Temperaturen und wenig Regen.' },
-      { icon: '🌿', title: 'Ruhe und Natur', text: 'Keine Massen, kein Trubel. Nur Meer, Landschaft und echte Gastfreundschaft.' },
+      { icon: 'bi-water', title: 'Meer in der Nähe', text: 'LivingApple Landhaus ist 1,5 km vom Strand entfernt. LivingApple Meer nur 250 m.' },
+      { icon: 'bi-geo-alt-fill', title: 'Strategische Lage', text: '2h von Rom und 1h15 von Neapel mit dem Auto, auch mit dem Zug erreichbar.' },
+      { icon: 'bi-sun-fill', title: 'Mediterranes Klima', text: 'Langer sonniger Sommer von Mai bis Oktober mit milden Temperaturen und wenig Regen.' },
+      { icon: 'bi-tree-fill', title: 'Ruhe und Natur', text: 'Keine Massen, kein Trubel. Nur Meer, Landschaft und echte Gastfreundschaft.' },
     ],
     map_title: 'Wie weit sind wir entfernt?',
     map_sub: 'Scauri ist von allen großen italienischen Städten an einem Tag erreichbar.',
@@ -156,10 +156,10 @@ const T: Record<Locale, {
     hero_sub: 'Tam, gdzie Lacjum spotyka morze — natura, historia i autentyczne smaki południa Włoch.',
     why_title: 'Dlaczego Scauri',
     pills: [
-      { icon: '🌊', title: 'Morze w pobliżu', text: 'LivingApple campagna jest 1,5 km od plaży. LivingApple beach zaledwie 250 m.' },
-      { icon: '📍', title: 'Strategiczna lokalizacja', text: '2h od Rzymu i 1h15 od Neapolu samochodem, dostępne też pociągiem.' },
-      { icon: '☀️', title: 'Klimat śródziemnomorski', text: 'Długie słoneczne lato od maja do października, łagodne temperatury i mało deszczu.' },
-      { icon: '🌿', title: 'Cisza i natura', text: 'Bez tłumów, bez chaosu. Tylko morze, wieś i autentyczna gościnność.' },
+      { icon: 'bi-water', title: 'Morze w pobliżu', text: 'LivingApple campagna jest 1,5 km od plaży. LivingApple beach zaledwie 250 m.' },
+      { icon: 'bi-geo-alt-fill', title: 'Strategiczna lokalizacja', text: '2h od Rzymu i 1h15 od Neapolu samochodem, dostępne też pociągiem.' },
+      { icon: 'bi-sun-fill', title: 'Klimat śródziemnomorski', text: 'Długie słoneczne lato od maja do października, łagodne temperatury i mało deszczu.' },
+      { icon: 'bi-tree-fill', title: 'Cisza i natura', text: 'Bez tłumów, bez chaosu. Tylko morze, wieś i autentyczna gościnność.' },
     ],
     map_title: 'Jak daleko jesteśmy?',
     map_sub: 'Do Scauri można dotrzeć w ciągu jednego dnia z każdego większego włoskiego miasta.',
@@ -472,7 +472,7 @@ export default function DoveSiamoClient({
         >
           {t.pills.map((pill, i) => (
             <div key={i} className="bg-light border rounded-3 p-3">
-              <span className="d-block mb-2" style={{ fontSize: '1.8rem' }}>{pill.icon}</span>
+              <i className={`bi ${pill.icon} d-block mb-2`} style={{ fontSize: '1.8rem', color: 'var(--color-primary)' }} aria-hidden="true" />
               <strong className="d-block text-primary mb-1">{pill.title}</strong>
               <p className="small text-secondary mb-0">{pill.text}</p>
             </div>
@@ -561,7 +561,10 @@ export default function DoveSiamoClient({
               ))}
             </div>
             <div className="alert alert-warning border" style={{ background: '#FFF8E7', borderColor: '#FCAF1A' }}>
-              <strong className="d-block mb-1" style={{ color: '#92400e' }}>⚠️ {t.car_note_title}</strong>
+              <strong className="d-block mb-1" style={{ color: '#92400e' }}>
+                <i className="bi bi-exclamation-triangle-fill me-1" aria-hidden="true" />
+                {t.car_note_title}
+              </strong>
               <p className="small mb-0" style={{ color: '#78350f', lineHeight: 1.6 }}>{t.car_note}</p>
             </div>
           </div>
