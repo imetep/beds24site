@@ -174,8 +174,8 @@ export default function SuccessContent({ locale }: Props) {
       textAlign: 'center', padding: '3rem 1.5rem',
       fontFamily: 'sans-serif',
     }}>
-      <div style={{ fontSize: 56, marginBottom: 20 }}>
-        {isCardSaved ? '🔐' : '🎉'}
+      <div style={{ fontSize: 56, marginBottom: 20, color: isCardSaved ? 'var(--color-primary)' : 'var(--color-cta)' }}>
+        <i className={`bi ${isCardSaved ? 'bi-shield-lock-fill' : 'bi-check-circle-fill'}`} aria-hidden="true" />
       </div>
 
       <h1 style={{

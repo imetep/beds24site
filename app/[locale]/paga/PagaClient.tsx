@@ -15,13 +15,13 @@ const UI: Record<string, Record<string, string>> = {
     priceDetail: 'Dettaglio prezzo', totalBooking: 'Totale prenotazione',
     deposit: 'Acconto richiesto', remaining: 'Saldo residuo',
     touristTax: 'Imposta di soggiorno',
-    payBtn: 'Paga acconto', paying: 'Elaborazione...', paid: 'Pagamento completato ✓',
+    payBtn: 'Paga acconto', paying: 'Elaborazione...', paid: 'Pagamento completato',
     paypalLoading: 'Caricamento PayPal...', payingPaypal: 'Elaborazione PayPal...',
     loading: 'Caricamento prenotazione...', notFound: 'Prenotazione non trovata.',
     errTitle: 'Errore', chooseMethod: 'Metodo di pagamento',
-    energy: '⚡ Consumi energetici a consumo — contatori in ogni abitazione',
+    energy: 'Consumi energetici a consumo — contatori in ogni abitazione',
     energyLink: 'Tariffe e consigli →', energyHref: '/it/utenze',
-    deposit_info: '🔐 Deposito cauzionale: verrà richiesto separatamente',
+    deposit_info: 'Deposito cauzionale: verrà richiesto separatamente',
     depositLink: 'Come funziona il deposito →', depositHref: '/it/deposito',
   },
   en: {
@@ -32,13 +32,13 @@ const UI: Record<string, Record<string, string>> = {
     priceDetail: 'Price breakdown', totalBooking: 'Total booking',
     deposit: 'Deposit requested', remaining: 'Remaining balance',
     touristTax: 'Tourist tax',
-    payBtn: 'Pay deposit', paying: 'Processing...', paid: 'Payment completed ✓',
+    payBtn: 'Pay deposit', paying: 'Processing...', paid: 'Payment completed',
     paypalLoading: 'Loading PayPal...', payingPaypal: 'Processing PayPal...',
     loading: 'Loading booking...', notFound: 'Booking not found.',
     errTitle: 'Error', chooseMethod: 'Payment method',
-    energy: '⚡ Energy billed by actual usage — meters in each unit',
+    energy: 'Energy billed by actual usage — meters in each unit',
     energyLink: 'Rates and tips →', energyHref: '/en/utilities',
-    deposit_info: '🔐 Security deposit: will be requested separately',
+    deposit_info: 'Security deposit: will be requested separately',
     depositLink: 'How it works →', depositHref: '/en/deposito',
   },
   de: {
@@ -49,13 +49,13 @@ const UI: Record<string, Record<string, string>> = {
     priceDetail: 'Preisdetails', totalBooking: 'Gesamtpreis',
     deposit: 'Angeforderter Anzahlung', remaining: 'Restbetrag',
     touristTax: 'Kurtaxe',
-    payBtn: 'Anzahlung bezahlen', paying: 'Verarbeitung...', paid: 'Zahlung abgeschlossen ✓',
+    payBtn: 'Anzahlung bezahlen', paying: 'Verarbeitung...', paid: 'Zahlung abgeschlossen',
     paypalLoading: 'PayPal wird geladen...', payingPaypal: 'PayPal wird verarbeitet...',
     loading: 'Buchung wird geladen...', notFound: 'Buchung nicht gefunden.',
     errTitle: 'Fehler', chooseMethod: 'Zahlungsmethode',
-    energy: '⚡ Energiekosten nach Verbrauch — Zähler in jeder Einheit',
+    energy: 'Energiekosten nach Verbrauch — Zähler in jeder Einheit',
     energyLink: 'Tarife und Tipps →', energyHref: '/de/energie',
-    deposit_info: '🔐 Kaution: wird separat angefordert',
+    deposit_info: 'Kaution: wird separat angefordert',
     depositLink: 'So funktioniert sie →', depositHref: '/de/deposito',
   },
   pl: {
@@ -66,13 +66,13 @@ const UI: Record<string, Record<string, string>> = {
     priceDetail: 'Szczegóły ceny', totalBooking: 'Łączna rezerwacja',
     deposit: 'Wymagana zaliczka', remaining: 'Pozostałe saldo',
     touristTax: 'Opłata turystyczna',
-    payBtn: 'Zapłać zaliczkę', paying: 'Przetwarzanie...', paid: 'Płatność zakończona ✓',
+    payBtn: 'Zapłać zaliczkę', paying: 'Przetwarzanie...', paid: 'Płatność zakończona',
     paypalLoading: 'Ładowanie PayPal...', payingPaypal: 'Przetwarzanie PayPal...',
     loading: 'Ładowanie rezerwacji...', notFound: 'Rezerwacja nie znaleziona.',
     errTitle: 'Błąd', chooseMethod: 'Metoda płatności',
-    energy: '⚡ Koszty energii według zużycia — liczniki w każdym lokalu',
+    energy: 'Koszty energii według zużycia — liczniki w każdym lokalu',
     energyLink: 'Taryfy i wskazówki →', energyHref: '/pl/media',
-    deposit_info: '🔐 Kaucja: zostanie pobrana oddzielnie',
+    deposit_info: 'Kaucja: zostanie pobrana oddzielnie',
     depositLink: 'Jak działa →', depositHref: '/pl/deposito',
   },
 };
@@ -284,7 +284,9 @@ export default function PagaClient({ locale }: Props) {
 
   if (error && !booking) return (
     <div style={{ maxWidth: 480, margin: '80px auto', textAlign: 'center', padding: '0 16px' }}>
-      <div style={{ fontSize: 48, marginBottom: 16 }}>⚠️</div>
+      <div style={{ fontSize: 48, marginBottom: 16, color: '#c0392b' }}>
+        <i className="bi bi-exclamation-triangle-fill" aria-hidden="true" />
+      </div>
       <h2 style={{ fontSize: 20, fontWeight: 700, color: '#c0392b' }}>{t.errTitle}</h2>
       <p style={{ color: '#888', fontSize: 14 }}>{error}</p>
     </div>
@@ -301,7 +303,9 @@ export default function PagaClient({ locale }: Props) {
   // ── Done ───────────────────────────────────────────────────────────────────
   if (phase === 'done') return (
     <div style={{ maxWidth: 480, margin: '80px auto', textAlign: 'center', padding: '0 16px' }}>
-      <div style={{ fontSize: 56, marginBottom: 16 }}>✅</div>
+      <div style={{ fontSize: 56, marginBottom: 16, color: '#16a34a' }}>
+        <i className="bi bi-check-circle-fill" aria-hidden="true" />
+      </div>
       <h2 style={{ fontSize: 22, fontWeight: 800, color: '#16a34a' }}>{t.paid}</h2>
       <p style={{ color: '#888', fontSize: 14, marginTop: 8 }}>{booking.guestName} · {booking.guestEmail}</p>
     </div>
@@ -345,9 +349,15 @@ export default function PagaClient({ locale }: Props) {
 
       {/* Info box */}
       <div style={{ ...card, background: 'var(--color-bg-muted)', border: '1px solid var(--color-border)' }}>
-        <p style={{ margin: '0 0 4px', fontSize: 13, color: '#555' }}>{t.energy}</p>
+        <p style={{ margin: '0 0 4px', fontSize: 13, color: '#555' }}>
+          <i className="bi bi-lightning-fill me-1" aria-hidden="true" />
+          {t.energy}
+        </p>
         <a href={t.energyHref} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginBottom: 8, fontSize: 11, color: 'var(--color-primary)', textDecoration: 'none', fontWeight: 600 }}>{t.energyLink}</a>
-        <p style={{ margin: '0 0 4px', fontSize: 13, color: '#555' }}>{t.deposit_info}</p>
+        <p style={{ margin: '0 0 4px', fontSize: 13, color: '#555' }}>
+          <i className="bi bi-shield-lock-fill me-1" aria-hidden="true" />
+          {t.deposit_info}
+        </p>
         <a href={t.depositHref} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', fontSize: 11, color: 'var(--color-primary)', textDecoration: 'none', fontWeight: 600 }}>{t.depositLink}</a>
       </div>
 

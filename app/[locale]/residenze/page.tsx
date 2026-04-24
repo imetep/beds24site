@@ -56,7 +56,8 @@ export default async function ResidenzePage({ params }: Props) {
 
       <section className="mb-5">
         <h2 className="fs-5 fw-bold text-secondary pb-2 mb-3 border-bottom px-2" style={{ borderBottomWidth: 2 }}>
-          🌿 {t.natura}
+          <i className="bi bi-tree-fill me-2" aria-hidden="true" />
+          {t.natura}
         </h2>
         <div
           className="d-grid gap-3"
@@ -75,7 +76,8 @@ export default async function ResidenzePage({ params }: Props) {
 
       <section>
         <h2 className="fs-5 fw-bold text-secondary pb-2 mb-3 border-bottom px-2" style={{ borderBottomWidth: 2 }}>
-          🏖️ {t.mare}
+          <i className="bi bi-umbrella-fill me-2" aria-hidden="true" />
+          {t.mare}
         </h2>
         <div
           className="d-grid gap-3"

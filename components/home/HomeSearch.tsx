@@ -251,7 +251,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
               border: '1px solid var(--color-cta)', borderLeft: '4px solid var(--color-cta)',
               borderRadius: 10, padding: '10px 14px', marginBottom: 12,
             }}>
-              <span style={{ fontSize: 18, flexShrink: 0 }}>🌙</span>
+              <i className="bi bi-moon-stars-fill" style={{ fontSize: 18, flexShrink: 0, color: '#92610A' }} aria-hidden="true" />
               <div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#92610A', letterSpacing: '0.02em' }}>
                   {locale === 'it' ? 'Soggiorno minimo consigliato: 3 notti'
