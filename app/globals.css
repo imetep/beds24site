@@ -576,7 +576,7 @@ body {
 .booking-sidebar__total-value {
   font-size: var(--text-xl);
   font-weight: 800;
-  color: var(--color-primary);
+  color: var(--color-text-accent);
 }
 .booking-sidebar__cta {
   width: 100%;
@@ -1397,7 +1397,7 @@ body {
 .wizard-step3__total-value {
   font-size: var(--text-xl);
   font-weight: 800;
-  color: var(--color-primary);
+  color: var(--color-text-accent);
 }
 .wizard-step3__savings {
   font-size: var(--text-sm);
@@ -2268,7 +2268,7 @@ body {
 }
 .sticky-booking-bar__price {
   font-weight: 700;
-  color: var(--color-primary);
+  color: var(--color-text-accent);
   font-size: var(--text-md);
 }
 .sticky-booking-bar__price-suffix {
@@ -3996,7 +3996,7 @@ body {
 .wizard-step2-mobile__total-new {
   font-size: 20px;
   font-weight: 800;
-  color: var(--color-primary);
+  color: var(--color-text-accent);
 }
 .wizard-step2-mobile__tourist-tax-note {
   font-size: 11px;
