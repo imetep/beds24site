@@ -74,7 +74,7 @@ Applicato alla migrazione: **mai deployare qualcosa che introduce attriti o bug 
 | `components/residenze/CardPhotoGallery.tsx` | 18 | Anteprima foto hero | 🟡 media |
 | `components/residenze/BedConfigDisplay.tsx` | 20 | Configurazione letti | 🟡 media |
 | `components/residenze/BookingPanel.tsx` | 25 | Pannello tariffe + CTA "Prenota" | 🔴 alta (entry booking!) |
-| `components/residenze/PhotoLightbox.tsx` | 26 | Lightbox gallery | 🟡 media |
+| ~~`components/residenze/PhotoLightbox.tsx`~~ | ~~26~~ | Dead code orfano dal 2026-03-29, rimosso post-Session 12 (commit `93e11b0`). Il lightbox vero vive in `PhotoCarousel.tsx` ramo desktop fullscreen | ⚪ eliminato |
 | `components/residenze/PhotoCarousel.tsx` | 27 | Carousel foto desktop | 🟡 media |
 | `components/residenze/AvailabilityCalendar.tsx` | 33 | Calendario disponibilità | 🟡 media |
 | `components/residenze/FotoGalleryClient.tsx` | 34 | Pagina dedicata `/foto` | 🟡 media |
@@ -136,11 +136,11 @@ La spec di dettaglio da seguire è [wizard-sidebar-design.md §6 roadmap](wizard
 | 7 | File piccoli in un colpo | page + RoomCard + PropertyMap + ThingsToKnow + StickyBookingBar = 19 inline | Warm-up area | ✅ `8278a74` (css+doc), `f31ef59` (page), `3265199` (css mini), `469bc45` (RoomCard), `fb52c08` (PropertyMap), `1b0dd8f` (ThingsToKnow), `41b48ee` (StickyBookingBar) |
 | 8 | BedConfigDisplay + CardPhotoGallery | 38 inline totali | Pattern "card residenza" + dead code removal lightbox CardPhotoGallery | ✅ `2956e99` (css mini), `8db427a` (BedConfigDisplay), `9677c53` (CardPhotoGallery dead-code + RoomCard prop), `5bf6b05` (cleanup lightbox CSS) |
 | 9 | BookingPanel | 25 inline | CTA principale scheda (entry booking). Include fix pre-esistente: `#dbeafe` deprecato riga 196 → `var(--color-primary-soft)` | ⏳ |
-| 10 | PhotoCarousel + PhotoLightbox | 53 inline totali | Gallery + lightbox "vero" (duplicava con quello rimosso in Sess 8) | ✅ `49a0081` (css shared), `8ab3be4` (PhotoCarousel), `49d4448` (css touch-lock), `b98ddea` (PhotoLightbox) |
+| 10 | PhotoCarousel + PhotoLightbox | 53 inline totali | Gallery + lightbox "vero" (duplicava con quello rimosso in Sess 8). **NB**: post-Session 12 è emerso che `PhotoLightbox.tsx` era dead code orfano dal 2026-03-29; rimosso in cleanup (commit `93e11b0` tsx + `4e938bb` 9 classi CSS). Il lightbox vero vive in `PhotoCarousel.tsx` | ✅ `49a0081` (css shared), `8ab3be4` (PhotoCarousel), `49d4448` (css touch-lock), `b98ddea` (PhotoLightbox — poi eliminato) |
 | 11 | AvailabilityCalendar | 33 inline | Calendario complesso, sessione dedicata. Applicato T7 (#EEF5FC → token) | ✅ `9c93916` |
 | 12 | FotoGalleryClient | 34 inline | Pagina foto completa (portrait + landscape immersivo). Banner iOS CriOS/FxiOS preservato byte-identical, emoji 📷 mantenuta (eccezione deliberata compat. cross-browser). Applicato T2 | ✅ `8f6fbb0` (css), `4513f15` (FotoGalleryClient, 1 inline residuo: frozenW/H dinamici iOS) |
 
-**Sessione 12 completata** ✅ (2026-04-24, 2 commit) — prossima e **ultima Fase B**: Sessione 9 (BookingPanel 🔴 25 inline — entry booking, sessione isolata). Sessione mobile dedicata WizardStep2 SidebarContent a seguire.
+**Sessione 12 completata** ✅ (2026-04-24, 2 commit) + **cleanup PhotoLightbox dead code** ✅ (2026-04-24, commit `93e11b0` + `4e938bb` + aggiornamento doc) — prossima e **ultima Fase B**: Sessione 9 (BookingPanel 🔴 25 inline — entry booking, sessione isolata). Sessione mobile dedicata WizardStep2 SidebarContent a seguire.
 
 ---
 
@@ -262,7 +262,7 @@ Emerso durante audit `REDIS_RT_KEY`: file parallelo a `lib/beds24-token.ts` che 
 
 **Scope aggiuntivo emerso durante Session 10+11+12 (aria-label nuovi introdotti hardcoded in italiano)**:
 - `PhotoCarousel.tsx`: `aria-label="Chiudi"`, `"Precedente"`, `"Successivo"` (3 occorrenze)
-- `PhotoLightbox.tsx`: `aria-label="Chiudi"`, `"Precedente"`, `"Successivo"` (3 occorrenze) — ⚠️ se conserviamo il file; vedi §6.1-T11
+- ~~`PhotoLightbox.tsx`~~: file eliminato nel cleanup post-Session 12 (commit `93e11b0`), scope i18n non più applicabile
 - `AvailabilityCalendar.tsx`: `aria-label="Mese precedente"`, `"Mese successivo"` (×2 per mobile/desktop), `"Cancella date"`
 - `FotoGalleryClient.tsx`: `aria-label="Precedente"`, `"Successivo"` (frecce immersive), `"Chiudi"` (X banner iOS), `"Indietro"` (back button topbar)
 - `FotoGalleryClient.tsx`: testi IT già pre-esistenti (da tradurre ex-novo nei 4 locale):
@@ -270,7 +270,7 @@ Emerso durante audit `REDIS_RT_KEY`: file parallelo a `lib/beds24-token.ts` che 
   - `"Apri in Safari"` (CTA banner iOS)
   - `"Gira il telefono per la galleria immersiva"` (hint floating)
   - `"Nessuna foto disponibile."` (empty state)
-- `PhotoCarousel.tsx` + `PhotoLightbox.tsx`: testo `"N foto"` (pre-esistente, string concatenation) — dopo `<i class="bi bi-camera-fill">` serve label tradotta
+- `PhotoCarousel.tsx`: testo `"N foto"` (pre-esistente, string concatenation) — dopo `<i class="bi bi-camera-fill">` serve label tradotta
 
 **Residui i18n non-aria** da portare via getTranslations:
 - `components.availabilityCalendar.clear` esiste già in `locales/*/common.json` ma non è usato (il bottone ✕ non ha testo visibile)
@@ -341,7 +341,7 @@ distanceLabel: { it: '...', en: '...', de: '...', pl: '...' },
 | 6 | WizardStep3.tsx | 32 | 200 |
 | 7 | 5 file piccoli scheda | 19 | 181 |
 | 8 | BedConfig + CardPhotoGallery | 38 | 143 |
-| 10 | PhotoCarousel + PhotoLightbox | 53 | 90 ✅ |
+| 10 | PhotoCarousel + PhotoLightbox (quest'ultimo poi eliminato) | 53 | 90 ✅ |
 | 11 | AvailabilityCalendar | 33 | 57 ✅ |
 | 12 | FotoGalleryClient | 33 (34 → 1 dinamico) | 24 ✅ |
 | 9 | BookingPanel | 25 | 0 ✅ (teorico, c'è un off-by-2 nei conti originali) |
