@@ -2925,6 +2925,11 @@ body {
   z-index: 2;
 }
 
+/* Lock gesture browser (pinch/swipe back) dentro il lightbox con swipe orizzontale */
+.lightbox--touch-lock {
+  touch-action: none;
+}
+
 /* ==========================================================================
    Session 11 — AvailabilityCalendar (scheda residenza)
    Legenda + 2 card date (CI/CO) + hint + banner min-stay (riuso .banner
