@@ -2617,3 +2617,567 @@ body {
   font-size: var(--text-base);
   cursor: pointer;
 }
+
+/* ==========================================================================
+   Session 10 — PhotoCarousel + PhotoLightbox (scheda residenza)
+   Pattern condivisi: preview grid desktop, preview touch, lightbox fullscreen
+   (top bar + frecce + thumbs/dots), dot indicators, badge foto count, tap
+   zone laterali. Base lightbox riusa .layout-fullscreen-overlay (§ gallery).
+   ========================================================================== */
+
+/* ── Preview touch: singola foto con overlay (PhotoCarousel mobile, PhotoLightbox mobile) ── */
+.photo-preview--touch {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  max-height: 60vh;
+  overflow: hidden;
+  background: var(--color-bg-dark);
+  cursor: pointer;
+}
+.photo-preview--touch__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Preview desktop: griglia hero + thumb cells ── */
+.photo-preview-grid {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 6px;
+  border-radius: var(--radius-lg);
+  height: 420px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+}
+.photo-preview-grid--5 {
+  /* hero + 4 tiles (PhotoCarousel desktop) */
+  grid-template-columns: 2fr 1fr 1fr;
+}
+.photo-preview-grid--2 {
+  /* hero + 2 tiles su 2 righe (PhotoLightbox desktop) */
+  grid-template-columns: 2fr 1fr;
+}
+.photo-preview-grid__hero {
+  grid-row: 1 / 3;
+  overflow: hidden;
+  background: var(--color-border-dark);
+}
+.photo-preview-grid__cell {
+  overflow: hidden;
+  background: var(--color-border-dark);
+}
+.photo-preview-grid__cell-empty {
+  width: 100%;
+  height: 100%;
+  background: #2a2a2a;
+}
+.photo-preview-grid__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+.photo-preview-grid__hero:hover .photo-preview-grid__img {
+  transform: scale(1.03);
+}
+.photo-preview-grid__cell:hover .photo-preview-grid__img {
+  transform: scale(1.05);
+}
+
+/* ── Badge "N foto" overlay su preview ── */
+.photo-count-badge {
+  position: absolute;
+  bottom: var(--space-md);
+  right: var(--space-md);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-overlay-dark);
+  color: var(--color-on-dark);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  padding: 5px 13px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  z-index: 2;
+}
+.photo-count-badge--prominent {
+  bottom: var(--space-base);
+  right: var(--space-base);
+  padding: 8px var(--space-base);
+}
+
+/* ── Tap zone laterali invisibili (swipe alternate via frecce mini) ── */
+.photo-nav-tap-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 60px;
+  display: flex;
+  align-items: center;
+  z-index: 2;
+}
+.photo-nav-tap-zone--left {
+  left: 0;
+  padding-left: 10px;
+  justify-content: flex-start;
+}
+.photo-nav-tap-zone--right {
+  right: 0;
+  padding-right: 10px;
+  justify-content: flex-end;
+}
+.photo-nav-mini {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-on-dark);
+  background: var(--color-overlay-dark);
+  backdrop-filter: blur(4px);
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* ── Dot indicators (finestra scorrevole max 5) ── */
+.photo-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  padding: var(--space-sm) 0;
+}
+.photo-dots__dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: #d1d5db;
+  transition: all 0.2s;
+}
+.photo-dots__dot.is-active {
+  width: 20px;
+  background: var(--color-primary);
+}
+.photo-dots__dot.is-edge {
+  width: 5px;
+}
+.photo-dots--dark .photo-dots__dot {
+  background: rgba(255, 255, 255, 0.50);
+}
+.photo-dots--dark .photo-dots__dot.is-active {
+  background: var(--color-cta);
+}
+
+/* ── Lightbox fullscreen (base wrapper = .layout-fullscreen-overlay) ── */
+.lightbox-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.lightbox-photo--centered {
+  /* Variante PhotoLightbox: img centrata dentro wrapper flex */
+  position: static;
+  max-width: 100%;
+  max-height: 100%;
+}
+.lightbox-photo-centered-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md) var(--space-md);
+  padding-top: max(var(--space-base), env(safe-area-inset-top));
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.72) 0%, transparent 100%);
+  z-index: 2;
+}
+.lightbox-topbar__title {
+  color: var(--color-on-dark);
+  font-size: var(--text-md);
+  font-weight: 600;
+}
+.lightbox-topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-base);
+}
+.lightbox-topbar__counter {
+  color: rgba(255, 255, 255, 0.70);
+  font-size: var(--text-base);
+}
+
+.lightbox-close-btn {
+  width: var(--touch-target);
+  height: var(--touch-target);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: var(--color-on-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-lg);
+  cursor: pointer;
+  padding: 0;
+}
+
+.lightbox-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: var(--color-on-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  padding: 0;
+  z-index: 3;
+}
+.lightbox-arrow--sm {
+  width: var(--touch-target);
+  height: var(--touch-target);
+  font-size: 24px;
+  line-height: 1;
+}
+.lightbox-arrow--lg {
+  width: 52px;
+  height: 52px;
+  font-size: 22px;
+  line-height: 1;
+}
+.lightbox-arrow--left  { left: var(--space-sm); }
+.lightbox-arrow--right { right: var(--space-sm); }
+.lightbox-arrow--left-lg  { left: var(--space-base); }
+.lightbox-arrow--right-lg { right: var(--space-base); }
+
+.lightbox-thumbs {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-md);
+  overflow-x: auto;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, transparent 100%);
+  z-index: 2;
+}
+.lightbox-thumbs--center { justify-content: center; }
+.lightbox-thumbs--scroll { justify-content: flex-start; }
+.lightbox-thumb {
+  flex-shrink: 0;
+  width: 56px;
+  height: 40px;
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background: transparent;
+  opacity: 0.5;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.lightbox-thumb.is-active {
+  border-color: var(--color-cta);
+  opacity: 1;
+}
+.lightbox-thumb__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.lightbox-dots-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-bottom: max(var(--space-base), env(safe-area-inset-bottom));
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.60) 0%, transparent 100%);
+  z-index: 2;
+}
+
+/* ==========================================================================
+   Session 11 — AvailabilityCalendar (scheda residenza)
+   Legenda + 2 card date (CI/CO) + hint + banner min-stay (riuso .banner
+   .banner--accent) + calendario 1/2 mesi responsive con stati cella
+   (past/occupied/today/check-in/check-out/in-range/hover-range). Applica T7:
+   #EEF5FC letterale → var(--color-primary-soft) nella cella .is-in-range.
+   ========================================================================== */
+
+.avail-legend {
+  display: flex;
+  gap: var(--space-lg);
+}
+.avail-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
+}
+.avail-legend__item--muted {
+  color: var(--color-text-muted);
+}
+.avail-legend__free {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: transparent;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-text);
+}
+.avail-legend__busy {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: #ccc;
+  text-decoration: line-through;
+}
+
+/* ── Cards CHECK-IN / CHECK-OUT ── */
+.avail-date-cards-row {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+.avail-date-card {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-md);
+  border: 1.5px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-bg);
+  box-shadow: var(--shadow-sm);
+  text-align: left;
+  cursor: pointer;
+}
+.avail-date-card.is-active {
+  border-color: var(--color-primary);
+  background: var(--color-info-bg);
+}
+.avail-date-card__icon-calendar {
+  flex-shrink: 0;
+  color: var(--color-primary);
+}
+.avail-date-card__icon-chevron {
+  flex-shrink: 0;
+  color: #bbb;
+}
+.avail-date-card__body {
+  flex: 1;
+  min-width: 0;
+}
+.avail-date-card__label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-xs);
+}
+.avail-date-card__value {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.avail-date-card__value.is-placeholder {
+  color: #bbb;
+}
+.avail-date-clear-btn {
+  align-self: center;
+  background: none;
+  border: none;
+  padding: 0 var(--space-xs);
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.avail-hint {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-sm);
+}
+
+/* ── Calendar frame ── */
+.avail-cal {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-base) var(--space-md) 20px;
+}
+@media (min-width: 640px) {
+  .avail-cal {
+    padding: 20px 28px 24px;
+  }
+}
+
+.avail-cal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
+}
+.avail-cal__nav-btn {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  font-size: 28px;
+  line-height: 1;
+  font-weight: 300;
+  color: #333;
+  padding: 0 var(--space-sm);
+  cursor: pointer;
+}
+.avail-cal__nav-btn:disabled,
+.avail-cal__nav-btn.is-disabled {
+  color: #ddd;
+  cursor: default;
+}
+.avail-cal__titles-desktop {
+  flex: 1;
+  display: flex;
+  justify-content: space-around;
+}
+.avail-cal__month-title {
+  font-size: var(--text-md);
+  font-weight: 700;
+  color: var(--color-text);
+}
+.avail-cal__month-title--mobile {
+  flex: 1;
+  text-align: center;
+}
+
+.avail-cal__months {
+  display: flex;
+  gap: 0;
+}
+@media (min-width: 640px) {
+  .avail-cal__months {
+    gap: 40px;
+  }
+}
+.avail-cal__month {
+  flex: 1;
+  min-width: 0;
+}
+.avail-cal__divider {
+  flex-shrink: 0;
+  width: 1px;
+  background: #f0f0f0;
+}
+
+.avail-cal__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: var(--space-xs);
+}
+.avail-cal__weekday {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  padding-bottom: var(--space-xs);
+  color: #bbb;
+}
+
+.avail-cal__days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.avail-cal__day-empty {
+  height: 36px;
+}
+.avail-cal__day {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--color-text);
+  border-radius: 6px;
+  cursor: default;
+  user-select: none;
+  position: relative;
+  background: transparent;
+  transition: background 0.1s;
+}
+.avail-cal__day.is-past {
+  opacity: 0.4;
+  color: #ccc;
+}
+.avail-cal__day.is-occupied {
+  color: #ccc;
+  text-decoration: line-through;
+}
+.avail-cal__day.is-today {
+  font-weight: 700;
+}
+.avail-cal__day.is-clickable {
+  cursor: pointer;
+}
+.avail-cal__day.is-check-in,
+.avail-cal__day.is-check-out {
+  background: var(--color-primary);
+  color: var(--color-on-dark);
+  font-weight: 700;
+}
+.avail-cal__day.is-check-in  { border-radius: 6px 0 0 6px; }
+.avail-cal__day.is-check-out { border-radius: 0 6px 6px 0; }
+.avail-cal__day.is-in-range {
+  background: var(--color-primary-soft);
+  border-radius: 0;
+}
+.avail-cal__day.is-hover-range {
+  background: var(--color-info-bg);
+}
+.avail-cal__today-dot {
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+}
