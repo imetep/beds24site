@@ -48,10 +48,20 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
     ? new URLSearchParams(window.location.search).get('deposit') : null;
 
   const loadBooking = useCallback(async () => {
+    // Hint client-only: evita la fetch (e il 401 rumoroso in console) se
+    // l'utente non ha mai loggato in questo browser. Il cookie guest_session
+    // è httpOnly quindi non leggibile qui; usiamo localStorage come flag.
+    if (typeof window !== 'undefined' && !localStorage.getItem('guest_portal_session')) {
+      setPhase('login');
+      return;
+    }
     try {
       const res = await fetch('/api/portal/booking', { cache: 'no-store' });
-      if (res.status === 401) { setPhase('login'); return; }
-      if (!res.ok)            { setPhase('login'); return; }
+      if (res.status === 401 || !res.ok) {
+        localStorage.removeItem('guest_portal_session');
+        setPhase('login');
+        return;
+      }
       const data = await res.json();
       setBooking(data.booking); setCheckin(data.checkin); setDeposit(data.deposit);
       setPhase('dashboard');
@@ -62,6 +72,7 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
 
   const handleLogout = async () => {
     await fetch('/api/portal/auth', { method: 'DELETE' });
+    if (typeof window !== 'undefined') localStorage.removeItem('guest_portal_session');
     setPhase('login'); setBooking(null); setCheckin(null); setDeposit(null);
   };
 
