@@ -534,15 +534,17 @@ Estensioni dei pattern card residenza (letti) e gallery foto (cover + lightbox).
 | `.card-gallery__img` | Img cover object-fit cover con hover scale 1.04 (via selettore `:hover` del parent) |
 | `.card-gallery__no-photo` | Placeholder "Foto in arrivo" centrato |
 
-**Nota storica**: `CardPhotoGallery.tsx` aveva originariamente anche una modalità "lightbox fullscreen" attivata quando `linkHref` era omesso, con le relative classi `.lightbox__*`. Era dead code (nessuno la invocava mai) e duplicava il lightbox vero di `PhotoLightbox.tsx` (Sessione 10). Rimossa nel cleanup di Sessione 8 (commit `9677c53` per il TSX, commit cleanup CSS per le classi).
+**Nota storica**: `CardPhotoGallery.tsx` aveva originariamente anche una modalità "lightbox fullscreen" attivata quando `linkHref` era omesso, con le relative classi `.lightbox__*`. Era dead code (nessuno la invocava mai) e duplicava il lightbox vero di `PhotoCarousel.tsx` (Sessione 10, ramo desktop fullscreen). Rimossa nel cleanup di Sessione 8 (commit `9677c53` per il TSX, commit cleanup CSS per le classi).
 
 **Token aggiunti**: `--container-page: 1100px` (nuovo, usato da `.room-page` e `.sticky-booking-bar__inner`).
 
-### 3.14 PhotoCarousel + PhotoLightbox + AvailabilityCalendar (Sessione 10+11)
+### 3.14 PhotoCarousel + AvailabilityCalendar (Sessione 10+11)
 
 Pattern gallery foto (preview desktop + preview touch + lightbox fullscreen) e calendario disponibilità. Tutto il lightbox è costruito sopra `.layout-fullscreen-overlay` (Sessione 1).
 
-**Photo preview (PhotoCarousel + PhotoLightbox)**
+> **Nota**: la Sessione 10 è stata originariamente pianificata per `PhotoCarousel + PhotoLightbox`. `PhotoLightbox.tsx` è stato successivamente rimosso perché dead code orfano (commit `93e11b0`, cleanup post-Session 12). Le classi dedicate a `PhotoLightbox` (`.photo-preview-grid--2`, `.lightbox-photo--centered`, `.lightbox-photo-centered-wrap`, `.lightbox-arrow--sm`, `.lightbox-arrow--left/--right`, `.lightbox-dots-bar`, `.lightbox--touch-lock`, `.photo-dots--dark`) sono state rimosse nel commit `4e938bb`. Quanto segue documenta solo lo stato attuale.
+
+**Photo preview (PhotoCarousel)**
 
 | Classe | Ruolo |
 |---|---|
@@ -550,7 +552,6 @@ Pattern gallery foto (preview desktop + preview touch + lightbox fullscreen) e c
 | `.photo-preview--touch__img` | Img cover absolute inset 0 |
 | `.photo-preview-grid` | Griglia desktop base (radius-lg, height 420, cursor pointer) |
 | `.photo-preview-grid--5` | Modifier: `2fr 1fr 1fr` (PhotoCarousel, hero + 4 tile) |
-| `.photo-preview-grid--2` | Modifier: `2fr 1fr` (PhotoLightbox, hero + 4 tile su 2 colonne) |
 | `.photo-preview-grid__hero` | Cella hero (`grid-row: 1/3`) con hover scale 1.03 sull'img figlio |
 | `.photo-preview-grid__cell` | Cella tile secondaria con hover scale 1.05 sull'img figlio |
 | `.photo-preview-grid__cell-empty` | Placeholder grigio scuro quando `photos[i]` mancante |
@@ -566,7 +567,7 @@ Pattern gallery foto (preview desktop + preview touch + lightbox fullscreen) e c
 | `.photo-nav-tap-zone--left` / `--right` | Posizionamento e padding interno |
 | `.photo-nav-mini` | Pill round 36×36 traslucida scura con chevron |
 
-**Dot indicators (PhotoCarousel + PhotoLightbox)**
+**Dot indicators (PhotoCarousel)**
 
 | Classe | Ruolo |
 |---|---|
@@ -574,34 +575,27 @@ Pattern gallery foto (preview desktop + preview touch + lightbox fullscreen) e c
 | `.photo-dots__dot` | Dot base 8×8 grigio (`#d1d5db`) |
 | `.photo-dots__dot.is-active` | Attivo → width 20 + bg `--color-primary` |
 | `.photo-dots__dot.is-edge` | Dot sentinella ai bordi (width 5) |
-| `.photo-dots--dark` | Modifier: dot bg `rgba(white, 0.5)`; `.is-active` → bg `--color-cta` |
 
-**Lightbox fullscreen (condiviso)**
+**Lightbox fullscreen (PhotoCarousel desktop)**
 
 | Classe | Ruolo |
 |---|---|
 | *(riuso)* `.layout-fullscreen-overlay` | Base (fixed inset 0, z-modal, bg `--color-overlay-gallery`) |
-| `.lightbox--touch-lock` | Modifier: `touch-action: none` (PhotoLightbox mobile swipe) |
 | `.lightbox-photo` | Img fullscreen absolute inset 0 object-contain |
-| `.lightbox-photo--centered` | Variante per wrapper flex center (PhotoLightbox) |
-| `.lightbox-photo-centered-wrap` | Wrapper absolute inset 0 flex center per img `--centered` |
 | `.lightbox-topbar` | Barra superiore absolute con gradient `rgba(0,0,0,0.72) → transparent` |
 | `.lightbox-topbar__title` | Nome residenza (white, fw 600, text-md) |
 | `.lightbox-topbar__actions` | Flex gap tra counter e close |
 | `.lightbox-topbar__counter` | "N / total" (white 70%, text-base) |
 | `.lightbox-close-btn` | Bottone round touch-target, bg translucent + border |
 | `.lightbox-arrow` | Bottone frecce circolare absolute middle (bg translucent + blur) |
-| `.lightbox-arrow--sm` | 44×44, font 24 (PhotoLightbox) |
-| `.lightbox-arrow--lg` | 52×52, font 22 (PhotoCarousel) |
-| `.lightbox-arrow--left` / `--right` | Posizione laterale (offset `--space-sm`) |
-| `.lightbox-arrow--left-lg` / `--right-lg` | Variante offset `--space-base` per `--lg` |
+| `.lightbox-arrow--lg` | 52×52, font 22 |
+| `.lightbox-arrow--left-lg` / `--right-lg` | Posizione laterale offset `--space-base` |
 | `.lightbox-thumbs` | Strip thumbnail bottom con gradient dark-to-transparent |
 | `.lightbox-thumbs--center` | Modifier: `justify-content: center` (≤ 10 foto) |
 | `.lightbox-thumbs--scroll` | Modifier: `justify-content: flex-start` (> 10 foto, scroll x) |
 | `.lightbox-thumb` | Thumb bottone 56×40 radius 5 opacity 0.5 |
 | `.lightbox-thumb.is-active` | Bordo `--color-cta` + opacity 1 |
 | `.lightbox-thumb__img` | Img cover dentro thumb |
-| `.lightbox-dots-bar` | Container bottom per dots touch con gradient |
 
 **AvailabilityCalendar**
 
@@ -836,6 +830,27 @@ Prima del commit:
 
 ## 9. Changelog
 
+### 2026-04-24 — Cleanup post-Session 12 — delete PhotoLightbox (v1.7)
+- Rimosso `components/residenze/PhotoLightbox.tsx` (235 righe, commit `93e11b0`):
+  era dead code orfano dal 2026-03-29 (in `commit 559e7fb` page.tsx ha sostituito
+  `import PhotoLightbox` con `import PhotoCarousel` ma il file era rimasto nel repo).
+  Nessun consumer (grep `.tsx/.ts/.js/.jsx/.mdx/.json`).
+- Rimosse 9 classi CSS orfane da `app/globals.css` (commit `4e938bb`, 46 righe):
+  `.photo-preview-grid--2`, `.lightbox-photo--centered`, `.lightbox-photo-centered-wrap`,
+  `.lightbox-arrow--sm`, `.lightbox-arrow--left`, `.lightbox-arrow--right`,
+  `.lightbox-dots-bar`, `.lightbox--touch-lock`, `.photo-dots--dark`.
+- Classi CONSERVATE (condivise/riusate da PhotoCarousel): `.photo-preview-grid--5`,
+  `.lightbox-photo` (base), `.lightbox-topbar` + `__title`/`__actions`/`__counter`,
+  `.lightbox-close-btn`, `.lightbox-arrow` + `--lg` + `--left-lg`/`--right-lg`,
+  `.lightbox-thumbs` + `--center`/`--scroll`, `.lightbox-thumb` + `.is-active`
+  + `__img`, `.photo-dots` + `__dot` + `.is-active`/`.is-edge`.
+- §3.14 aggiornato: rinominato in "PhotoCarousel + AvailabilityCalendar", nota
+  storica sul delete + rimossi i riferimenti alle 9 classi cancellate.
+- `components/residenze/CardPhotoGallery.tsx:18` e changelog v1.4: commento
+  "lightbox vero vive in PhotoLightbox.tsx" → "PhotoCarousel.tsx (ramo desktop
+  fullscreen)".
+- Zero impatto visivo (classi non avevano consumer vivi).
+
 ### 2026-04-24 — Sessione 12 — FotoGalleryClient (v1.6)
 - Aggiunto §3.15 con ~32 classi BEM per la pagina `/foto` (portrait + landscape
   immersivo).
@@ -910,7 +925,7 @@ Prima del commit:
   `.card-gallery--clickable` inizialmente aggiunte in commit `8278a74` ma
   rese non necessarie dal rimuovere la modalità lightbox di
   `CardPhotoGallery.tsx` (era dead code). Il lightbox vero vive in
-  `PhotoLightbox.tsx` (Sessione 10).
+  `PhotoCarousel.tsx` (Sessione 10, ramo desktop fullscreen).
 - Riusi: `.card-room-bed` (§3.2), `.badge-warning-chip` (§3.4), `.badge-overlay`
   (§3.4), `.services-grid` (§3.8 pre-esistente).
 - Token nuovo: `--container-page: 1100px` per max-width scheda residenza.
