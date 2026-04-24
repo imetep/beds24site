@@ -401,7 +401,9 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                   key={item.id}
                   className={`wizard-step2-mobile__extra-item${qty > 0 ? ' is-selected' : ''}`}
                 >
-                  <span className="wizard-step2-mobile__extra-icon" aria-hidden="true">🛏️</span>
+                  <span className="wizard-step2-mobile__extra-icon" aria-hidden="true">
+                    <i className="bi bi-bag-plus-fill" />
+                  </span>
                   <div className="wizard-step2-mobile__extra-info">
                     <p className="wizard-step2-mobile__extra-name">
                       {item.name[loc] ?? item.name.it}
@@ -672,7 +674,9 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                     const MAX_QTY = 4;
                     return (
                       <div key={item.id} className={`extras-catalog__item${qty > 0 ? ' is-selected' : ''}`}>
-                        <span className="extras-catalog__item-icon">🛏️</span>
+                        <span className="extras-catalog__item-icon" aria-hidden="true">
+                          <i className="bi bi-bag-plus-fill" />
+                        </span>
                         <div className="extras-catalog__item-info">
                           <p className="extras-catalog__item-name">
                             {item.name[loc] ?? item.name.it}

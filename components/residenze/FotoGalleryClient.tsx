@@ -273,13 +273,13 @@ export default function FotoGalleryClient({
     <div className="fotogallery-page">
 
       {/* ── Banner browser non supportato ── */}
-      {/* ⚠️ Visibile solo su Chrome iOS (CriOS) e Firefox iOS (FxiOS).
-           Emoji 📷 mantenuta (NON sostituita con Bootstrap Icon) per ridurre
-           rischi cross-browser su ambienti già problematici. */}
+      {/* Visibile solo su Chrome iOS (CriOS) e Firefox iOS (FxiOS). */}
       {isUnsupportedBrowser && !bannerDismissed && (
         <div className="fotogallery-ios-banner">
           <div className="fotogallery-ios-banner__content">
-            <span className="fotogallery-ios-banner__emoji">📷</span>
+            <span className="fotogallery-ios-banner__emoji" aria-hidden="true">
+              <i className="bi bi-camera-fill" />
+            </span>
             <span className="fotogallery-ios-banner__text">
               {ui.iosBannerText}
             </span>
