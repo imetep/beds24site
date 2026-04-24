@@ -3186,3 +3186,393 @@ body {
   border-radius: var(--radius-pill);
   background: var(--color-primary);
 }
+
+/* ==========================================================================
+   Session 12 — FotoGalleryClient (pagina /residenze/[slug]/foto)
+   Due modalità:
+   - Portrait: page wrapper + banner iOS opzionale + topbar sticky (back +
+     nome + scroll orizzontale card residenze) + lista foto verticali 4:3 +
+     floating hint "gira il telefono" + back link in fondo
+   - Landscape: overlay fullscreen immersivo YouTube-style (Fullscreen API
+     iOS safari) con controls auto-hide dopo 3s
+   ========================================================================== */
+
+/* ── Banner compatibilità iOS (Chrome iOS / Firefox iOS) ──────────────────
+   ⚠️ Banner visibile solo su browser iOS che non supportano la Fullscreen API
+   (CriOS / FxiOS). L'emoji 📷 è mantenuta come inline content dentro
+   .fotogallery-ios-banner__emoji (NON sostituita con Bootstrap Icon) per
+   ridurre al minimo i rischi di rendering cross-browser su ambienti già
+   problematici. Tutti i valori (sticky/z-index/colori/padding) preservano
+   il comportamento pre-migration. */
+.fotogallery-ios-banner {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-primary);
+}
+.fotogallery-ios-banner__content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex: 1;
+  min-width: 0;
+}
+.fotogallery-ios-banner__emoji {
+  flex-shrink: 0;
+  font-size: var(--text-lg);
+}
+.fotogallery-ios-banner__text {
+  color: var(--color-on-dark);
+  font-weight: 500;
+  font-size: var(--text-sm);
+  line-height: 1.3;
+}
+.fotogallery-ios-banner__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+.fotogallery-ios-banner__safari-btn {
+  background: var(--color-bg);
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: var(--text-xs);
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.fotogallery-ios-banner__close {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.20);
+  border: none;
+  color: var(--color-on-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-base);
+  cursor: pointer;
+  padding: 0;
+}
+
+/* ── Page shell portrait ─────────────────────────────────────────────────── */
+.fotogallery-page {
+  background: var(--color-bg);
+  min-height: 100vh;
+}
+
+/* ── Topbar sticky (back + nome + scroll residenze) ──────────────────────── */
+.fotogallery-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+.fotogallery-topbar__title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-md) var(--space-sm);
+}
+.fotogallery-topbar__back-btn {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  background: #f5f5f5; /* grigio neutro non-token, stesso di .card-gallery bg */
+  color: var(--color-text);
+  font-size: var(--text-lg);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fotogallery-topbar__title {
+  font-weight: 700;
+  color: var(--color-text);
+  font-size: 16px; /* valore specifico, non in scale token */
+  line-height: 1.2;
+}
+.fotogallery-topbar__subtitle {
+  font-size: var(--text-xs);
+  color: #888; /* non-token: muted scuro per contrasto su topbar */
+  margin-top: 2px;
+}
+
+/* ── Scroll orizzontale thumbnail residenze ──────────────────────────────── */
+.fotogallery-topbar__rooms-scroll {
+  display: flex;
+  gap: var(--space-sm);
+  padding: 0 var(--space-md) var(--space-md);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.fotogallery-topbar__rooms-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.fotogallery-room-thumb {
+  flex-shrink: 0;
+  display: block;
+  text-decoration: none;
+  scroll-snap-align: start;
+}
+.fotogallery-room-thumb__frame {
+  position: relative;
+  width: 110px;
+  height: 74px;
+  border-radius: var(--radius-md);
+  border: 2px solid transparent;
+  background: var(--color-border);
+  overflow: hidden;
+  transition: border 0.15s;
+}
+.fotogallery-room-thumb.is-active .fotogallery-room-thumb__frame {
+  border: 2.5px solid var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+.fotogallery-room-thumb__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.fotogallery-room-thumb__empty {
+  width: 100%;
+  height: 100%;
+  background: #d1d5db; /* non-token: placeholder più scuro di bg muted */
+}
+.fotogallery-room-thumb__gradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 55%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.72) 0%, transparent 100%);
+}
+.fotogallery-room-thumb__label {
+  position: absolute;
+  bottom: 6px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: var(--color-on-dark);
+  font-weight: 700;
+  font-size: 11px; /* sotto --text-xs */
+  line-height: 1.2;
+  padding: 0 4px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Lista foto verticali + hint ─────────────────────────────────────────── */
+.fotogallery-photos-list {
+  padding-top: 4px;
+  padding-bottom: var(--space-xl);
+  position: relative;
+}
+.fotogallery-photo-item {
+  width: 100%;
+  margin-bottom: 4px;
+  overflow: hidden;
+  background: #f0f0f0; /* allineato a .card-gallery background */
+  aspect-ratio: 4 / 3;
+}
+.fotogallery-photo-item--first {
+  position: relative;
+}
+.fotogallery-photo-item__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.fotogallery-empty {
+  text-align: center;
+  padding: var(--space-xl) var(--space-md);
+  color: var(--color-text-muted);
+  font-size: var(--text-md);
+}
+
+/* Floating hint "gira il telefono" sulla prima foto — solo mobile portrait */
+.fotogallery-rotate-hint {
+  position: absolute;
+  bottom: var(--space-base);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  white-space: nowrap;
+  padding: var(--space-sm) 18px;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  pointer-events: none;
+}
+.fotogallery-rotate-hint__text {
+  color: var(--color-on-dark);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  letter-spacing: 0.01em;
+}
+.fotogallery-rotate-hint__icon {
+  color: rgba(255, 255, 255, 0.90);
+}
+
+/* ── Back link in fondo (outline primary pill) ───────────────────────────── */
+.fotogallery-back-link-wrap {
+  text-align: center;
+  padding: var(--space-base) var(--space-md) 0;
+}
+.fotogallery-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) 28px;
+  border: 1.5px solid var(--color-primary);
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: var(--text-base);
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+}
+
+/* ==========================================================================
+   Landscape — modalità immersiva YouTube-style
+   ========================================================================== */
+
+/* Container fullscreen. ⚠️ width/height restano inline (valori DINAMICI
+   frozenW/frozenH calcolati a runtime per evitare toolbar iOS). */
+.fotogallery-immersive {
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  background: #000; /* nero puro, non --color-overlay-gallery (#1a1a1a) */
+  z-index: 9999;
+  cursor: default;
+}
+.fotogallery-immersive.is-controls-hidden {
+  cursor: none;
+}
+.fotogallery-immersive__img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+/* Overlay controls (gradient + nome + counter + frecce + progress).
+   Auto-hide dopo 3s, toggle via .is-hidden. */
+.fotogallery-immersive__controls {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  pointer-events: auto;
+}
+.fotogallery-immersive__controls.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fotogallery-immersive__gradient-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 90px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75) 0%, transparent 100%);
+}
+.fotogallery-immersive__gradient-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 90px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, transparent 100%);
+}
+
+.fotogallery-immersive__title {
+  position: absolute;
+  top: max(var(--space-base), env(safe-area-inset-top));
+  left: max(var(--space-base), env(safe-area-inset-left));
+  color: var(--color-on-dark);
+  font-weight: 600;
+  font-size: var(--text-md);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+.fotogallery-immersive__counter {
+  position: absolute;
+  top: max(var(--space-base), env(safe-area-inset-top));
+  right: max(var(--space-base), env(safe-area-inset-right));
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+  font-size: var(--text-base);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.fotogallery-immersive__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(6px);
+  color: var(--color-on-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+.fotogallery-immersive__arrow--left  { left: max(var(--space-md), env(safe-area-inset-left)); }
+.fotogallery-immersive__arrow--right { right: max(var(--space-md), env(safe-area-inset-right)); }
+
+.fotogallery-immersive__progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: max(var(--space-base), env(safe-area-inset-bottom));
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+.fotogallery-immersive__progress-dot {
+  width: 6px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.35);
+  transition: all 0.2s;
+}
+.fotogallery-immersive__progress-dot.is-active {
+  width: 20px;
+  background: var(--color-cta);
+}
