@@ -308,8 +308,8 @@ Oltre ai pattern strutturali, emergono **~20 colori hex hardcoded** (§9) e **5 
 
 ### 8.7 `layout-fullscreen-overlay` — fullscreen gallery/lightbox
 - **Look**: position fixed inset 0, background scuro (`#1a1a1a` / `#2a2a2a`), z-index altissimo, scrollLock via `position: fixed` sul body
-- **File**: `PhotoLightbox`, `PhotoCarousel`
-- **Frequenza**: 2 (pattern specialistico)
+- **File**: `PhotoCarousel` (ramo desktop fullscreen). *`PhotoLightbox` era il secondo consumer pianificato ma è stato eliminato nel cleanup post-Session 12 come dead code orfano, commit `93e11b0`.*
+- **Frequenza**: 1 (pattern specialistico)
 
 ---
 
@@ -468,8 +468,8 @@ Nessuna nuova classe. Durante la migrazione sostituire:
 ### ⚠️ Sessione 11 (AvailabilityCalendar) — calcoli JS + CSS grid intrecciati
 Il layout del calendario si basa su `buildCells`, `toYMD`, `diffNights`. Modificare CSS di celle o grid può rompere la logica di highlight range. **Testare disponibilità real + selezione range dopo ogni commit.**
 
-### ⚠️ Sessione 10 (PhotoLightbox/PhotoCarousel) — scrollLock non standard
-Usano `document.body.style.position = 'fixed'` + top negativo per bloccare scroll su iOS Safari (overflow:hidden non funziona). **Non toccare gli style applicati al body durante il fullscreen.**
+### ⚠️ Sessione 10 (PhotoCarousel) — scrollLock non standard
+Usa `document.body.style.position = 'fixed'` + top negativo per bloccare scroll su iOS Safari (overflow:hidden non funziona). **Non toccare gli style applicati al body durante il fullscreen.** *(`PhotoLightbox` era il secondo consumer ma è stato eliminato post-Session 12, commit `93e11b0`.)*
 
 ### ⚠️ Sessione 5 (WizardStep2) — PayPal SDK caricato dinamicamente
 Container `#paypal-button-container` deve restare render-stabile. Se CSS cambia mentre lo script si carica, i bottoni PayPal possono non renderizzarsi. **Mantenere contenitore intatto durante loading.**
@@ -521,7 +521,7 @@ Card-bed ha `overflow: hidden` ma il badge è `position: absolute top: -1`. Su m
 - [x] `components/residenze/CardPhotoGallery.tsx`
 - [x] `components/residenze/BedConfigDisplay.tsx`
 - [x] `components/residenze/BookingPanel.tsx`
-- [x] `components/residenze/PhotoLightbox.tsx`
+- [x] ~~`components/residenze/PhotoLightbox.tsx`~~ *(file eliminato post-Session 12 come dead code, commit `93e11b0`)*
 - [x] `components/residenze/PhotoCarousel.tsx`
 - [x] `components/residenze/AvailabilityCalendar.tsx`
 - [x] `components/residenze/FotoGalleryClient.tsx`
