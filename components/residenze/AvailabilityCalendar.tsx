@@ -148,25 +148,18 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
 
   // ─── Render singolo mese ───────────────────────────────────────────────────
 
-  function renderMonth(year: number, month: number, showTitle: boolean) {
+  function renderMonth(year: number, month: number) {
     const cells = buildCells(year, month);
     return (
-      <div className="flex-fill min-w-0">
-        {showTitle && (
-          <div className="text-center fw-bold text-dark mb-3" style={{ fontSize: 15 }}>
-            {months[month]} {year}
-          </div>
-        )}
-        <div className="d-grid mb-1" style={{ gridTemplateColumns: 'repeat(7, 1fr)' }}>
+      <div className="avail-cal__month">
+        <div className="avail-cal__weekdays">
           {days.map(d => (
-            <div key={d} className="text-center fw-semibold pb-1" style={{ fontSize: 11, color: '#bbb' }}>
-              {d}
-            </div>
+            <div key={d} className="avail-cal__weekday">{d}</div>
           ))}
         </div>
-        <div className="d-grid" style={{ gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
+        <div className="avail-cal__days">
           {cells.map((day, i) => {
-            if (!day) return <div key={i} style={{ height: 36 }} />;
+            if (!day) return <div key={i} className="avail-cal__day-empty" />;
 
             const ymd      = toYMD(year, month, day);
             const occupied = isOccupied(ymd);
@@ -178,21 +171,16 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
             const isHover  = interactive && !occupied && hoverDate === ymd;
             const canClick = interactive && !occupied && !isPast;
 
-            let bg = 'transparent';
-            let color = isPast ? '#ccc' : occupied ? '#ccc' : '#222';
-            let fontWeight: number = isToday ? 700 : 400;
-            let borderRadius = '6px';
-
-            if (isCI || isCO) {
-              bg = 'var(--color-primary)';
-              color = '#fff';
-              fontWeight = 700;
-              borderRadius = isCI ? '6px 0 0 6px' : '0 6px 6px 0';
-            } else if (inRange) {
-              bg = '#EEF5FC';
-              borderRadius = '0';
-            } else if (isHover && phase === 'co' && checkIn && ymd > checkIn) {
-              bg = '#f0f7ff';
+            const classes = ['avail-cal__day'];
+            if (isPast)                                             classes.push('is-past');
+            if (!isPast && occupied)                                classes.push('is-occupied');
+            if (isToday)                                            classes.push('is-today');
+            if (canClick)                                           classes.push('is-clickable');
+            if (isCI)                                               classes.push('is-check-in');
+            if (isCO)                                               classes.push('is-check-out');
+            if (inRange && !isCI && !isCO)                          classes.push('is-in-range');
+            if (isHover && phase === 'co' && checkIn && ymd > checkIn && !isCI && !isCO && !inRange) {
+              classes.push('is-hover-range');
             }
 
             return (
@@ -201,31 +189,11 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
                 onClick={() => handleDayClick(ymd)}
                 onMouseEnter={() => interactive && setHoverDate(ymd)}
                 onMouseLeave={() => interactive && setHoverDate(null)}
-                className="d-flex align-items-center justify-content-center user-select-none position-relative"
-                style={{
-                  height: 36,
-                  fontSize: 13,
-                  fontWeight,
-                  cursor: canClick ? 'pointer' : 'default',
-                  borderRadius,
-                  color,
-                  textDecoration: (!isPast && occupied) ? 'line-through' : 'none',
-                  background: bg,
-                  opacity: isPast ? 0.4 : 1,
-                  transition: 'background 0.1s',
-                }}
+                className={classes.join(' ')}
               >
                 {day}
                 {isToday && !isCI && !isCO && (
-                  <span
-                    className="position-absolute rounded-circle"
-                    style={{
-                      bottom: 3, left: '50%',
-                      transform: 'translateX(-50%)',
-                      width: 4, height: 4,
-                      background: 'var(--color-primary)',
-                    }}
-                  />
+                  <span className="avail-cal__today-dot" />
                 )}
               </div>
             );
@@ -243,23 +211,14 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
       {/* Titolo + legenda */}
       <div className="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
         <div>
-          <h2 className="fw-bold text-dark mb-2" style={{ fontSize: 22 }}>
-            {ui.title}
-          </h2>
-          <div className="d-flex" style={{ gap: 20 }}>
-            <div className="d-flex align-items-center" style={{ gap: 6, fontSize: 12, color: '#555' }}>
-              <span
-                className="d-inline-flex align-items-center justify-content-center fw-semibold border"
-                style={{
-                  width: 24, height: 24, borderRadius: 6,
-                  background: 'transparent',
-                  fontSize: 12, color: '#222',
-                }}
-              >15</span>
+          <h2 className="section-title-main">{ui.title}</h2>
+          <div className="avail-legend">
+            <div className="avail-legend__item">
+              <span className="avail-legend__free">15</span>
               {ui.legendFree}
             </div>
-            <div className="d-flex align-items-center" style={{ gap: 6, fontSize: 12, color: '#999' }}>
-              <span className="fw-semibold text-decoration-line-through" style={{ fontSize: 12, color: '#ccc' }}>15</span>
+            <div className="avail-legend__item avail-legend__item--muted">
+              <span className="avail-legend__busy">15</span>
               {ui.legendBusy}
             </div>
           </div>
@@ -268,7 +227,7 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
 
       {/* Pill CHECK-IN / CHECK-OUT — cliccabili, stile card HomeSearch */}
       {interactive && (
-        <div className="d-flex gap-2 mb-3">
+        <div className="avail-date-cards-row">
 
           {/* Card CHECK-IN */}
           <button
@@ -276,32 +235,19 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
               // Click check-in: azzera ENTRAMBE le date → riparte da zero
               clearDates();
             }}
-            className="flex-fill d-flex align-items-center gap-2 px-3 py-3 text-start shadow-sm"
-            style={{
-              border: `1.5px solid ${(checkIn) ? 'var(--color-primary)' : '#e5e7eb'}`,
-              borderRadius: 14,
-              background: (checkIn) ? '#f0f7ff' : '#fff',
-              cursor: 'pointer',
-            }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#006CB7" strokeWidth="1.8" className="flex-shrink-0">
+            className={`avail-date-card ${checkIn ? 'is-active' : ''}`}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="avail-date-card__icon-calendar">
               <rect x="3" y="4" width="18" height="18" rx="3"/>
               <path d="M16 2v4M8 2v4M3 10h18"/>
             </svg>
-            <div className="min-w-0 flex-fill">
-              <div
-                className="fw-bold text-uppercase mb-1 text-muted"
-                style={{ fontSize: 10, letterSpacing: '0.07em' }}
-              >
-                {ui.checkin}
-              </div>
-              <div
-                className="fw-semibold text-truncate"
-                style={{ fontSize: 14, color: checkIn ? '#111' : '#bbb' }}
-              >
+            <div className="avail-date-card__body">
+              <div className="avail-date-card__label">{ui.checkin}</div>
+              <div className={`avail-date-card__value ${!checkIn ? 'is-placeholder' : ''}`}>
                 {checkIn ? fmtDate(checkIn, locale) : '—'}
               </div>
             </div>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bbb" strokeWidth="2" className="flex-shrink-0">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="avail-date-card__icon-chevron">
               <path d="M9 18l6-6-6-6"/>
             </svg>
           </button>
@@ -313,43 +259,26 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
               setCheckOut('');
               setSelectingCheckout(true);
             }}
-            className="flex-fill d-flex align-items-center gap-2 px-3 py-3 text-start shadow-sm"
-            style={{
-              border: `1.5px solid ${(checkOut || phase === 'co') ? 'var(--color-primary)' : '#e5e7eb'}`,
-              borderRadius: 14,
-              background: (checkOut || phase === 'co') ? '#f0f7ff' : '#fff',
-              cursor: 'pointer',
-            }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#006CB7" strokeWidth="1.8" className="flex-shrink-0">
+            className={`avail-date-card ${(checkOut || phase === 'co') ? 'is-active' : ''}`}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="avail-date-card__icon-calendar">
               <rect x="3" y="4" width="18" height="18" rx="3"/>
               <path d="M16 2v4M8 2v4M3 10h18"/>
             </svg>
-            <div className="min-w-0 flex-fill">
-              <div
-                className="fw-bold text-uppercase mb-1 text-muted"
-                style={{ fontSize: 10, letterSpacing: '0.07em' }}
-              >
-                {ui.checkout}
-              </div>
-              <div
-                className="fw-semibold text-truncate"
-                style={{ fontSize: 14, color: checkOut ? '#111' : '#bbb' }}
-              >
+            <div className="avail-date-card__body">
+              <div className="avail-date-card__label">{ui.checkout}</div>
+              <div className={`avail-date-card__value ${!checkOut ? 'is-placeholder' : ''}`}>
                 {checkOut ? fmtDate(checkOut, locale) : '—'}
               </div>
             </div>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bbb" strokeWidth="2" className="flex-shrink-0">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="avail-date-card__icon-chevron">
               <path d="M9 18l6-6-6-6"/>
             </svg>
           </button>
 
           {/* Bottone cancella date */}
           {(checkIn || checkOut) && (
-            <button
-              onClick={clearDates}
-              className="btn align-self-center text-muted"
-              style={{ fontSize: 16, padding: '0 4px' }}
-            >
+            <button onClick={clearDates} className="avail-date-clear-btn" aria-label="Cancella date">
               ✕
             </button>
           )}
@@ -358,33 +287,26 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
 
       {/* Hint */}
       {interactive && (
-        <p className="text-muted mb-2" style={{ fontSize: 13 }}>
+        <p className="avail-hint">
           {phase === 'ci' ? ui.selectCheckin : ui.selectCheckout}
         </p>
       )}
 
       {/* Box soggiorno minimo */}
       {interactive && (
-        <div
-          className="d-flex align-items-start gap-2 px-3 py-2 mb-3 border"
-          style={{
-            background: 'linear-gradient(135deg, #FFF8EC 0%, #FFF3DC 100%)',
-            borderColor: '#F5C842',
-            borderRadius: 10,
-          }}
-        >
-          <span className="flex-shrink-0" style={{ fontSize: 18 }}>🌙</span>
+        <div className="banner banner--accent banner--with-icon mb-3">
+          <i className="bi bi-moon-stars-fill" aria-hidden="true" />
           <div>
-            <div className="fw-bold" style={{ fontSize: 12, color: '#92610A' }}>{ui.minStay}</div>
-            <div style={{ fontSize: 11, color: '#B07820', marginTop: 2 }}>{ui.minSub}</div>
+            <p className="banner__title">{ui.minStay}</p>
+            <p className="banner__text">{ui.minSub}</p>
           </div>
         </div>
       )}
 
       {/* Spinner */}
       {loading && (
-        <div className="d-flex align-items-center gap-2 py-3 text-muted" style={{ fontSize: 14 }}>
-          <div className="rounded-circle flex-shrink-0" style={{ width: 20, height: 20, border: '2px solid #eee', borderTop: '2px solid #006CB7', animation: 'spin 0.8s linear infinite' }} />
+        <div className="wizard-loading">
+          <div className="wizard-loading-spinner" />
           {ui.loading}
         </div>
       )}
@@ -392,11 +314,7 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
       {/* Calendario */}
       {!loading && (
         <div
-          className="bg-white border"
-          style={{
-            borderRadius: 16,
-            padding: isDesktop ? '20px 28px 24px' : '16px 12px 20px',
-          }}
+          className="avail-cal"
           onTouchStart={e => setTouchStartX(e.touches[0].clientX)}
           onTouchEnd={e => {
             if (touchStartX === null) return;
@@ -409,59 +327,55 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
           }}
         >
           {/* ✅ FIX: navigazione corretta — mobile: 1 titolo centrato; desktop: frecce agli estremi + 2 titoli centrati */}
-          <div className="d-flex align-items-center justify-content-between mb-3">
+          <div className="avail-cal__header">
             {isDesktop ? (
               <>
-                {/* Freccia sinistra */}
-                <button onClick={goToPrev} disabled={isPrevDisabled} className="btn flex-shrink-0" style={navBtnStyle(isPrevDisabled)}>‹</button>
+                <button
+                  onClick={goToPrev}
+                  disabled={isPrevDisabled}
+                  className={`avail-cal__nav-btn ${isPrevDisabled ? 'is-disabled' : ''}`}
+                  aria-label="Mese precedente"
+                >‹</button>
 
-                {/* 2 titoli mese — ognuno sopra al proprio mese */}
-                <div className="flex-fill d-flex justify-content-around">
-                  <span className="fw-bold text-dark" style={{ fontSize: 15 }}>
+                <div className="avail-cal__titles-desktop">
+                  <span className="avail-cal__month-title">
                     {months[viewMonth]} {viewYear}
                   </span>
-                  <span className="fw-bold text-dark" style={{ fontSize: 15 }}>
+                  <span className="avail-cal__month-title">
                     {months[secondMonth.month]} {secondMonth.year}
                   </span>
                 </div>
 
-                {/* Freccia destra */}
-                <button onClick={goToNext} className="btn flex-shrink-0" style={navBtnStyle(false)}>›</button>
+                <button onClick={goToNext} className="avail-cal__nav-btn" aria-label="Mese successivo">›</button>
               </>
             ) : (
               <>
-                {/* Mobile: frecce ai lati + 1 titolo centrato */}
-                <button onClick={goToPrev} disabled={isPrevDisabled} className="btn flex-shrink-0" style={navBtnStyle(isPrevDisabled)}>‹</button>
-                <span className="fw-bold text-dark flex-fill text-center" style={{ fontSize: 15 }}>
+                <button
+                  onClick={goToPrev}
+                  disabled={isPrevDisabled}
+                  className={`avail-cal__nav-btn ${isPrevDisabled ? 'is-disabled' : ''}`}
+                  aria-label="Mese precedente"
+                >‹</button>
+                <span className="avail-cal__month-title avail-cal__month-title--mobile">
                   {months[viewMonth]} {viewYear}
                 </span>
-                <button onClick={goToNext} className="btn flex-shrink-0" style={navBtnStyle(false)}>›</button>
+                <button onClick={goToNext} className="avail-cal__nav-btn" aria-label="Mese successivo">›</button>
               </>
             )}
           </div>
 
           {/* Mesi */}
-          <div className="d-flex" style={{ gap: isDesktop ? 40 : 0 }}>
-            {renderMonth(viewYear, viewMonth, false)}
+          <div className="avail-cal__months">
+            {renderMonth(viewYear, viewMonth)}
             {isDesktop && (
               <>
-                <div className="flex-shrink-0" style={{ width: 1, background: '#f0f0f0' }} />
-                {renderMonth(secondMonth.year, secondMonth.month, false)}
+                <div className="avail-cal__divider" />
+                {renderMonth(secondMonth.year, secondMonth.month)}
               </>
             )}
           </div>
         </div>
       )}
-
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </section>
   );
 }
-
-const navBtnStyle = (disabled: boolean): React.CSSProperties => ({
-  background: 'none', border: 'none',
-  fontSize: 28, lineHeight: 1,
-  cursor: disabled ? 'default' : 'pointer',
-  color: disabled ? '#ddd' : '#333',
-  padding: '0 8px', fontWeight: 300,
-});
