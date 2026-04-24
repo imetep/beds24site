@@ -103,23 +103,16 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
     if (end - start < maxDots) start = Math.max(0, end - maxDots);
 
     return (
-      <div className="d-flex justify-content-center align-items-center py-2" style={{ gap: 6 }}>
+      <div className={`photo-dots ${dark ? 'photo-dots--dark' : ''}`}>
         {Array.from({ length: end - start }, (_, i) => {
           const di       = start + i;
           const isActive = di === idx;
           const isEdge   = (i === 0 && start > 0) || (i === end - start - 1 && end < total);
           return (
-            <div key={di}
-              className="flex-shrink-0"
-              style={{
-                width:        isActive ? 20 : isEdge ? 5 : 8,
-                height:       8,
-                borderRadius: 4,
-                background:   dark
-                  ? (isActive ? '#FCAF1A' : 'rgba(255,255,255,0.50)')
-                  : (isActive ? 'var(--color-primary)' : '#d1d5db'),
-                transition: 'all 0.2s',
-              }} />
+            <div
+              key={di}
+              className={`photo-dots__dot ${isActive ? 'is-active' : ''} ${isEdge ? 'is-edge' : ''}`}
+            />
           );
         })}
       </div>
@@ -134,15 +127,7 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
       <div className="mb-4">
         {/* Foto carousel */}
         <div
-          className="position-relative w-100 overflow-hidden"
-          style={{
-            // aspect-ratio 4:3 in portrait (≈56%),
-            // max-height: 60vh in landscape così la foto non scappa fuori schermo
-            aspectRatio: '4/3',
-            maxHeight:  '60vh',
-            background: '#111',
-            cursor:     'pointer',
-          }}
+          className="photo-preview--touch"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
           onClick={() => router.push(`/${locale}/residenze/${slug}/foto`)}
@@ -151,8 +136,7 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
             <img
               src={photos[current]}
               alt={`${roomName} ${current + 1}`}
-              className="position-absolute top-0 start-0 w-100 h-100 d-block"
-              style={{ objectFit: 'cover' }}
+              className="photo-preview--touch__img"
             />
           )}
 
@@ -161,47 +145,23 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
             <>
               <div
                 onClick={e => { e.stopPropagation(); prev(); }}
-                className="position-absolute top-0 bottom-0 start-0 d-flex align-items-center justify-content-start"
-                style={{ width: 60, paddingLeft: 10, zIndex: 2 }}
+                className="photo-nav-tap-zone photo-nav-tap-zone--left"
               >
-                <div
-                  className="rounded-circle d-flex align-items-center justify-content-center text-white"
-                  style={{
-                    width: 36, height: 36,
-                    background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)',
-                    fontSize: 20,
-                  }}
-                >‹</div>
+                <div className="photo-nav-mini">‹</div>
               </div>
               <div
                 onClick={e => { e.stopPropagation(); next(); }}
-                className="position-absolute top-0 bottom-0 end-0 d-flex align-items-center justify-content-end"
-                style={{ width: 60, paddingRight: 10, zIndex: 2 }}
+                className="photo-nav-tap-zone photo-nav-tap-zone--right"
               >
-                <div
-                  className="rounded-circle d-flex align-items-center justify-content-center text-white"
-                  style={{
-                    width: 36, height: 36,
-                    background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)',
-                    fontSize: 20,
-                  }}
-                >›</div>
+                <div className="photo-nav-mini">›</div>
               </div>
             </>
           )}
 
           {/* Badge foto in basso a destra */}
-          <div
-            className="position-absolute text-white fw-semibold rounded-pill"
-            style={{
-              bottom: 12, right: 12, zIndex: 2,
-              background: 'rgba(0,0,0,0.60)', backdropFilter: 'blur(6px)',
-              fontSize: 13,
-              padding: '5px 13px',
-              border: '1px solid rgba(255,255,255,0.18)',
-            }}
-          >
-            📷 {photos.length} foto
+          <div className="photo-count-badge">
+            <i className="bi bi-camera-fill" aria-hidden="true" />
+            {photos.length} foto
           </div>
         </div>
 
@@ -219,88 +179,54 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
       {/* Griglia desktop */}
       <div
         onClick={() => openLightbox(0)}
-        className="d-grid overflow-hidden mb-5 position-relative"
-        style={{
-          gridTemplateColumns: '2fr 1fr 1fr',
-          gridTemplateRows: '1fr 1fr',
-          gap: 6, borderRadius: 20,
-          height: 420,
-          cursor: 'pointer',
-        }}
+        className="photo-preview-grid photo-preview-grid--5 mb-5"
       >
-        <div className="overflow-hidden h-100" style={{ gridRow: '1 / 3', background: '#1a1a1a' }}>
+        <div className="photo-preview-grid__hero">
           {photos[0] && (
-            <img src={photos[0]} alt={roomName}
-              className="w-100 h-100 d-block"
-              style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }}
-              onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.03)')}
-              onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
-            />
+            <img src={photos[0]} alt={roomName} className="photo-preview-grid__img" />
           )}
         </div>
         {[1, 2, 3, 4].map(i => (
-          <div key={i} className="overflow-hidden" style={{ background: '#1a1a1a' }}>
+          <div key={i} className="photo-preview-grid__cell">
             {photos[i] ? (
-              <img src={photos[i]} alt={`${roomName} ${i + 1}`}
-                className="w-100 h-100 d-block"
-                style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }}
-                onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.05)')}
-                onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
+              <img
+                src={photos[i]}
+                alt={`${roomName} ${i + 1}`}
+                className="photo-preview-grid__img"
               />
             ) : (
-              <div className="w-100 h-100" style={{ background: '#2a2a2a' }} />
+              <div className="photo-preview-grid__cell-empty" />
             )}
           </div>
         ))}
-        <div
-          className="position-absolute text-white fw-semibold rounded-pill"
-          style={{
-            bottom: 16, right: 16,
-            background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)',
-            fontSize: 13,
-            padding: '8px 16px',
-            border: '1px solid rgba(255,255,255,0.2)',
-          }}
-        >
-          📷 {photos.length} foto
+        <div className="photo-count-badge photo-count-badge--prominent">
+          <i className="bi bi-camera-fill" aria-hidden="true" />
+          {photos.length} foto
         </div>
       </div>
 
       {/* Lightbox desktop */}
       {open && (
-        <div
-          className="position-fixed top-0 start-0 w-100 h-100 overflow-hidden"
-          style={{ zIndex: 9999, background: '#000' }}
-        >
+        <div className="layout-fullscreen-overlay">
           {/* Foto a pieno schermo */}
           <img
             key={lightboxIdx}
             src={photos[lightboxIdx]}
             alt={`${roomName} ${lightboxIdx + 1}`}
-            className="position-absolute top-0 start-0 w-100 h-100 d-block"
-            style={{ objectFit: 'contain' }}
+            className="lightbox-photo"
           />
 
           {/* Top bar */}
-          <div
-            className="position-absolute top-0 start-0 end-0 d-flex justify-content-between align-items-center px-3 py-3"
-            style={{
-              zIndex: 2,
-              background: 'linear-gradient(to bottom, rgba(0,0,0,0.72), transparent)',
-            }}
-          >
-            <span className="text-white fw-semibold" style={{ fontSize: 15 }}>{roomName}</span>
-            <div className="d-flex align-items-center gap-4">
-              <span style={{ color: 'rgba(255,255,255,0.65)', fontSize: 14 }}>
+          <div className="lightbox-topbar">
+            <span className="lightbox-topbar__title">{roomName}</span>
+            <div className="lightbox-topbar__actions">
+              <span className="lightbox-topbar__counter">
                 {lightboxIdx + 1} / {photos.length}
               </span>
               <button
                 onClick={closeLightbox}
-                className="btn rounded-circle text-white d-flex align-items-center justify-content-center"
-                style={{
-                  background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)',
-                  width: 44, height: 44, fontSize: 18,
-                }}
+                className="lightbox-close-btn"
+                aria-label="Chiudi"
               >✕</button>
             </div>
           </div>
@@ -310,52 +236,28 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
             <>
               <button
                 onClick={lbPrev}
-                className="btn position-absolute rounded-circle text-white d-flex align-items-center justify-content-center"
-                style={{
-                  left: 16, top: '50%', transform: 'translateY(-50%)',
-                  background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)',
-                  width: 52, height: 52, fontSize: 22, zIndex: 3,
-                  backdropFilter: 'blur(6px)',
-                }}
+                className="lightbox-arrow lightbox-arrow--lg lightbox-arrow--left-lg"
+                aria-label="Precedente"
               >‹</button>
               <button
                 onClick={lbNext}
-                className="btn position-absolute rounded-circle text-white d-flex align-items-center justify-content-center"
-                style={{
-                  right: 16, top: '50%', transform: 'translateY(-50%)',
-                  background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)',
-                  width: 52, height: 52, fontSize: 22, zIndex: 3,
-                  backdropFilter: 'blur(6px)',
-                }}
+                className="lightbox-arrow lightbox-arrow--lg lightbox-arrow--right-lg"
+                aria-label="Successivo"
               >›</button>
             </>
           )}
 
           {/* Thumbnails desktop in basso */}
           <div
-            className="position-absolute bottom-0 start-0 end-0 d-flex gap-2 px-3 py-3"
-            style={{
-              zIndex: 2,
-              background: 'linear-gradient(to top, rgba(0,0,0,0.75), transparent)',
-              overflowX: 'auto',
-              justifyContent: photos.length <= 10 ? 'center' : 'flex-start',
-            }}
+            className={`lightbox-thumbs ${photos.length <= 10 ? 'lightbox-thumbs--center' : 'lightbox-thumbs--scroll'}`}
           >
             {photos.map((url, i) => (
               <button
                 key={i}
                 onClick={() => setLbIdx(i)}
-                className="flex-shrink-0 overflow-hidden p-0"
-                style={{
-                  width: 56, height: 40,
-                  borderRadius: 5,
-                  border: i === lightboxIdx ? '2px solid #FCAF1A' : '2px solid transparent',
-                  background: 'transparent',
-                  opacity: i === lightboxIdx ? 1 : 0.5,
-                  transition: 'opacity 0.2s',
-                }}
+                className={`lightbox-thumb ${i === lightboxIdx ? 'is-active' : ''}`}
               >
-                <img src={url} alt="" className="w-100 h-100 d-block" style={{ objectFit: 'cover' }} />
+                <img src={url} alt="" className="lightbox-thumb__img" />
               </button>
             ))}
           </div>
