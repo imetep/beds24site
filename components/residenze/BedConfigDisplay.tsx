@@ -37,7 +37,7 @@ function bedLabel(bed: Bed, locale: Locale): string {
   const labels: Record<string, Record<Locale, string>> = {
     'matrimoniale-standard':  { it: 'Matrimoniale', en: 'Double bed', de: 'Doppelbett', pl: 'Łóżko małżeńskie' },
     'singolo-standard':       { it: 'Singolo', en: 'Single bed', de: 'Einzelbett', pl: 'Łóżko pojedyncze' },
-    'sommier':                { it: 'Sommier', en: 'Divan bed', de: 'Sommier', pl: 'Sommier' },
+    'sommier':                { it: 'Sommier', en: 'Bed base', de: 'Sommier', pl: 'Sommier' },
     'trasformabile':          { it: 'Letto trasformabile', en: 'Configurable bed', de: 'Verwandelbares Bett', pl: 'Łóżko przekształcalne' },
     'impilabile':             { it: 'Letto impilabile', en: 'Stacking bed', de: 'Stapelbett', pl: 'Łóżko składane' },
     'estraibile':             { it: 'Letto estraibile', en: 'Pull-out bed', de: 'Ausziehbett', pl: 'Łóżko wysuwane' },
