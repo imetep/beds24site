@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
+import { getTranslations } from '@/lib/i18n';
+import type { Locale } from '@/config/i18n';
 
 interface RoomCard {
   slug:     string;
@@ -22,6 +24,8 @@ interface Props {
 export default function FotoGalleryClient({
   photos, roomName, slug, locale, rooms, allPhotosLabel, backLabel,
 }: Props) {
+
+  const ui = getTranslations(locale as Locale).components.fotoGallery;
 
   // ── Stato orientamento ─────────────────────────────────────────────────────
   // true = landscape → modalità immersiva YouTube-style
@@ -235,7 +239,7 @@ export default function FotoGalleryClient({
             <button
               onTouchEnd={e => { e.preventDefault(); e.stopPropagation(); prev(); showControls(); }}
               className="fotogallery-immersive__arrow fotogallery-immersive__arrow--left"
-              aria-label="Precedente"
+              aria-label={ui.prev}
             >‹</button>
           )}
 
@@ -244,7 +248,7 @@ export default function FotoGalleryClient({
             <button
               onTouchEnd={e => { e.preventDefault(); e.stopPropagation(); next(); showControls(); }}
               className="fotogallery-immersive__arrow fotogallery-immersive__arrow--right"
-              aria-label="Successivo"
+              aria-label={ui.next}
             >›</button>
           )}
 
@@ -277,7 +281,7 @@ export default function FotoGalleryClient({
           <div className="fotogallery-ios-banner__content">
             <span className="fotogallery-ios-banner__emoji">📷</span>
             <span className="fotogallery-ios-banner__text">
-              Per la galleria immersiva usa Safari
+              {ui.iosBannerText}
             </span>
           </div>
           <div className="fotogallery-ios-banner__actions">
@@ -285,12 +289,12 @@ export default function FotoGalleryClient({
               href={`safari-https://${typeof window !== 'undefined' ? window.location.host + window.location.pathname : ''}`}
               className="fotogallery-ios-banner__safari-btn"
             >
-              Apri in Safari
+              {ui.iosBannerOpenSafari}
             </a>
             <button
               onClick={() => setBannerDismissed(true)}
               className="fotogallery-ios-banner__close"
-              aria-label="Chiudi"
+              aria-label={ui.close}
             >✕</button>
           </div>
         </div>
@@ -304,7 +308,7 @@ export default function FotoGalleryClient({
           <Link
             href={`/${locale}/residenze/${slug}`}
             className="fotogallery-topbar__back-btn"
-            aria-label="Indietro"
+            aria-label={ui.back}
           >←</Link>
           <div>
             <div className="fotogallery-topbar__title">{roomName}</div>
@@ -345,7 +349,7 @@ export default function FotoGalleryClient({
       <div className="page-container fotogallery-photos-list">
 
         {photos.length === 0 ? (
-          <div className="fotogallery-empty">Nessuna foto disponibile.</div>
+          <div className="fotogallery-empty">{ui.emptyState}</div>
         ) : (
           <>
             {photos.map((url, i) => (
@@ -377,7 +381,7 @@ export default function FotoGalleryClient({
                       <path d="M8 22c2.5 1.5 7 1.5 9.5-1" strokeDasharray="2 1"/>
                     </svg>
                     <span className="fotogallery-rotate-hint__text">
-                      Gira il telefono per la galleria immersiva
+                      {ui.rotateHint}
                     </span>
                     {/* Icona landscape */}
                     <svg
