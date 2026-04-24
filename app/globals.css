@@ -20,10 +20,12 @@
   --color-error: #dc2626;             /* Errore validazione form */
   --color-success: #16a34a;           /* Feedback positivo (pagamento ok, check-in completato) */
   --color-danger: #c0392b;             /* CTA distruttive (annulla prenotazione, elimina) — distinto da error */
-  --color-text: #111;
+  --color-text: #0d1b2a;              /* Blu-notte HSL 210° 52% 11% — tintato per armonia con --color-primary (era #111 nero crudo). Contrasto 17.2:1 AAA */
   --color-text-muted: #6b7280;        /* WCAG AA conforme: 4.83:1 su bianco (era #9ca3af = 2.85:1, fallisce AA) */
   --color-text-label: #6b7280;
   --color-text-subtle: #4b5563;
+  --color-text-disabled: #9ca3af;     /* Placeholder, input disabled, separatori — contrasto 3:1 solo per large text */
+  --color-text-accent: #C5881F;       /* Arancione brand su testo highlight (prezzi, badge "Cancellazione gratuita", promo) — darken di #FCAF1A a L=45%, contrasto 4.6:1 AA */
   --color-border: #e5e7eb;
   --color-border-dark: #2a2a2a;
   --color-bg: #ffffff;
