@@ -394,6 +394,35 @@ Numeri da `grep 'style={{' components/` + `grep 'style={{' app/` post-sessione m
 
 **Rapporto inline eliminati / totale progetto**: 411 / (411 + 768) = **~35%** del debito inline storico smaltito nella Fase B + sessione mobile, con **100% delle pagine-utente del funnel booking coperte** (scheda residenza + wizard 1/2/3 incluso accordion mobile a zero inline, pagamento resta in stato corrente).
 
+### 8.2 Sweep emoji 2026-04-24
+
+Regola **"no emoji decorative, sempre Bootstrap Icons"** applicata a tutto il sito tranne area admin (esclusa da utente) e commenti di sviluppo.
+
+**File toccati (~30)**: WizardStep1, 4 pagine root (paga/successo/residenze/home), 8 marketing (HeaderClient, PropertyMap, Utenze, Contatti, Deposito, Animali, DoveSiamo, PrenotazioneSicura), 6 guest portal (GuestLogin, GuestPortal, DepositSection, CheckinSection, ChangeRequestWizard, BedSection), 3 self-checkin (WizardCheckin, StatusCheckin, SelfCheckinPage), residui (BookingPanel/AvailabilityCalendar/FotoGalleryClient/PhotoCarousel/WizardStep2), `locales/*/common.json × 4` (~15 chiavi pulite + icon consumer wiring).
+
+**Mapping principale** (~50 emoji sostituite):
+- 🏠 bi-house-fill · 🛏️/🛏 bi-door-closed-fill · 🚿 bi-droplet-fill · 👥 bi-people-fill · 📐 bi-aspect-ratio
+- 🏊/🌊 bi-water · 🏖️ bi-umbrella-fill · 🌿 bi-tree-fill · ☀️ bi-sun-fill · ❄️ bi-snow · 🌙 bi-moon-stars-fill
+- 📍 bi-geo-alt-fill · 🏛️ bi-building · 🏢 bi-building-fill · 🏨 bi-building
+- 🔐 bi-shield-lock-fill · 🔒 bi-lock-fill · 🛡️ bi-shield-fill · ⚠️ bi-exclamation-triangle-fill · ⚡ bi-lightning-fill
+- 💳 bi-credit-card-fill · 🅿️ bi-paypal · 💶/💰 bi-currency-euro / bi-cash-coin · 🏷️ bi-tag-fill
+- ✅/✓ bi-check-circle-fill / bi-check-lg · ❌ bi-x-circle-fill · ✕ bi-x-lg · ℹ️ bi-info-circle-fill · 💡 bi-lightbulb-fill
+- 💬 bi-chat-fill (+ bi-whatsapp per link WA) · ✉️/📧 bi-envelope-fill · 🔗 bi-link-45deg · 🔍 bi-search
+- 📋 bi-clipboard-fill · 📝 bi-sticky-fill · 📰 bi-newspaper · 📅/🗓️ bi-calendar-fill · ⏳/⏱️ bi-hourglass-split / bi-clock-fill
+- ⚖️ bi-bank2 · 🐾 bi-heart-fill (no paw, closest) · 🐕 bi-check-circle-fill · 🧸 bi-emoji-smile · ⭐ bi-star-fill
+- ✈️ bi-airplane-fill · 🚂/🚉 bi-train-front-fill · 🚗 bi-car-front-fill · 🍼 bi-egg-fill (no bottle) · 👤 bi-person-fill
+
+**Pattern consumer esteso**: dove array dict aveva `{ icon: 'emoji' }`, il valore è ora nome class Bootstrap (`{ icon: 'bi-xxx' }`) e il renderer usa `<i className={`bi ${item.icon}`}>` invece di `{item.icon}`.
+
+**Eccezioni legittime rimaste (non da toccare)**:
+- commenti di sviluppo in TSX/TS/CSS (`// ✅ FIX:`, `/* BANNER ⚡ */`, `console.log('✅')`)
+- log server-side in `app/api/**` (trace emoji non-UI)
+- email/Slack backend messages in `app/api/portal/*`
+- prose markdown-style (`✗`/`✓` come bullet markers in testo narrativo di PrenotazioneSicuraClient chapters)
+- area admin esclusa da utente (3 file: AdminBiancheria/AdminCheckin/AdminPulizie)
+
+**Commit sweep** (8 commit, 2026-04-24): `a9e1ba4` WizardStep1 · `172d03e` FAQ icons + ContattiClient · `da2628b` pool values + consumer · `97bbd52` 4 pagine pubbliche root · `6c05f3e` 8 marketing · `38be518` 6 guest portal · `c9deb46` 3 self-checkin · `4f1ebc0` sweep residui finale.
+
 **Prossimi passi — aggiornato 2026-04-24 post-task T8+T12+T9**:
 
 | # | Cosa | Prio | Effort | Stato |
@@ -403,7 +432,7 @@ Numeri da `grep 'style={{' components/` + `grep 'style={{' app/` post-sessione m
 | 3 | ~~Sessione mobile WizardStep2~~ | 🟡 | 2-3h | ✅ risolto 2026-04-24 (commit `ed5db23` css + `4ce08c0` refactor). 48 inline → 0, SidebarContent + SideRow + 2 CSSProp legacy a BEM `.wizard-step2-mobile__*`. 4 emoji decorative → Bootstrap Icons (🛏️ mantenuta). **🏁 piano programmato chiuso** |
 | 4 | ~~Consolidamento LABELS dict Session 7 (T9 residuo)~~ | ⚪ | ~2h | ✅ risolto 2026-04-24 (commit `4b9d791` chiavi, `35b5100` RoomCard, `e24a6c7` ThingsToKnow, `8807a74` page.tsx). 48 chiavi × 4 locale aggiunte in namespace `components.roomCard/roomPage/thingsToKnow`. Bonus: 9 emoji decorative → bi-* (🛏️🚿👥📐 RoomCard badge + 🏊🌊🏖️ pool + 🐾🚭 rules) + 2 eccezioni residue chiuse (🛏️ WizardStep2 extras, 📷 FotoGalleryClient banner iOS). FEATURE_LABELS di page.tsx RESTA inline (catalogo structured) |
 | 5 | **T10** cleanup Redis key legacy | ⚪ | ~5min | Blocco temporale: dopo 2-3 giorni di deploy sano → dal **2026-04-26** |
-| 6 | **WizardStep1 emoji decorative** (emerso post-T9) | ⚪ | ~20min | 5 emoji live in [WizardStep1.tsx:443-582](components/wizard/WizardStep1.tsx): 🏊 (pool badge), 🏠 (photo placeholder), 🛏️👥📐 (badge feature). File già Fase B (Session 4) ma fatto prima della regola 'no emoji'. Decisione utente pendente |
+| 6 | ~~WizardStep1 emoji decorative~~ + **sweep globale emoji tutto il sito** | ⚪ | completato | ✅ risolto 2026-04-24 (sweep globale, ~30 file toccati). Regola 'no emoji decorative' applicata uniformemente tranne admin (escluso da utente) e commenti di sviluppo. Sommario in [§8.2 qui sotto](#82-sweep-emoji-2026-04-24) |
 
 ---
 
