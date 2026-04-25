@@ -45,13 +45,26 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
   const totalPeople = numAdult + numChild;
   const overCapacity = totalPeople > maxPeople;
 
+  // Sincronizza la scelta locale con il wizard store (StickyBookingBar legge da lì
+  // per decidere quale CTA mostrare: "Vedi tariffe" vs "Continua con questa offerta").
+  function choose(id: number | null) {
+    setPicked(id);
+    if (id === null) {
+      setSelectedOfferId(null);
+    } else {
+      setSelectedRoomId(roomId);
+      setSelectedOfferId(id);
+      setOffers([{ roomId, offers }]);
+    }
+  }
+
   // Fetch offerte quando date+ospiti sono pronti
   useEffect(() => {
-    if (!checkIn || !checkOut) { setLocalOffers([]); setPicked(null); return; }
+    if (!checkIn || !checkOut) { setLocalOffers([]); choose(null); return; }
     if (overCapacity) return;
 
     setLoading(true);
-    setPicked(null);
+    choose(null);
 
     const qs = new URLSearchParams({
       roomIds:     String(roomId),
@@ -167,7 +180,7 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
 
               return (
                 <button key={offer.offerId}
-                  onClick={() => avail && setPicked(offer.offerId)}
+                  onClick={() => avail && choose(offer.offerId)}
                   disabled={!avail}
                   className={`booking-panel__offer${isPicked ? ' is-picked' : ''}${!avail ? ' is-unavailable' : ''}`}
                 >
