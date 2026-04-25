@@ -248,10 +248,12 @@ D.X ora pienamente chiusa (nessun residuo ex-#1E73BE).
 Decisione utente: bar sempre visibile oltre 350px scroll (prima veniva nascosta quando `#booking-panel` era a schermo via IntersectionObserver). Rimosso lo state `panelVisible`, l'useEffect con IO e l'import `useRef` inutilizzato.
 Best practice UX hospitality (Booking.com / Airbnb / Expedia / Vrbo): la sticky CTA bar mobile è sempre visibile dopo il primo scroll, mai nascosta. Il CTA primary deve essere sempre a portata di pollice per ridurre friction e massimizzare conversioni. La ridondanza col BookingPanel quando è a schermo è accettabile (CTA identico = non confonde).
 
-**T5 — Mappa Google pinch-zoom 2 dita sposta la pagina** 🟡 decisione: **Opzione A** scelta, implementazione rinviata (2026-04-26)
-Decisione utente: passare a **Maps JavaScript API con `gestureHandling: 'greedy'`** (l'implementazione richiede setup Google Cloud Console — abilitare Maps JS API, verificare billing — difficile da remoto, quindi sessione dedicata in futuro).
-**Note costi**: Maps JS API ha free tier $200/mese credito con **28.500 load/mese gratis**. Per traffico LivingApple stimato (~200-800 load/mese solo su scheda residenza), resta dentro il free tier anche con picchi stagionali 10× → **$0/mese**.
-**Scope sessione futura** (~2h): abilitare Maps JavaScript API su Google Cloud Console, riscrivere `PropertyMap.tsx` da iframe Embed a componente React con `@googlemaps/js-api-loader`, configurare `gestureHandling: 'greedy'`, ripristinare marker custom + styling mappa, test mobile touch.
+**T5 — Mappa Google pinch-zoom 2 dita sposta la pagina** ✅ risolto (3 commit, 2026-04-25)
+Refactor `PropertyMap.tsx` da iframe Embed a client component con `@googlemaps/js-api-loader` (API funzionale `setOptions` + `importLibrary` — la classe `Loader` è deprecata in v2). `gestureHandling: 'greedy'` fissa il bug pinch-zoom 2 dita su mobile (la pagina non si sposta più). Disabilitati `mapTypeControl` / `streetViewControl` / `fullscreenControl` per UI minimale, marker classico sulla coordinata. Signature componente invariata: zero impatto sui consumer.
+**Cloud Console rotation**: sessione include pulizia totale su `livingapple@gmail.com` (account identificato via ricerca Gmail su email `CloudPlatform-noreply@google.com` + `payments-noreply@google.com` storiche). Cancellati tutti i progetti vecchi (pending deletion 30gg), creato nuovo progetto `livingapple-maps`, abilitate Maps JS API + Maps Embed API, generata nuova API key con HTTP referrers (vercel.app + localhost) + restrizione alle 2 API. La vecchia chiave `…O4smfFb2fV0` decommissionata insieme al suo progetto. Ruotata `NEXT_PUBLIC_GOOGLE_MAPS_KEY` su Vercel (Prod+Preview+Dev) via CLI e in `.env.local`.
+**Commit**: `a319db8` deps · `dd79145` css height frame · `fc5e5e9` refactor PropertyMap.
+**Costi**: $0/mese stimato (entro free tier 28.500 load/mese Maps JS API).
+**Follow-up aperto**: cancellare la `Maps Platform API Key` auto-generata da Google al momento dell'enable (33 API, nessuna restrizione) per pulizia di sicurezza.
 
 **T6 — `#dbeafe` deprecato in `BookingPanel.tsx:196`** ✅ risolto (2026-04-24)
 Applicato durante Sessione 9: `.booking-panel__offer-pill-selected` usa ora `var(--color-primary-soft)` (commit `fc10a0e`).
@@ -467,7 +469,7 @@ Regola **"no emoji decorative, sempre Bootstrap Icons"** applicata a tutto il si
 | 12 | ~~T1 contrasto titoli neri vs palette brand~~ | 🟡 | ~2h | ✅ risolto 2026-04-26 (6 commit M1+M2+M3). `--color-text: #0d1b2a` blu-notte, 46 grigi hardcoded consolidati a 4 token, 5 prezzi totali in `--color-text-accent` #C5881F. Dettagli in §6.1 sopra |
 | 13 | **T14 message port closed /contatti** | ⚪ | — | ✅ chiuso 2026-04-26 come falso positivo estensione Chrome (confermato test Incognito) |
 | 14 | **T13 Chrome unload violation /residenze/fuji** | 🟡 | 5min | Ancora aperto. Test Incognito (2026-04-26) = warning persiste → probabile "Allow in incognito" attivo sull'estensione. Azione: disabilitare toggle "Allow in incognito" in chrome://extensions e ripetere test |
-| 15 | **T5 Google Maps pinch-zoom → Opzione A (Maps JS API)** | 🟡 | ~2h | Decisione presa (2026-04-26): migrare a Maps JS API con `gestureHandling: 'greedy'`. Implementazione rinviata perché richiede setup Google Cloud Console (abilitare API + verificare billing) difficile da remoto. Costi: $0/mese per il traffico stimato LivingApple (dentro 28.500 load/mese free tier) |
+| 15 | ~~T5 Google Maps pinch-zoom → Opzione A (Maps JS API)~~ | 🟡 | ~2h | ✅ risolto 2026-04-25 (3 commit `a319db8` deps + `dd79145` css + `fc5e5e9` refactor). Pulizia totale Cloud Console su livingapple@gmail.com (cancellati progetti vecchi + nuovo `livingapple-maps`), key ruotata su Vercel + .env.local. `gestureHandling: 'greedy'` fissa pinch-zoom mobile. Follow-up: cancellare key `Maps Platform API Key` auto-generata da Google (33 API senza restrizioni) |
 
 ---
 
