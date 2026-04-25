@@ -112,7 +112,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
   function handleBack() {
     if (fromRoom && room?.slug) {
-      router.push(`/${locale}/residenze/${room.slug}`);
+      router.push(`/${locale}/residenze/${room.slug}?from=wizard`);
     } else {
       prevStep();
     }
