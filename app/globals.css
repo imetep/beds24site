@@ -576,7 +576,7 @@ body {
 .booking-sidebar__total-value {
   font-size: var(--text-xl);
   font-weight: 800;
-  color: var(--color-text-accent);
+  color: var(--color-primary);
 }
 .booking-sidebar__cta {
   width: 100%;
@@ -2269,7 +2269,7 @@ body {
 }
 .sticky-booking-bar__price {
   font-weight: 700;
-  color: var(--color-text-accent);
+  color: var(--color-primary);
   font-size: var(--text-md);
 }
 .sticky-booking-bar__price-suffix {
@@ -4071,4 +4071,54 @@ body {
   flex-shrink: 0;
   margin-left: var(--space-sm);
   text-decoration: underline;
+}
+
+/* ==========================================================================
+   Residenze list page — header sezione property
+   File: app/[locale]/residenze/page.tsx
+   ========================================================================== */
+.residenze-section__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-base);
+  margin-bottom: var(--space-base);
+  background: var(--color-primary-soft);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--color-primary);
+}
+.residenze-section__icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--color-bg);
+  color: var(--color-primary);
+  flex-shrink: 0;
+  font-size: 22px;
+  box-shadow: var(--shadow-sm);
+}
+.residenze-section__text {
+  flex: 1;
+  min-width: 0;
+}
+.residenze-section__title {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+  line-height: var(--line-height-tight);
+}
+.residenze-section__subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-subtle);
+  margin: 2px 0 0;
+  line-height: var(--line-height-base);
+}
+.residenze-section__grid {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
 }
