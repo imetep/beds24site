@@ -10,13 +10,16 @@ interface Props {
   longitude: number;
   name: string;
   locale?: string;
+  distanceLabel?: string;
 }
 
-export default function PropertyMap({ latitude, longitude, name, locale = 'it' }: Props) {
+export default function PropertyMap({ latitude, longitude, name, locale = 'it', distanceLabel }: Props) {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
   const t = getTranslations((locale as Locale));
   const label = t.components.propertyMap.label;
+  const openInMapsLabel = t.components.propertyMap.openInMaps;
+  const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
   useEffect(() => {
     if (!apiKey || !mapRef.current) return;
@@ -39,13 +42,16 @@ export default function PropertyMap({ latitude, longitude, name, locale = 'it' }
         streetViewControl: false,
         fullscreenControl: false,
       });
-      new Marker({ map, position, title: name });
+      const marker = new Marker({ map, position, title: name });
+      marker.addListener('click', () => {
+        window.open(mapsUrl, '_blank', 'noopener,noreferrer');
+      });
     });
 
     return () => {
       cancelled = true;
     };
-  }, [apiKey, latitude, longitude, name, locale]);
+  }, [apiKey, latitude, longitude, name, locale, mapsUrl]);
 
   if (!apiKey) return null;
 
@@ -61,6 +67,19 @@ export default function PropertyMap({ latitude, longitude, name, locale = 'it' }
         role="application"
         aria-label={name}
       />
+      {distanceLabel && (
+        <p className="room-map__caption">{distanceLabel}</p>
+      )}
+      <a
+        href={mapsUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="room-map__cta"
+      >
+        <i className="bi bi-geo-alt-fill" aria-hidden="true" />
+        <span>{openInMapsLabel}</span>
+        <i className="bi bi-arrow-up-right room-map__cta-arrow" aria-hidden="true" />
+      </a>
     </div>
   );
 }
