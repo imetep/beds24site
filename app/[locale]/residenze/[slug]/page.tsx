@@ -274,6 +274,7 @@ export default async function RoomPage({ params }: Props) {
           longitude={property.longitude}
           name={room.name}
           locale={locale}
+          distanceLabel={property.distanceLabel[locale] ?? property.distanceLabel.it}
         />
       </div>
 
