@@ -12,31 +12,16 @@ export async function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
-const LABELS: Record<string, Record<string, string>> = {
-  it: {
-    title: 'Le nostre Residenze',
-    subtitle: 'Scegli il tuo appartamento e prenota direttamente con noi',
-    natura: 'LivingApple · Immerso nella natura · 1.5km dal mare',
-    mare: 'LivingApple Beach · Vicino al mare · 250m dalla spiaggia',
-  },
-  en: {
-    title: 'Our Residences',
-    subtitle: 'Choose your apartment and book directly with us',
-    natura: 'LivingApple · Surrounded by nature · 1.5km from the sea',
-    mare: 'LivingApple Beach · Near the sea · 250m from the beach',
-  },
-  de: {
-    title: 'Unsere Residenzen',
-    subtitle: 'Wählen Sie Ihre Unterkunft und buchen Sie direkt bei uns',
-    natura: 'LivingApple · In der Natur · 1,5km vom Meer',
-    mare: 'LivingApple Beach · In Meeresnähe · 250m vom Strand',
-  },
-  pl: {
-    title: 'Nasze Rezydencje',
-    subtitle: 'Wybierz apartament i zarezerwuj bezpośrednio u nas',
-    natura: 'LivingApple · Wśród natury · 1,5km od morza',
-    mare: 'LivingApple Beach · Blisko morza · 250m od plaży',
-  },
+const LABELS: Record<string, { title: string; subtitle: string }> = {
+  it: { title: 'Le nostre Residenze', subtitle: 'Scegli il tuo appartamento e prenota direttamente con noi' },
+  en: { title: 'Our Residences',     subtitle: 'Choose your apartment and book directly with us' },
+  de: { title: 'Unsere Residenzen',  subtitle: 'Wählen Sie Ihre Unterkunft und buchen Sie direkt bei uns' },
+  pl: { title: 'Nasze Rezydencje',   subtitle: 'Wybierz apartament i zarezerwuj bezpośrednio u nas' },
+};
+
+const SECTION_ICON: Record<number, string> = {
+  46487: 'bi-tree-fill',
+  46871: 'bi-umbrella-fill',
 };
 
 export default async function ResidenzePage({ params }: Props) {
@@ -54,45 +39,31 @@ export default async function ResidenzePage({ params }: Props) {
         <p className="fs-5 text-secondary mb-0">{t.subtitle}</p>
       </div>
 
-      <section className="mb-5">
-        <h2 className="fs-5 fw-bold text-secondary pb-2 mb-3 border-bottom px-2" style={{ borderBottomWidth: 2 }}>
-          <i className="bi bi-tree-fill me-2" aria-hidden="true" />
-          {t.natura}
-        </h2>
-        <div
-          className="d-grid gap-3"
-          style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))' }}
-        >
-          {PROPERTIES[0].rooms.map((room) => (
-            <RoomCard
-              key={room.roomId}
-              room={room}
-              locale={locale}
-              coverUrl={covers[room.cloudinaryFolder] ?? null}
-            />
-          ))}
-        </div>
-      </section>
-
-      <section>
-        <h2 className="fs-5 fw-bold text-secondary pb-2 mb-3 border-bottom px-2" style={{ borderBottomWidth: 2 }}>
-          <i className="bi bi-umbrella-fill me-2" aria-hidden="true" />
-          {t.mare}
-        </h2>
-        <div
-          className="d-grid gap-3"
-          style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))' }}
-        >
-          {PROPERTIES[1].rooms.map((room) => (
-            <RoomCard
-              key={room.roomId}
-              room={room}
-              locale={locale}
-              coverUrl={covers[room.cloudinaryFolder] ?? null}
-            />
-          ))}
-        </div>
-      </section>
+      {PROPERTIES.map((property, idx) => (
+        <section key={property.propertyId} className={idx < PROPERTIES.length - 1 ? 'mb-5' : ''}>
+          <header className={`residenze-section__header residenze-section__header--p${property.propertyId}`}>
+            <div className="residenze-section__icon-wrap">
+              <i className={`bi ${SECTION_ICON[property.propertyId] ?? 'bi-house-fill'}`} aria-hidden="true" />
+            </div>
+            <div className="residenze-section__text">
+              <h2 className="residenze-section__title">{property.name}</h2>
+              <p className="residenze-section__subtitle">
+                {property.distanceLabel[locale] ?? property.distanceLabel.it}
+              </p>
+            </div>
+          </header>
+          <div className="residenze-section__grid">
+            {property.rooms.map((room) => (
+              <RoomCard
+                key={room.roomId}
+                room={room}
+                locale={locale}
+                coverUrl={covers[room.cloudinaryFolder] ?? null}
+              />
+            ))}
+          </div>
+        </section>
+      ))}
 
     </main>
   );
