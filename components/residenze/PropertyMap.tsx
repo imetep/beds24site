@@ -22,6 +22,7 @@ export default function PropertyMap({ latitude, longitude, name, locale = 'it' }
     if (!apiKey || !mapRef.current) return;
 
     let cancelled = false;
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     setOptions({ key: apiKey, v: 'weekly', language: locale });
 
     Promise.all([
@@ -33,7 +34,7 @@ export default function PropertyMap({ latitude, longitude, name, locale = 'it' }
       const map = new Map(mapRef.current, {
         center: position,
         zoom: 15,
-        gestureHandling: 'greedy',
+        gestureHandling: isTouchDevice ? 'greedy' : 'cooperative',
         mapTypeControl: false,
         streetViewControl: false,
         fullscreenControl: false,
