@@ -351,7 +351,8 @@
   },
   "components": {
     "propertyMap": {
-      "label": "How to get there"
+      "label": "How to get there",
+      "openInMaps": "Open in Google Maps"
     },
     "availabilityCalendar": {
       "title": "Availability",
