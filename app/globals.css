@@ -2199,6 +2199,40 @@ body {
   border-radius: var(--radius-lg);
   height: 380px;
 }
+.room-map__caption {
+  margin-top: var(--space-sm);
+  margin-bottom: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.room-map__cta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+}
+.room-map__cta:hover,
+.room-map__cta:focus-visible {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+}
+.room-map__cta-arrow {
+  margin-left: auto;
+  font-size: 0.9em;
+  opacity: 0.7;
+}
 
 /* ── ThingsToKnow (accordion scheda) ── */
 .things-to-know {
