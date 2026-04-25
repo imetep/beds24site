@@ -19,7 +19,7 @@ export default function PropertyMap({ latitude, longitude, name, locale = 'it', 
   const t = getTranslations((locale as Locale));
   const label = t.components.propertyMap.label;
   const openInMapsLabel = t.components.propertyMap.openInMaps;
-  const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
 
   useEffect(() => {
     if (!apiKey || !mapRef.current) return;
