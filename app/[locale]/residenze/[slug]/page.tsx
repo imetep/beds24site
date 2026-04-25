@@ -272,7 +272,7 @@ export default async function RoomPage({ params }: Props) {
         <PropertyMap
           latitude={property.latitude}
           longitude={property.longitude}
-          name={room.name}
+          name={property.name}
           locale={locale}
           distanceLabel={property.distanceLabel[locale] ?? property.distanceLabel.it}
         />
