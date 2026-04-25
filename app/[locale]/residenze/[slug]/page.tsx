@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { v2 as cloudinary } from 'cloudinary';
@@ -303,12 +304,14 @@ export default async function RoomPage({ params }: Props) {
         />
       </div>
 
-      {/* Sticky CTA */}
-      <StickyBookingBar
-        roomId={room.roomId}
-        locale={locale}
-        roomName={room.name}
-      />
+      {/* Sticky CTA — useSearchParams richiede Suspense */}
+      <Suspense fallback={null}>
+        <StickyBookingBar
+          roomId={room.roomId}
+          locale={locale}
+          roomName={room.name}
+        />
+      </Suspense>
 
     </main>
   );
