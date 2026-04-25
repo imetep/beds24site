@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@googlemaps/js-api-loader": "^2.0.2",
     "@upstash/redis": "^1.37.0",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
