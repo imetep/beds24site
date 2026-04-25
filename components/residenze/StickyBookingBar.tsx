@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
 import { calculateTouristTax } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
@@ -22,22 +23,37 @@ interface Props {
 
 export default function StickyBookingBar({ roomId, locale, roomName }: Props) {
   const t = getTranslations(locale as Locale).components.stickyBookingBar;
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  // Visibile solo se l'utente arriva dal wizard (?from=wizard); da link diretto
+  // sarebbe rumore (l'utente non è ancora in flusso prenotazione).
+  const fromWizard = searchParams.get('from') === 'wizard';
 
-  const { checkIn, checkOut, numAdult, numChild, childrenAges } = useWizardStore();
+  const {
+    checkIn, checkOut, numAdult, numChild, childrenAges,
+    selectedRoomId, selectedOfferId, cachedOffers,
+  } = useWizardStore();
 
-  // Visibilità: sempre visibile una volta che l'utente ha scrollato oltre la soglia.
-  // Best practice UX (Booking.com/Airbnb/Expedia): sticky CTA bar sempre presente
-  // su mobile dopo il primo scroll, per ridurre friction del "torna su per prenotare"
-  // e massimizzare conversioni. La ridondanza col BookingPanel quando è a schermo
-  // è accettabile: CTA identica, semplice backup visivo, l'utente non si confonde.
+  // Soglia scroll: la barra entra dopo che l'utente ha superato l'hero foto.
   const [scrolledPast, setScrolledPast] = useState(false);
 
-  // Prezzo totale (con tassa soggiorno) — identico a BookingPanel
+  // Prezzo fallback (lowest) quando l'utente non ha ancora scelto un'offerta.
   const [lowestTotal, setLowestTotal] = useState<number | null>(null);
   const [loadingPrice, setLoadingPrice] = useState(false);
-  const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
 
+  const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
   const touristTax = calculateTouristTax(numAdult, childrenAges, nights);
+
+  // Stato 3-vie: l'utente ha già scelto un'offerta per QUESTA stanza?
+  const hasPickedOffer = selectedRoomId === roomId && selectedOfferId !== null;
+  const pickedOffer = hasPickedOffer
+    ? cachedOffers
+        ?.find((ro: any) => ro.roomId === roomId)
+        ?.offers
+        ?.find((o: any) => o.offerId === selectedOfferId) ?? null
+    : null;
+  const pickedTotal = pickedOffer ? pickedOffer.price + touristTax : null;
+  const displayTotal = pickedTotal ?? lowestTotal;
 
   // ── Scroll threshold: appare dopo 350px (oltre la foto) ──────────────
   useEffect(() => {
@@ -47,9 +63,9 @@ export default function StickyBookingBar({ roomId, locale, roomName }: Props) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // ── 3. Fetch autonomo offerte (solo se ci sono date) ────────────────────
+  // ── Fetch lowest price (skippato se la barra è nascosta o offerta già scelta)
   useEffect(() => {
-    if (!checkIn || !checkOut) {
+    if (!fromWizard || hasPickedOffer || !checkIn || !checkOut) {
       setLowestTotal(null);
       return;
     }
@@ -57,7 +73,6 @@ export default function StickyBookingBar({ roomId, locale, roomName }: Props) {
     if (n <= 0) { setLowestTotal(null); return; }
 
     setLoadingPrice(true);
-
     const qs = new URLSearchParams({
       roomIds:   String(roomId),
       arrival:   checkIn,
@@ -73,13 +88,7 @@ export default function StickyBookingBar({ roomId, locale, roomName }: Props) {
         const available = offers.filter(o => o.unitsAvailable > 0);
         if (available.length > 0) {
           const minPrice = Math.min(...available.map(o => o.price));
-          // Totale = prezzo offerta + tassa soggiorno (stessa formula di BookingPanel)
-          const n = calcNights(checkIn!, checkOut!);
-          const cTax = (childrenAges ?? []).filter((a: number) => a >= 12).length;
-          const tAdults = numAdult + cTax;
-          const tNights = Math.min(n, 10);
-          const tax = tNights * tAdults * 2;
-          setLowestTotal(minPrice + tax);
+          setLowestTotal(minPrice + touristTax);
         } else {
           setLowestTotal(null);
         }
@@ -87,15 +96,25 @@ export default function StickyBookingBar({ roomId, locale, roomName }: Props) {
       .catch(() => setLowestTotal(null))
       .finally(() => setLoadingPrice(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checkIn, checkOut, numAdult, numChild, JSON.stringify(childrenAges), roomId]);
+  }, [fromWizard, hasPickedOffer, checkIn, checkOut, numAdult, numChild, JSON.stringify(childrenAges), roomId]);
 
-  // ── Navigazione ──────────────────────────────────────────────────────────
-  function scrollToPanel() {
-    const el = document.getElementById('booking-panel');
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // ── CTA action: dipende dallo stato ─────────────────────────────────────
+  function handleCta() {
+    if (hasPickedOffer) {
+      // Offerta scelta → salta direttamente al wizard step 2
+      router.push(`/${locale}/prenota?roomId=${roomId}&from=room`);
+    } else {
+      // Offerta non scelta → scrolla al BookingPanel per farla scegliere
+      const el = document.getElementById('booking-panel');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
+  // Da link diretto: niente barra (vedi commento all'inizio).
+  if (!fromWizard) return null;
+
   const show = scrolledPast;
+  const ctaLabel = hasPickedOffer ? t.prenota : t.vediTariffe;
 
   return (
     <div
@@ -113,10 +132,10 @@ export default function StickyBookingBar({ roomId, locale, roomName }: Props) {
             <div className="mt-1">
               {loadingPrice ? (
                 <span className="small text-muted">…</span>
-              ) : lowestTotal ? (
+              ) : displayTotal ? (
                 <>
                   <span className="sticky-booking-bar__price">
-                    {fmt(lowestTotal)}
+                    {fmt(displayTotal)}
                   </span>
                   <span className="sticky-booking-bar__price-suffix">{t.totale}</span>
                 </>
@@ -136,10 +155,10 @@ export default function StickyBookingBar({ roomId, locale, roomName }: Props) {
         {/* Destra: CTA */}
         <button
           type="button"
-          onClick={scrollToPanel}
+          onClick={handleCta}
           className="btn btn-warning fw-bold text-white flex-shrink-0 px-4 text-nowrap"
         >
-          {t.prenota}
+          {ctaLabel}
         </button>
       </div>
     </div>
