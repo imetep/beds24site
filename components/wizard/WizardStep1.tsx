@@ -560,7 +560,7 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                   {!isSingleRoom && (
                     <div className="step1-room-card__photo">
                       <div
-                        onClick={e => { e.stopPropagation(); router.push(`/${locale}/residenze/${room.slug}`); }}
+                        onClick={e => { e.stopPropagation(); router.push(`/${locale}/residenze/${room.slug}?from=wizard`); }}
                         className="step1-room-card__photo-link"
                       >
                         {coverUrl ? (
