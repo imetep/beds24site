@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { PROPERTIES } from '@/config/properties';
 import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
+import { getTranslations } from '@/lib/i18n';
+import type { Locale } from '@/config/i18n';
 
 // ─── UI translations ──────────────────────────────────────────────────────────
 
@@ -118,6 +120,7 @@ interface Props { locale: string; }
 
 export default function PagaClient({ locale }: Props) {
   const t = UI[locale] ?? UI.it;
+  const tSidebar = getTranslations(locale as Locale).components.wizardSidebar;
   const searchParams = useSearchParams();
   const bookId  = searchParams.get('bookId') ?? '';
   const pct     = Number(searchParams.get('pct') ?? '100');
@@ -328,28 +331,43 @@ export default function PagaClient({ locale }: Props) {
       {/* Card 1 — Riepilogo soggiorno + prezzo */}
       <div className="card-info">
 
-        {/* Hero foto residenza (stessa pattern di BookingSidebar wizard) */}
-        {coverUrl && (
-          <div className="booking-sidebar__hero">
+        {/* Hero compatto: foto 80x80 a sx + nome + meta (typeLabel · sqm · people) — pattern wizard-step3 */}
+        <div className="wizard-step3__hero">
+          {coverUrl ? (
             <img
               src={coverUrl}
               alt={room?.name ?? booking.roomName ?? ''}
-              className="booking-sidebar__hero-img"
+              className="wizard-step3__hero-img"
               loading="lazy"
             />
+          ) : (
+            <div className="wizard-step3__hero-placeholder" aria-hidden="true">
+              <i className="bi bi-house-fill" />
+            </div>
+          )}
+          <div className="wizard-step3__hero-info">
+            <p className="wizard-step3__hero-name">{room?.name ?? booking.roomName ?? '—'}</p>
+            {room && (
+              <p className="wizard-step3__hero-meta">
+                {room.type === 'monolocale' ? tSidebar.typeMonolocale
+                  : room.type === 'villa' ? tSidebar.typeVilla
+                  : tSidebar.typeAppartamento}
+                {' · '}{room.sqm} {tSidebar.sqm}
+                {' · '}{room.maxPeople} {tSidebar.people}
+              </p>
+            )}
           </div>
-        )}
-        <p className="section-title-secondary">{room?.name ?? booking.roomName ?? '—'}</p>
-        <p className="label-metadata">
-          {nights} {nights === 1 ? t.night : t.nights} · {formatDate(booking.checkIn, locale)} → {formatDate(booking.checkOut, locale)}
-        </p>
+        </div>
 
         <hr className="divider-horizontal" />
 
-        {/* Dati chiave: Date / Ospiti */}
+        {/* Dati chiave: Date (con notti come suffisso) / Ospiti — niente duplicazione */}
         <dl className="wizard-step3__data-grid">
           <dt>{t.dates}</dt>
-          <dd>{formatDate(booking.checkIn, locale)} → {formatDate(booking.checkOut, locale)}</dd>
+          <dd>
+            {formatDate(booking.checkIn, locale)} – {formatDate(booking.checkOut, locale)}
+            {nights > 0 && ` · ${nights} ${nights === 1 ? t.night : t.nights}`}
+          </dd>
           <dt>{t.guests}</dt>
           <dd>{booking.numAdult} {t.adults}{booking.numChild > 0 ? `, ${booking.numChild} ${t.children}` : ''}</dd>
         </dl>
