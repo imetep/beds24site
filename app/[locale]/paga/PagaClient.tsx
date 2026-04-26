@@ -324,7 +324,11 @@ export default function PagaClient({ locale }: Props) {
   );
 
   return (
-    <div className="wizard-step3">
+    <div className="paga-layout">
+
+      {/* Colonna sinistra (desktop ≥1024px) — riepilogo soggiorno + dati ospite */}
+      <div className="paga-layout__main">
+
       <h2 className="section-title-main">{t.title}</h2>
       <p className="wizard-step3__subtitle">{t.subtitle}</p>
 
@@ -401,6 +405,11 @@ export default function PagaClient({ locale }: Props) {
         <p className="wizard-step3__guest-name">{booking.guestName}</p>
         <p className="wizard-step3__guest-meta">{booking.guestEmail}</p>
       </div>
+
+      </div>{/* /.paga-layout__main */}
+
+      {/* Colonna destra (desktop ≥1024px) — info accessorie + metodo + CTA (sticky) */}
+      <div className="paga-layout__side">
 
       {/* Banner consumi (info) */}
       <div className="banner banner--info banner--with-icon">
@@ -502,6 +511,8 @@ export default function PagaClient({ locale }: Props) {
           )}
         </div>
       )}
+
+      </div>{/* /.paga-layout__side */}
 
     </div>
   );
