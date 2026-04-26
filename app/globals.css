@@ -4243,6 +4243,40 @@ body {
   margin-top: var(--space-sm);
 }
 
+/* Layout 2-col Airbnb-style (mobile single col, desktop ≥1024px due colonne):
+   - main 680px (riepilogo soggiorno + prezzo + dati ospite)
+   - side 480px sticky (consumi/deposito + metodo + CTA) */
+.paga-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-base);
+}
+.paga-layout__main {
+  width: 100%;
+  min-width: 0;
+}
+.paga-layout__side {
+  width: 100%;
+  min-width: 0;
+}
+@media (min-width: 1024px) {
+  .paga-layout {
+    flex-direction: row;
+    gap: var(--space-xl);
+    align-items: flex-start;
+  }
+  .paga-layout__main {
+    flex: 1 1 0;
+    max-width: var(--container-sm);  /* 680px */
+  }
+  .paga-layout__side {
+    flex: 1 1 0;
+    max-width: 480px;
+    position: sticky;
+    top: 90px;
+  }
+}
+
 /* Selettore metodo pagamento (Stripe / PayPal toggle) — pattern unico di paga,
    non presente nel wizard (lì il metodo è scelto in step 2). */
 .paga-method-grid {
