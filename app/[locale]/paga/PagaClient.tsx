@@ -311,172 +311,171 @@ export default function PagaClient({ locale }: Props) {
   );
 
   return (
-    <div className="paga-content">
+    <div className="wizard-step3">
+      <h2 className="section-title-main">{t.title}</h2>
+      <p className="wizard-step3__subtitle">{t.subtitle}</p>
 
-      <h2 className="paga-content__title">{t.title}</h2>
-      <p className="paga-content__subtitle">{t.subtitle}</p>
-
-      {/* Card appartamento + date */}
-      <div className="paga-card">
-        <Row label={t.apartment} value={room?.name ?? booking.roomName ?? '—'} />
-        <Row label={t.dates} value={`${formatDate(booking.checkIn, locale)} → ${formatDate(booking.checkOut, locale)}`} />
-        <Row label="" value={`${nights} ${nights === 1 ? t.night : t.nights}`} dimmed />
-        <Row label={t.guests} value={`${booking.numAdult} ${t.adults}${booking.numChild > 0 ? `, ${booking.numChild} ${t.children}` : ''}`} />
+      {/* Hero residenza (placeholder icona — la pagina paga non carica Cloudinary) */}
+      <div className="wizard-step3__hero">
+        <div className="wizard-step3__hero-placeholder" aria-hidden="true">
+          <i className="bi bi-house-door-fill" />
+        </div>
+        <div className="wizard-step3__hero-info">
+          <p className="wizard-step3__hero-name">{room?.name ?? booking.roomName ?? '—'}</p>
+          <p className="wizard-step3__hero-meta">
+            {nights} {nights === 1 ? t.night : t.nights} · {formatDate(booking.checkIn, locale)} → {formatDate(booking.checkOut, locale)}
+          </p>
+        </div>
       </div>
+
+      {/* Dati chiave: Date / Ospiti */}
+      <dl className="wizard-step3__data-grid">
+        <dt>{t.dates}</dt>
+        <dd>{formatDate(booking.checkIn, locale)} → {formatDate(booking.checkOut, locale)}</dd>
+        <dt>{t.guests}</dt>
+        <dd>{booking.numAdult} {t.adults}{booking.numChild > 0 ? `, ${booking.numChild} ${t.children}` : ''}</dd>
+      </dl>
+
+      <hr className="divider-horizontal" />
 
       {/* Dati ospite */}
-      <div className="paga-card">
-        <p className="paga-section-label">{t.guestData}</p>
-        <Row label={t.name}  value={booking.guestName} />
-        <Row label={t.email} value={booking.guestEmail} />
-      </div>
+      <p className="label-uppercase-muted">{t.guestData}</p>
+      <p className="wizard-step3__guest-name">{booking.guestName}</p>
+      <p className="wizard-step3__guest-meta">{booking.guestEmail}</p>
+
+      <hr className="divider-horizontal" />
 
       {/* Dettaglio prezzo */}
-      <div className="paga-card">
-        <p className="paga-section-label">{t.priceDetail}</p>
-        <PriceRow label={`${nights} ${nights === 1 ? t.night : t.nights} × ${fmt(perNight)}/${nights === 1 ? t.night : t.nights}`} value={fmt(booking.price)} />
-        <div className="paga-price-divider" />
-        <PriceRow label={t.totalBooking} value={fmt(booking.price)} bold />
-        {validPct < 100 && (
-          <>
-            <div className="paga-price-divider" />
-            <PriceRow label={`${t.deposit} (${validPct}%)`} value={fmt(depositAmount)} highlight />
-            <PriceRow label={t.remaining} value={fmt(remaining)} dimmed />
-          </>
-        )}
+      <p className="label-uppercase-muted">{t.priceDetail}</p>
+      <div className="wizard-step3__price-rows">
+        <div className="layout-row-between">
+          <span>{nights} {nights === 1 ? t.night : t.nights} × {fmt(perNight)}/{nights === 1 ? t.night : t.nights}</span>
+          <span>{fmt(booking.price)}</span>
+        </div>
       </div>
 
-      {/* Info box */}
-      <div className="paga-card paga-card--muted">
-        <p className="paga-info-row">
-          <i className="bi bi-lightning-fill me-1" aria-hidden="true" />
-          {t.energy}
-        </p>
-        <a href={t.energyHref} target="_blank" rel="noopener noreferrer" className="paga-info-link">{t.energyLink}</a>
-        <p className="paga-info-row">
-          <i className="bi bi-shield-lock-fill me-1" aria-hidden="true" />
-          {t.deposit_info}
-        </p>
-        <a href={t.depositHref} target="_blank" rel="noopener noreferrer" className="paga-info-link">{t.depositLink}</a>
+      {/* Totale prenotazione */}
+      <div className="wizard-step3__total-row">
+        <span className="wizard-step3__total-label">{t.totalBooking}</span>
+        <span className="wizard-step3__total-value">{fmt(booking.price)}</span>
       </div>
+
+      {/* Acconto + saldo (solo se pct < 100) */}
+      {validPct < 100 && (
+        <>
+          <div className="wizard-step3__total-row">
+            <span className="wizard-step3__total-label">{t.deposit} ({validPct}%)</span>
+            <span className="wizard-step3__total-value">{fmt(depositAmount)}</span>
+          </div>
+          <p className="wizard-step3__total-note">{t.remaining}: {fmt(remaining)}</p>
+        </>
+      )}
+
+      <hr className="divider-horizontal" />
+
+      {/* Banner consumi (info) */}
+      <div className="banner banner--info banner--with-icon">
+        <i className="bi bi-lightning-fill" aria-hidden="true" />
+        <div>
+          <p className="banner__title">{t.energy}</p>
+          <a href={t.energyHref} target="_blank" rel="noopener noreferrer" className="banner__link">{t.energyLink}</a>
+        </div>
+      </div>
+
+      {/* Banner deposito cauzionale (warning) */}
+      <div className="banner banner--warning banner--with-icon banner--mb">
+        <i className="bi bi-shield-lock-fill" aria-hidden="true" />
+        <div>
+          <p className="banner__title">{t.deposit_info}</p>
+          <a href={t.depositHref} target="_blank" rel="noopener noreferrer" className="banner__link">{t.depositLink}</a>
+        </div>
+      </div>
+
+      <hr className="divider-horizontal" />
 
       {/* Metodo di pagamento */}
-      <div className="paga-card">
-        <p className="paga-section-label">{t.chooseMethod}</p>
-        <div className="paga-method-grid">
-          {(['stripe', 'paypal'] as const).map(m => (
-            <button
-              key={m}
-              onClick={() => setPayMethod(m)}
-              className={`paga-method-btn${payMethod === m ? ' is-active' : ''}`}
-              type="button"
-            >
-              {m === 'stripe' ? (
-                <>
-                  <i className="bi bi-credit-card-fill me-1" aria-hidden="true" />
-                  Carta
-                </>
-              ) : (
-                <>
-                  <i className="bi bi-paypal me-1" aria-hidden="true" />
-                  PayPal
-                </>
-              )}
-            </button>
-          ))}
-        </div>
-
-        {/* Errore */}
-        {error && (
-          <div className="banner banner--error banner--mb">
-            <p className="banner__title">{t.errTitle}</p>
-            <p className="banner__text">{error}</p>
-          </div>
-        )}
-
-        {/* Bottone Stripe */}
-        {payMethod === 'stripe' && (
+      <p className="label-uppercase-muted">{t.chooseMethod}</p>
+      <div className="paga-method-grid">
+        {(['stripe', 'paypal'] as const).map(m => (
           <button
-            onClick={handleStripe}
-            disabled={phase === 'paying'}
-            className="paga-cta-btn"
+            key={m}
+            onClick={() => setPayMethod(m)}
+            className={`paga-method-btn${payMethod === m ? ' is-active' : ''}`}
             type="button"
           >
-            {phase === 'paying' ? (
+            {m === 'stripe' ? (
               <>
-                <i className="bi bi-hourglass-split me-1" aria-hidden="true" />
-                {t.paying}
+                <i className="bi bi-credit-card-fill me-1" aria-hidden="true" />
+                Carta
               </>
             ) : (
               <>
-                <i className="bi bi-credit-card-fill me-1" aria-hidden="true" />
-                {t.payBtn} · {fmt(depositAmount)}
+                <i className="bi bi-paypal me-1" aria-hidden="true" />
+                PayPal
               </>
             )}
           </button>
-        )}
-
-        {/* Bottone PayPal (SDK v6) */}
-        {payMethod === 'paypal' && (
-          <div>
-            {!paypalReady && phase !== 'paying' && (
-              <div className="paga-paypal-placeholder">
-                <i className="bi bi-hourglass-split me-1" aria-hidden="true" />
-                {t.paypalLoading}
-              </div>
-            )}
-            {paypalReady && phase !== 'paying' && (
-              <button
-                onClick={handlePayPalClick}
-                className="wizard-step3__paypal-v6-btn"
-                type="button"
-              >
-                <i className="bi bi-paypal" aria-hidden="true"></i>
-                <span>{t.payBtn} · {fmt(depositAmount)}</span>
-              </button>
-            )}
-            {phase === 'paying' && (
-              <div className="paga-paypal-placeholder paga-paypal-placeholder--paying">
-                <i className="bi bi-hourglass-split me-1" aria-hidden="true" />
-                {t.payingPaypal}
-              </div>
-            )}
-          </div>
-        )}
+        ))}
       </div>
 
-    </div>
-  );
-}
+      {/* Errore inline sopra al CTA */}
+      {error && (
+        <div className="banner banner--error banner--mb">
+          <p className="banner__title">{t.errTitle}</p>
+          <p className="banner__text">{error}</p>
+        </div>
+      )}
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+      {/* CTA Stripe */}
+      {payMethod === 'stripe' && (
+        <button
+          onClick={handleStripe}
+          disabled={phase === 'paying'}
+          className="btn btn--primary wizard-step3__cta"
+          type="button"
+        >
+          {phase === 'paying' ? (
+            <>
+              <i className="bi bi-hourglass-split" aria-hidden="true" />
+              {t.paying}
+            </>
+          ) : (
+            <>
+              <i className="bi bi-credit-card-fill" aria-hidden="true" />
+              {t.payBtn} · {fmt(depositAmount)}
+            </>
+          )}
+        </button>
+      )}
 
-function Row({ label, value, dimmed }: { label: string; value: string; dimmed?: boolean }) {
-  return (
-    <div className="paga-row">
-      {label ? <span className="paga-row__label">{label}</span> : <span />}
-      <span className={`paga-row__value${dimmed ? ' paga-row__value--dimmed' : ''}`}>{value}</span>
-    </div>
-  );
-}
+      {/* PayPal SDK v6 */}
+      {payMethod === 'paypal' && (
+        <div className="wizard-step3__paypal-wrapper">
+          {!paypalReady && phase !== 'paying' && (
+            <div className="wizard-step3__paypal-loading">
+              <i className="bi bi-hourglass-split me-1" aria-hidden="true" />
+              {t.paypalLoading}
+            </div>
+          )}
+          {paypalReady && phase !== 'paying' && (
+            <button
+              onClick={handlePayPalClick}
+              className="wizard-step3__paypal-v6-btn"
+              type="button"
+            >
+              <i className="bi bi-paypal" aria-hidden="true"></i>
+              <span>{t.payBtn} · {fmt(depositAmount)}</span>
+            </button>
+          )}
+          {phase === 'paying' && (
+            <div className="wizard-step3__paypal-loading">
+              <i className="bi bi-hourglass-split me-1" aria-hidden="true" />
+              {t.payingPaypal}
+            </div>
+          )}
+        </div>
+      )}
 
-function PriceRow({ label, value, bold, highlight, dimmed }: { label: string; value: string; bold?: boolean; highlight?: boolean; dimmed?: boolean }) {
-  const labelClass = [
-    'paga-price-row__label',
-    bold && 'paga-price-row__label--bold',
-    highlight && 'paga-price-row__label--highlight',
-    dimmed && 'paga-price-row__label--dimmed',
-  ].filter(Boolean).join(' ');
-  const valueClass = [
-    'paga-price-row__value',
-    bold && 'paga-price-row__value--bold',
-    highlight && 'paga-price-row__value--highlight',
-    dimmed && 'paga-price-row__value--dimmed',
-  ].filter(Boolean).join(' ');
-  return (
-    <div className="paga-price-row">
-      <span className={labelClass}>{label}</span>
-      <span className={valueClass}>{value}</span>
     </div>
   );
 }
