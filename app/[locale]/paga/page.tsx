@@ -16,12 +16,11 @@ export default async function PagaPage({ params }: Props) {
   if (!isValidLocale(locale)) notFound();
 
   return (
-    <main className="page-container" style={{ minHeight: '80vh', padding: '2rem 16px 3rem' }}>
+    <main className="page-container paga-main">
       <Suspense fallback={
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '40vh', color: '#aaa', gap: 12 }}>
-          <div style={{ width: 22, height: 22, border: '2px solid #eee', borderTop: '2px solid var(--color-primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+        <div className="page-loading">
+          <div className="page-loading__spinner" />
           Caricamento...
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
       }>
         <PagaClient locale={locale} />
