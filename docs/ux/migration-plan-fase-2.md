@@ -145,7 +145,7 @@ L'ordine è ottimizzato per: **rischio crescente** (warm-up sui flussi semplici 
 
 | # | Sessione | File | Obiettivo | Stato |
 |---|---|---|---|---|
-| 14 | Pagamento standalone | `paga/PagaClient.tsx` + `paga/page.tsx` | migra 37 inline. Stripe Element preserva il theme nativo (no token applicati lì). Smoke test obbligatorio con carta test Stripe (`4242 4242 4242 4242`). | ⏳ |
+| 14 | Pagamento standalone | `paga/PagaClient.tsx` + `paga/page.tsx` | migra 37 inline. Stripe Element preserva il theme nativo (no token applicati lì). Smoke test obbligatorio con carta test Stripe (`4242 4242 4242 4242`). | ✅ b61de2d (smoke test pendente — booking test da creare) |
 | 15 | Post-pagamento | `successo/SuccessContent.tsx` + `successo/page.tsx` + `prenota/page.tsx` | migra 16 inline su 3 page shell. Banner success/error pattern unificato. | ⏳ |
 | 16 | Guest login + portal main | `GuestLogin.tsx` + `GuestPortal.tsx` | migra 72 inline. Pattern login form unificato + container portal con banner sezione (deposit success/cancel). | ⏳ |
 | 17 | Guest sections A | `BedSection.tsx` + `DepositSection.tsx` + `CheckinSection.tsx` | migra 76 inline. Pattern dashboard-card unificato. DepositSection: smoke test Stripe SetupIntent (carta test). | ⏳ |
@@ -227,28 +227,28 @@ Checklist rigida da completare **prima** del push finale di ogni sessione:
 
 ## 6. Decisioni aperte (da risolvere in corsa, in ordine di apparizione)
 
-### D.A — Stripe Elements custom theme (Sessione 14)
+### D.A — Stripe Elements custom theme (Sessione 14 → spostata a Sessione 17)
 
-`PagaClient.tsx` e `DepositSection.tsx` usano Stripe Elements (`<CardElement>`, `<PaymentElement>`). Questi componenti renderizzano in iframe con styling controllato via prop `options`. Oggi probabilmente usano default Stripe.
+**Aggiornamento 2026-04-26 (durante Sessione 14):** PagaClient.tsx **non usa** Stripe Elements (iframe `<CardElement>` / `<PaymentElement>`). Usa **Stripe Checkout** con redirect (`window.location.href = d.url` verso una pagina hosted da Stripe). Il branding di Checkout si configura nel Dashboard Stripe (Settings → Branding), non via codice. Quindi D.A non si applica a PagaClient.
+
+**D.A si decide in Sessione 17 (DepositSection.tsx)**, che è il primo file del Tier 1 che usa effettivamente `<CardElement>` per Stripe SetupIntent (deposito cauzionale).
+
+`DepositSection.tsx` userà Stripe Elements (`<CardElement>`, `<PaymentElement>`). Questi componenti renderizzano in iframe con styling controllato via prop `options`.
 
 **Opzioni:**
 - **A** Lasciare default Stripe (theme neutro, blu Stripe brand)
 - **B** Applicare theme custom con token brand: `colorPrimary: var(--color-primary)`, `colorText: var(--color-text)`, `fontFamily: var(--font-sans)`
 - **C** Theme custom solo su elementi non-iframe (label, helper text), iframe Stripe resta default
 
-**Da decidere prima della Sessione 14.** Default consigliato: **B** (allineamento brand completo, costo basso una volta stabiliti i token).
+**Da decidere prima della Sessione 17.** Default consigliato: **B** (allineamento brand completo, costo basso una volta stabiliti i token).
 
-### D.B — Pattern banner notice (Sessione 14-20)
+### D.B — Pattern banner notice (Sessione 14-20) ✅ RISOLTA
 
-Il guest portal ha banner success/error/info/warning ricorrenti (`depositResult === 'success'` rendering verde, ecc.). Self-checkin idem. Oggi sono sparsi inline.
+**Risolta durante Sessione 14 (2026-04-26):** la libreria `.banner` con varianti `--success`, `--error`, `--info`, `--warning`, `--accent` + `__title` / `__text` / `--with-icon` / `--stack` **esiste già dalla Fase B** in `app/globals.css:976-1029` con tutti i token semantici (`--color-success-bg/border/text`, `--color-error-bg/border/text`, `--color-info-bg/border/text`, `--color-warning-bg/border/text`).
 
-**Da unificare in 4 classi** durante Sessione 14 (libreria pre-Tier 1):
-- `.notice-banner.is-success` (#d1fae5 bg, #065f46 text, bi-check-circle-fill)
-- `.notice-banner.is-error` (#fef2f2 bg, #991b1b text, bi-x-circle-fill)
-- `.notice-banner.is-info` (#dbeafe bg, primary text, bi-info-circle-fill)
-- `.notice-banner.is-warning` (warning-soft bg, warning-text, bi-exclamation-triangle-fill)
+Aggiunto solo modifier `.banner--mb` (margine inferiore quando il banner è standalone in flow normale, sopra a CTA pagamento).
 
-Tutti centrali in `globals.css`, riusati nei file Tier 1. **Decidere prima della Sessione 14**.
+**Tutti i Tier 1 successivi (Sessioni 15-20) riusano direttamente `.banner.banner--*`** — nessuna nuova classe `.notice-banner` necessaria.
 
 ### D.C — Pattern dashboard-card (Sessione 16-17)
 
@@ -337,7 +337,7 @@ Sezione speculare a §6.1 della Fase B, da popolare durante l'esecuzione. Esempi
 
 | Sessione | File toccato | Inline eliminati (sessione) | Inline rimanenti (scope 33 file) |
 |---|---|---|---|
-| 14 | PagaClient + paga/page | 37 | 653 |
+| 14 | PagaClient + paga/page | 37 ✅ | 653 |
 | 15 | SuccessContent + successo/page + prenota/page | 16 | 637 |
 | 16 | GuestLogin + GuestPortal | 72 | 565 |
 | 17 | BedSection + DepositSection + CheckinSection | 76 | 489 |
