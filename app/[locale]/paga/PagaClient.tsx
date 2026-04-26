@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { PROPERTIES } from '@/config/properties';
+import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 
 // ─── UI translations ──────────────────────────────────────────────────────────
 
@@ -128,6 +129,7 @@ export default function PagaClient({ locale }: Props) {
   const [phase,         setPhase]         = useState<'ready' | 'paying' | 'done'>('ready');
   const [payMethod,     setPayMethod]     = useState<'stripe' | 'paypal'>('stripe');
   const [paypalReady,   setPaypalReady]   = useState(false);
+  const [coverUrl,      setCoverUrl]      = useState<string | null>(null);
   const sdkInstanceRef   = useRef<any>(null);
   const paypalSessionRef = useRef<any>(null);
 
@@ -143,6 +145,14 @@ export default function PagaClient({ locale }: Props) {
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
   }, [bookId]);
+
+  // Carica cover Cloudinary dell'unità (stessa logica di WizardStep3 / BookingSidebar)
+  useEffect(() => {
+    if (!booking) { setCoverUrl(null); return; }
+    const room = PROPERTIES.flatMap(p => p.rooms).find(r => r.roomId === booking.roomId);
+    if (!room?.cloudinaryFolder) { setCoverUrl(null); return; }
+    fetchCoversCached().then(covers => setCoverUrl(covers?.[room.cloudinaryFolder] ?? null));
+  }, [booking]);
 
   // Carica PayPal SDK v6 + crea session one-time
   useEffect(() => {
@@ -318,18 +328,21 @@ export default function PagaClient({ locale }: Props) {
       {/* Card 1 — Riepilogo soggiorno + prezzo */}
       <div className="card-info">
 
-        {/* Hero residenza (placeholder icona — la pagina paga non carica Cloudinary) */}
-        <div className="wizard-step3__hero">
-          <div className="wizard-step3__hero-placeholder" aria-hidden="true">
-            <i className="bi bi-house-fill" />
+        {/* Hero foto residenza (stessa pattern di BookingSidebar wizard) */}
+        {coverUrl && (
+          <div className="booking-sidebar__hero">
+            <img
+              src={coverUrl}
+              alt={room?.name ?? booking.roomName ?? ''}
+              className="booking-sidebar__hero-img"
+              loading="lazy"
+            />
           </div>
-          <div className="wizard-step3__hero-info">
-            <p className="wizard-step3__hero-name">{room?.name ?? booking.roomName ?? '—'}</p>
-            <p className="wizard-step3__hero-meta">
-              {nights} {nights === 1 ? t.night : t.nights} · {formatDate(booking.checkIn, locale)} → {formatDate(booking.checkOut, locale)}
-            </p>
-          </div>
-        </div>
+        )}
+        <p className="section-title-secondary">{room?.name ?? booking.roomName ?? '—'}</p>
+        <p className="label-metadata">
+          {nights} {nights === 1 ? t.night : t.nights} · {formatDate(booking.checkIn, locale)} → {formatDate(booking.checkOut, locale)}
+        </p>
 
         <hr className="divider-horizontal" />
 
