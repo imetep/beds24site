@@ -275,20 +275,19 @@ export default function PagaClient({ locale }: Props) {
 
   // ── Loading ────────────────────────────────────────────────────────────────
   if (loading) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', gap: 12, color: '#aaa' }}>
-      <div style={{ width: 22, height: 22, border: '2px solid var(--color-border)', borderTop: '2px solid var(--color-primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+    <div className="page-loading page-loading--tall">
+      <div className="page-loading__spinner" />
       {t.loading}
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 
   if (error && !booking) return (
-    <div style={{ maxWidth: 480, margin: '80px auto', textAlign: 'center', padding: '0 16px' }}>
-      <div style={{ fontSize: 48, marginBottom: 16, color: '#c0392b' }}>
+    <div className="page-state">
+      <div className="page-state__icon page-state__icon--lg page-state__icon--error">
         <i className="bi bi-exclamation-triangle-fill" aria-hidden="true" />
       </div>
-      <h2 style={{ fontSize: 20, fontWeight: 700, color: '#c0392b' }}>{t.errTitle}</h2>
-      <p style={{ color: '#888', fontSize: 14 }}>{error}</p>
+      <h2 className="page-state__title page-state__title--error">{t.errTitle}</h2>
+      <p className="page-state__text">{error}</p>
     </div>
   );
 
@@ -302,23 +301,23 @@ export default function PagaClient({ locale }: Props) {
 
   // ── Done ───────────────────────────────────────────────────────────────────
   if (phase === 'done') return (
-    <div style={{ maxWidth: 480, margin: '80px auto', textAlign: 'center', padding: '0 16px' }}>
-      <div style={{ fontSize: 56, marginBottom: 16, color: '#16a34a' }}>
+    <div className="page-state">
+      <div className="page-state__icon page-state__icon--xl page-state__icon--success">
         <i className="bi bi-check-circle-fill" aria-hidden="true" />
       </div>
-      <h2 style={{ fontSize: 22, fontWeight: 800, color: '#16a34a' }}>{t.paid}</h2>
-      <p style={{ color: '#888', fontSize: 14, marginTop: 8 }}>{booking.guestName} · {booking.guestEmail}</p>
+      <h2 className="page-state__title page-state__title--success">{t.paid}</h2>
+      <p className="page-state__text">{booking.guestName} · {booking.guestEmail}</p>
     </div>
   );
 
   return (
-    <div style={{ maxWidth: 640, margin: '0 auto', fontFamily: 'sans-serif', padding: '0 2px' }}>
+    <div className="paga-content">
 
-      <h2 style={{ fontSize: 24, fontWeight: 800, color: 'var(--color-text)', margin: '0 0 4px' }}>{t.title}</h2>
-      <p style={{ fontSize: 14, color: '#888', margin: '0 0 24px' }}>{t.subtitle}</p>
+      <h2 className="paga-content__title">{t.title}</h2>
+      <p className="paga-content__subtitle">{t.subtitle}</p>
 
       {/* Card appartamento + date */}
-      <div style={card}>
+      <div className="paga-card">
         <Row label={t.apartment} value={room?.name ?? booking.roomName ?? '—'} />
         <Row label={t.dates} value={`${formatDate(booking.checkIn, locale)} → ${formatDate(booking.checkOut, locale)}`} />
         <Row label="" value={`${nights} ${nights === 1 ? t.night : t.nights}`} dimmed />
@@ -326,21 +325,21 @@ export default function PagaClient({ locale }: Props) {
       </div>
 
       {/* Dati ospite */}
-      <div style={card}>
-        <p style={labelStyle}>{t.guestData}</p>
+      <div className="paga-card">
+        <p className="paga-section-label">{t.guestData}</p>
         <Row label={t.name}  value={booking.guestName} />
         <Row label={t.email} value={booking.guestEmail} />
       </div>
 
       {/* Dettaglio prezzo */}
-      <div style={card}>
-        <p style={labelStyle}>{t.priceDetail}</p>
+      <div className="paga-card">
+        <p className="paga-section-label">{t.priceDetail}</p>
         <PriceRow label={`${nights} ${nights === 1 ? t.night : t.nights} × ${fmt(perNight)}/${nights === 1 ? t.night : t.nights}`} value={fmt(booking.price)} />
-        <div style={{ height: 1, background: 'var(--color-border)', margin: '12px 0' }} />
+        <div className="paga-price-divider" />
         <PriceRow label={t.totalBooking} value={fmt(booking.price)} bold />
         {validPct < 100 && (
           <>
-            <div style={{ height: 1, background: 'var(--color-border)', margin: '12px 0' }} />
+            <div className="paga-price-divider" />
             <PriceRow label={`${t.deposit} (${validPct}%)`} value={fmt(depositAmount)} highlight />
             <PriceRow label={t.remaining} value={fmt(remaining)} dimmed />
           </>
@@ -348,31 +347,30 @@ export default function PagaClient({ locale }: Props) {
       </div>
 
       {/* Info box */}
-      <div style={{ ...card, background: 'var(--color-bg-muted)', border: '1px solid var(--color-border)' }}>
-        <p style={{ margin: '0 0 4px', fontSize: 13, color: '#555' }}>
+      <div className="paga-card paga-card--muted">
+        <p className="paga-info-row">
           <i className="bi bi-lightning-fill me-1" aria-hidden="true" />
           {t.energy}
         </p>
-        <a href={t.energyHref} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginBottom: 8, fontSize: 11, color: 'var(--color-primary)', textDecoration: 'none', fontWeight: 600 }}>{t.energyLink}</a>
-        <p style={{ margin: '0 0 4px', fontSize: 13, color: '#555' }}>
+        <a href={t.energyHref} target="_blank" rel="noopener noreferrer" className="paga-info-link">{t.energyLink}</a>
+        <p className="paga-info-row">
           <i className="bi bi-shield-lock-fill me-1" aria-hidden="true" />
           {t.deposit_info}
         </p>
-        <a href={t.depositHref} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', fontSize: 11, color: 'var(--color-primary)', textDecoration: 'none', fontWeight: 600 }}>{t.depositLink}</a>
+        <a href={t.depositHref} target="_blank" rel="noopener noreferrer" className="paga-info-link">{t.depositLink}</a>
       </div>
 
       {/* Metodo di pagamento */}
-      <div style={card}>
-        <p style={labelStyle}>{t.chooseMethod}</p>
-        <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
+      <div className="paga-card">
+        <p className="paga-section-label">{t.chooseMethod}</p>
+        <div className="paga-method-grid">
           {(['stripe', 'paypal'] as const).map(m => (
-            <button key={m} onClick={() => setPayMethod(m)}
-              style={{
-                flex: 1, padding: '10px', borderRadius: 10, cursor: 'pointer',
-                border: `2px solid ${payMethod === m ? 'var(--color-primary)' : 'var(--color-border)'}`,
-                background: payMethod === m ? 'var(--color-primary-soft)' : 'var(--color-bg)',
-                fontWeight: 600, fontSize: 14, color: payMethod === m ? 'var(--color-primary)' : '#555',
-              }}>
+            <button
+              key={m}
+              onClick={() => setPayMethod(m)}
+              className={`paga-method-btn${payMethod === m ? ' is-active' : ''}`}
+              type="button"
+            >
               {m === 'stripe' ? (
                 <>
                   <i className="bi bi-credit-card-fill me-1" aria-hidden="true" />
@@ -390,23 +388,20 @@ export default function PagaClient({ locale }: Props) {
 
         {/* Errore */}
         {error && (
-          <div style={{ background: '#fff5f5', border: '1px solid #f5c6cb', borderRadius: 10, padding: '12px 16px', marginBottom: 16 }}>
-            <p style={{ margin: 0, color: '#c0392b', fontWeight: 600, fontSize: 14 }}>{t.errTitle}</p>
-            <p style={{ margin: '4px 0 0', fontSize: 13, color: '#888' }}>{error}</p>
+          <div className="banner banner--error banner--mb">
+            <p className="banner__title">{t.errTitle}</p>
+            <p className="banner__text">{error}</p>
           </div>
         )}
 
         {/* Bottone Stripe */}
         {payMethod === 'stripe' && (
-          <button onClick={handleStripe} disabled={phase === 'paying'}
-            style={{
-              width: '100%', padding: '18px', borderRadius: 14, border: 'none',
-              fontSize: 18, fontWeight: 900,
-              background: phase === 'paying' ? '#e0e0e0' : 'var(--color-cta)',
-              color: phase === 'paying' ? '#999' : 'var(--color-on-dark)',
-              cursor: phase === 'paying' ? 'not-allowed' : 'pointer',
-              boxShadow: phase === 'paying' ? 'none' : '0 4px 14px rgba(252,175,26,0.4)',
-            }}>
+          <button
+            onClick={handleStripe}
+            disabled={phase === 'paying'}
+            className="paga-cta-btn"
+            type="button"
+          >
             {phase === 'paying' ? (
               <>
                 <i className="bi bi-hourglass-split me-1" aria-hidden="true" />
@@ -425,8 +420,9 @@ export default function PagaClient({ locale }: Props) {
         {payMethod === 'paypal' && (
           <div>
             {!paypalReady && phase !== 'paying' && (
-              <div style={{ width: '100%', padding: '18px', borderRadius: 14, background: '#f0f4f8', textAlign: 'center', fontSize: 14, color: '#888' }}>
-                ⏳ {t.paypalLoading}
+              <div className="paga-paypal-placeholder">
+                <i className="bi bi-hourglass-split me-1" aria-hidden="true" />
+                {t.paypalLoading}
               </div>
             )}
             {paypalReady && phase !== 'paying' && (
@@ -440,15 +436,15 @@ export default function PagaClient({ locale }: Props) {
               </button>
             )}
             {phase === 'paying' && (
-              <div style={{ width: '100%', padding: '18px', borderRadius: 14, background: '#e0e0e0', textAlign: 'center', fontSize: 14, color: '#999', fontWeight: 600 }}>
-                ⏳ {t.payingPaypal}
+              <div className="paga-paypal-placeholder paga-paypal-placeholder--paying">
+                <i className="bi bi-hourglass-split me-1" aria-hidden="true" />
+                {t.payingPaypal}
               </div>
             )}
           </div>
         )}
       </div>
 
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }
@@ -457,27 +453,30 @@ export default function PagaClient({ locale }: Props) {
 
 function Row({ label, value, dimmed }: { label: string; value: string; dimmed?: boolean }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10, gap: 12 }}>
-      {label ? <span style={{ fontSize: 13, color: 'var(--color-text-label)', fontWeight: 600, flexShrink: 0, minWidth: 100 }}>{label}</span> : <span />}
-      <span style={{ fontSize: 13, color: dimmed ? 'var(--color-text-muted)' : 'var(--color-text)', textAlign: 'right', lineHeight: 1.4 }}>{value}</span>
+    <div className="paga-row">
+      {label ? <span className="paga-row__label">{label}</span> : <span />}
+      <span className={`paga-row__value${dimmed ? ' paga-row__value--dimmed' : ''}`}>{value}</span>
     </div>
   );
 }
 
 function PriceRow({ label, value, bold, highlight, dimmed }: { label: string; value: string; bold?: boolean; highlight?: boolean; dimmed?: boolean }) {
+  const labelClass = [
+    'paga-price-row__label',
+    bold && 'paga-price-row__label--bold',
+    highlight && 'paga-price-row__label--highlight',
+    dimmed && 'paga-price-row__label--dimmed',
+  ].filter(Boolean).join(' ');
+  const valueClass = [
+    'paga-price-row__value',
+    bold && 'paga-price-row__value--bold',
+    highlight && 'paga-price-row__value--highlight',
+    dimmed && 'paga-price-row__value--dimmed',
+  ].filter(Boolean).join(' ');
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-      <span style={{ fontSize: 14, color: dimmed ? 'var(--color-text-muted)' : highlight ? 'var(--color-primary)' : '#444', fontWeight: bold || highlight ? 700 : 400 }}>{label}</span>
-      <span style={{ fontSize: bold ? 18 : 14, fontWeight: bold || highlight ? 800 : 600, color: dimmed ? 'var(--color-text-muted)' : highlight ? 'var(--color-primary)' : 'var(--color-text)' }}>{value}</span>
+    <div className="paga-price-row">
+      <span className={labelClass}>{label}</span>
+      <span className={valueClass}>{value}</span>
     </div>
   );
 }
-
-const card: React.CSSProperties = {
-  border: '1px solid var(--color-border)', borderRadius: 16,
-  padding: '20px 22px', marginBottom: 16, background: 'var(--color-bg)',
-};
-const labelStyle: React.CSSProperties = {
-  fontSize: 11, fontWeight: 700, color: 'var(--color-text-muted)',
-  textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 12px',
-};
