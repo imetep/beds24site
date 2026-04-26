@@ -446,7 +446,7 @@ body {
 .ui-booking-summary-price-total {
   font-size: var(--text-xl);
   font-weight: 800;
-  color: var(--color-text-accent);
+  color: var(--color-primary);
   line-height: var(--line-height-tight);
 }
 .ui-booking-summary-price-pernight {
@@ -1409,7 +1409,7 @@ body {
 .wizard-step3__total-value {
   font-size: var(--text-xl);
   font-weight: 800;
-  color: var(--color-text-accent);
+  color: var(--color-primary);
 }
 .wizard-step3__savings {
   font-size: var(--text-sm);
@@ -4043,7 +4043,7 @@ body {
 .wizard-step2-mobile__total-new {
   font-size: 20px;
   font-weight: 800;
-  color: var(--color-text-accent);
+  color: var(--color-primary);
 }
 .wizard-step2-mobile__tourist-tax-note {
   font-size: 11px;
