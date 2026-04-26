@@ -331,33 +331,27 @@ export default function PagaClient({ locale }: Props) {
       {/* Card 1 — Riepilogo soggiorno + prezzo */}
       <div className="card-info">
 
-        {/* Hero compatto: foto 80x80 a sx + nome + meta (typeLabel · sqm · people) — pattern wizard-step3 */}
-        <div className="wizard-step3__hero">
-          {coverUrl ? (
+        {/* Hero foto full-width + nome + meta (typeLabel · sqm · people) — pattern BookingSidebar wizardstep2 */}
+        {coverUrl && (
+          <div className="booking-sidebar__hero">
             <img
               src={coverUrl}
               alt={room?.name ?? booking.roomName ?? ''}
-              className="wizard-step3__hero-img"
+              className="booking-sidebar__hero-img"
               loading="lazy"
             />
-          ) : (
-            <div className="wizard-step3__hero-placeholder" aria-hidden="true">
-              <i className="bi bi-house-fill" />
-            </div>
-          )}
-          <div className="wizard-step3__hero-info">
-            <p className="wizard-step3__hero-name">{room?.name ?? booking.roomName ?? '—'}</p>
-            {room && (
-              <p className="wizard-step3__hero-meta">
-                {room.type === 'monolocale' ? tSidebar.typeMonolocale
-                  : room.type === 'villa' ? tSidebar.typeVilla
-                  : tSidebar.typeAppartamento}
-                {' · '}{room.sqm} {tSidebar.sqm}
-                {' · '}{room.maxPeople} {tSidebar.people}
-              </p>
-            )}
           </div>
-        </div>
+        )}
+        <p className="section-title-secondary">{room?.name ?? booking.roomName ?? '—'}</p>
+        {room && (
+          <p className="label-metadata">
+            {room.type === 'monolocale' ? tSidebar.typeMonolocale
+              : room.type === 'villa' ? tSidebar.typeVilla
+              : tSidebar.typeAppartamento}
+            {' · '}{room.sqm} {tSidebar.sqm}
+            {' · '}{room.maxPeople} {tSidebar.people}
+          </p>
+        )}
 
         <hr className="divider-horizontal" />
 
