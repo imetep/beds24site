@@ -315,63 +315,67 @@ export default function PagaClient({ locale }: Props) {
       <h2 className="section-title-main">{t.title}</h2>
       <p className="wizard-step3__subtitle">{t.subtitle}</p>
 
-      {/* Hero residenza (placeholder icona — la pagina paga non carica Cloudinary) */}
-      <div className="wizard-step3__hero">
-        <div className="wizard-step3__hero-placeholder" aria-hidden="true">
-          <i className="bi bi-house-door-fill" />
-        </div>
-        <div className="wizard-step3__hero-info">
-          <p className="wizard-step3__hero-name">{room?.name ?? booking.roomName ?? '—'}</p>
-          <p className="wizard-step3__hero-meta">
-            {nights} {nights === 1 ? t.night : t.nights} · {formatDate(booking.checkIn, locale)} → {formatDate(booking.checkOut, locale)}
-          </p>
-        </div>
-      </div>
+      {/* Card 1 — Riepilogo soggiorno + prezzo */}
+      <div className="card-info">
 
-      {/* Dati chiave: Date / Ospiti */}
-      <dl className="wizard-step3__data-grid">
-        <dt>{t.dates}</dt>
-        <dd>{formatDate(booking.checkIn, locale)} → {formatDate(booking.checkOut, locale)}</dd>
-        <dt>{t.guests}</dt>
-        <dd>{booking.numAdult} {t.adults}{booking.numChild > 0 ? `, ${booking.numChild} ${t.children}` : ''}</dd>
-      </dl>
-
-      <hr className="divider-horizontal" />
-
-      {/* Dati ospite */}
-      <p className="label-uppercase-muted">{t.guestData}</p>
-      <p className="wizard-step3__guest-name">{booking.guestName}</p>
-      <p className="wizard-step3__guest-meta">{booking.guestEmail}</p>
-
-      <hr className="divider-horizontal" />
-
-      {/* Dettaglio prezzo */}
-      <p className="label-uppercase-muted">{t.priceDetail}</p>
-      <div className="wizard-step3__price-rows">
-        <div className="layout-row-between">
-          <span>{nights} {nights === 1 ? t.night : t.nights} × {fmt(perNight)}/{nights === 1 ? t.night : t.nights}</span>
-          <span>{fmt(booking.price)}</span>
-        </div>
-      </div>
-
-      {/* Totale prenotazione */}
-      <div className="wizard-step3__total-row">
-        <span className="wizard-step3__total-label">{t.totalBooking}</span>
-        <span className="wizard-step3__total-value">{fmt(booking.price)}</span>
-      </div>
-
-      {/* Acconto + saldo (solo se pct < 100) */}
-      {validPct < 100 && (
-        <>
-          <div className="wizard-step3__total-row">
-            <span className="wizard-step3__total-label">{t.deposit} ({validPct}%)</span>
-            <span className="wizard-step3__total-value">{fmt(depositAmount)}</span>
+        {/* Hero residenza (placeholder icona — la pagina paga non carica Cloudinary) */}
+        <div className="wizard-step3__hero">
+          <div className="wizard-step3__hero-placeholder" aria-hidden="true">
+            <i className="bi bi-house-fill" />
           </div>
-          <p className="wizard-step3__total-note">{t.remaining}: {fmt(remaining)}</p>
-        </>
-      )}
+          <div className="wizard-step3__hero-info">
+            <p className="wizard-step3__hero-name">{room?.name ?? booking.roomName ?? '—'}</p>
+            <p className="wizard-step3__hero-meta">
+              {nights} {nights === 1 ? t.night : t.nights} · {formatDate(booking.checkIn, locale)} → {formatDate(booking.checkOut, locale)}
+            </p>
+          </div>
+        </div>
 
-      <hr className="divider-horizontal" />
+        <hr className="divider-horizontal" />
+
+        {/* Dati chiave: Date / Ospiti */}
+        <dl className="wizard-step3__data-grid">
+          <dt>{t.dates}</dt>
+          <dd>{formatDate(booking.checkIn, locale)} → {formatDate(booking.checkOut, locale)}</dd>
+          <dt>{t.guests}</dt>
+          <dd>{booking.numAdult} {t.adults}{booking.numChild > 0 ? `, ${booking.numChild} ${t.children}` : ''}</dd>
+        </dl>
+
+        <hr className="divider-horizontal" />
+
+        {/* Dettaglio prezzo */}
+        <p className="label-uppercase-muted">{t.priceDetail}</p>
+        <div className="wizard-step3__price-rows">
+          <div className="layout-row-between">
+            <span>{nights} {nights === 1 ? t.night : t.nights} × {fmt(perNight)}/{nights === 1 ? t.night : t.nights}</span>
+            <span>{fmt(booking.price)}</span>
+          </div>
+        </div>
+
+        {/* Totale prenotazione (arancione brand --color-text-accent, allineato a sidebar/wizard-step3/sticky-bar — vedi commit b4be8c6 T1 M3) */}
+        <div className="wizard-step3__total-row">
+          <span className="wizard-step3__total-label">{t.totalBooking}</span>
+          <span className="wizard-step3__total-value">{fmt(booking.price)}</span>
+        </div>
+
+        {/* Acconto + saldo (solo se pct < 100) */}
+        {validPct < 100 && (
+          <>
+            <div className="wizard-step3__total-row">
+              <span className="wizard-step3__total-label">{t.deposit} ({validPct}%)</span>
+              <span className="wizard-step3__total-value">{fmt(depositAmount)}</span>
+            </div>
+            <p className="wizard-step3__total-note">{t.remaining}: {fmt(remaining)}</p>
+          </>
+        )}
+      </div>
+
+      {/* Card 2 — Dati ospite (compatta, allineata a wizard-step3 ordine) */}
+      <div className="card-info">
+        <p className="label-uppercase-muted">{t.guestData}</p>
+        <p className="wizard-step3__guest-name">{booking.guestName}</p>
+        <p className="wizard-step3__guest-meta">{booking.guestEmail}</p>
+      </div>
 
       {/* Banner consumi (info) */}
       <div className="banner banner--info banner--with-icon">
@@ -390,8 +394,6 @@ export default function PagaClient({ locale }: Props) {
           <a href={t.depositHref} target="_blank" rel="noopener noreferrer" className="banner__link">{t.depositLink}</a>
         </div>
       </div>
-
-      <hr className="divider-horizontal" />
 
       {/* Metodo di pagamento */}
       <p className="label-uppercase-muted">{t.chooseMethod}</p>
