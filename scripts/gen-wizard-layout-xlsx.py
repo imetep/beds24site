@@ -1,10 +1,12 @@
 """
-Genera docs/ux/wizard-layout-analysis.xlsx — analisi layout wizardstep2 e wizardstep3.
-Estrae dimensioni dai CSS reali (globals.css + componenti) e produce 4 fogli:
-  1. step2-grid : sketch visuale (celle colorate)
-  2. step2-data : tabella dimensioni px
-  3. step3-grid : sketch visuale
-  4. step3-data : tabella dimensioni px
+Genera docs/ux/wizard-layout-analysis.xlsx — analisi layout wizardstep1/2/3.
+Estrae dimensioni dai CSS reali (globals.css + componenti) e produce 6 fogli:
+  1. step1-grid : sketch visuale wizardstep1 (lista residenze + offers)
+  2. step1-data : tabella dimensioni px
+  3. step2-grid : sketch visuale wizardstep2 (form + sidebar)
+  4. step2-data : tabella dimensioni px
+  5. step3-grid : sketch visuale wizardstep3 (single-col)
+  6. step3-data : tabella dimensioni px
 """
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
@@ -101,7 +103,280 @@ wb = Workbook()
 wb.remove(wb.active)
 
 # ═════════════════════════════════════════════════════════════════════════════
-# FOGLIO 1: step2-grid
+# FOGLIO 1: step1-grid (wizardstep1 — lista residenze + offers)
+# ═════════════════════════════════════════════════════════════════════════════
+ws = wb.create_sheet('step1-grid')
+set_grid_dimensions(ws, n_cols=85, n_rows=130)
+
+ws['A1'] = 'wizardstep1 — desktop ≥768px (page-container 1200, layout 2-col main 680 + sidebar 380)'
+ws['A1'].font = FONT_TITLE
+ws.merge_cells('A1:CG1')
+
+# Header sito
+draw_block(ws, 'A3:CG4', C_HEADER, 'Header sito (livingapple + nav)  —  ~70px', font=FONT_LBL)
+
+# Stepper (3 step) — niente merge sul container, solo fill
+draw_container(ws, 'A6:CG8', C_WHITE, border=False)
+write_label(ws, 'AB7', '①  Scegli  (CORRENTE)        ②  Dati ospite        ③  Paga', FONT_LBL_BOLD,
+            align=Alignment(horizontal='center', vertical='center'))
+ws.merge_cells('AB7:BS7')
+
+# === MAIN (azzurro) cols B:AX (49 col ≈ 680px) ===
+draw_block(ws, 'B10:AX10', C_MAIN, '↓ .wizard-container__main  flex 1 · max 680', font=FONT_LBL_BOLD)
+
+# Box riepilogo dates+ospiti+edit (.card-info--compact)
+draw_container(ws, 'B12:AX17', C_WHITE, border=True)
+write_label(ws, 'C13', '.card-info--compact   →   Riepilogo dates + edit-btn', FONT_LBL_BOLD)
+ws.merge_cells('C13:AT13')
+write_label(ws, 'C14', '15 mag 2026 – 18 mag 2026   .step1-summary__dates', FONT_LBL_BOLD)
+ws.merge_cells('C14:AT14')
+write_label(ws, 'C15', '3 notti · 2 adulti   .step1-summary__meta', FONT_LBL)
+ws.merge_cells('C15:AT15')
+draw_block(ws, 'AU13:AX16', C_BANNER_INFO, '↩\n.step1-\nsummary__\nedit-btn',
+           font=Font(name='Arial', size=7, color='006CB7'))
+
+# Titolo
+draw_block(ws, 'B19:AX21', C_TITLE,
+           'h2.section-title-main  "Scegli la tua casa" / "Scegli la tariffa"', font=FONT_LBL)
+
+# Filter bar
+draw_container(ws, 'B23:AX26', C_WHITE, border=True)
+write_label(ws, 'C24', '.step1-filter-bar  (overflow-x scroll)', FONT_LBL_BOLD)
+ws.merge_cells('C24:AX24')
+draw_block(ws, 'C25:M25', C_WHITE, '☰ Filtri  .step1-filter-btn', font=FONT_LBL)
+draw_block(ws, 'O25:Y25', C_BANNER_INFO, 'chip filtro  ×', font=FONT_LBL)
+draw_block(ws, 'AA25:AK25', C_BANNER_INFO, 'chip filtro  ×', font=FONT_LBL)
+
+# Lista room-card[]
+write_label(ws, 'B28', 'LISTA RESIDENZE  →  .step1-room-card[]', FONT_LBL_BOLD)
+ws.merge_cells('B28:AX28')
+
+# Card residenza 1
+draw_container(ws, 'B30:AX55', C_WHITE, border=True)
+write_label(ws, 'C31', '.step1-room-card  (residenza 1: Pink Lady)', FONT_LBL_BOLD)
+ws.merge_cells('C31:AX31')
+
+# Card row: photo a sx + details a dx
+draw_block(ws, 'C33:N42', C_PHOTO,
+           '[FOTO 200×160]\n.step1-room-card__photo-img', font=FONT_LBL)
+write_label(ws, 'O33', 'Pink Lady   .step1-room-card__name', FONT_LBL_BOLD)
+ws.merge_cells('O33:AW33')
+write_label(ws, 'O34', '🏠 App. · 📐 180mq · 👥 12 · 🌊 250m   .step1-room-card__meta-chips', FONT_LBL)
+ws.merge_cells('O34:AW34')
+
+# Lista offers dentro la card
+write_label(ws, 'O37', 'TARIFFE DISPONIBILI  .step1-room-card__offers', FONT_LBL_SMALL)
+ws.merge_cells('O37:AW37')
+
+# Offer 1: Non rimborsabile (selected)
+draw_block(ws, 'O39:AW42', C_BANNER_INFO,
+           '● Non rimborsabile      79 €/notte   .step1-offer-option.is-selected', font=FONT_LBL)
+# Offer 2
+draw_block(ws, 'O44:AW47', C_WHITE,
+           '○ Parzialmente rimborsabile     85 €/notte   .step1-offer-option', font=FONT_LBL)
+# Offer 3
+draw_block(ws, 'O49:AW52', C_WHITE,
+           '○ Flessibile                    95 €/notte   .step1-offer-option', font=FONT_LBL)
+
+# Card residenza 2 (placeholder)
+draw_container(ws, 'B58:AX78', C_WHITE, border=True)
+write_label(ws, 'C59', '.step1-room-card  (residenza 2: Casa Verde) — same structure', FONT_LBL_BOLD)
+ws.merge_cells('C59:AX59')
+draw_block(ws, 'C61:N70', C_PHOTO, '[FOTO 200×160]', font=FONT_LBL)
+write_label(ws, 'O61', 'Casa Verde', FONT_LBL_BOLD)
+ws.merge_cells('O61:AW61')
+write_label(ws, 'O62', '🏠 Villa · 📐 250mq · 👥 8 · 🌊 500m', FONT_LBL)
+ws.merge_cells('O62:AW62')
+draw_block(ws, 'O66:AW69', C_WHITE, '○ Non rimborsabile      120 €/notte', font=FONT_LBL)
+draw_block(ws, 'O71:AW74', C_WHITE, '○ Parzialmente rimborsabile  130', font=FONT_LBL)
+
+# Empty state placeholder note
+write_label(ws, 'B82', '... continua con altre residenze (lista scrollabile)', FONT_LBL_SMALL)
+ws.merge_cells('B82:AX82')
+
+# Footer dimensione main
+write_label(ws, 'B95', '◄── max-width 680 (--container-sm) ──►   flex 1', FONT_LBL_BOLD)
+ws.merge_cells('B95:AX95')
+
+# === GAP ===
+draw_block(ws, 'AY10:AZ95', C_GAP, '', font=FONT_LBL)
+
+# === SIDEBAR (rosa) — stessa BookingSidebar di step2 ===
+draw_block(ws, 'BA10:CA10', C_SIDE, '↓ .wizard-container__sidebar  STICKY 90', font=FONT_LBL_BOLD)
+
+draw_container(ws, 'BA12:CA90', C_WHITE, border=True)
+write_label(ws, 'BA13', '.booking-sidebar  width:380  padding:24', FONT_LBL_SMALL)
+ws.merge_cells('BA13:CA13')
+
+draw_block(ws, 'BB15:BZ22', C_PHOTO,
+           '[ FOTO PINK LADY ]\n.booking-sidebar__hero-img\n332 × 160 (cover)', font=FONT_LBL)
+write_label(ws, 'BB24', 'Pink Lady  .section-title-secondary', FONT_LBL_BOLD)
+ws.merge_cells('BB24:BZ24')
+write_label(ws, 'BB25', 'Appartamento · 180 mq · 12 ospiti', FONT_LBL)
+ws.merge_cells('BB25:BZ25')
+
+draw_block(ws, 'BB27:BZ32', C_BANNER_INFO,
+           '⚡ Consumi energetici\n.banner.banner--info', font=FONT_LBL)
+
+write_label(ws, 'BB34', 'CARATTERISTICHE  .label-uppercase-muted', FONT_LBL_BOLD)
+ws.merge_cells('BB34:BZ34')
+write_label(ws, 'BB35', '🛏 4 camere  · 🚿 3 bagni  · 👥 12 ospiti', FONT_LBL)
+ws.merge_cells('BB35:BZ35')
+write_label(ws, 'BB36', '🏊 Piscina condivisa  ·  🌳 Giardino', FONT_LBL)
+ws.merge_cells('BB36:BZ36')
+
+draw_container(ws, 'BB39:BZ42', C_WHITE, border=True)
+write_label(ws, 'BB39', 'Date', FONT_LBL_BOLD)
+ws.merge_cells('BB39:BZ39')
+write_label(ws, 'BB40', '15 mag 2026 – 18 mag 2026', FONT_LBL)
+write_label(ws, 'BB41', '3 notti', FONT_LBL_SMALL)
+
+draw_container(ws, 'BB44:BZ46', C_WHITE, border=True)
+write_label(ws, 'BB44', 'Ospiti', FONT_LBL_BOLD)
+write_label(ws, 'BB45', '2 adulti', FONT_LBL)
+
+write_label(ws, 'BB48', 'DETTAGLI DEL PREZZO  .label-uppercase-muted', FONT_LBL_BOLD)
+ws.merge_cells('BB48:BZ48')
+write_label(ws, 'BB49', '3 notti × 79 €')
+write_label(ws, 'BZ49', '236 €', align=Alignment(horizontal='right'))
+write_label(ws, 'BB50', 'Imposta soggiorno')
+write_label(ws, 'BZ50', '12 €', align=Alignment(horizontal='right'))
+
+draw_block(ws, 'BB54:BZ56', C_TOTAL, 'Totale                         248 €', font=FONT_TOTAL)
+
+write_label(ws, 'BB58', 'CANCELLAZIONE', FONT_LBL_BOLD)
+ws.merge_cells('BB58:BZ58')
+write_label(ws, 'BB59', 'Flessibile 60 gg — Cancellazione gratuita', FONT_LBL_SMALL)
+ws.merge_cells('BB59:BZ60')
+
+draw_block(ws, 'BB62:BZ69', C_BANNER_WARNING,
+           '🛡 Deposito cauzionale — €500\n.banner.banner--warning', font=FONT_LBL)
+
+draw_block(ws, 'BB72:BZ76', C_CTA,
+           'CTA  →  "Continua"\n.booking-sidebar__cta\n.btn.btn--primary', font=FONT_CTA)
+
+write_label(ws, 'BB78', 'CIN IT059014B47RVOMN2D  .booking-sidebar__footer', FONT_LBL_SMALL)
+ws.merge_cells('BB78:BZ78')
+
+write_label(ws, 'BA92', '◄── 380 px FISSA  flex-shrink:0 ──►', FONT_LBL_BOLD)
+ws.merge_cells('BA92:CA92')
+
+# Note sotto
+write_label(ws, 'A100', 'NOTE STEP1:', FONT_LBL_BOLD)
+write_label(ws, 'A102',
+            '• WizardStep1 è il contenuto del .wizard-container__main · main max 680 · sidebar 380 fissa', FONT_LBL)
+ws.merge_cells('A102:CG102')
+write_label(ws, 'A103',
+            '• Lista residenze: .step1-room-card[] — ognuna con foto sx (200×160) + nome + meta-chips + offers', FONT_LBL)
+ws.merge_cells('A103:CG103')
+write_label(ws, 'A104',
+            '• Per ogni residenza: 1-N offers (Non rimborsabile / Parzialmente / Flessibile)', FONT_LBL)
+ws.merge_cells('A104:CG104')
+write_label(ws, 'A105',
+            '• Filter bar: bottone Filtri (apre modale) + chip filtri attivi (×) — overflow-x scroll', FONT_LBL)
+ws.merge_cells('A105:CG105')
+write_label(ws, 'A106',
+            '• Sidebar BookingSidebar: foto Pink Lady + caratteristiche residenza selezionata + Date/Ospiti + Prezzi + CTA Continua', FONT_LBL)
+ws.merge_cells('A106:CG106')
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+# FOGLIO 2: step1-data
+# ═════════════════════════════════════════════════════════════════════════════
+ws = wb.create_sheet('step1-data')
+ws.column_dimensions['A'].width = 26
+ws.column_dimensions['B'].width = 40
+ws.column_dimensions['C'].width = 8
+ws.column_dimensions['D'].width = 8
+ws.column_dimensions['E'].width = 10
+ws.column_dimensions['F'].width = 10
+ws.column_dimensions['G'].width = 22
+ws.column_dimensions['H'].width = 55
+
+ws['A1'] = 'wizardstep1 — tabella dimensioni layout (desktop ≥768px, viewport 1200)'
+ws['A1'].font = FONT_TITLE
+ws.merge_cells('A1:H1')
+
+headers = ['Elemento', 'Classe CSS', 'x px', 'y px', 'width px', 'height px', 'parent', 'note']
+for i, h in enumerate(headers):
+    c = ws.cell(row=3, column=i + 1, value=h)
+    c.font = FONT_HEAD_TBL
+    c.fill = PatternFill('solid', start_color='374151', end_color='374151')
+    c.alignment = ALIGN_C
+    c.border = BOX_BORDER
+
+rows_step1 = [
+    ('page-container', '.page-container', 0, 0, 1200, 'auto', 'body', 'max-width var(--container-lg) 1200'),
+    ('header sito', '(layout root)', 0, 0, 1200, 70, 'page-container', 'sticky'),
+    ('stepper', '.ui-stepper', 16, 80, 1168, 60, 'page-container', '3 step (1 corrente, 2 e 3 inactive)'),
+    ('wizard-container', '.wizard-container', 0, 140, 1200, 'auto', 'page-container', 'padding lg+base+xl · max 1200'),
+    ('layout 2-col', '.wizard-container__layout', 24, 164, 1152, 'auto', 'wizard-container', 'flex row · gap 32'),
+    ('main (sx)', '.wizard-container__main', 24, 164, 680, 'auto', 'layout', 'flex 1 · max --container-sm 680'),
+    ('  card-summary', '.card-info.card-info--compact', 24, 164, 680, 90, 'main', 'Riepilogo dates+ospiti + edit-btn'),
+    ('    dates', '.step1-summary__dates', 40, 180, 600, 22, 'card-summary', '"15 mag – 18 mag" bold 14'),
+    ('    meta', '.step1-summary__meta', 40, 205, 600, 18, 'card-summary', '"3 notti · 2 adulti" muted'),
+    ('    edit-btn', '.step1-summary__edit-btn', 660, 175, 44, 44, 'card-summary', 'icon undo (touch-target)'),
+    ('  titolo', '.section-title-main', 24, 270, 680, 36, 'main', '"Scegli la tua casa" / "Scegli la tariffa"'),
+    ('  filter-bar', '.step1-filter-bar', 24, 320, 680, 50, 'main', 'flex · overflow-x scroll · gap 8'),
+    ('    filter-btn', '.step1-filter-btn', 24, 330, 100, 40, 'filter-bar', 'apre modale filtri · badge count'),
+    ('    filter-chip', '.step1-filter-chip', 132, 332, 90, 36, 'filter-bar', 'chip filtro attivo · close ×'),
+    ('  room-card #1', '.step1-room-card', 24, 388, 680, 280, 'main', 'foto sx + name + meta + offers'),
+    ('    photo', '.step1-room-card__photo-img', 40, 404, 200, 160, 'room-card', 'rect link · object-fit cover'),
+    ('    name', '.step1-room-card__name', 256, 404, 432, 28, 'room-card', '"Pink Lady" 18px / 700'),
+    ('    meta-chips', '.step1-room-card__meta-chips', 256, 436, 432, 24, 'room-card', 'icone + numeri (sqm, ospiti, mare, piscina)'),
+    ('    offers list', '.step1-room-card__offers', 256, 466, 432, 195, 'room-card', 'lista 1-N offer-option'),
+    ('      offer #1 sel', '.step1-offer-option.is-selected', 256, 466, 432, 60, 'offers', 'border 2px primary · bg primary-soft'),
+    ('      offer #1 name', '.step1-offer-option__name', 280, 478, 280, 22, 'offer #1', '"Non rimborsabile" bold'),
+    ('      offer #1 desc', '.step1-offer-option__desc', 280, 502, 280, 18, 'offer #1', 'descrizione policy'),
+    ('      offer #1 price', '.step1-offer-option__price', 580, 478, 100, 22, 'offer #1', '"79 €" 19px / 800 BLU primary'),
+    ('      offer #1 /n', '.step1-offer-option__per-night', 580, 502, 100, 16, 'offer #1', '"/notte" 11px muted'),
+    ('      offer #2', '.step1-offer-option', 256, 540, 432, 60, 'offers', 'non selezionata · bg bianco'),
+    ('      offer #3', '.step1-offer-option', 256, 614, 432, 60, 'offers', 'non selezionata · bg bianco'),
+    ('  room-card #2', '.step1-room-card', 24, 686, 680, 280, 'main', 'card residenza 2 — same structure'),
+    ('  ...', '...', 24, '...', 680, 'auto', 'main', 'lista scrollabile · 1-N residenze'),
+    ('GAP', '(--space-xl 32)', 704, 164, 32, 'auto', 'layout', 'spazio fra main e sidebar'),
+    ('sidebar (dx)', '.wizard-container__sidebar', 736, 164, 380, 'auto', 'layout', 'display:none mobile · block 768+'),
+    ('  booking-sidebar', '.booking-sidebar', 736, 164, 380, 'auto', 'sidebar', 'sticky 90 · width 380 fissa · padding 24'),
+    ('    hero foto', '.booking-sidebar__hero-img', 760, 188, 332, 160, 'booking-sidebar', 'foto residenza selezionata'),
+    ('    nome', '.section-title-secondary', 760, 364, 332, 28, 'booking-sidebar', '"Pink Lady"'),
+    ('    meta', '.label-metadata', 760, 392, 332, 18, 'booking-sidebar', 'type · sqm · people'),
+    ('    banner consumi', '.banner.banner--info', 760, 420, 332, 80, 'booking-sidebar', 'energia info'),
+    ('    feature-list', '.booking-sidebar__feature-list', 760, 520, 332, 70, 'booking-sidebar', 'camere, bagni, piscina, giardino'),
+    ('    date row', '.booking-sidebar__data-row', 760, 610, 332, 60, 'booking-sidebar', '15 mag – 18 mag · 3 notti'),
+    ('    guests row', '.booking-sidebar__data-row', 760, 680, 332, 50, 'booking-sidebar', '2 adulti'),
+    ('    price rows', '(.layout-row-between)', 760, 750, 332, 60, 'booking-sidebar', '3 notti × 79 = 236 · imposta 12'),
+    ('    totale', '.booking-sidebar__total + __total-value', 760, 820, 332, 30, 'booking-sidebar', 'Totale BLU primary 248 €'),
+    ('    cancellazione', '(.label-uppercase-muted + .hint-text)', 760, 860, 332, 50, 'booking-sidebar', 'Flessibile 60gg'),
+    ('    banner deposito', '.banner.banner--warning', 760, 920, 332, 90, 'booking-sidebar', 'Deposito €500'),
+    ('    CTA Continua', '.booking-sidebar__cta + .btn.btn--primary', 760, 1020, 332, 50, 'booking-sidebar', 'visibile solo se offerta selezionata'),
+    ('    CIN', '.booking-sidebar__footer', 760, 1080, 332, 20, 'booking-sidebar', 'CIN IT059...'),
+]
+
+for r_idx, row in enumerate(rows_step1):
+    for c_idx, val in enumerate(row):
+        cell = ws.cell(row=4 + r_idx, column=c_idx + 1, value=val)
+        cell.font = FONT_LBL
+        cell.alignment = ALIGN_L if c_idx in (0, 1, 6, 7) else ALIGN_C
+        cell.border = BOX_BORDER
+        if isinstance(val, str) and not val.startswith('  ') and c_idx == 0:
+            cell.font = FONT_LBL_BOLD
+
+note_row = 4 + len(rows_step1) + 2
+notes_step1 = [
+    'NOTE STEP1:',
+    '• Layout 2-col come step2 (stesso .wizard-container__main 680 + sidebar 380 fissa)',
+    '• Main contiene la lista delle residenze · ogni .step1-room-card ha photo sx + name/meta dx + offers sotto',
+    '• Sidebar BookingSidebar mostra info residenza SELEZIONATA (cambia al cambio selezione) + CTA "Continua"',
+    '• Mobile <768px: sidebar nascosta · stack verticale · CTA Continua dentro la card-room (sticky bottom?)',
+    '• filter-bar: overflow-x scroll · bottone Filtri (apre modale bottom-sheet mobile / centered desktop)',
+]
+for i, n in enumerate(notes_step1):
+    cell = ws.cell(row=note_row + i, column=1, value=n)
+    cell.font = FONT_LBL_BOLD if i == 0 else FONT_LBL
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+# FOGLIO 3: step2-grid
 # ═════════════════════════════════════════════════════════════════════════════
 ws = wb.create_sheet('step2-grid')
 set_grid_dimensions(ws, n_cols=85, n_rows=110)
