@@ -334,6 +334,186 @@ for i, n in enumerate(notes):
 
 
 # ═════════════════════════════════════════════════════════════════════════════
+# FOGLIO 3: searchbar-dropdowns (catturato via Chrome MCP click sui campi)
+# ═════════════════════════════════════════════════════════════════════════════
+ws = wb.create_sheet('searchbar-dropdowns')
+ws.column_dimensions['A'].width = 28
+ws.column_dimensions['B'].width = 35
+ws.column_dimensions['C'].width = 10
+ws.column_dimensions['D'].width = 10
+ws.column_dimensions['E'].width = 10
+ws.column_dimensions['F'].width = 10
+ws.column_dimensions['G'].width = 60
+
+ws['A1'] = 'Airbnb searchbar — i 3 dropdown (Dove/Date/Chi) misurati al click'
+ws['A1'].font = FONT_TITLE
+ws.merge_cells('A1:G1')
+
+headers_sb = ['Componente', 'Selettore / role', 'x', 'y', 'w', 'h', 'descrizione contenuto']
+for i, h in enumerate(headers_sb):
+    c = ws.cell(row=3, column=i + 1, value=h)
+    c.font = FONT_HEAD_TBL
+    c.fill = PatternFill('solid', start_color='374151', end_color='374151')
+    c.alignment = ALIGN_C
+    c.border = BOX_BORDER
+
+rows_sb = [
+    # ── SEARCHBAR COMPATTA (default header) ──
+    ('SEARCHBAR compatta', '[data-testid=little-search]', 543, 25, 439, 46,
+     '"Milano: alloggi · 18-24 mag · Aggiungi ospiti" + lente rosa · pillola unica'),
+    ('  └ Filtri btn (separato)', 'button "Filtri"', 999, 28, 83, 40,
+     'separato dalla pillola searchbar · apre la modale full filtri'),
+
+    # ── SEARCHBAR ESPANSA (al click di un campo) ──
+    ('SEARCHBAR espansa (3-seg)', '(big-search)', 320, 95, 800, 60,
+     'al click campo: pillola si espande in 3 segmenti label-su / value-sotto'),
+    ('  └ segmento Dove', '(button con label "Dove")', 320, 95, 240, 60,
+     'mostra "Milano, Lombardia" + ×'),
+    ('  └ segmento Date', '(button con label "Date")', 580, 95, 240, 60,
+     'mostra "18 mag - 24 mag" + ×'),
+    ('  └ segmento Chi', '(button con label "Chi")', 840, 95, 240, 60,
+     'mostra "4 ospiti, 2 neon..." + bottone Ricerca rosa'),
+    ('  └ Ricerca CTA', 'button rosa #FF385C + lente', 1020, 105, 70, 50,
+     'icona lente bianca su sfondo rosa · sempre visibile in modalità espansa'),
+
+    # ── DROPDOWN DOVE (suggerimenti località) ──
+    ('DROPDOWN Dove', '[role=listbox][aria-label=Suggerimenti di ricerca]',
+     346, 204, 398, 360, 'lista 5 suggerimenti località con icona pin · click → riempie input + chiude'),
+    ('  └ suggerimento (riga)', '(option role)', 346, 220, 398, 60,
+     '<icon-pin> + "Milano, Lombardia" · 5 voci default (storico+near)'),
+
+    # ── DATE PICKER (calendario) ──
+    ('CALENDAR Date', '[role=application][aria-label=Calendario]',
+     343, 264, 829, 359,
+     'calendario 2 mesi affiancati + toggle "Date/Flessibile" + footer check-in/out precision'),
+    ('  └ toggle Date/Flessibile', '(tabs)', 575, 200, 440, 56,
+     '"Date" (selected pillola bianca) + "Flessibile" — 2 modalità di scelta'),
+    ('  └ mese sx (Maggio)', '(table)', 360, 264, 380, 280,
+     'griglia 7-col (L M M G V S D) · navigazione frecce sx/dx in alto'),
+    ('  └ mese dx (Giugno)', '(table)', 760, 264, 380, 280, 'stessa griglia'),
+    ('  └ check-in precision', '(select dropdown)', 470, 600, 250, 50,
+     '"Check-in: Giorno esatto / ±1 / ±2 / ±3 / ±7 / ±14 giorni"'),
+    ('  └ check-out precision', '(select dropdown)', 720, 600, 250, 50, 'stessa cosa per check-out'),
+
+    # ── STEPPER CHI (ospiti) ──
+    ('STEPPER Chi', '(popup absolute)', 750, 180, 400, 380,
+     'lista 4 stepper ± con label+sublabel descrittivo'),
+    ('  └ Adulti', '(stepper row)', 770, 200, 360, 60,
+     '"Adulti" + sublabel "Da 13 in su" · stepper [- 2 +]'),
+    ('  └ Bambini', '(stepper row)', 770, 270, 360, 60,
+     '"Bambini" + sublabel "Da 2 a 12 anni" · stepper [- 2 +]'),
+    ('  └ Neonati', '(stepper row)', 770, 370, 360, 60,
+     '"Neonati" + sublabel "Fino a 2 anni" · stepper [- 2 +]'),
+    ('  └ Animali domestici', '(stepper row)', 770, 460, 360, 60,
+     '"Animali domestici" + link blu "Viaggi con animale di servizio?" · stepper [- 0 +]'),
+]
+
+for r_idx, row in enumerate(rows_sb):
+    for c_idx, val in enumerate(row):
+        cell = ws.cell(row=4 + r_idx, column=c_idx + 1, value=val)
+        cell.font = FONT_LBL
+        cell.alignment = ALIGN_L if c_idx in (0, 1, 6) else ALIGN_C
+        cell.border = BOX_BORDER
+        if isinstance(val, str) and val.startswith(('SEARCHBAR', 'DROPDOWN', 'CALENDAR', 'STEPPER')) and c_idx == 0:
+            cell.font = FONT_LBL_BOLD
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+# FOGLIO 4: filtri-modale (la modale completa "Filtri")
+# ═════════════════════════════════════════════════════════════════════════════
+ws = wb.create_sheet('filtri-modale')
+ws.column_dimensions['A'].width = 28
+ws.column_dimensions['B'].width = 22
+ws.column_dimensions['C'].width = 70
+ws.column_dimensions['D'].width = 50
+
+ws['A1'] = 'Airbnb modale Filtri — sezioni gerarchiche (568×775 centrata x=487)'
+ws['A1'].font = FONT_TITLE
+ws.merge_cells('A1:D1')
+
+ws['A2'] = 'Dialogo modale aperto da bottone "Filtri" · 10 sezioni · scroll interno · footer fisso'
+ws['A2'].font = FONT_LBL_SMALL
+ws.merge_cells('A2:D2')
+
+headers_fm = ['Sezione', 'Pattern UX', 'Contenuto', 'Note']
+for i, h in enumerate(headers_fm):
+    c = ws.cell(row=4, column=i + 1, value=h)
+    c.font = FONT_HEAD_TBL
+    c.fill = PatternFill('solid', start_color='374151', end_color='374151')
+    c.alignment = ALIGN_C
+    c.border = BOX_BORDER
+
+rows_fm = [
+    ('Header modale', 'titolo + close X', '"Filtri" centrato + close × top-right', 'sticky in alto'),
+    ('1. Consigliati per te', '4 tile-card icona+label',
+     '🛏 "2+ camere" · 🧺 "Lavatrice" · 🍴 "Cucina" · 📅 "Cancellazione gratuita"',
+     'icone illustrate (non pittogrammi) · click toggle attivo · grid 4-col'),
+    ('2. Tipo di alloggio', 'segmented 3-radio',
+     '"Qualsiasi tipo" (selected) / "Stanza" / "Casa intera"',
+     'pillola unica con border attivo · pattern wizardstep1 nostro filter-chip'),
+    ('3. Fascia di prezzo', 'slider min-max + histogram + 2 input',
+     'slider 2-handle sopra histogram distribuzione prezzi (rosa Airbnb) · "Minimo €50" / "Massimo €2600+" sotto come input testuali editabili',
+     '⭐ pattern unico Airbnb · histogram aiuta scegliere min/max consapevolmente · UX premium'),
+    ('4. Stanze e letti', '3 stepper ± con label "Qualsiasi"',
+     'Camere da letto [- Qualsiasi +] · Letti [- Qualsiasi +] · Bagni [- Qualsiasi +]',
+     'stepper riusa stesso pattern di "Chi/ospiti"'),
+    ('5. Servizi', 'checkbox grid (mostra di più)',
+     'WiFi · Cucina · A/C · Lavatrice · Asciugatrice · Riscaldamento · TV · ...',
+     'inizialmente 8-10 visibili + "Mostra altro" expand · checkbox classici'),
+    ('6. Opzioni di prenotazione', '4 chip toggle (con icona)',
+     '⚡ "Prenotazione immediata" · 🔑 "Self check-in" · 📅 "Cancellazione gratuita" · 🐾 "Animali ammessi"',
+     'chip pillola con icona linea + label · click toggle · grid 2x2 desktop'),
+    ('7. Alloggi straordinari', '2 tile-card grandi',
+     '"Amato dagli ospiti" (Gli alloggi più amati su Airbnb) · "Luxe" (Alloggi di lusso dal design favoloso)',
+     'tile più grandi delle "Consigliati" · 2-col · sublabel descrittivo · brand-led'),
+    ('8. Tipo di alloggio (accordion)', 'accordion ▼',
+     'Appartamento / Loft / Villa / Cottage / Stanza / B&B / ...',
+     'collapsed default · expand mostra checkbox grid'),
+    ('9. Caratteristiche accessibilità', 'accordion ▼',
+     'Ingresso senza gradini · Bagno accessibile in sedia a rotelle · ...',
+     'collapsed default · WCAG-aware'),
+    ('10. Lingua dell\'host', 'accordion ▼',
+     'Italiano / English / Deutsch / ...',
+     'collapsed default'),
+    ('Footer fisso', '2 bottoni',
+     '"Cancella tutto" (sx, link blu)  +  "Mostra oltre 1.000 alloggi" (dx, primary rosa #FF385C)',
+     '⭐ il count si aggiorna LIVE mentre selezioni filtri (feedback immediato)'),
+]
+
+for r_idx, row in enumerate(rows_fm):
+    for c_idx, val in enumerate(row):
+        cell = ws.cell(row=5 + r_idx, column=c_idx + 1, value=val)
+        cell.font = FONT_LBL
+        cell.alignment = ALIGN_L
+        cell.border = BOX_BORDER
+        if c_idx == 0:
+            cell.font = FONT_LBL_BOLD
+
+# Note finali con UX pattern e confronto
+note_row = 5 + len(rows_fm) + 2
+notes_fm = [
+    'PATTERN UX CHIAVE (Airbnb Filtri):',
+    '• Mai uniform-pattern: ogni sezione ha il pattern UX più adatto al tipo di filtro (slider per range, stepper per count, segmented per esclusivi, chip toggle per non-mutex, accordion per long lists)',
+    '• "Consigliati per te" in cima · personalizzato (più cliccati / più rilevanti per la query)',
+    '• Histogram prezzo è SIGNATURE: aiuta capire dove sta la massa dei prezzi → scelta informata',
+    '• Footer LIVE count: "Mostra oltre 1.000 alloggi" si aggiorna ad ogni cambio · feedback immediato di rilevanza',
+    '• Accordion in fondo per filtri "long-tail" (tipo alloggio specifico, accessibilità, lingua) · evita modale infinita',
+    '• Nessun click "Applica" intermedio · TUTTO live · solo "Cancella tutto" e "Mostra"',
+    '',
+    'CONFRONTO CON wizardstep1 LIVINGAPPLE:',
+    '• LivingApple: bottone Filtri + chip orizzontali sopra la lista · modale bottom-sheet mobile / centered desktop',
+    '• Airbnb: bottone Filtri solo · modale ricca · chip non in pagina (filtri appaiono solo in modale)',
+    '• LivingApple ha 5 macro-filtri (Sort, Mare, Piscina, Tipo, Camere) · Airbnb ne ha 10 · scopo diverso (booking vs platform)',
+    '• Pattern Airbnb da adottare: histogram prezzo + LIVE count footer + tile-card "Consigliati"',
+    '• Pattern LivingApple da MANTENERE: chip orizzontali above-fold per filtri primari (più veloce di aprire modale)',
+]
+for i, n in enumerate(notes_fm):
+    cell = ws.cell(row=note_row + i, column=1, value=n)
+    cell.font = FONT_LBL_BOLD if (i == 0 or i == 8) else FONT_LBL
+    ws.merge_cells(start_row=note_row + i, start_column=1, end_row=note_row + i, end_column=4)
+
+
+# ═════════════════════════════════════════════════════════════════════════════
 # SAVE
 # ═════════════════════════════════════════════════════════════════════════════
 import os
