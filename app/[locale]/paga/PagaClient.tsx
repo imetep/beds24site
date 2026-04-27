@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { PROPERTIES } from '@/config/properties';
+import { PROPERTIES, CIN } from '@/config/properties';
 import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
@@ -323,194 +323,202 @@ export default function PagaClient({ locale }: Props) {
     </div>
   );
 
+  // Type label e deposit text replicano BookingSidebar.tsx:55-66 + 142-144
+  const roomTypeLabel = !room ? ''
+    : room.type === 'monolocale' ? tSidebar.typeMonolocale
+    : room.type === 'villa' ? tSidebar.typeVilla
+    : tSidebar.typeAppartamento;
+  const depositText = room?.securityDeposit
+    ? tSidebar.depositText.replace('{amount}', String(room.securityDeposit))
+    : tSidebar.depositTextGeneric;
+
   return (
     <div className="paga-layout">
 
-      {/* Colonna sinistra (desktop ≥1024px) — riepilogo soggiorno + dati ospite */}
+      {/* Colonna sinistra (desktop ≥1024px) — BookingSidebar replica del wizardstep2 */}
       <div className="paga-layout__main">
 
-      <h2 className="section-title-main">{t.title}</h2>
-      <p className="wizard-step3__subtitle">{t.subtitle}</p>
+        <h2 className="section-title-main">{t.title}</h2>
+        <p className="wizard-step3__subtitle">{t.subtitle}</p>
 
-      {/* Card 1 — Riepilogo soggiorno + prezzo */}
-      <div className="card-info">
+        <div className="card-info">
 
-        {/* Hero foto full-width + nome + meta (typeLabel · sqm · people) — pattern BookingSidebar wizardstep2 */}
-        {coverUrl && (
-          <div className="booking-sidebar__hero">
-            <img
-              src={coverUrl}
-              alt={room?.name ?? booking.roomName ?? ''}
-              className="booking-sidebar__hero-img"
-              loading="lazy"
-            />
+          {/* Hero foto full-width 160px (pattern wizardstep2 BookingSidebar) */}
+          {coverUrl && (
+            <div className="booking-sidebar__hero">
+              <img
+                src={coverUrl}
+                alt={room?.name ?? booking.roomName ?? ''}
+                className="booking-sidebar__hero-img"
+                loading="lazy"
+              />
+            </div>
+          )}
+          <p className="section-title-secondary">{room?.name ?? booking.roomName ?? '—'}</p>
+          {room && (
+            <p className="label-metadata">
+              {roomTypeLabel} · {room.sqm} {tSidebar.sqm} · {room.maxPeople} {tSidebar.people}
+            </p>
+          )}
+
+          {/* Banner consumi energetici (info) */}
+          <div className="banner banner--info banner--with-icon">
+            <i className="bi bi-lightning-fill" aria-hidden="true" />
+            <div>
+              <p className="banner__title">{tSidebar.energyTitle}</p>
+              <p className="banner__text">{tSidebar.energyText}</p>
+            </div>
           </div>
-        )}
-        <p className="section-title-secondary">{room?.name ?? booking.roomName ?? '—'}</p>
-        {room && (
-          <p className="label-metadata">
-            {room.type === 'monolocale' ? tSidebar.typeMonolocale
-              : room.type === 'villa' ? tSidebar.typeVilla
-              : tSidebar.typeAppartamento}
-            {' · '}{room.sqm} {tSidebar.sqm}
-            {' · '}{room.maxPeople} {tSidebar.people}
-          </p>
-        )}
 
-        <hr className="divider-horizontal" />
+          {/* Date / Ospiti (booking-sidebar__data-row) */}
+          <hr className="divider-horizontal" />
+          <div className="booking-sidebar__data-row">
+            <div className="booking-sidebar__data-cell">
+              <p className="booking-sidebar__data-label">{tSidebar.dates}</p>
+              <p className="booking-sidebar__data-value">
+                {formatDate(booking.checkIn, locale)} – {formatDate(booking.checkOut, locale)}
+              </p>
+              {nights > 0 && (
+                <p className="booking-sidebar__data-hint">{nights} {nights === 1 ? tSidebar.night : tSidebar.nights}</p>
+              )}
+            </div>
+          </div>
+          <div className="booking-sidebar__data-row">
+            <div className="booking-sidebar__data-cell">
+              <p className="booking-sidebar__data-label">{tSidebar.guests}</p>
+              <p className="booking-sidebar__data-value">
+                {booking.numAdult} {tSidebar.adults}{booking.numChild > 0 ? `, ${booking.numChild} ${tSidebar.children}` : ''}
+              </p>
+            </div>
+          </div>
 
-        {/* Dati chiave: Date (con notti come suffisso) / Ospiti — niente duplicazione */}
-        <dl className="wizard-step3__data-grid">
-          <dt>{t.dates}</dt>
-          <dd>
-            {formatDate(booking.checkIn, locale)} – {formatDate(booking.checkOut, locale)}
-            {nights > 0 && ` · ${nights} ${nights === 1 ? t.night : t.nights}`}
-          </dd>
-          <dt>{t.guests}</dt>
-          <dd>{booking.numAdult} {t.adults}{booking.numChild > 0 ? `, ${booking.numChild} ${t.children}` : ''}</dd>
-        </dl>
-
-        <hr className="divider-horizontal" />
-
-        {/* Dettaglio prezzo */}
-        <p className="label-uppercase-muted">{t.priceDetail}</p>
-        <div className="wizard-step3__price-rows">
+          {/* Dettagli prezzo */}
+          <hr className="divider-horizontal" />
+          <p className="label-uppercase-muted">{tSidebar.priceSection}</p>
           <div className="layout-row-between">
-            <span>{nights} {nights === 1 ? t.night : t.nights} × {fmt(perNight)}/{nights === 1 ? t.night : t.nights}</span>
+            <span>{nights} {nights === 1 ? tSidebar.night : tSidebar.nights} × {fmt(perNight)}</span>
             <span>{fmt(booking.price)}</span>
           </div>
-        </div>
 
-        {/* Totale prenotazione (arancione brand --color-text-accent, allineato a sidebar/wizard-step3/sticky-bar — vedi commit b4be8c6 T1 M3) */}
-        <div className="wizard-step3__total-row">
-          <span className="wizard-step3__total-label">{t.totalBooking}</span>
-          <span className="wizard-step3__total-value">{fmt(booking.price)}</span>
-        </div>
+          {/* Totale (booking-sidebar__total-value blu primary) */}
+          <div className="booking-sidebar__total">
+            <span className="booking-sidebar__total-label">{tSidebar.total}</span>
+            <span className="booking-sidebar__total-value">{fmt(booking.price)}</span>
+          </div>
 
-        {/* Acconto + saldo (solo se pct < 100) */}
-        {validPct < 100 && (
-          <>
-            <div className="wizard-step3__total-row">
-              <span className="wizard-step3__total-label">{t.deposit} ({validPct}%)</span>
-              <span className="wizard-step3__total-value">{fmt(depositAmount)}</span>
+          {/* Acconto + saldo (solo se pct < 100) */}
+          {validPct < 100 && (
+            <>
+              <div className="booking-sidebar__total">
+                <span className="booking-sidebar__total-label">{t.deposit} ({validPct}%)</span>
+                <span className="booking-sidebar__total-value">{fmt(depositAmount)}</span>
+              </div>
+              <p className="wizard-step3__total-note">{t.remaining}: {fmt(remaining)}</p>
+            </>
+          )}
+
+          {/* Banner deposito cauzionale (warning) */}
+          <div className="banner banner--warning banner--with-icon">
+            <i className="bi bi-shield-lock-fill" aria-hidden="true" />
+            <div>
+              <p className="banner__title">
+                {tSidebar.depositTitle}{room?.securityDeposit ? ` — €${room.securityDeposit}` : ''}
+              </p>
+              <p className="banner__text">{depositText}</p>
             </div>
-            <p className="wizard-step3__total-note">{t.remaining}: {fmt(remaining)}</p>
-          </>
-        )}
-      </div>
+          </div>
 
-      {/* Card 2 — Dati ospite (compatta, allineata a wizard-step3 ordine) */}
-      <div className="card-info">
-        <p className="label-uppercase-muted">{t.guestData}</p>
-        <p className="wizard-step3__guest-name">{booking.guestName}</p>
-        <p className="wizard-step3__guest-meta">{booking.guestEmail}</p>
-      </div>
+          {/* CIN footer */}
+          <p className="booking-sidebar__footer">{tSidebar.cinLabel} {CIN}</p>
+
+        </div>
 
       </div>{/* /.paga-layout__main */}
 
-      {/* Colonna destra (desktop ≥1024px) — info accessorie + metodo + CTA (sticky) */}
+      {/* Colonna destra (desktop ≥1024px sticky) — metodi pagamento + CTA */}
       <div className="paga-layout__side">
 
-      {/* Banner consumi (info) */}
-      <div className="banner banner--info banner--with-icon">
-        <i className="bi bi-lightning-fill" aria-hidden="true" />
-        <div>
-          <p className="banner__title">{t.energy}</p>
-          <a href={t.energyHref} target="_blank" rel="noopener noreferrer" className="banner__link">{t.energyLink}</a>
+        <p className="label-uppercase-muted">{t.chooseMethod}</p>
+        <div className="paga-method-grid">
+          {(['stripe', 'paypal'] as const).map(m => (
+            <button
+              key={m}
+              onClick={() => setPayMethod(m)}
+              className={`paga-method-btn${payMethod === m ? ' is-active' : ''}`}
+              type="button"
+            >
+              {m === 'stripe' ? (
+                <>
+                  <i className="bi bi-credit-card-fill me-1" aria-hidden="true" />
+                  Carta
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-paypal me-1" aria-hidden="true" />
+                  PayPal
+                </>
+              )}
+            </button>
+          ))}
         </div>
-      </div>
 
-      {/* Banner deposito cauzionale (warning) */}
-      <div className="banner banner--warning banner--with-icon banner--mb">
-        <i className="bi bi-shield-lock-fill" aria-hidden="true" />
-        <div>
-          <p className="banner__title">{t.deposit_info}</p>
-          <a href={t.depositHref} target="_blank" rel="noopener noreferrer" className="banner__link">{t.depositLink}</a>
-        </div>
-      </div>
+        {/* Errore inline sopra al CTA */}
+        {error && (
+          <div className="banner banner--error banner--mb">
+            <p className="banner__title">{t.errTitle}</p>
+            <p className="banner__text">{error}</p>
+          </div>
+        )}
 
-      {/* Metodo di pagamento */}
-      <p className="label-uppercase-muted">{t.chooseMethod}</p>
-      <div className="paga-method-grid">
-        {(['stripe', 'paypal'] as const).map(m => (
+        {/* CTA Stripe */}
+        {payMethod === 'stripe' && (
           <button
-            key={m}
-            onClick={() => setPayMethod(m)}
-            className={`paga-method-btn${payMethod === m ? ' is-active' : ''}`}
+            onClick={handleStripe}
+            disabled={phase === 'paying'}
+            className="btn btn--primary wizard-step3__cta"
             type="button"
           >
-            {m === 'stripe' ? (
+            {phase === 'paying' ? (
               <>
-                <i className="bi bi-credit-card-fill me-1" aria-hidden="true" />
-                Carta
+                <i className="bi bi-hourglass-split" aria-hidden="true" />
+                {t.paying}
               </>
             ) : (
               <>
-                <i className="bi bi-paypal me-1" aria-hidden="true" />
-                PayPal
+                <i className="bi bi-credit-card-fill" aria-hidden="true" />
+                {t.payBtn} · {fmt(depositAmount)}
               </>
             )}
           </button>
-        ))}
-      </div>
+        )}
 
-      {/* Errore inline sopra al CTA */}
-      {error && (
-        <div className="banner banner--error banner--mb">
-          <p className="banner__title">{t.errTitle}</p>
-          <p className="banner__text">{error}</p>
-        </div>
-      )}
-
-      {/* CTA Stripe */}
-      {payMethod === 'stripe' && (
-        <button
-          onClick={handleStripe}
-          disabled={phase === 'paying'}
-          className="btn btn--primary wizard-step3__cta"
-          type="button"
-        >
-          {phase === 'paying' ? (
-            <>
-              <i className="bi bi-hourglass-split" aria-hidden="true" />
-              {t.paying}
-            </>
-          ) : (
-            <>
-              <i className="bi bi-credit-card-fill" aria-hidden="true" />
-              {t.payBtn} · {fmt(depositAmount)}
-            </>
-          )}
-        </button>
-      )}
-
-      {/* PayPal SDK v6 */}
-      {payMethod === 'paypal' && (
-        <div className="wizard-step3__paypal-wrapper">
-          {!paypalReady && phase !== 'paying' && (
-            <div className="wizard-step3__paypal-loading">
-              <i className="bi bi-hourglass-split me-1" aria-hidden="true" />
-              {t.paypalLoading}
-            </div>
-          )}
-          {paypalReady && phase !== 'paying' && (
-            <button
-              onClick={handlePayPalClick}
-              className="wizard-step3__paypal-v6-btn"
-              type="button"
-            >
-              <i className="bi bi-paypal" aria-hidden="true"></i>
-              <span>{t.payBtn} · {fmt(depositAmount)}</span>
-            </button>
-          )}
-          {phase === 'paying' && (
-            <div className="wizard-step3__paypal-loading">
-              <i className="bi bi-hourglass-split me-1" aria-hidden="true" />
-              {t.payingPaypal}
-            </div>
-          )}
-        </div>
-      )}
+        {/* PayPal SDK v6 */}
+        {payMethod === 'paypal' && (
+          <div className="wizard-step3__paypal-wrapper">
+            {!paypalReady && phase !== 'paying' && (
+              <div className="wizard-step3__paypal-loading">
+                <i className="bi bi-hourglass-split me-1" aria-hidden="true" />
+                {t.paypalLoading}
+              </div>
+            )}
+            {paypalReady && phase !== 'paying' && (
+              <button
+                onClick={handlePayPalClick}
+                className="wizard-step3__paypal-v6-btn"
+                type="button"
+              >
+                <i className="bi bi-paypal" aria-hidden="true"></i>
+                <span>{t.payBtn} · {fmt(depositAmount)}</span>
+              </button>
+            )}
+            {phase === 'paying' && (
+              <div className="wizard-step3__paypal-loading">
+                <i className="bi bi-hourglass-split me-1" aria-hidden="true" />
+                {t.payingPaypal}
+              </div>
+            )}
+          </div>
+        )}
 
       </div>{/* /.paga-layout__side */}
 
