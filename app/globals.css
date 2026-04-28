@@ -99,11 +99,11 @@
   --bp-md: 768px;
   --bp-lg: 1024px;
 
-  /* Container max-width scale — wrapper pagina responsive (vedi .page-container e media query sotto) */
+  /* Container max-width scale — wrapper pagina fisso a 985px (Airbnb-pattern grid, vedi .page-container) */
   --container-sm: 680px;           /* Form, single-column reading (legali, wizard step) */
   --container-md: 1024px;          /* Layout standard desktop */
-  --container-page: 757px;         /* Wrapper pagina responsive — base/tablet 1024. Override a 1280/1920 sotto */
-  --container-lg: 1200px;          /* Hero, gallerie, wizard prenota — non responsive */
+  --container-page: 985px;         /* Wrapper pagina — fisso a 985 (Airbnb-grid container centrale) */
+  --container-lg: 1200px;          /* Hero, gallerie, wizard prenota, opt-out --wide */
 
   /* Z-index scale — evita numeri magici sparsi */
   --z-header: 10;                  /* Header sticky */
@@ -116,22 +116,13 @@
   --focus-ring-error: 0 0 0 3px rgba(220, 38, 38, 0.25);
 }
 
-/* Container pagina responsive — scala con viewport (Airbnb-pattern grid):
-   ≥1024 → 757px · ≥1280 → 863px · ≥1920 → 985px (centrato) */
-@media (min-width: 1280px) {
-  :root { --container-page: 863px; }
-}
-@media (min-width: 1920px) {
-  :root { --container-page: 985px; }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
 }
 
 /* ── Wrapper pagina unificato — usa su ogni page wrapper per coerenza larghezza desktop ──
-   max-width responsive (Airbnb-pattern grid): ≥1024 757px · ≥1280 863px · ≥1920 985px.
+   max-width 985 fisso (Airbnb-pattern grid, container centrale a tutti i viewport ≥985).
    .wizard-container resta su --container-lg (1200), escluso da questa scala.
    .page-container--wide opt-out per pagine con layout 2-col interno largo (es. /paga). */
 .page-container {
