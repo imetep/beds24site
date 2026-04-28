@@ -12,7 +12,7 @@
  */
 export default function PagaMockPage() {
   return (
-    <main className="page-container" style={{ padding: '32px 16px 48px' }}>
+    <main className="page-container page-container--wide" style={{ padding: '32px 16px 48px' }}>
 
       {/* Stepper */}
       <div className="ui-stepper">

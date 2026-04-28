@@ -16,7 +16,7 @@ export default async function PagaPage({ params }: Props) {
   if (!isValidLocale(locale)) notFound();
 
   return (
-    <main className="page-container paga-main">
+    <main className="page-container page-container--wide paga-main">
       <Suspense fallback={
         <div className="page-loading">
           <div className="page-loading__spinner" />
