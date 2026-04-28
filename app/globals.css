@@ -682,6 +682,9 @@ body {
     padding: var(--space-xl) var(--space-lg) 4rem;
   }
 }
+.checkout-page__title {
+  margin-bottom: var(--space-lg);
+}
 
 /* ── Grid 2-col desktop / stacked mobile ── */
 .checkout-grid {
@@ -759,6 +762,16 @@ body {
   margin: var(--space-xs) 0 0;
   line-height: 1.4;
 }
+/* Variante quando il subtitle viene SUBITO dopo header (annulla margin-top, aggiunge md sotto) */
+.checkout-card__subtitle--lead {
+  margin-top: 0;
+  margin-bottom: var(--space-md);
+}
+/* Wrapper textarea che compare in fondo a una card (annulla margin-bottom) */
+.checkout-card__textarea-wrap {
+  margin-top: var(--space-md);
+  margin-bottom: 0;
+}
 
 /* ── Modifica btn (81×32 Airbnb-like, ma colori LivingApple) ── */
 .checkout-modify-btn {
@@ -789,6 +802,10 @@ body {
   gap: var(--space-sm);
   font-size: var(--text-base);
   color: var(--color-text);
+}
+.checkout-pay-current__icon {
+  font-size: 1.2em;
+  color: var(--color-primary);
 }
 .checkout-pay-current__brand {
   font-weight: 700;
@@ -912,6 +929,19 @@ body {
   object-fit: cover;
   display: block;
 }
+/* Placeholder gradient mock-only (rimuovere quando si aggancia a Cloudinary) */
+.checkout-summary__hero-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #b89e85 0%, #8b6f50 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
 .checkout-summary__title {
   font-size: var(--text-lg);
   font-weight: 700;
@@ -963,6 +993,9 @@ body {
   font-size: var(--text-sm);
   color: var(--color-text-subtle);
   margin: var(--space-xs) 0 0;
+}
+.checkout-summary__price-title {
+  margin-bottom: var(--space-sm);
 }
 .checkout-summary__price-row {
   display: flex;
@@ -1018,6 +1051,9 @@ body {
   border-top: 1px solid var(--color-border);
   z-index: var(--z-sticky);
   margin-inline: calc(var(--space-base) * -1);
+}
+.checkout-cta-mobile-sticky .btn {
+  width: 100%;
 }
 @media (min-width: 1024px) {
   .checkout-cta-mobile-sticky {
