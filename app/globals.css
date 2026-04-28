@@ -1073,6 +1073,246 @@ body {
   }
 }
 
+/* ──────────────────────────────────────────────────────────────────────────
+   STEP 1 lista risultati — classi specifiche (filter-bar + room-card + offers).
+   Layout esterno usa .checkout-grid / .checkout-form-col / .checkout-summary-col
+   come wizardstep2. Cambia solo il CONTENUTO della form-col.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Filter bar (overflow-x scroll su mobile) */
+.s1-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 0 var(--space-base);
+  margin: 0 calc(var(--space-base) * -1) var(--space-md);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.s1-filter-bar::-webkit-scrollbar {
+  display: none;
+}
+@media (min-width: 768px) {
+  .s1-filter-bar {
+    margin-inline: 0;
+    padding: 0;
+    flex-wrap: wrap;
+  }
+}
+
+.s1-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.s1-filter-btn:hover {
+  border-color: var(--color-primary);
+}
+
+.s1-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: var(--color-primary-soft);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
+  color: var(--color-primary);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.s1-filter-chip__remove {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 2px;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  color: inherit;
+}
+
+/* Room card (1 per residenza disponibile) */
+.s1-room-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 540px) {
+  .s1-room-card {
+    flex-direction: row;
+  }
+}
+
+.s1-room-card__photo {
+  width: 100%;
+  height: 160px;
+  flex-shrink: 0;
+  background: var(--color-bg-muted, #f3f4f6);
+  position: relative;
+  overflow: hidden;
+}
+@media (min-width: 540px) {
+  .s1-room-card__photo {
+    width: 200px;
+    height: auto;
+    min-height: 100%;
+  }
+}
+.s1-room-card__photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.s1-room-card__photo-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #b89e85 0%, #8b6f50 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.s1-room-card__body {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.s1-room-card__name {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+.s1-room-card__meta-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px var(--space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-sm);
+  color: var(--color-text-subtle);
+}
+.s1-room-card__meta-chips li {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Banner inline dentro room card (compatti vs banner pagina) */
+.s1-room-card__banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+}
+.s1-room-card__banner--info {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+.s1-room-card__banner--warning {
+  background: #fff7e6;
+  color: #b54708;
+}
+.s1-room-card__banner--success {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+/* Sezione "TARIFFE DISPONIBILI" */
+.s1-offers-section {
+  margin-top: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.s1-offers-label {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 4px;
+}
+
+/* Offer option (radio + nome + prezzo) */
+.s1-offer-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  color: var(--color-text);
+}
+.s1-offer-option:hover {
+  border-color: var(--color-primary);
+}
+.s1-offer-option.is-selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+.s1-offer-option__radio {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 50%;
+  flex-shrink: 0;
+  position: relative;
+  background: #fff;
+}
+.s1-offer-option.is-selected .s1-offer-option__radio {
+  border-color: var(--color-primary);
+}
+.s1-offer-option.is-selected .s1-offer-option__radio::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+.s1-offer-option__label {
+  flex: 1;
+  min-width: 0;
+}
+.s1-offer-option__price {
+  font-weight: 700;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
 /* ==========================================================================
    Slot step 2 BookingSidebar — voucher input + catalogo upsell extras
    Spec: docs/ux/wizard-sidebar-design.md §4 (slot voucher / extras)
