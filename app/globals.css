@@ -662,6 +662,382 @@ body {
 }
 
 /* ==========================================================================
+   CHECKOUT layout (Airbnb /book pattern, adattato a colori LivingApple).
+   Usato in /paga-mock-v2 (mockup) e — quando ratificato — in WizardStep1+2.
+   Token: --container-checkout 985 (form 540 + gap 105 + summary 340).
+   Mobile <768: stacked 1-col, summary IN ALTO, CTA sticky bottom.
+   Riferimento: docs/ux/airbnb-checkout-analysis.xlsx + docs/ux/mio desiderio.xlsx
+   ========================================================================== */
+
+/* ── Wrapper pagina checkout ── */
+.checkout-page {
+  width: 100%;
+  max-width: var(--container-checkout);
+  margin-inline: auto;
+  padding: var(--space-lg) var(--space-base) var(--space-xl);
+  box-sizing: border-box;
+}
+@media (min-width: 768px) {
+  .checkout-page {
+    padding: var(--space-xl) var(--space-lg) 4rem;
+  }
+}
+
+/* ── Grid 2-col desktop / stacked mobile ── */
+.checkout-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+@media (min-width: 1024px) {
+  .checkout-grid {
+    flex-direction: row;
+    gap: var(--gap-checkout);
+    align-items: flex-start;
+  }
+}
+
+/* ── Form column (sx desktop, sotto mobile) ── */
+.checkout-form-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  /* Mobile: la summary va prima */
+  order: 2;
+}
+@media (min-width: 1024px) {
+  .checkout-form-col {
+    flex: 0 0 var(--col-checkout-form);
+    max-width: var(--col-checkout-form);
+    order: 1;
+  }
+}
+
+/* ── Summary column (dx desktop sticky, sopra mobile) ── */
+.checkout-summary-col {
+  flex: 1;
+  min-width: 0;
+  order: 1;
+}
+@media (min-width: 1024px) {
+  .checkout-summary-col {
+    flex: 0 0 var(--col-checkout-summary);
+    max-width: var(--col-checkout-summary);
+    order: 2;
+    position: sticky;
+    top: var(--top-checkout-sticky);
+    align-self: flex-start;
+  }
+}
+
+/* ── Card singola del form (gap 24 fra cards via .checkout-form-col gap) ── */
+.checkout-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-sizing: border-box;
+}
+.checkout-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+.checkout-card__title {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+.checkout-card__subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-subtle);
+  margin: var(--space-xs) 0 0;
+  line-height: 1.4;
+}
+
+/* ── Modifica btn (81×32 Airbnb-like, ma colori LivingApple) ── */
+.checkout-modify-btn {
+  background: var(--color-bg-muted, #f3f4f6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text);
+  cursor: pointer;
+  white-space: nowrap;
+  min-height: 32px;
+  flex-shrink: 0;
+}
+.checkout-modify-btn:hover {
+  background: var(--color-bg-hover, #e5e7eb);
+}
+.checkout-modify-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* ── Riga metodo pagamento dentro la card (saved card display) ── */
+.checkout-pay-current {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--text-base);
+  color: var(--color-text);
+}
+.checkout-pay-current__brand {
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.checkout-pay-brands-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ── Grid input dati ospite (2x2 desktop, 1col mobile) ── */
+.checkout-guest-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+}
+@media (min-width: 540px) {
+  .checkout-guest-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ── Upsell list ── */
+.checkout-upsell-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.checkout-upsell-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+.checkout-upsell-item:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+.checkout-upsell-item.is-selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+.checkout-upsell-item__text {
+  flex: 1;
+  min-width: 0;
+}
+.checkout-upsell-item__title {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+.checkout-upsell-item__sub {
+  font-size: var(--text-sm);
+  color: var(--color-text-subtle);
+  margin: var(--space-xs) 0 0;
+}
+.checkout-upsell-item__price {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+/* ── Disclaimer testi (terms, host policy, ecc.) ── */
+.checkout-disclaimer {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin: var(--space-md) 0 0;
+}
+.checkout-disclaimer a,
+.checkout-disclaimer button {
+  color: var(--color-text);
+  text-decoration: underline;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+/* ── CTA finale (full-width della form-col) — usa .btn .btn--primary già esistente ── */
+.checkout-cta {
+  width: 100%;
+  margin-top: var(--space-md);
+}
+
+/* ── Summary card content (riusa stile .booking-sidebar ma con classe propria
+        per non rompere le wizard step esistenti) ── */
+.checkout-summary {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-sizing: border-box;
+}
+.checkout-summary__hero {
+  width: 100%;
+  height: 160px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: var(--space-md);
+}
+.checkout-summary__hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.checkout-summary__title {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 var(--space-xs);
+}
+.checkout-summary__features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px var(--space-sm);
+  margin: 0 0 var(--space-md);
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-sm);
+  color: var(--color-text-subtle);
+}
+.checkout-summary__features li {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.checkout-summary__divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: var(--space-md) 0;
+  border: none;
+}
+.checkout-summary__data-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+.checkout-summary__data-row:last-of-type {
+  margin-bottom: 0;
+}
+.checkout-summary__data-cell {
+  flex: 1;
+  min-width: 0;
+}
+.checkout-summary__data-label {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+.checkout-summary__data-value {
+  font-size: var(--text-sm);
+  color: var(--color-text-subtle);
+  margin: var(--space-xs) 0 0;
+}
+.checkout-summary__price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--space-xs);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+}
+.checkout-summary__price-row--strike {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+  font-size: var(--text-xs);
+}
+.checkout-summary__total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+}
+.checkout-summary__total-label {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-text);
+}
+.checkout-summary__total-value {
+  font-size: var(--text-xl);
+  font-weight: 800;
+  color: var(--color-primary);
+}
+.checkout-summary__breakdown-link {
+  display: inline-block;
+  margin-top: var(--space-sm);
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ── CTA sticky bottom mobile (visibile solo <1024) ── */
+.checkout-cta-mobile-sticky {
+  display: block;
+  position: sticky;
+  bottom: 0;
+  margin-top: var(--space-lg);
+  padding: var(--space-md);
+  background: var(--color-bg);
+  border-top: 1px solid var(--color-border);
+  z-index: var(--z-sticky);
+  margin-inline: calc(var(--space-base) * -1);
+}
+@media (min-width: 1024px) {
+  .checkout-cta-mobile-sticky {
+    display: none;
+  }
+}
+
+/* ── CTA dentro summary card (visibile solo desktop) ── */
+.checkout-summary__cta-desktop {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .checkout-summary__cta-desktop {
+    display: block;
+    width: 100%;
+    margin-top: var(--space-md);
+  }
+}
+
+/* ==========================================================================
    Slot step 2 BookingSidebar — voucher input + catalogo upsell extras
    Spec: docs/ux/wizard-sidebar-design.md §4 (slot voucher / extras)
    Aggiunti in sessione 3c.4 per migrare gli inline style ereditati da
