@@ -105,6 +105,14 @@
   --container-page: 1200px;        /* Wrapper pagina unificato (era 1100, ora allineato a --container-lg) */
   --container-lg: 1200px;          /* Hero, gallerie, pagine marketing wide */
 
+  /* Checkout — pattern Airbnb /book adattato (proporzioni 540/105/340 = 985 max-width).
+     Usato dalle classi .checkout-* per wizardstep1 (lista offerte) e wizardstep2 (form unificato). */
+  --container-checkout: 985px;     /* form 540 + gap 105 + summary 340 */
+  --col-checkout-form: 540px;      /* colonna sx (lista offerte / form dati+pagamento) */
+  --col-checkout-summary: 340px;   /* colonna dx sticky (riepilogo + CTA) */
+  --gap-checkout: 105px;           /* spazio fra le 2 colonne (Airbnb-like) */
+  --top-checkout-sticky: 32px;     /* offset sticky della summary card */
+
   /* Z-index scale — evita numeri magici sparsi */
   --z-header: 10;                  /* Header sticky */
   --z-sticky: 20;                  /* StickyBookingBar, bottom nav */
