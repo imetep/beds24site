@@ -99,11 +99,11 @@
   --bp-md: 768px;
   --bp-lg: 1024px;
 
-  /* Container max-width scale — larghezza pagina unificata a 1200px (vedi .page-container) */
+  /* Container max-width scale — wrapper pagina responsive (vedi .page-container e media query sotto) */
   --container-sm: 680px;           /* Form, single-column reading (legali, wizard step) */
   --container-md: 1024px;          /* Layout standard desktop */
-  --container-page: 1200px;        /* Wrapper pagina unificato (era 1100, ora allineato a --container-lg) */
-  --container-lg: 1200px;          /* Hero, gallerie, pagine marketing wide */
+  --container-page: 757px;         /* Wrapper pagina responsive — base/tablet 1024. Override a 1280/1920 sotto */
+  --container-lg: 1200px;          /* Hero, gallerie, wizard prenota — non responsive */
 
   /* Z-index scale — evita numeri magici sparsi */
   --z-header: 10;                  /* Header sticky */
@@ -116,17 +116,32 @@
   --focus-ring-error: 0 0 0 3px rgba(220, 38, 38, 0.25);
 }
 
+/* Container pagina responsive — scala con viewport (Airbnb-pattern grid):
+   ≥1024 → 757px · ≥1280 → 863px · ≥1920 → 985px (centrato) */
+@media (min-width: 1280px) {
+  :root { --container-page: 863px; }
+}
+@media (min-width: 1920px) {
+  :root { --container-page: 985px; }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
 }
 
-/* ── Wrapper pagina unificato — usa su ogni page wrapper per coerenza larghezza desktop ── */
+/* ── Wrapper pagina unificato — usa su ogni page wrapper per coerenza larghezza desktop ──
+   max-width responsive (Airbnb-pattern grid): ≥1024 757px · ≥1280 863px · ≥1920 985px.
+   .wizard-container resta su --container-lg (1200), escluso da questa scala.
+   .page-container--wide opt-out per pagine con layout 2-col interno largo (es. /paga). */
 .page-container {
   width: 100%;
-  max-width: var(--container-lg);
+  max-width: var(--container-page);
   margin-inline: auto;
   padding-inline: 16px;
+}
+.page-container--wide {
+  max-width: var(--container-lg);  /* 1200 — checkout 2-col (/paga) */
 }
 
 /* Accessibilità — rispetta preferenza utente per ridurre animazioni */
