@@ -3,15 +3,19 @@
  *
  * Scopo: discussione preliminare del nuovo wizardstep1 (lista risultati)
  * 2-col Airbnb-style. Riferimento: docs/ux/mio desiderio.xlsx (foglio
- * wizardstep1) + docs/ux/airbnb-checkout-analysis.xlsx.
+ * wizardstep1) — banner cancellazione/consumi/deposito SPOSTATI in
+ * sidebar (NON dentro la room-card). Tariffe usano .step1-offer-option
+ * esistente (stesso aspetto del WizardStep1.tsx attuale).
  *
  * Layout:
- *   - desktop ≥1024: form 540 sx (filter-bar + lista room-card) + summary 340 dx STICKY top:32
- *   - mobile <1024: stacked, summary IN ALTO, lista sotto, CTA "Continua" sticky bottom
+ *   - desktop ≥1024: form 540 sx (filter-bar + lista room-card 3-col interna) +
+ *     summary 340 dx STICKY top:32 (con banner alloggio + Date/Ospiti + prezzo)
+ *   - mobile <1024: stacked, summary IN ALTO, lista sotto, CTA sticky bottom
  *
- * Logica: ZERO. Dati hardcoded (2 room-card mock con 3 tariffe ciascuna).
+ * Riusa classi CSS esistenti: .step1-room-card, .step1-offer-option,
+ * .step1-filter-*, .banner, .checkout-* (layout esterno + summary).
  *
- * Da rimuovere quando i pattern migrano in components/wizard/WizardStep1.tsx.
+ * Logica: ZERO. Da rimuovere quando i pattern migrano in WizardStep1.tsx.
  */
 export default function WizardStep1MockV2Page() {
   return (
@@ -26,117 +30,130 @@ export default function WizardStep1MockV2Page() {
       <div className="checkout-grid">
 
         {/* ═══════════════════════════════════════════════════════════════
-            COLONNA SX — filter-bar + lista room-card
+            COLONNA SX — filter-bar + lista room-card (riusa .step1-*)
             ═══════════════════════════════════════════════════════════════ */}
         <div className="checkout-form-col">
 
-          {/* Filter bar (overflow-x scroll mobile) */}
-          <div className="s1-filter-bar" role="toolbar" aria-label="Filtri">
-            <button type="button" className="s1-filter-btn">
+          {/* Filter bar (overflow-x scroll mobile) — riusa .step1-filter-* */}
+          <div className="step1-filter-bar" role="toolbar" aria-label="Filtri">
+            <button type="button" className="step1-filter-btn">
               <i className="bi bi-sliders" aria-hidden="true" /> Filtri
             </button>
-            <button type="button" className="s1-filter-chip">
+            <button type="button" className="step1-filter-chip">
               Piscina
-              <span className="s1-filter-chip__remove" aria-label="Rimuovi filtro Piscina">×</span>
+              <span className="step1-filter-chip__x" aria-label="Rimuovi filtro">×</span>
             </button>
-            <button type="button" className="s1-filter-chip">
+            <button type="button" className="step1-filter-chip">
               Vista mare
-              <span className="s1-filter-chip__remove" aria-label="Rimuovi filtro Vista mare">×</span>
+              <span className="step1-filter-chip__x" aria-label="Rimuovi filtro">×</span>
             </button>
-            <button type="button" className="s1-filter-chip">
+            <button type="button" className="step1-filter-chip">
               4+ camere
-              <span className="s1-filter-chip__remove" aria-label="Rimuovi filtro 4+ camere">×</span>
+              <span className="step1-filter-chip__x" aria-label="Rimuovi filtro">×</span>
             </button>
           </div>
 
-          {/* ROOM CARD #1 — Pellini 3 */}
-          <article className="s1-room-card">
-            <div className="s1-room-card__photo">
-              <div className="s1-room-card__photo-placeholder">
-                [Pellini 3 — 200×160]
+          {/* ROOM CARD #1 — Pellini 3 (selected) */}
+          <article className="step1-room-card is-selected">
+            <div className="step1-room-card__row">
+              <div className="step1-room-card__photo">
+                <div className="step1-room-card__photo-placeholder">
+                  <i className="bi bi-image" aria-hidden="true" />
+                </div>
               </div>
-            </div>
-            <div className="s1-room-card__body">
-              <h2 className="s1-room-card__name">Pellini 3 — 180 m²</h2>
-              <ul className="s1-room-card__meta-chips">
-                <li><i className="bi bi-house-door" aria-hidden="true" /> Appartamento</li>
-                <li><i className="bi bi-people" aria-hidden="true" /> 12 ospiti</li>
-                <li><i className="bi bi-door-open" aria-hidden="true" /> 4 camere</li>
-                <li><i className="bi bi-water" aria-hidden="true" /> 200m mare</li>
-              </ul>
-
-              <div className="s1-room-card__banner s1-room-card__banner--success">
-                <i className="bi bi-check2-circle" aria-hidden="true" />
-                <span>Cancellazione gratuita fino a 60 giorni dall&apos;arrivo</span>
+              <div className="step1-room-card__details">
+                <div className="step1-room-card__name">Pellini 3 — 180 m²</div>
+                <div className="step1-room-card__meta-chips">
+                  <span><i className="bi bi-house-door" aria-hidden="true" /> Appartamento</span>
+                  <span><i className="bi bi-people" aria-hidden="true" /> 12 ospiti</span>
+                  <span><i className="bi bi-door-open" aria-hidden="true" /> 4 camere</span>
+                  <span><i className="bi bi-water" aria-hidden="true" /> 200m mare</span>
+                </div>
               </div>
-              <div className="s1-room-card__banner s1-room-card__banner--info">
-                <i className="bi bi-lightning-charge" aria-hidden="true" />
-                <span>Consumi energetici reali, addebitati dopo il soggiorno</span>
-              </div>
-              <div className="s1-room-card__banner s1-room-card__banner--warning">
-                <i className="bi bi-shield-exclamation" aria-hidden="true" />
-                <span>Deposito cauzionale €300 — Carta di Credito al check-in</span>
-              </div>
+              <div className="step1-room-card__offers">
+                <button type="button" className="step1-offer-option is-selected">
+                  <div className="step1-offer-option__info">
+                    <div className="step1-offer-option__name-row">
+                      <span className="step1-offer-option__name">Non rimborsabile</span>
+                      <span className="step1-offer-option__selected-tag" aria-hidden="true">
+                        <i className="bi bi-check-lg" />
+                      </span>
+                    </div>
+                    <p className="step1-offer-option__desc">Cancellazione non rimborsabile</p>
+                  </div>
+                  <div className="step1-offer-option__price-col">
+                    <div className="step1-offer-option__price">79 €</div>
+                  </div>
+                </button>
 
-              <div className="s1-offers-section">
-                <p className="s1-offers-label">Tariffe disponibili</p>
+                <button type="button" className="step1-offer-option">
+                  <div className="step1-offer-option__info">
+                    <div className="step1-offer-option__name-row">
+                      <span className="step1-offer-option__name">Parzialmente rimborsabile</span>
+                    </div>
+                    <p className="step1-offer-option__desc">50% trattenuto se cancelli</p>
+                  </div>
+                  <div className="step1-offer-option__price-col">
+                    <div className="step1-offer-option__price">87 €</div>
+                  </div>
+                </button>
 
-                <label className="s1-offer-option is-selected">
-                  <span className="s1-offer-option__radio" aria-hidden="true" />
-                  <span className="s1-offer-option__label">Non rimborsabile</span>
-                  <span className="s1-offer-option__price">79 €/notte</span>
-                </label>
-
-                <label className="s1-offer-option">
-                  <span className="s1-offer-option__radio" aria-hidden="true" />
-                  <span className="s1-offer-option__label">Parzialmente rimborsabile</span>
-                  <span className="s1-offer-option__price">87 €/notte</span>
-                </label>
-
-                <label className="s1-offer-option">
-                  <span className="s1-offer-option__radio" aria-hidden="true" />
-                  <span className="s1-offer-option__label">Flessibile (60 gg)</span>
-                  <span className="s1-offer-option__price">99 €/notte</span>
-                </label>
+                <button type="button" className="step1-offer-option">
+                  <div className="step1-offer-option__info">
+                    <div className="step1-offer-option__name-row">
+                      <span className="step1-offer-option__name">Flessibile</span>
+                    </div>
+                    <p className="step1-offer-option__desc">Cancellazione gratuita 60 giorni</p>
+                  </div>
+                  <div className="step1-offer-option__price-col">
+                    <div className="step1-offer-option__price">99 €</div>
+                  </div>
+                </button>
               </div>
             </div>
           </article>
 
           {/* ROOM CARD #2 — Casa Mare */}
-          <article className="s1-room-card">
-            <div className="s1-room-card__photo">
-              <div className="s1-room-card__photo-placeholder">
-                [Casa Mare — 200×160]
+          <article className="step1-room-card">
+            <div className="step1-room-card__row">
+              <div className="step1-room-card__photo">
+                <div className="step1-room-card__photo-placeholder">
+                  <i className="bi bi-image" aria-hidden="true" />
+                </div>
               </div>
-            </div>
-            <div className="s1-room-card__body">
-              <h2 className="s1-room-card__name">Casa Mare — 95 m²</h2>
-              <ul className="s1-room-card__meta-chips">
-                <li><i className="bi bi-house-door" aria-hidden="true" /> Appartamento</li>
-                <li><i className="bi bi-people" aria-hidden="true" /> 6 ospiti</li>
-                <li><i className="bi bi-door-open" aria-hidden="true" /> 2 camere</li>
-                <li><i className="bi bi-water" aria-hidden="true" /> 50m mare</li>
-              </ul>
-
-              <div className="s1-room-card__banner s1-room-card__banner--info">
-                <i className="bi bi-lightning-charge" aria-hidden="true" />
-                <span>Consumi energetici reali, addebitati dopo il soggiorno</span>
+              <div className="step1-room-card__details">
+                <div className="step1-room-card__name">Casa Mare — 95 m²</div>
+                <div className="step1-room-card__meta-chips">
+                  <span><i className="bi bi-house-door" aria-hidden="true" /> Appartamento</span>
+                  <span><i className="bi bi-people" aria-hidden="true" /> 6 ospiti</span>
+                  <span><i className="bi bi-door-open" aria-hidden="true" /> 2 camere</span>
+                  <span><i className="bi bi-water" aria-hidden="true" /> 50m mare</span>
+                </div>
               </div>
+              <div className="step1-room-card__offers">
+                <button type="button" className="step1-offer-option">
+                  <div className="step1-offer-option__info">
+                    <div className="step1-offer-option__name-row">
+                      <span className="step1-offer-option__name">Non rimborsabile</span>
+                    </div>
+                    <p className="step1-offer-option__desc">Cancellazione non rimborsabile</p>
+                  </div>
+                  <div className="step1-offer-option__price-col">
+                    <div className="step1-offer-option__price">62 €</div>
+                  </div>
+                </button>
 
-              <div className="s1-offers-section">
-                <p className="s1-offers-label">Tariffe disponibili</p>
-
-                <label className="s1-offer-option">
-                  <span className="s1-offer-option__radio" aria-hidden="true" />
-                  <span className="s1-offer-option__label">Non rimborsabile</span>
-                  <span className="s1-offer-option__price">62 €/notte</span>
-                </label>
-
-                <label className="s1-offer-option">
-                  <span className="s1-offer-option__radio" aria-hidden="true" />
-                  <span className="s1-offer-option__label">Parzialmente rimborsabile</span>
-                  <span className="s1-offer-option__price">71 €/notte</span>
-                </label>
+                <button type="button" className="step1-offer-option">
+                  <div className="step1-offer-option__info">
+                    <div className="step1-offer-option__name-row">
+                      <span className="step1-offer-option__name">Parzialmente rimborsabile</span>
+                    </div>
+                    <p className="step1-offer-option__desc">50% trattenuto se cancelli</p>
+                  </div>
+                  <div className="step1-offer-option__price-col">
+                    <div className="step1-offer-option__price">71 €</div>
+                  </div>
+                </button>
               </div>
             </div>
           </article>
@@ -144,7 +161,7 @@ export default function WizardStep1MockV2Page() {
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════
-            COLONNA DX — summary sticky (CTA "Continua")
+            COLONNA DX — sidebar sticky (foto + caratteristiche + BANNER + Date/Ospiti + prezzo)
             ═══════════════════════════════════════════════════════════════ */}
         <aside className="checkout-summary-col">
           <div className="checkout-summary">
@@ -164,7 +181,22 @@ export default function WizardStep1MockV2Page() {
               <li><i className="bi bi-door-open" aria-hidden="true" /> 4 camere</li>
               <li><i className="bi bi-droplet-half" aria-hidden="true" /> 3 bagni</li>
               <li><i className="bi bi-water" aria-hidden="true" /> Piscina condivisa</li>
+              <li><i className="bi bi-tree" aria-hidden="true" /> Giardino</li>
             </ul>
+
+            {/* BANNER alloggio (qui, NON dentro room-card) — riusa .banner.banner--* esistenti */}
+            <div className="banner banner--success">
+              <i className="bi bi-check2-circle" aria-hidden="true" />
+              <span>Cancellazione gratuita fino a 60 giorni dall&apos;arrivo</span>
+            </div>
+            <div className="banner banner--info">
+              <i className="bi bi-lightning-charge" aria-hidden="true" />
+              <span>Consumi energetici reali, addebitati dopo il soggiorno</span>
+            </div>
+            <div className="banner banner--warning">
+              <i className="bi bi-shield-exclamation" aria-hidden="true" />
+              <span>Deposito cauzionale €300 — Carta di Credito al check-in</span>
+            </div>
 
             <hr className="checkout-summary__divider" />
 
