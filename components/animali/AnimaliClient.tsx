@@ -181,10 +181,10 @@ export default function AnimaliClient({ locale }: { locale: Locale }) {
   const t = T[locale];
 
   return (
-    <div className="page-container pb-5">
+    <div className="page-container page-top pb-5">
 
       {/* Hero */}
-      <section className="text-center py-5">
+      <section className="text-center pb-5">
         <div className="display-3 mb-2 text-primary">
           <i className="bi bi-heart-fill" aria-hidden="true" />
         </div>
