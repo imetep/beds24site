@@ -14,7 +14,7 @@
 
 import { useEffect, useState, type ReactNode } from 'react';
 import { useWizardStore } from '@/store/wizard-store';
-import { PROPERTIES, CIN, OFFER_INFO, calculateTouristTax, formatTouristTaxNote, type Room, type Property } from '@/config/properties';
+import { PROPERTIES, OFFER_INFO, calculateTouristTax, formatTouristTaxNote, type Room, type Property } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
 import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import type { Locale } from '@/config/i18n';
@@ -143,83 +143,113 @@ export default function BookingSidebar({
     ? t.depositText.replace('{amount}', String(room.securityDeposit))
     : t.depositTextGeneric;
 
+  // Round 1 sidebar 2026-04-29 — toggle banner consumi cliccabile
+  const [energyExpanded, setEnergyExpanded] = useState(false);
+
+  // i18n fallback per cancellation (pre-tariffa) — chiavi nuove possono mancare a runtime
+  const tAny = t as any;
+  const cancellationFallbackTitle: string = tAny.cancellationFallbackTitle ?? 'Termini di cancellazione';
+  const cancellationFallbackText: string = tAny.cancellationFallbackText ?? 'Per conoscere i termini di cancellazione devi scegliere una delle tariffe nella lista degli appartamenti';
+
   return (
     <div className="booking-sidebar">
-      {/* 1. HERO */}
-      <div className="booking-sidebar__hero">
-        <img
-          src={heroUrl}
-          alt={room?.name ?? 'LivingApple'}
-          className="booking-sidebar__hero-img"
-          loading="lazy"
-        />
-      </div>
+      {/* 1. HERO — 2 varianti
+          A) no tariffa selezionata: foto wide 100% h=103
+          B) tariffa selezionata:    foto 103×103 sx + nome+caratteristiche dx */}
       {room ? (
-        <>
-          <p className="section-title-secondary">{room.name}</p>
-          <p className="label-metadata">{typeLabel(t, room.type)} · {room.sqm} {t.sqm} · {room.maxPeople} {t.people}</p>
-        </>
+        <div className="booking-sidebar__hero-row">
+          <img
+            src={heroUrl}
+            alt={room.name}
+            className="booking-sidebar__hero-img--compact"
+            loading="lazy"
+          />
+          <div className="booking-sidebar__hero-info">
+            <p className="section-title-secondary">{room.name}</p>
+            <ul className="feature-list">
+              <li className="feature-list__item">
+                <i className="bi bi-door-closed-fill" aria-hidden="true" />
+                {room.bedrooms} {t.bedrooms}
+              </li>
+              <li className="feature-list__item">
+                <i className="bi bi-droplet-fill" aria-hidden="true" />
+                {room.bathrooms} {t.bathrooms}
+              </li>
+              <li className="feature-list__item">
+                <i className="bi bi-people-fill" aria-hidden="true" />
+                {room.maxPeople} {t.people}
+              </li>
+              {poolLabel(t, room) && (
+                <li className="feature-list__item">
+                  <i className="bi bi-water" aria-hidden="true" />
+                  {poolLabel(t, room)}
+                </li>
+              )}
+              {room.features.patio && (
+                <li className="feature-list__item">
+                  <i className="bi bi-house-door-fill" aria-hidden="true" />
+                  {t.featurePatio}
+                </li>
+              )}
+              {room.features.garden && (
+                <li className="feature-list__item">
+                  <i className="bi bi-tree-fill" aria-hidden="true" />
+                  {t.featureGarden}
+                </li>
+              )}
+            </ul>
+          </div>
+        </div>
       ) : (
-        <p className="hint-text">{t.selectRoomMsg}</p>
+        <div className="booking-sidebar__hero">
+          <img
+            src={heroUrl}
+            alt="LivingApple"
+            className="booking-sidebar__hero-img"
+            loading="lazy"
+          />
+        </div>
       )}
 
-      {/* 2. BANNER ⚡ CONSUMI (sempre visibile) */}
-      <div className="banner banner--info banner--with-icon">
-        <i className="bi bi-lightning-fill" aria-hidden="true"></i>
+      {/* 2. CANCELLAZIONE — sempre visibile
+          A) no tariffa: titolo+sub fallback (i18n)
+          B) tariffa:    name + conditions da OFFER_INFO[offerId] */}
+      <div className="booking-sidebar__cancellation">
+        <p className="booking-sidebar__cancellation-title">
+          {offerName ?? cancellationFallbackTitle}
+        </p>
+        <p className="booking-sidebar__cancellation-text">
+          {offerCondition ?? cancellationFallbackText}
+        </p>
+      </div>
+
+      {/* 3. BANNER DEPOSITO (compatto, fisso) */}
+      <div className="banner banner--warning banner--compact banner--with-icon">
+        <i className="bi bi-shield-lock-fill" aria-hidden="true"></i>
         <div>
-          <p className="banner__title">{t.energyTitle}</p>
-          <p className="banner__text">{t.energyText}</p>
+          <p className="banner__title">
+            {t.depositTitle}{room?.securityDeposit ? ` — €${room.securityDeposit}` : ''}
+          </p>
+          <p className="banner__text">{depositText}</p>
         </div>
       </div>
 
-      {/* 3. FEATURE appartamento (solo step 1, se selezionato) */}
-      {step === 1 && room && (
-        <>
-          <hr className="divider-horizontal" />
-          <p className="label-uppercase-muted">{t.propertySection}</p>
-          <ul className="booking-sidebar__feature-list">
-            {property && (
-              <li className="booking-sidebar__feature-item">
-                {property.name} · {property.distanceLabel[locale] ?? property.distanceLabel.it}
-              </li>
-            )}
-            <li className="booking-sidebar__feature-item">
-              <i className="bi bi-door-closed-fill me-2" aria-hidden="true"></i>
-              {room.bedrooms} {t.bedrooms}
-              <i className="bi bi-droplet-fill ms-3 me-2" aria-hidden="true"></i>
-              {room.bathrooms} {t.bathrooms}
-              <i className="bi bi-people-fill ms-3 me-2" aria-hidden="true"></i>
-              {room.maxPeople} {t.people}
-            </li>
-            {poolLabel(t, room) && (
-              <li className="booking-sidebar__feature-item">
-                <i className="bi bi-water me-2" aria-hidden="true"></i>
-                {poolLabel(t, room)}
-              </li>
-            )}
-            {room.features.garden && (
-              <li className="booking-sidebar__feature-item">
-                <i className="bi bi-tree-fill me-2" aria-hidden="true"></i>
-                {t.featureGarden}
-              </li>
-            )}
-            {room.features.patio && (
-              <li className="booking-sidebar__feature-item">
-                <i className="bi bi-house-door-fill me-2" aria-hidden="true"></i>
-                {t.featurePatio}
-              </li>
-            )}
-            {room.features.eventHall && (
-              <li className="booking-sidebar__feature-item">
-                <i className="bi bi-calendar-event-fill me-2" aria-hidden="true"></i>
-                {t.featureEventHall}
-              </li>
-            )}
-          </ul>
-        </>
+      {/* 4. BANNER CONSUMI (compatto, cliccabile expand/collapse) */}
+      <button
+        type="button"
+        onClick={() => setEnergyExpanded((e) => !e)}
+        aria-expanded={energyExpanded}
+        className={`banner banner--info banner--compact banner--with-icon banner--clickable${energyExpanded ? ' is-expanded' : ''}`}
+      >
+        <i className="bi bi-lightning-fill" aria-hidden="true"></i>
+        <span className="banner__title">{t.energyTitle}</span>
+        <i className="bi bi-chevron-down banner__chevron" aria-hidden="true"></i>
+      </button>
+      {energyExpanded && (
+        <p className="banner__text-expanded">{t.energyText}</p>
       )}
 
-      {/* 4. VOUCHER (solo step 2) — slot popolato da WizardStep2 in 3c.3/3c.4 */}
+      {/* 5. VOUCHER (solo step 2) — slot */}
       {step === 2 && step2VoucherSlot && (
         <>
           <hr className="divider-horizontal" />
@@ -227,7 +257,7 @@ export default function BookingSidebar({
         </>
       )}
 
-      {/* 5. DATI CHIAVE — layout verticale (label sopra, valore sotto) */}
+      {/* 6. DATI CHIAVE — Date · Ospiti (con Modifica btn anche in step 1, disabled placeholder) */}
       <hr className="divider-horizontal" />
       <div className="booking-sidebar__data-row">
         <div className="booking-sidebar__data-cell">
@@ -241,11 +271,14 @@ export default function BookingSidebar({
             <p className="booking-sidebar__data-hint">{nights} {nights === 1 ? t.night : t.nights}</p>
           )}
         </div>
-        {step === 2 && onEditDates && (
-          <button type="button" onClick={onEditDates} className="booking-sidebar__edit-btn">
-            {t.editBtn}
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={onEditDates}
+          disabled={!onEditDates}
+          className="booking-sidebar__edit-btn"
+        >
+          {t.editBtn}
+        </button>
       </div>
       <div className="booking-sidebar__data-row">
         <div className="booking-sidebar__data-cell">
@@ -254,14 +287,17 @@ export default function BookingSidebar({
             {numAdult > 0 ? `${numAdult} ${t.adults}${numChild > 0 ? `, ${numChild} ${t.children}` : ''}` : '—'}
           </p>
         </div>
-        {step === 2 && onEditGuests && (
-          <button type="button" onClick={onEditGuests} className="booking-sidebar__edit-btn">
-            {t.editBtn}
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={onEditGuests}
+          disabled={!onEditGuests}
+          className="booking-sidebar__edit-btn"
+        >
+          {t.editBtn}
+        </button>
       </div>
 
-      {/* 6. DETTAGLI DEL PREZZO */}
+      {/* 7. DETTAGLI DEL PREZZO */}
       <hr className="divider-horizontal" />
       <p className="label-uppercase-muted">{t.priceSection}</p>
       {hasPricing ? (
@@ -296,7 +332,7 @@ export default function BookingSidebar({
         <p className="hint-text">{t.priceWaitingMsg}</p>
       )}
 
-      {/* 7. SERVIZI EXTRA (solo step 2) — slot popolato da WizardStep2 in 3c.3/3c.4 */}
+      {/* 8. SERVIZI EXTRA (solo step 2) — slot */}
       {step === 2 && step2ExtrasSlot && (
         <>
           <hr className="divider-horizontal" />
@@ -304,7 +340,7 @@ export default function BookingSidebar({
         </>
       )}
 
-      {/* 8. TOTALE */}
+      {/* 9. TOTALE */}
       {hasPricing && (
         <div className="booking-sidebar__total">
           <span className="booking-sidebar__total-label">{t.total}</span>
@@ -312,25 +348,7 @@ export default function BookingSidebar({
         </div>
       )}
 
-      {/* 9. CANCELLAZIONE */}
-      <hr className="divider-horizontal" />
-      <p className="label-uppercase-muted">{t.cancellationSection}</p>
-      <p className="hint-text">
-        {offerCondition ? (offerName ? `${offerName} — ${offerCondition}` : offerCondition) : t.cancellationPendingMsg}
-      </p>
-
-      {/* 10. BANNER 🔐 DEPOSITO */}
-      <div className="banner banner--warning banner--with-icon">
-        <i className="bi bi-shield-lock-fill" aria-hidden="true"></i>
-        <div>
-          <p className="banner__title">
-            {t.depositTitle}{room?.securityDeposit ? ` — €${room.securityDeposit}` : ''}
-          </p>
-          <p className="banner__text">{depositText}</p>
-        </div>
-      </div>
-
-      {/* 11. CTA */}
+      {/* 10. CTA */}
       {showContinua && (
         <button
           onClick={handleContinua}
@@ -340,9 +358,7 @@ export default function BookingSidebar({
           {ctaLabel ?? t.continua}
         </button>
       )}
-
-      {/* 12. CIN/CIR footer */}
-      <p className="booking-sidebar__footer">{t.cinLabel} {CIN}</p>
+      {/* Footer CIN rimosso (Round 1 sidebar 2026-04-29) */}
     </div>
   );
 }

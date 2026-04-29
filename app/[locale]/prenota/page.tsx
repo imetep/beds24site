@@ -19,10 +19,10 @@ export default async function PrenotaPage({ params }: Props) {
   const t = getTranslations(locale);
 
   return (
-    <main style={{ minHeight: '80vh', paddingTop: '2rem', paddingBottom: '3rem' }}>
+    <main className="prenota-page-main">
       {/* useSearchParams() in Wizard richiede Suspense */}
       <Suspense fallback={
-        <div style={{ textAlign: 'center', padding: '4rem', color: '#999' }}>
+        <div className="prenota-page-loading">
           Caricamento...
         </div>
       }>

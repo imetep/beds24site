@@ -495,6 +495,8 @@
       "selectRoomMsg": "Wähle eine Unterkunft aus der Liste",
       "priceWaitingMsg": "Wähle Unterkunft und Daten, um den Gesamtpreis zu sehen",
       "cancellationPendingMsg": "Abhängig vom gewählten Tarif",
+      "cancellationFallbackTitle": "Stornierungsbedingungen",
+      "cancellationFallbackText": "Um die Stornierungsbedingungen zu erfahren, wählen Sie einen der Tarife aus der Apartmentliste",
       "energyTitle": "Energieverbrauch",
       "energyText": "Der Energieverbrauch wird auf Grundlage des tatsächlichen Verbrauchs berechnet und über in jeder Unterkunft installierte Zähler erfasst. Dabei handelt es sich nicht um eine zusätzliche Gebühr zur Gewinnerzielung, sondern um eine Maßnahme zur Vermeidung von Energieverschwendung.",
       "depositTitle": "Kaution",
