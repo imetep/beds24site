@@ -495,6 +495,8 @@
       "selectRoomMsg": "Choose an apartment from the list",
       "priceWaitingMsg": "Choose apartment and dates to see the total",
       "cancellationPendingMsg": "Depends on the selected rate",
+      "cancellationFallbackTitle": "Cancellation terms",
+      "cancellationFallbackText": "To learn the cancellation terms, choose one of the rates from the apartments list",
       "energyTitle": "Energy consumption",
       "energyText": "Energy consumption is calculated based on actual usage, measured through meters installed in each accommodation. This is not an additional charge for profit, but a measure to prevent energy waste.",
       "depositTitle": "Security deposit",
@@ -523,6 +525,21 @@
       "typeMonolocale": "Studio",
       "typeAppartamento": "Apartment",
       "typeVilla": "Villa"
+    },
+    "paymentModal": {
+      "title": "Payment method",
+      "sectionAlt": "Or pay with",
+      "confirm": "Done",
+      "close": "Close",
+      "comingSoon": "Coming soon",
+      "comingSoonInterestFree": "Coming soon · interest-free",
+      "methods": {
+        "stripe": { "label": "Credit or debit card" },
+        "paypal": { "label": "PayPal" },
+        "applePay": { "label": "Apple Pay" },
+        "googlePay": { "label": "Google Pay" },
+        "klarna": { "label": "Pay in 3 with Klarna" }
+      }
     },
     "wizardStepper": {
       "stepScegli": "Choose",
@@ -965,6 +982,7 @@
     "wizardStep1": {
       "titleSingle": "Which rate do you prefer?",
       "titleMulti": "Choose apartment and rate",
+      "titleMultiCount": "{count} accommodations in Scauri",
       "loading": "Searching prices and availability...",
       "noResults": "No apartments available for the selected dates.",
       "nightsSing": "night",
@@ -1056,7 +1074,16 @@
       "stripeFlexNote": "With Stripe your card is only saved — no immediate charge.",
       "flexOnlyCardNote": "We only accept card payment for this rate.",
       "vediRiepilogo": "View booking summary",
-      "vediRiepilogoFlex": "Continue"
+      "vediRiepilogoFlex": "Continue",
+      "cardPagamentoTitle": "Payment method",
+      "cardPagamentoEmpty": "Choose a payment method",
+      "cardOspiteTitle": "Guest details",
+      "cardOspiteSub": "Used for booking confirmation and check-in.",
+      "cardUpsellTitle": "Optional services",
+      "ctaConfirm": "Confirm booking",
+      "ctaConfirmAndPay": "Confirm and pay",
+      "termsAnd": "and the",
+      "privacyLink": "privacy policy"
     },
     "wizardStep3": {
       "title": "Booking summary",

@@ -495,6 +495,8 @@
       "selectRoomMsg": "Seleziona un appartamento dalla lista",
       "priceWaitingMsg": "Seleziona appartamento e date per vedere il totale",
       "cancellationPendingMsg": "Dipende dalla tariffa scelta",
+      "cancellationFallbackTitle": "Termini di cancellazione",
+      "cancellationFallbackText": "Per conoscere i termini di cancellazione devi scegliere una delle tariffe nella lista degli appartamenti",
       "energyTitle": "Consumi energetici",
       "energyText": "I consumi energetici vengono conteggiati in base all'utilizzo reale, tramite contatori presenti in ogni abitazione. Non si tratta di un costo aggiuntivo per guadagno, ma di una misura per evitare sprechi.",
       "depositTitle": "Deposito cauzionale",
@@ -529,6 +531,21 @@
       "stepOspite": "Dati ospite",
       "stepPaga": "Paga",
       "ariaLabel": "Avanzamento prenotazione"
+    },
+    "paymentModal": {
+      "title": "Metodo di pagamento",
+      "sectionAlt": "Oppure paga con",
+      "confirm": "Fatto",
+      "close": "Chiudi",
+      "comingSoon": "In arrivo",
+      "comingSoonInterestFree": "In arrivo · senza interessi",
+      "methods": {
+        "stripe": { "label": "Carta di credito o debito" },
+        "paypal": { "label": "PayPal" },
+        "applePay": { "label": "Apple Pay" },
+        "googlePay": { "label": "Google Pay" },
+        "klarna": { "label": "Paga in 3 rate con Klarna" }
+      }
     },
     "bedConfigDisplay": {
       "sectionTitle": "Dove dormirete",
@@ -983,6 +1000,7 @@
     "wizardStep1": {
       "titleSingle": "Quale tariffa preferite?",
       "titleMulti": "Scegli appartamento e tariffa",
+      "titleMultiCount": "{count} alloggi a Scauri",
       "loading": "Ricerca prezzi e disponibilità...",
       "noResults": "Nessun appartamento disponibile per le date selezionate.",
       "nightsSing": "notte",
@@ -1074,7 +1092,16 @@
       "stripeFlexNote": "Con Stripe la carta viene solo salvata — nessun addebito immediato.",
       "flexOnlyCardNote": "Per questa tariffa accettiamo solo pagamento con carta.",
       "vediRiepilogo": "Vedi riepilogo finale",
-      "vediRiepilogoFlex": "Continua"
+      "vediRiepilogoFlex": "Continua",
+      "cardPagamentoTitle": "Metodo di pagamento",
+      "cardPagamentoEmpty": "Scegli il metodo di pagamento",
+      "cardOspiteTitle": "Dati ospite",
+      "cardOspiteSub": "I dati che inserisci sono usati per la conferma di prenotazione e il check-in.",
+      "cardUpsellTitle": "Servizi opzionali",
+      "ctaConfirm": "Conferma prenotazione",
+      "ctaConfirmAndPay": "Conferma e paga",
+      "termsAnd": "e la",
+      "privacyLink": "privacy"
     },
     "wizardStep3": {
       "title": "Riepilogo prenotazione",

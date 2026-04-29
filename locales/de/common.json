@@ -495,6 +495,8 @@
       "selectRoomMsg": "Wähle eine Unterkunft aus der Liste",
       "priceWaitingMsg": "Wähle Unterkunft und Daten, um den Gesamtpreis zu sehen",
       "cancellationPendingMsg": "Abhängig vom gewählten Tarif",
+      "cancellationFallbackTitle": "Stornierungsbedingungen",
+      "cancellationFallbackText": "Um die Stornierungsbedingungen zu erfahren, wählen Sie einen der Tarife aus der Apartmentliste",
       "energyTitle": "Energieverbrauch",
       "energyText": "Der Energieverbrauch wird auf Grundlage des tatsächlichen Verbrauchs berechnet und über in jeder Unterkunft installierte Zähler erfasst. Dabei handelt es sich nicht um eine zusätzliche Gebühr zur Gewinnerzielung, sondern um eine Maßnahme zur Vermeidung von Energieverschwendung.",
       "depositTitle": "Kaution",
@@ -523,6 +525,21 @@
       "typeMonolocale": "Studio",
       "typeAppartamento": "Wohnung",
       "typeVilla": "Villa"
+    },
+    "paymentModal": {
+      "title": "Zahlungsmethode",
+      "sectionAlt": "Oder bezahlen mit",
+      "confirm": "Fertig",
+      "close": "Schließen",
+      "comingSoon": "Demnächst",
+      "comingSoonInterestFree": "Demnächst · zinsfrei",
+      "methods": {
+        "stripe": { "label": "Kredit- oder Debitkarte" },
+        "paypal": { "label": "PayPal" },
+        "applePay": { "label": "Apple Pay" },
+        "googlePay": { "label": "Google Pay" },
+        "klarna": { "label": "3 Raten mit Klarna" }
+      }
     },
     "wizardStepper": {
       "stepScegli": "Wählen",
@@ -965,6 +982,7 @@
     "wizardStep1": {
       "titleSingle": "Welchen Tarif bevorzugen Sie?",
       "titleMulti": "Unterkunft und Tarif wählen",
+      "titleMultiCount": "{count} Unterkünfte in Scauri",
       "loading": "Preise und Verfügbarkeit suchen...",
       "noResults": "Keine Unterkünfte für die gewählten Daten verfügbar.",
       "nightsSing": "Nacht",
@@ -1056,7 +1074,16 @@
       "stripeFlexNote": "Bei Stripe wird die Karte nur gespeichert — keine sofortige Belastung.",
       "flexOnlyCardNote": "Für diesen Tarif akzeptieren wir nur Kartenzahlung.",
       "vediRiepilogo": "Buchungsübersicht anzeigen",
-      "vediRiepilogoFlex": "Weiter"
+      "vediRiepilogoFlex": "Weiter",
+      "cardPagamentoTitle": "Zahlungsmethode",
+      "cardPagamentoEmpty": "Zahlungsmethode wählen",
+      "cardOspiteTitle": "Gastdaten",
+      "cardOspiteSub": "Wird für die Buchungsbestätigung und den Check-in verwendet.",
+      "cardUpsellTitle": "Zusatzleistungen",
+      "ctaConfirm": "Buchung bestätigen",
+      "ctaConfirmAndPay": "Bestätigen und bezahlen",
+      "termsAnd": "und die",
+      "privacyLink": "Datenschutzerklärung"
     },
     "wizardStep3": {
       "title": "Buchungsübersicht",

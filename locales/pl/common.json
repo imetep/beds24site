@@ -495,6 +495,8 @@
       "selectRoomMsg": "Wybierz apartament z listy",
       "priceWaitingMsg": "Wybierz apartament i daty, aby zobaczyć sumę",
       "cancellationPendingMsg": "Zależy od wybranej taryfy",
+      "cancellationFallbackTitle": "Warunki anulowania",
+      "cancellationFallbackText": "Aby poznać warunki anulowania, wybierz jedną z taryf z listy apartamentów",
       "energyTitle": "Zużycie energii",
       "energyText": "Zużycie energii jest rozliczane na podstawie rzeczywistego wykorzystania, mierzonego przez liczniki zainstalowane w każdym obiekcie. Nie jest to dodatkowa opłata w celu osiągnięcia zysku, lecz środek mający na celu zapobieganie marnotrawstwu energii.",
       "depositTitle": "Kaucja",
@@ -523,6 +525,21 @@
       "typeMonolocale": "Kawalerka",
       "typeAppartamento": "Apartament",
       "typeVilla": "Willa"
+    },
+    "paymentModal": {
+      "title": "Metoda płatności",
+      "sectionAlt": "Lub zapłać przez",
+      "confirm": "Gotowe",
+      "close": "Zamknij",
+      "comingSoon": "Wkrótce",
+      "comingSoonInterestFree": "Wkrótce · bez odsetek",
+      "methods": {
+        "stripe": { "label": "Karta kredytowa lub debetowa" },
+        "paypal": { "label": "PayPal" },
+        "applePay": { "label": "Apple Pay" },
+        "googlePay": { "label": "Google Pay" },
+        "klarna": { "label": "3 raty z Klarna" }
+      }
     },
     "wizardStepper": {
       "stepScegli": "Wybierz",
@@ -965,6 +982,7 @@
     "wizardStep1": {
       "titleSingle": "Którą taryfę preferujecie?",
       "titleMulti": "Wybierz apartament i taryfę",
+      "titleMultiCount": "{count} obiektów w Scauri",
       "loading": "Wyszukiwanie cen i dostępności...",
       "noResults": "Brak dostępnych apartamentów dla wybranych dat.",
       "nightsSing": "noc",
@@ -1056,7 +1074,16 @@
       "stripeFlexNote": "W przypadku Stripe karta jest tylko zapisywana — bez natychmiastowego obciążenia.",
       "flexOnlyCardNote": "Dla tej taryfy akceptujemy tylko płatność kartą.",
       "vediRiepilogo": "Zobacz podsumowanie",
-      "vediRiepilogoFlex": "Dalej"
+      "vediRiepilogoFlex": "Dalej",
+      "cardPagamentoTitle": "Metoda płatności",
+      "cardPagamentoEmpty": "Wybierz metodę płatności",
+      "cardOspiteTitle": "Dane gościa",
+      "cardOspiteSub": "Używane do potwierdzenia rezerwacji i zameldowania.",
+      "cardUpsellTitle": "Usługi opcjonalne",
+      "ctaConfirm": "Potwierdź rezerwację",
+      "ctaConfirmAndPay": "Potwierdź i zapłać",
+      "termsAnd": "oraz",
+      "privacyLink": "polityką prywatności"
     },
     "wizardStep3": {
       "title": "Podsumowanie rezerwacji",

@@ -114,7 +114,7 @@ export default async function PrivacyPage({ params }: Props) {
   const t = T[locale];
 
   return (
-    <div className="page-container py-5">
+    <div className="page-container page-top pb-5">
       <h1 className="fs-1 fw-bold mb-1">{t.h1}</h1>
       <p className="text-muted mb-3">{t.subtitle}</p>
       <div className="alert alert-primary"><strong>{t.infoBox}</strong></div>

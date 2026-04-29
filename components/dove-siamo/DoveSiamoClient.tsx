@@ -448,10 +448,10 @@ export default function DoveSiamoClient({
   const [activeTab, setActiveTab] = useState<Tab>('car');
 
   return (
-    <div className="page-container pb-5">
+    <div className="page-container page-top pb-5">
 
       {/* Hero */}
-      <section className="text-center py-5">
+      <section className="text-center pb-5">
         <h1
           className="fw-bold text-primary mb-2"
           style={{ fontSize: 'clamp(1.6rem, 4vw, 2.4rem)', lineHeight: 1.25 }}
