@@ -66,6 +66,11 @@
   --space-lg: 24px;
   --space-xl: 32px;
 
+  /* Top padding unificato per il primo contenuto della pagina (sotto header sticky).
+     Applicato via classe .page-top sui wrapper raw .page-container, e direttamente
+     sulle classi wrapper page-level (.paga-main, .room-page, .wizard-container, ecc.). */
+  --page-pad-top: 24px;
+
   /* Border radius scale */
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -133,6 +138,14 @@ body {
   max-width: var(--container-lg);
   margin-inline: auto;
   padding-inline: 16px;
+}
+
+/* Top spacing standard sotto header sticky.
+   Si combina con .page-container sui wrapper di pagina; le classi wrapper
+   page-level (.paga-main, .room-page, .wizard-container, .paypal-return-main)
+   applicano lo stesso valore via var(--page-pad-top) nei loro selettori. */
+.page-top {
+  padding-top: var(--page-pad-top);
 }
 
 /* Accessibilità — rispetta preferenza utente per ridurre animazioni */
@@ -894,11 +907,11 @@ body {
 .wizard-container {
   max-width: var(--wizard-container-max);  /* 985 — pattern Airbnb /book */
   margin: 0 auto;
-  padding: var(--space-md) var(--space-base) var(--space-xl);
+  padding: var(--page-pad-top) var(--space-base) var(--space-xl);
 }
 @media (min-width: 768px) {
   .wizard-container {
-    padding: var(--space-md) var(--space-lg) 3rem;
+    padding: var(--page-pad-top) var(--space-lg) 3rem;
   }
 }
 .wizard-loading {
@@ -2087,7 +2100,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-lg) var(--space-base);
+  padding: var(--page-pad-top) var(--space-base);
 }
 .paypal-return-center {
   max-width: 420px;
@@ -2753,7 +2766,7 @@ body {
 .room-page {
   max-width: var(--container-page);
   margin: 0 auto;
-  padding: var(--space-lg) var(--space-base) 120px;  /* 120px bottom = safe-area sticky CTA */
+  padding: var(--page-pad-top) var(--space-base) 120px;  /* 120px bottom = safe-area sticky CTA */
 }
 .room-page__meta {
   font-size: var(--text-xs);
@@ -4929,7 +4942,7 @@ body {
 /* Wrapper main della pagina paga (Suspense + content) */
 .paga-main {
   min-height: 80vh;
-  padding: var(--space-xl) var(--space-base) 48px;
+  padding: var(--page-pad-top) var(--space-base) 48px;
 }
 
 /* Stati di pagina full-screen riusabili (loading / error / done).
