@@ -157,11 +157,12 @@ export default function WizardStep2({ locale = 'it' }: Props) {
       .catch(() => {});
   }, [selectedRoomId]);
 
-  // ── PayPal SDK v6: inizializzazione completa al click radio "PayPal" ─────
+  // ── PayPal SDK v6: inizializzazione (solo per offerte non-flex) ──────────
   // Triggerato quando paymentMethod === 'paypal' (settato dal modale onConfirm).
-  // Per offerte non-flex crea anche la session one-time per capture 100%.
+  // Per offerte Flex il flow è setup-token + redirect (no SDK necessario):
+  // skippiamo l'init per evitare chiamate inutili a /api/paypal-client-token.
   useEffect(() => {
-    if (paymentMethod !== 'paypal') {
+    if (paymentMethod !== 'paypal' || isFlexOffer) {
       setSdkReady(false);
       return;
     }
@@ -214,8 +215,8 @@ export default function WizardStep2({ locale = 'it' }: Props) {
         if (cancelled) return;
         sdkInstanceRef.current = instance;
 
-        // Session one-time per offerte non-flex (capture 100% o 50% upfront)
-        if (!isFlexOffer && typeof instance.createPayPalOneTimePaymentSession === 'function') {
+        // Session one-time (capture 100% o 50% upfront — il flex non passa di qui)
+        if (typeof instance.createPayPalOneTimePaymentSession === 'function') {
           paypalSessionRef.current = instance.createPayPalOneTimePaymentSession({
             onApprove: async (data: { orderId: string }) => {
               setPhase('paying');
