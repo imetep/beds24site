@@ -18,6 +18,8 @@ import { PROPERTIES, OFFER_INFO, calculateTouristTax, formatTouristTaxNote, type
 import { getTranslations } from '@/lib/i18n';
 import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import type { Locale } from '@/config/i18n';
+import EditDatesModal from './EditDatesModal';
+import EditGuestsModal from './EditGuestsModal';
 
 interface Props {
   locale?: string;
@@ -145,6 +147,13 @@ export default function BookingSidebar({
 
   // Round 1 sidebar 2026-04-29 — toggle banner consumi cliccabile
   const [energyExpanded, setEnergyExpanded] = useState(false);
+  // Round 2 sidebar 2026-04-29 — modali Modifica Date / Ospiti
+  const [showEditDates, setShowEditDates] = useState(false);
+  const [showEditGuests, setShowEditGuests] = useState(false);
+  // In step=1 i bottoni Modifica funzionano (aprono modale).
+  // In step=2 il caller passa onEditDates/Guests con la sua logica.
+  const editDatesHandler = step === 1 ? () => setShowEditDates(true) : onEditDates;
+  const editGuestsHandler = step === 1 ? () => setShowEditGuests(true) : onEditGuests;
 
   // i18n fallback per cancellation (pre-tariffa) — chiavi nuove possono mancare a runtime
   const tAny = t as any;
@@ -273,8 +282,8 @@ export default function BookingSidebar({
         </div>
         <button
           type="button"
-          onClick={onEditDates}
-          disabled={!onEditDates}
+          onClick={editDatesHandler}
+          disabled={!editDatesHandler}
           className="booking-sidebar__edit-btn"
         >
           {t.editBtn}
@@ -289,8 +298,8 @@ export default function BookingSidebar({
         </div>
         <button
           type="button"
-          onClick={onEditGuests}
-          disabled={!onEditGuests}
+          onClick={editGuestsHandler}
+          disabled={!editGuestsHandler}
           className="booking-sidebar__edit-btn"
         >
           {t.editBtn}
@@ -359,6 +368,14 @@ export default function BookingSidebar({
         </button>
       )}
       {/* Footer CIN rimosso (Round 1 sidebar 2026-04-29) */}
+
+      {/* Round 2: modali Modifica Date / Ospiti (solo step 1 di default) */}
+      {showEditDates && (
+        <EditDatesModal locale={locale} onClose={() => setShowEditDates(false)} />
+      )}
+      {showEditGuests && (
+        <EditGuestsModal locale={locale} onClose={() => setShowEditGuests(false)} />
+      )}
     </div>
   );
 }
