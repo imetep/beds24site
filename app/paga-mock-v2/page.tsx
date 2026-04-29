@@ -150,13 +150,30 @@ export default function PagaMockV2Page() {
 
             {/* Titolo + caratteristiche */}
             <h2 className="checkout-summary__title">Pellini 3 — 180 m²</h2>
+
+            <p className="label-uppercase-muted">Caratteristiche</p>
             <ul className="checkout-summary__features">
-              <li><i className="bi bi-house-door" aria-hidden="true" /> Appartamento</li>
               <li><i className="bi bi-people" aria-hidden="true" /> 12 ospiti</li>
               <li><i className="bi bi-door-open" aria-hidden="true" /> 4 camere</li>
               <li><i className="bi bi-droplet-half" aria-hidden="true" /> 3 bagni</li>
               <li><i className="bi bi-water" aria-hidden="true" /> Piscina condivisa</li>
+              <li><i className="bi bi-tree" aria-hidden="true" /> Giardino</li>
             </ul>
+
+            {/* Flessibile come TESTO INLINE GRIGIO (pattern Airbnb, no banner) */}
+            <p className="checkout-summary__policy-text">
+              Questa prenotazione è flessibile per 60 giorni
+            </p>
+
+            {/* Banner alloggio (specifici LivingApple) */}
+            <div className="banner banner--info">
+              <i className="bi bi-lightning-charge" aria-hidden="true" />
+              <span>Consumi energetici</span>
+            </div>
+            <div className="banner banner--warning">
+              <i className="bi bi-shield-exclamation" aria-hidden="true" />
+              <span>Deposito cauzionale — € (variabile)</span>
+            </div>
 
             <hr className="checkout-summary__divider" />
 
