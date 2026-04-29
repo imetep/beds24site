@@ -246,10 +246,10 @@ export default function PrenotazioneSicuraClient({
   const t = T[locale];
 
   return (
-    <div className="page-container pb-5">
+    <div className="page-container page-top pb-5">
 
       {/* Hero */}
-      <section className="text-center py-5">
+      <section className="text-center pb-5">
         <div className="mb-2" style={{ fontSize: '2.5rem' }}>🔍</div>
         <h1 className="fw-bold text-primary mb-3" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.1rem)', lineHeight: 1.3 }}>
           {t.hero_title}
