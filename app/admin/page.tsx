@@ -133,7 +133,7 @@ export default function AdminPage() {
   ];
 
   return (
-    <div className="container py-4 pb-5" style={{ maxWidth: 1400 }}>
+    <div className="container page-top pb-5" style={{ maxWidth: 1400 }}>
 
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
