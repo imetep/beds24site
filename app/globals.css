@@ -491,6 +491,16 @@ body {
   padding-bottom: 3rem;
 }
 
+/* Wrapper main della pagina /[locale]/prenota/successo — flex centrato
+   con stato verifica/successo/errore. Sostituisce inline style. */
+.prenota-success-main {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--page-pad-top) var(--space-base) 3rem;
+}
+
 /* ──────────────────────────────────────────────────────────────────────────
    EDIT MODALS (Round 2 sidebar 2026-04-29)
    Modali inline per Modifica Date / Ospiti dalla BookingSidebar.
