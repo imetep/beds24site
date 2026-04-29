@@ -202,11 +202,11 @@ export default function ContattiClient({ locale, bookHref }: Props) {
   const faqData: FaqCategory[] = t.faq;
 
   return (
-    <div className="page-container pb-4 min-vh-100" style={{ background: '#f8fafc' }}>
+    <div className="page-container page-top pb-4 min-vh-100" style={{ background: '#f8fafc' }}>
 
       {/* ── Hero con sfondo brand ─────────────────────────────────────────── */}
       <div
-        className="px-3 pt-4 pb-4"
+        className="px-3 pb-4"
         style={{ background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%)' }}
       >
         <h1
