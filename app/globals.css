@@ -771,6 +771,120 @@ body {
 .edit-modal__age-select.is-error {
   border-color: #f97316;
 }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   PAYMENT METHOD MODAL (E.1 sessione 2026-04-29)
+   Modale "Modifica metodo di pagamento" stile Airbnb /book.
+   Riusa .edit-modal__* (overlay, panel, header, footer) + classi specifiche.
+   ────────────────────────────────────────────────────────────────────────── */
+.payment-modal__panel {
+  /* desktop: leggermente più stretto della edit-modal generica */
+  max-width: 520px;
+}
+.payment-modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.payment-modal__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.payment-modal__list--disabled {
+  opacity: 0.6;
+}
+
+.payment-modal__option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: 14px 16px;
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  font-size: var(--text-base);
+  color: var(--color-text);
+}
+.payment-modal__option:not(.is-disabled):hover {
+  border-color: var(--color-primary);
+}
+.payment-modal__option.is-selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+  border-width: 2px;
+  padding: 13.5px 15.5px; /* compensate +0.5px border per non shiftare */
+}
+.payment-modal__option.is-disabled {
+  cursor: not-allowed;
+  background: var(--color-bg-muted);
+}
+
+.payment-modal__option-icon {
+  font-size: 1.4em;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+.payment-modal__option.is-disabled .payment-modal__option-icon {
+  color: var(--color-text-disabled);
+}
+
+.payment-modal__option-label {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.payment-modal__option-name {
+  font-weight: 500;
+  color: var(--color-text);
+}
+.payment-modal__option-sub {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.payment-modal__radio {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  background: var(--color-bg);
+  flex-shrink: 0;
+  position: relative;
+}
+.payment-modal__radio.is-checked {
+  border-color: var(--color-primary);
+}
+.payment-modal__radio.is-checked::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+
+.payment-modal__section-label {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: var(--space-sm) 0 0;
+}
+
+.payment-modal__confirm {
+  /* override generico .edit-modal__btn-primary se necessario in futuro */
+}
 .prenota-page-loading {
   text-align: center;
   padding: 4rem;
