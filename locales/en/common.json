@@ -526,6 +526,21 @@
       "typeAppartamento": "Apartment",
       "typeVilla": "Villa"
     },
+    "paymentModal": {
+      "title": "Payment method",
+      "sectionAlt": "Or pay with",
+      "confirm": "Done",
+      "close": "Close",
+      "comingSoon": "Coming soon",
+      "comingSoonInterestFree": "Coming soon · interest-free",
+      "methods": {
+        "stripe": { "label": "Credit or debit card" },
+        "paypal": { "label": "PayPal" },
+        "applePay": { "label": "Apple Pay" },
+        "googlePay": { "label": "Google Pay" },
+        "klarna": { "label": "Pay in 3 with Klarna" }
+      }
+    },
     "wizardStepper": {
       "stepScegli": "Choose",
       "stepOspite": "Guest info",

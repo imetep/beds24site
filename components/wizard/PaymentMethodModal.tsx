@@ -18,6 +18,8 @@ import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
 
 type Method = 'stripe' | 'paypal' | 'apple-pay' | 'google-pay' | 'klarna' | null;
+type MethodId = Exclude<Method, null>;
+type MethodKey = 'stripe' | 'paypal' | 'applePay' | 'googlePay' | 'klarna';
 
 interface Props {
   locale: string;
@@ -27,58 +29,33 @@ interface Props {
   onConfirm?: (method: Method) => void;
 }
 
-interface MethodOption {
-  id: Exclude<Method, null>;
-  label: Record<string, string>;
-  sub?: Record<string, string>;
+/**
+ * Config NON-i18n dei metodi (id, mapping a chiavi i18n, icona Bootstrap, attivo/coming-soon).
+ * Tutti i testi user-facing (label, sub) vivono in locales/{it,en,de,pl}/common.json
+ * sotto components.paymentModal.methods.* + components.paymentModal.comingSoon*
+ * (memoria progetto: i18n centralizzato).
+ */
+interface MethodConfig {
+  id: MethodId;
+  i18nKey: MethodKey;
   icon: string;
   enabled: boolean;
+  /** Se non-attivo, prefisso del sub-text i18n (comingSoon | comingSoonInterestFree) */
+  comingSoonKey?: 'comingSoon' | 'comingSoonInterestFree';
 }
 
-const METHODS: MethodOption[] = [
-  {
-    id: 'stripe',
-    label: { it: 'Carta di credito o debito', en: 'Credit or debit card', de: 'Kredit- oder Debitkarte', pl: 'Karta kredytowa lub debetowa' },
-    icon: 'bi-credit-card-2-front-fill',
-    enabled: true,
-  },
-  {
-    id: 'paypal',
-    label: { it: 'PayPal', en: 'PayPal', de: 'PayPal', pl: 'PayPal' },
-    icon: 'bi-paypal',
-    enabled: true,
-  },
-  {
-    id: 'apple-pay',
-    label: { it: 'Apple Pay', en: 'Apple Pay', de: 'Apple Pay', pl: 'Apple Pay' },
-    sub: { it: 'In arrivo', en: 'Coming soon', de: 'Demnächst', pl: 'Wkrótce' },
-    icon: 'bi-apple',
-    enabled: false,
-  },
-  {
-    id: 'google-pay',
-    label: { it: 'Google Pay', en: 'Google Pay', de: 'Google Pay', pl: 'Google Pay' },
-    sub: { it: 'In arrivo', en: 'Coming soon', de: 'Demnächst', pl: 'Wkrótce' },
-    icon: 'bi-google',
-    enabled: false,
-  },
-  {
-    id: 'klarna',
-    label: { it: 'Paga in 3 rate con Klarna', en: 'Pay in 3 with Klarna', de: '3 Raten mit Klarna', pl: '3 raty z Klarna' },
-    sub: { it: 'In arrivo · senza interessi', en: 'Coming soon · interest-free', de: 'Demnächst · zinsfrei', pl: 'Wkrótce · bez odsetek' },
-    icon: 'bi-cash-stack',
-    enabled: false,
-  },
+const METHODS: MethodConfig[] = [
+  { id: 'stripe',     i18nKey: 'stripe',    icon: 'bi-credit-card-2-front-fill', enabled: true },
+  { id: 'paypal',     i18nKey: 'paypal',    icon: 'bi-paypal',                   enabled: true },
+  { id: 'apple-pay',  i18nKey: 'applePay',  icon: 'bi-apple',                    enabled: false, comingSoonKey: 'comingSoon' },
+  { id: 'google-pay', i18nKey: 'googlePay', icon: 'bi-google',                   enabled: false, comingSoonKey: 'comingSoon' },
+  { id: 'klarna',     i18nKey: 'klarna',    icon: 'bi-cash-stack',               enabled: false, comingSoonKey: 'comingSoonInterestFree' },
 ];
 
 export default function PaymentMethodModal({ locale, onClose, onConfirm }: Props) {
   const tr = getTranslations(locale as Locale);
-  const tAny = tr as any;
-  const titleText: string = tAny.components?.paymentModal?.title ?? 'Metodo di pagamento';
-  const sectionLabel: string = tAny.components?.paymentModal?.sectionAlt ?? 'Oppure paga con';
-  const cancelText: string = tr.components.homeSearch.ui.cancel ?? 'Annulla';
-  const doneText: string = tAny.components?.paymentModal?.confirm ?? 'Fatto';
-  const closeAria: string = tAny.components?.paymentModal?.close ?? 'Chiudi';
+  const pm = (tr as any).components.paymentModal;
+  const cancelText: string = tr.components.homeSearch.ui.cancel;
 
   const { paymentMethod, setPaymentMethod } = useWizardStore() as any;
   const [selected, setSelected] = useState<Method>(
@@ -92,17 +69,26 @@ export default function PaymentMethodModal({ locale, onClose, onConfirm }: Props
     onClose();
   }
 
+  // Helper: label/sub di un metodo da i18n
+  function methodLabel(key: MethodKey): string {
+    return pm.methods[key]?.label ?? key;
+  }
+  function methodSub(comingSoonKey?: 'comingSoon' | 'comingSoonInterestFree'): string | null {
+    if (!comingSoonKey) return null;
+    return pm[comingSoonKey] ?? null;
+  }
+
   return (
     <>
       <div className="edit-modal__overlay" onClick={onClose} />
-      <div className="edit-modal__panel payment-modal__panel" role="dialog" aria-label={titleText}>
+      <div className="edit-modal__panel payment-modal__panel" role="dialog" aria-label={pm.title}>
         <div className="edit-modal__header">
-          <h3 className="edit-modal__title">{titleText}</h3>
+          <h3 className="edit-modal__title">{pm.title}</h3>
           <button
             type="button"
             className="edit-modal__close"
             onClick={onClose}
-            aria-label={closeAria}
+            aria-label={pm.close}
           >
             ×
           </button>
@@ -112,8 +98,8 @@ export default function PaymentMethodModal({ locale, onClose, onConfirm }: Props
           {/* Metodi attivi (Stripe + PayPal) */}
           <ul className="payment-modal__list">
             {METHODS.filter(m => m.enabled).map(m => {
-              const label = m.label[locale] ?? m.label.it;
-              const sub = m.sub?.[locale] ?? m.sub?.it;
+              const label = methodLabel(m.i18nKey);
+              const sub = methodSub(m.comingSoonKey);
               const isSelected = selected === m.id;
               return (
                 <li key={m.id}>
@@ -137,11 +123,11 @@ export default function PaymentMethodModal({ locale, onClose, onConfirm }: Props
           {/* Sezione "Oppure paga con" — metodi disabled (coming soon) */}
           {METHODS.some(m => !m.enabled) && (
             <>
-              <p className="payment-modal__section-label">{sectionLabel}</p>
+              <p className="payment-modal__section-label">{pm.sectionAlt}</p>
               <ul className="payment-modal__list payment-modal__list--disabled">
                 {METHODS.filter(m => !m.enabled).map(m => {
-                  const label = m.label[locale] ?? m.label.it;
-                  const sub = m.sub?.[locale] ?? m.sub?.it;
+                  const label = methodLabel(m.i18nKey);
+                  const sub = methodSub(m.comingSoonKey);
                   return (
                     <li key={m.id}>
                       <button
@@ -173,7 +159,7 @@ export default function PaymentMethodModal({ locale, onClose, onConfirm }: Props
             onClick={handleConfirm}
             disabled={!selected}
           >
-            {doneText}
+            {pm.confirm}
           </button>
         </div>
       </div>
