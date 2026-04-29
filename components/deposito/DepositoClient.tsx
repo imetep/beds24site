@@ -50,10 +50,10 @@ export default function DepositoClient({ locale, contactHref, portalHref }: Prop
   const t = getTranslations(locale).components.depositoClient;
 
   return (
-    <div className="page-container pb-5">
+    <div className="page-container page-top pb-5">
 
       {/* ── Hero ────────────────────────────────────────────────────────────── */}
-      <div className="bg-white px-3 pt-4 pb-3 border-bottom mb-2">
+      <div className="bg-white px-3 pb-3 border-bottom mb-2">
         <div
           className="d-inline-block mb-2 fw-bold rounded-pill"
           style={{ background: '#FFF8E7', color: '#92400e', fontSize: 12, padding: '4px 12px' }}
