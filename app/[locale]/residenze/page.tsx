@@ -32,7 +32,7 @@ export default async function ResidenzePage({ params }: Props) {
   const covers = await getCovers();
 
   return (
-    <main className="page-container py-4">
+    <main className="page-container page-top pb-4">
 
       <div className="text-center mb-5 px-2">
         <h1 className="display-5 fw-bold text-primary mb-2">{t.title}</h1>
