@@ -1039,6 +1039,14 @@ body {
   text-decoration: underline;
   cursor: pointer;
 }
+/* Policy text inline (es. "Questa prenotazione è flessibile per 60 giorni")
+   Pattern Airbnb: testo grigio sotto il titolo del summary, NON banner colorato. */
+.checkout-summary__policy-text {
+  font-size: var(--text-sm);
+  color: var(--color-text-subtle);
+  margin: 0 0 var(--space-md);
+  line-height: 1.4;
+}
 
 /* ── CTA sticky bottom mobile (visibile solo <1024) ── */
 .checkout-cta-mobile-sticky {
