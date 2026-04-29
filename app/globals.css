@@ -69,7 +69,7 @@
   /* Top padding unificato per il primo contenuto della pagina (sotto header sticky).
      Applicato via classe .page-top sui wrapper raw .page-container, e direttamente
      sulle classi wrapper page-level (.paga-main, .room-page, .wizard-container, ecc.). */
-  --page-pad-top: 24px;
+  --page-pad-top: 12px;
 
   /* Border radius scale */
   --radius-sm: 8px;
