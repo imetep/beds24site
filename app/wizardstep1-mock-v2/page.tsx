@@ -1,19 +1,21 @@
 /**
  * MOCK STATICO — /wizardstep1-mock-v2
  *
- * Scopo: discussione preliminare del nuovo wizardstep1 (lista risultati)
- * 2-col Airbnb-style. Riferimento: docs/ux/mio desiderio.xlsx (foglio
- * wizardstep1) — banner cancellazione/consumi/deposito SPOSTATI in
- * sidebar (NON dentro la room-card). Tariffe usano .step1-offer-option
- * esistente (stesso aspetto del WizardStep1.tsx attuale).
+ * Riferimenti:
+ *   - docs/ux/mio desiderio.xlsx (foglio wizardstep1) — mockup utente
+ *   - docs/ux/airbnb-pattern-analysis.xlsx — pattern search results Airbnb
+ *
+ * Decisioni Airbnb-derived:
+ *   - H1 location + count ("X residenze a Scauri") come Airbnb /s
+ *   - "Flessibile 60gg" = TESTO INLINE GRIGIO (non banner colorato),
+ *     pattern Airbnb /book "Questa prenotazione non è rimborsabile"
+ *   - Tariffe = solo nome + prezzo (no descrizione sotto), pattern card Airbnb /s
+ *   - Banner sidebar: solo Consumi (info) + Deposito (warning), specifici LivingApple
+ *   - CTA blu --color-primary (no rosa Airbnb, memoria progetto)
  *
  * Layout:
- *   - desktop ≥1024: form 540 sx (filter-bar + lista room-card 3-col interna) +
- *     summary 340 dx STICKY top:32 (con banner alloggio + Date/Ospiti + prezzo)
+ *   - desktop ≥1024: form 540 sx + summary 340 dx STICKY top:32 (gap 105, max 985)
  *   - mobile <1024: stacked, summary IN ALTO, lista sotto, CTA sticky bottom
- *
- * Riusa classi CSS esistenti: .step1-room-card, .step1-offer-option,
- * .step1-filter-*, .banner, .checkout-* (layout esterno + summary).
  *
  * Logica: ZERO. Da rimuovere quando i pattern migrano in WizardStep1.tsx.
  */
@@ -21,9 +23,9 @@ export default function WizardStep1MockV2Page() {
   return (
     <main className="checkout-page">
 
-      {/* Titolo principale */}
+      {/* H1 location + count (pattern Airbnb /s) */}
       <h1 className="section-title-main checkout-page__title">
-        Scegli la tua tariffa
+        12 residenze a Scauri
       </h1>
 
       {/* Layout 2-col */}
@@ -34,7 +36,7 @@ export default function WizardStep1MockV2Page() {
             ═══════════════════════════════════════════════════════════════ */}
         <div className="checkout-form-col">
 
-          {/* Filter bar (overflow-x scroll mobile) — riusa .step1-filter-* */}
+          {/* Filter bar */}
           <div className="step1-filter-bar" role="toolbar" aria-label="Filtri">
             <button type="button" className="step1-filter-btn">
               <i className="bi bi-sliders" aria-hidden="true" /> Filtri
@@ -71,6 +73,7 @@ export default function WizardStep1MockV2Page() {
                 </div>
               </div>
               <div className="step1-room-card__offers">
+                {/* Tariffe: solo nome + prezzo (pattern Airbnb /s, niente descrizione) */}
                 <button type="button" className="step1-offer-option is-selected">
                   <div className="step1-offer-option__info">
                     <div className="step1-offer-option__name-row">
@@ -79,7 +82,6 @@ export default function WizardStep1MockV2Page() {
                         <i className="bi bi-check-lg" />
                       </span>
                     </div>
-                    <p className="step1-offer-option__desc">Cancellazione non rimborsabile</p>
                   </div>
                   <div className="step1-offer-option__price-col">
                     <div className="step1-offer-option__price">79 €</div>
@@ -91,7 +93,6 @@ export default function WizardStep1MockV2Page() {
                     <div className="step1-offer-option__name-row">
                       <span className="step1-offer-option__name">Parzialmente rimborsabile</span>
                     </div>
-                    <p className="step1-offer-option__desc">50% trattenuto se cancelli</p>
                   </div>
                   <div className="step1-offer-option__price-col">
                     <div className="step1-offer-option__price">87 €</div>
@@ -103,7 +104,6 @@ export default function WizardStep1MockV2Page() {
                     <div className="step1-offer-option__name-row">
                       <span className="step1-offer-option__name">Flessibile</span>
                     </div>
-                    <p className="step1-offer-option__desc">Cancellazione gratuita 60 giorni</p>
                   </div>
                   <div className="step1-offer-option__price-col">
                     <div className="step1-offer-option__price">99 €</div>
@@ -136,7 +136,6 @@ export default function WizardStep1MockV2Page() {
                     <div className="step1-offer-option__name-row">
                       <span className="step1-offer-option__name">Non rimborsabile</span>
                     </div>
-                    <p className="step1-offer-option__desc">Cancellazione non rimborsabile</p>
                   </div>
                   <div className="step1-offer-option__price-col">
                     <div className="step1-offer-option__price">62 €</div>
@@ -148,7 +147,6 @@ export default function WizardStep1MockV2Page() {
                     <div className="step1-offer-option__name-row">
                       <span className="step1-offer-option__name">Parzialmente rimborsabile</span>
                     </div>
-                    <p className="step1-offer-option__desc">50% trattenuto se cancelli</p>
                   </div>
                   <div className="step1-offer-option__price-col">
                     <div className="step1-offer-option__price">71 €</div>
@@ -161,7 +159,7 @@ export default function WizardStep1MockV2Page() {
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════
-            COLONNA DX — sidebar sticky (foto + caratteristiche + BANNER + Date/Ospiti + prezzo)
+            COLONNA DX — sidebar sticky (foto + caratteristiche + flessibile inline + banner + Date/Ospiti + prezzo)
             ═══════════════════════════════════════════════════════════════ */}
         <aside className="checkout-summary-col">
           <div className="checkout-summary">
@@ -173,10 +171,12 @@ export default function WizardStep1MockV2Page() {
               </div>
             </div>
 
-            {/* Titolo + caratteristiche */}
+            {/* Titolo casa */}
             <h2 className="checkout-summary__title">Pellini 3 — 180 m²</h2>
+
+            {/* Label uppercase + features */}
+            <p className="label-uppercase-muted">Caratteristiche</p>
             <ul className="checkout-summary__features">
-              <li><i className="bi bi-house-door" aria-hidden="true" /> Appartamento</li>
               <li><i className="bi bi-people" aria-hidden="true" /> 12 ospiti</li>
               <li><i className="bi bi-door-open" aria-hidden="true" /> 4 camere</li>
               <li><i className="bi bi-droplet-half" aria-hidden="true" /> 3 bagni</li>
@@ -184,18 +184,19 @@ export default function WizardStep1MockV2Page() {
               <li><i className="bi bi-tree" aria-hidden="true" /> Giardino</li>
             </ul>
 
-            {/* BANNER alloggio (qui, NON dentro room-card) — riusa .banner.banner--* esistenti */}
-            <div className="banner banner--success">
-              <i className="bi bi-check2-circle" aria-hidden="true" />
-              <span>Cancellazione gratuita fino a 60 giorni dall&apos;arrivo</span>
-            </div>
+            {/* Flessibile come TESTO INLINE GRIGIO (pattern Airbnb, no banner) */}
+            <p className="checkout-summary__policy-text">
+              Questa prenotazione è flessibile per 60 giorni
+            </p>
+
+            {/* Banner alloggio (specifici LivingApple) — solo Consumi + Deposito */}
             <div className="banner banner--info">
               <i className="bi bi-lightning-charge" aria-hidden="true" />
-              <span>Consumi energetici reali, addebitati dopo il soggiorno</span>
+              <span>Consumi energetici</span>
             </div>
             <div className="banner banner--warning">
               <i className="bi bi-shield-exclamation" aria-hidden="true" />
-              <span>Deposito cauzionale €300 — Carta di Credito al check-in</span>
+              <span>Deposito cauzionale — € (variabile)</span>
             </div>
 
             <hr className="checkout-summary__divider" />
@@ -220,7 +221,7 @@ export default function WizardStep1MockV2Page() {
 
             <hr className="checkout-summary__divider" />
 
-            {/* Dettagli prezzo (per la tariffa selezionata) */}
+            {/* Dettagli prezzo */}
             <h3 className="checkout-summary__data-label checkout-summary__price-title">Dettagli del prezzo</h3>
 
             <div className="checkout-summary__price-row">
@@ -252,7 +253,7 @@ export default function WizardStep1MockV2Page() {
 
       </div>
 
-      {/* CTA mobile sticky bottom (visibile solo <1024) */}
+      {/* CTA mobile sticky bottom */}
       <div className="checkout-cta-mobile-sticky">
         <button type="button" className="btn btn--primary">
           Continua · 354,00 €
