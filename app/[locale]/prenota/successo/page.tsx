@@ -16,16 +16,9 @@ export default async function SuccessPage({ params }: Props) {
   if (!isValidLocale(locale)) notFound();
 
   return (
-    <main style={{
-      minHeight: '80vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      paddingTop: '2rem',
-      paddingBottom: '3rem',
-    }}>
+    <main className="prenota-success-main">
       <Suspense fallback={
-        <div style={{ textAlign: 'center', padding: '4rem', color: '#999', fontFamily: 'sans-serif' }}>
+        <div className="prenota-page-loading">
           ⏳ Verifica pagamento...
         </div>
       }>
