@@ -6,7 +6,6 @@ import { useWizardStore } from '@/store/wizard-store';
 import BookingSidebar from './BookingSidebar';
 import WizardStep1 from './WizardStep1';
 import WizardStep2 from './WizardStep2';
-import WizardStep3 from './WizardStep3';
 
 interface Props {
   translations: any;
@@ -133,8 +132,8 @@ export default function Wizard({ translations: t, locale }: Props) {
   }
 
   const logicalStep = fromRoom || isGuestLink
-    ? Math.max(2, Math.min(currentStep, 3))
-    : Math.min(currentStep, 3);
+    ? Math.max(2, Math.min(currentStep, 2))
+    : Math.min(currentStep, 2);
 
   // Scroll-to-top a ogni cambio step (Continua, Indietro, click Stepper, "Modifica").
   // Salta il primo render per non interferire con scroll restoration del browser.
@@ -165,7 +164,6 @@ export default function Wizard({ translations: t, locale }: Props) {
         <div className={`wizard-container__main${fullWidth ? ' wizard-container__main--full' : ''}`}>
           {logicalStep === 1 && <WizardStep1 locale={locale} onBack={goBackHome} />}
           {logicalStep === 2 && <WizardStep2 locale={locale} />}
-          {logicalStep === 3 && <WizardStep3 locale={locale} />}
         </div>
 
         {showSidebar && (

@@ -1074,7 +1074,16 @@
       "stripeFlexNote": "With Stripe your card is only saved — no immediate charge.",
       "flexOnlyCardNote": "We only accept card payment for this rate.",
       "vediRiepilogo": "View booking summary",
-      "vediRiepilogoFlex": "Continue"
+      "vediRiepilogoFlex": "Continue",
+      "cardPagamentoTitle": "Payment method",
+      "cardPagamentoEmpty": "Choose a payment method",
+      "cardOspiteTitle": "Guest details",
+      "cardOspiteSub": "Used for booking confirmation and check-in.",
+      "cardUpsellTitle": "Optional services",
+      "ctaConfirm": "Confirm booking",
+      "ctaConfirmAndPay": "Confirm and pay",
+      "termsAnd": "and the",
+      "privacyLink": "privacy policy"
     },
     "wizardStep3": {
       "title": "Booking summary",

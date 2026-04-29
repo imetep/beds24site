@@ -3279,6 +3279,73 @@ body {
   cursor: pointer;
 }
 
+/* ── Sotto-titolo card (es. card Dati ospite) ── */
+.step2-section-sub {
+  margin: -4px 0 var(--space-md);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-base);
+}
+
+/* ── Card 1: Metodo di pagamento (riepilogo + Modifica → modale) ── */
+.step2-pagamento-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  min-height: var(--touch-target);
+}
+.step2-pagamento-icon {
+  font-size: var(--text-xl);
+  color: var(--color-primary);
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
+}
+.step2-pagamento-icon.is-empty {
+  color: var(--color-text-muted);
+}
+.step2-pagamento-content {
+  flex: 1;
+  min-width: 0;
+}
+.step2-pagamento-label {
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+.step2-pagamento-label.is-empty {
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+.step2-pagamento-edit-btn {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  padding: var(--space-xs) var(--space-sm);
+  text-decoration: underline;
+  flex-shrink: 0;
+  min-height: var(--touch-target);
+}
+.step2-pagamento-edit-btn:hover {
+  text-decoration: none;
+}
+.step2-pagamento-logos {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+  flex-wrap: wrap;
+}
+.step2-pagamento-logos i {
+  font-size: var(--text-xl);
+}
+
 /* ==========================================================================
    Session 10 — PhotoCarousel (scheda residenza)
    Preview grid desktop, preview touch mobile, lightbox fullscreen (top bar +

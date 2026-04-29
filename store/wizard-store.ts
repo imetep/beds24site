@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import type { PoolType } from '@/config/properties';
 import type { PropertyConfigResponse } from '@/app/api/property-config/route';
 
-export type PaymentMethod = 'stripe' | 'paypal';
+export type PaymentMethod = 'stripe' | 'paypal' | null;
 
 // ─── Tipo upsell extra selezionato ───────────────────────────────────────────
 export interface SelectedExtra {
@@ -96,7 +96,7 @@ const initialState = {
   cachedOffers: [],
   propertyConfig: null,
   selectedOfferId: null,
-  paymentMethod: 'stripe' as PaymentMethod,
+  paymentMethod: null as PaymentMethod,
   voucherCode: '',
   guestFirstName: '',
   guestLastName: '',

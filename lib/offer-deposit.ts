@@ -7,8 +7,8 @@ import type {
 
 /**
  * Helper condivisi per interpretare la configurazione deposito di un'offerta
- * Beds24. Importati da WizardStep2 (isFlexOffer) e WizardStep3 / stripe-session
- * (calcolo amount da addebitare).
+ * Beds24. Importati da WizardStep2 (isFlexOffer + calcolo amount) e
+ * stripe-session.
  *
  * Regola di mapping (verificata empiricamente su tutte le 5 property):
  * - bookingType === 'confirmedWithDepositCollection1' → depositPayment1 (oggi 100%)

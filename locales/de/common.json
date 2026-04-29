@@ -1074,7 +1074,16 @@
       "stripeFlexNote": "Bei Stripe wird die Karte nur gespeichert — keine sofortige Belastung.",
       "flexOnlyCardNote": "Für diesen Tarif akzeptieren wir nur Kartenzahlung.",
       "vediRiepilogo": "Buchungsübersicht anzeigen",
-      "vediRiepilogoFlex": "Weiter"
+      "vediRiepilogoFlex": "Weiter",
+      "cardPagamentoTitle": "Zahlungsmethode",
+      "cardPagamentoEmpty": "Zahlungsmethode wählen",
+      "cardOspiteTitle": "Gastdaten",
+      "cardOspiteSub": "Wird für die Buchungsbestätigung und den Check-in verwendet.",
+      "cardUpsellTitle": "Zusatzleistungen",
+      "ctaConfirm": "Buchung bestätigen",
+      "ctaConfirmAndPay": "Bestätigen und bezahlen",
+      "termsAnd": "und die",
+      "privacyLink": "Datenschutzerklärung"
     },
     "wizardStep3": {
       "title": "Buchungsübersicht",

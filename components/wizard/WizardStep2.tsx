@@ -1,50 +1,42 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+/**
+ * WizardStep2 — checkout unificato (assorbe l'ex WizardStep3).
+ * Pattern Airbnb /book: 3 card nella colonna form + BookingSidebar a destra.
+ *   1. Metodo di pagamento (collapsed → apre PaymentMethodModal)
+ *   2. Dati ospite (Nome, Cognome, Email, Telefono, Ora arrivo, Richieste)
+ *   3. Servizi opzionali (upsell stepper)
+ * CTA finale "Conferma prenotazione" → handlePagaStripe / handlePayPalOneTime /
+ * handlePayPalFlexVault, secondo paymentMethod e isFlexOffer.
+ *
+ * ⚠️ LOGICA PAGAMENTO — vincoli da preservare:
+ *   - Pre-caricamento SDK v6 core: triggerato dal callback onConfirm di
+ *     PaymentMethodModal quando l'utente sceglie 'paypal' (lazy-load).
+ *   - createBooking() invocata DENTRO il click del CTA finale (mai al mount).
+ *   - Status 'new' settato server-side in /api/paypal-capture o
+ *     /api/paypal-confirm-vault — non toccare.
+ *   - Stripe: createBooking → /api/stripe-session → redirect Stripe Checkout.
+ *   - PayPal Flex (Vault): setup-token + redirect approveUrl → /paypal-return.
+ *   - PayPal Non Rimborsabile: capture 100% via SDK v6 + session.start()
+ *     (TODO: opzione B "redirect classico" richiede /api/paypal-order che
+ *      ritorni anche approveUrl — fuori scope di questa sessione).
+ */
+
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
 import type { SelectedExtra } from '@/store/wizard-store';
-import { PROPERTIES, getPropertyForRoom, calculateTouristTax, formatTouristTaxNote } from '@/config/properties';
+import { PROPERTIES, getPropertyForRoom, calculateTouristTax } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
-import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
-import { findOffer, findPropertyByRoom, isFlexBookingType, computeDepositAmount } from '@/lib/offer-deposit';
+import {
+  findOffer, findPropertyByRoom, isFlexBookingType,
+  computeDepositAmount, computeVaultChargeAt,
+} from '@/lib/offer-deposit';
 import type { Locale } from '@/config/i18n';
 import BookingSidebar from './BookingSidebar';
-
-// ─── Testi fissi 4 lingue ─────────────────────────────────────────────────────
-const ENERGY_BOX: Record<string, string> = {
-  it: "I consumi energetici vengono conteggiati in base all'utilizzo reale, tramite contatori presenti in ogni abitazione. Non si tratta di un costo aggiuntivo per guadagno, ma di una misura per evitare sprechi.",
-  en: 'Energy consumption is calculated based on actual usage, measured through meters installed in each accommodation. This is not an additional charge for profit, but a measure to prevent energy waste.',
-  de: 'Der Energieverbrauch wird auf Grundlage des tatsächlichen Verbrauchs berechnet und über in jeder Unterkunft installierte Zähler erfasst. Dabei handelt es sich nicht um eine zusätzliche Gebühr zur Gewinnerzielung, sondern um eine Maßnahme zur Vermeidung von Energieverschwendung.',
-  pl: 'Zużycie energii jest rozliczane na podstawie rzeczywistego wykorzystania, mierzonego przez liczniki zainstalowane w każdym obiekcie. Nie jest to dodatkowa opłata w celu osiągnięcia zysku, lecz środek mający na celu zapobieganie marnotrawstwu energii.',
-};
-const DEPOSIT_BOX: Record<string, (n: number) => string> = {
-  it: (n) => `Questo alloggio richiede un deposito cauzionale di €${n}. Sarà necessaria una Carta di Credito (no Debit Card) al momento del check-in.`,
-  en: (n) => `This accommodation requires a security deposit of €${n}. Payment will be collected separately by the host before arrival or at check-in.`,
-  de: (n) => `Diese Unterkunft erfordert eine Kaution von €${n}. Die Zahlung wird separat vom Gastgeber vor der Ankunft oder beim Check-in erhoben.`,
-  pl: (n) => `To zakwaterowanie wymaga kaucji w wysokości €${n}. Płatność zostanie pobrana oddzielnie przez gospodarza przed przyjazdem lub przy zameldowaniu.`,
-};
-
-const CANCEL_POLICY: Record<number, Record<string,string>> = {
-  1: { it:'Pagamento non rimborsabile entro 48h dalla prenotazione.',          en:'Non-refundable payment within 48h of booking.',           de:'Nicht erstattungsfähige Zahlung innerhalb 48h.',          pl:'Bezzwrotna płatność w ciągu 48h od rezerwacji.' },
-  2: { it:'50% subito, saldo all\'arrivo. Cancellazione parzialmente rimborsabile.', en:'50% now, balance at arrival. Partially refundable.',  de:'50% jetzt, Rest bei Ankunft. Teilweise erstattungsfähig.', pl:'50% teraz, reszta przy przyjeździe. Częściowo zwrotna.' },
-  3: { it:'Cancellazione gratuita fino a 60 giorni prima dell\'arrivo.',       en:'Free cancellation up to 60 days before arrival.',         de:'Kostenlose Stornierung bis 60 Tage vor Ankunft.',         pl:'Bezpłatne anulowanie do 60 dni przed przyjazdem.' },
-  4: { it:'Cancellazione gratuita fino a 45 giorni prima dell\'arrivo.',       en:'Free cancellation up to 45 days before arrival.',         de:'Kostenlose Stornierung bis 45 Tage vor Ankunft.',         pl:'Bezpłatne anulowanie do 45 dni przed przyjazdem.' },
-  5: { it:'Cancellazione gratuita fino a 30 giorni prima dell\'arrivo.',       en:'Free cancellation up to 30 days before arrival.',         de:'Kostenlose Stornierung bis 30 Tage vor Ankunft.',         pl:'Bezpłatne anulowanie do 30 dni przed prijazdem.' },
-  6: { it:'Cancellazione gratuita fino a 5 giorni prima dell\'arrivo.',        en:'Free cancellation up to 5 days before arrival.',          de:'Kostenlose Stornierung bis 5 Tage vor Ankunft.',          pl:'Bezpłatne anulowanie do 5 dni przed prijazdem.' },
-};
+import PaymentMethodModal from './PaymentMethodModal';
 
 const SUPPORTED_LOCALES = ['it', 'en', 'de', 'pl'] as const;
-const PAY_INSTALL_NOTE: Record<string, (n: number) => string> = {
-  it: (n) => `3 rate da €${n} · senza interessi · tramite PayPal`,
-  en: (n) => `3 payments of €${n} · no interest · via PayPal`,
-  de: (n) => `3 Raten à €${n} · zinsfrei · über PayPal`,
-  pl: (n) => `3 raty po €${n} · bez odsetek · przez PayPal`,
-};
-
-// ─── Mock upsell items ────────────────────────────────────────────────────────
-// TODO: sostituire con chiamata API Beds24 quando gli upsell saranno configurati
-// Upsell items caricati dinamicamente da /api/upsells — vedi useEffect sotto.
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function getRoomData(roomId: number | null) {
@@ -61,31 +53,22 @@ function calcNights(ci: string, co: string) {
 function fmt(n: number) {
   return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
 }
-function formatDate(ymd: string, locale: string) {
-  return new Date(ymd + 'T00:00:00').toLocaleDateString(
-    locale === 'it' ? 'it-IT' : locale === 'de' ? 'de-DE' : locale === 'pl' ? 'pl-PL' : 'en-GB',
-    { day: 'numeric', month: 'short', year: 'numeric' }
-  );
-}
-function parseDeposit(str?: string): number | null {
-  const m = str?.match(/CUSTOMSTAYFEE\s+(\d+)\s+SECURITYDEPOSIT/);
-  return m ? Number(m[1]) : null;
-}
 
 // ─── Componente principale ────────────────────────────────────────────────────
 interface Props { locale?: string; }
 
 export default function WizardStep2({ locale = 'it' }: Props) {
   const loc = (SUPPORTED_LOCALES as readonly string[]).includes(locale) ? locale : 'it';
-  const t         = getTranslations(loc as Locale).components.wizardStep2;
-  const tSidebar  = getTranslations(loc as Locale).components.wizardSidebar;
-  const OFFER_NAMES = getTranslations(loc as Locale).shared.offerNames as Record<string, string>;
-  const router = useRouter();
+  const tr           = getTranslations(loc as Locale);
+  const t            = tr.components.wizardStep2 as any;
+  const tStep3       = tr.components.wizardStep3 as any;
+  const tSidebar     = tr.components.wizardSidebar;
+  const router       = useRouter();
   const searchParams = useSearchParams();
-  const fromRoom = searchParams.get('from') === 'room';
+  const fromRoom     = searchParams.get('from') === 'room';
 
   const {
-    numAdult, numChild, childrenAges,
+    numAdult, childrenAges,
     checkIn, checkOut,
     selectedRoomId, selectedOfferId,
     cachedOffers,
@@ -94,99 +77,66 @@ export default function WizardStep2({ locale = 'it' }: Props) {
     voucherCode, setVoucherCode,
     guestFirstName, guestLastName, guestEmail,
     guestPhone, guestCountry, guestArrivalTime, guestComments,
-    setGuestField, setCurrentStep, prevStep, nextStep,
-    discountedPrice, setDiscountedPrice,
-    propertyConfig,
+    pendingBookId,
+    setPendingBooking, setGuestField, setCurrentStep, prevStep,
+    discountedPrice, setDiscountedPrice, propertyConfig, reset,
   } = useWizardStore();
 
-  const [error, setError]                     = useState<string | null>(null);
-  const [upsellItems, setUpsellItems]          = useState<SelectedExtra[]>([]);
-  const [voucherInput, setVoucherInput]        = useState(voucherCode);
-  const [summaryOpen, setSummaryOpen]          = useState(true);
-  const [voucherError, setVoucherError]        = useState<string | null>(null);
-  const [voucherApplied, setVoucherApplied]    = useState(false);
-  const [coverUrl, setCoverUrl]                = useState<string | null>(null);
+  // ── State ────────────────────────────────────────────────────────────────
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [upsellItems, setUpsellItems]           = useState<SelectedExtra[]>([]);
+  const [voucherInput, setVoucherInput]         = useState(voucherCode);
+  const [voucherError, setVoucherError]         = useState<string | null>(null);
+  const [voucherApplied, setVoucherApplied]     = useState(false);
+  const [error, setError]                       = useState<string | null>(null);
+  const [phase, setPhase]                       = useState<'ready' | 'paying'>('ready');
+  const [vaultPhase, setVaultPhase]             = useState<'idle' | 'saving' | 'redirecting'>('idle');
+
+  // PayPal SDK v6 refs
+  const sdkInstanceRef   = useRef<any>(null);
+  const paypalSessionRef = useRef<any>(null);
+  const createdBookIdRef = useRef<number | null>(null);
+  const [sdkReady, setSdkReady] = useState(false);
 
   // ── Dati calcolati ─────────────────────────────────────────────────────────
-  const room = getRoomData(selectedRoomId);
-
-  function handleBack() {
-    if (fromRoom && room?.slug) {
-      router.push(`/${locale}/residenze/${room.slug}?from=wizard`);
-    } else {
-      prevStep();
-    }
-  }
+  const room   = getRoomData(selectedRoomId);
   const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
 
   const roomOffers = cachedOffers?.find((ro: any) => ro.roomId === selectedRoomId);
   const offer = roomOffers?.offers?.find((o: any) => o.offerId === selectedOfferId)
     ?? cachedOffers?.flatMap((ro: any) => ro.offers ?? []).find((o: any) => o.offerId === selectedOfferId);
   const offerPrice: number = offer?.price ?? 0;
-  const offerName = OFFER_NAMES[String(selectedOfferId ?? 0)] ?? offer?.offerName ?? '';
-  const cancelPolicy = CANCEL_POLICY[selectedOfferId ?? 0]?.[loc] ?? '';
-  const depositFromOffer = parseDeposit(offer?.offerDescription ?? offer?.description ?? '');
-  const depositAmount = depositFromOffer ?? room?.securityDeposit ?? null;
-  const perNight = nights > 0 && offerPrice > 0 ? Math.round(offerPrice / nights) : 0;
-
   const touristTax = calculateTouristTax(numAdult, childrenAges, nights);
-  const basePrice  = discountedPrice !== null ? discountedPrice : offerPrice;
-
-  // ── Totale extras selezionati ──────────────────────────────────────────────
   const extrasTotal = selectedExtras.reduce((sum, e) => sum + e.price * e.quantity, 0);
+  const realPrice = discountedPrice !== null ? discountedPrice : offerPrice;
+  const hasDiscount = discountedPrice !== null && discountedPrice < offerPrice;
+  const discountAmount = hasDiscount ? offerPrice - discountedPrice! : 0;
+  const total = realPrice + touristTax + extrasTotal;
 
-  const total         = basePrice + touristTax + extrasTotal;
-  // PayPal in 3 rate: si applica all'importo effettivamente addebitato (acconto
-  // per offerte parzialmente rimborsabili). Per le flex il radio PayPal è
-  // comunque nascosto (isFlexOffer → solo Stripe con capture=false).
-  // Nota: `amountToChargeDisplay` è definito più sotto — temporaneamente uso
-  // total come fallback, poi lo sovrascrivo dopo averlo calcolato.
-  let installment = Math.round(total / 3);
-
-  // Lettura dinamica bookingType dalla config Beds24 (cachata in store).
-  // Fallback sicuro: se la config non è ancora caricata, nessuna offerta è
-  // considerata flex → il wizard si comporta come prima della patch.
   const offerConfig = findOffer(propertyConfig, selectedRoomId, selectedOfferId);
+  const propertyCfg = findPropertyByRoom(propertyConfig, selectedRoomId);
   const isFlexOffer = isFlexBookingType(offerConfig?.bookingType);
-  // Su flex PayPal ora salva solo il conto (vault) — info utente, non warning.
-  const showPaypalFlexVaultInfo = paymentMethod === 'paypal' && isFlexOffer;
-  const showStripeFlexInfo      = paymentMethod === 'stripe' && isFlexOffer;
+  const amountToCharge = computeDepositAmount(total, offerConfig, propertyCfg);
 
-  const formValid = guestFirstName.trim() && guestLastName.trim()
-    && guestEmail.trim() && guestEmail.includes('@');
+  // Validazione form
+  const formValid = !!(
+    paymentMethod &&
+    guestFirstName.trim() &&
+    guestLastName.trim() &&
+    guestEmail.trim() &&
+    guestEmail.includes('@')
+  );
 
-  // ── PayPal su offerte flex è supportato via vault save ──────────────────
-  // (lib/paypal + /api/paypal-setup-token). Nessun charge al momento del
-  // salvataggio quindi niente commissione 3.4% al refund se l'ospite cancella
-  // entro la scadenza della cancellazione gratuita.
-
-  // ── Pre-carica script PayPal SDK v6 quando utente seleziona PayPal ───────
-  // Lo script v6 core è universale (sandbox vs live si sceglie dal sottodominio).
-  // Per evitare NEXT_PUBLIC_PAYPAL_MODE, facciamo una fetch leggera al client-token
-  // endpoint solo al prefetch: scopriamo la mode e carichiamo lo script giusto.
-  useEffect(() => {
-    if (paymentMethod !== 'paypal') return;
-    if (document.getElementById('paypal-sdk-script')) return;
-
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch('/api/paypal-client-token', { method: 'POST' });
-        const data = await res.json();
-        if (cancelled || !res.ok) return;
-        const mode   = data.mode === 'sandbox' ? 'sandbox' : 'live';
-        const host   = mode === 'sandbox' ? 'www.sandbox.paypal.com' : 'www.paypal.com';
-        const script = document.createElement('script');
-        script.id    = 'paypal-sdk-script';
-        script.src   = `https://${host}/web-sdk/v6/core`;
-        script.async = true;
-        document.head.appendChild(script);
-      } catch {
-        // prefetch fallito — Step3 riproverà al mount con messaggi d'errore utente
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [paymentMethod]);
+  function handleBack() {
+    if (pendingBookId) {
+      cancelBooking(pendingBookId);
+    }
+    if (fromRoom && room?.slug) {
+      router.push(`/${locale}/residenze/${room.slug}?from=wizard`);
+    } else {
+      prevStep();
+    }
+  }
 
   // ── Carica upsell items da API ───────────────────────────────────────────
   useEffect(() => {
@@ -204,17 +154,134 @@ export default function WizardStep2({ locale = 'it' }: Props) {
         }));
         setUpsellItems(items);
       })
-      .catch(() => {}); // silenzioso — se fallisce la sezione resta nascosta
+      .catch(() => {});
   }, [selectedRoomId]);
 
-  // ── Carica foto cover ────────────────────────────────────────────────────
+  // ── PayPal SDK v6: inizializzazione completa al click radio "PayPal" ─────
+  // Triggerato quando paymentMethod === 'paypal' (settato dal modale onConfirm).
+  // Per offerte non-flex crea anche la session one-time per capture 100%.
   useEffect(() => {
-    if (!room) return;
-    fetchCoversCached().then(covers => {
-      const url = covers?.[room.cloudinaryFolder];
-      if (url) setCoverUrl(url);
-    });
-  }, [room?.cloudinaryFolder]);
+    if (paymentMethod !== 'paypal') {
+      setSdkReady(false);
+      return;
+    }
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const tkRes  = await fetch('/api/paypal-client-token', { method: 'POST' });
+        const tkData = await tkRes.json();
+        if (cancelled) return;
+        if (!tkRes.ok || !tkData.clientToken) {
+          setError(tStep3.errPayPalLoad);
+          return;
+        }
+        const mode = tkData.mode === 'sandbox' ? 'sandbox' : 'live';
+        const host = mode === 'sandbox' ? 'www.sandbox.paypal.com' : 'www.paypal.com';
+        const src  = `https://${host}/web-sdk/v6/core`;
+
+        // Carica script v6 (idempotente)
+        const existing = document.getElementById('paypal-sdk-script') as HTMLScriptElement | null;
+        if (!existing || existing.src !== src) {
+          if (existing) existing.remove();
+          const script = document.createElement('script');
+          script.id    = 'paypal-sdk-script';
+          script.src   = src;
+          script.async = true;
+          await new Promise<void>((resolve, reject) => {
+            script.onload  = () => resolve();
+            script.onerror = () => reject(new Error('script load failed'));
+            document.head.appendChild(script);
+          });
+        }
+        if (cancelled) return;
+
+        const paypalGlobal = (window as any).paypal;
+        if (!paypalGlobal?.createInstance) {
+          setError(tStep3.errPayPalLoad);
+          return;
+        }
+        const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
+        if (!clientId) {
+          setError(tStep3.errPayPalLoad);
+          return;
+        }
+        const instance = await paypalGlobal.createInstance({
+          clientId,
+          components: ['paypal-payments'],
+          pageType:   'checkout',
+        });
+        if (cancelled) return;
+        sdkInstanceRef.current = instance;
+
+        // Session one-time per offerte non-flex (capture 100% o 50% upfront)
+        if (!isFlexOffer && typeof instance.createPayPalOneTimePaymentSession === 'function') {
+          paypalSessionRef.current = instance.createPayPalOneTimePaymentSession({
+            onApprove: async (data: { orderId: string }) => {
+              setPhase('paying');
+              const bookId = createdBookIdRef.current;
+              if (!bookId) {
+                setError(tStep3.errPayPalBookingMissing);
+                setPhase('ready');
+                return;
+              }
+              try {
+                const res = await fetch('/api/paypal-capture', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    orderID:        data.orderId,
+                    bookingId:      bookId,
+                    amount:         amountToCharge,
+                    accommodation:  offerPrice,
+                    touristTax:     touristTax,
+                    discountAmount: discountAmount,
+                    voucherCode:    voucherCode || undefined,
+                    extras:         (selectedExtras ?? []).map(e => ({
+                      description: e.name.it,
+                      price:       e.price,
+                      quantity:    e.quantity,
+                    })),
+                  }),
+                });
+                const result = await res.json();
+                if (!res.ok || !result.ok) throw new Error(result.error ?? tStep3.errPayPalCapture);
+
+                reset();
+                const origin = window.location.origin;
+                window.location.href = `${origin}/${locale}/prenota/successo?bookingId=${bookId}&paypal=1`;
+              } catch (e: any) {
+                setError(e.message ?? tStep3.errGeneric);
+                setPhase('ready');
+              }
+            },
+            onCancel: () => {
+              if (createdBookIdRef.current) {
+                cancelBooking(createdBookIdRef.current);
+                createdBookIdRef.current = null;
+              }
+            },
+            onError: (err: any) => {
+              console.error('[PayPal v6] onError:', err);
+              if (createdBookIdRef.current) {
+                cancelBooking(createdBookIdRef.current);
+                createdBookIdRef.current = null;
+              }
+              setError(tStep3.errPayPalGeneric);
+              setPhase('ready');
+            },
+          });
+        }
+
+        setSdkReady(true);
+      } catch (e: any) {
+        console.error('[PayPal v6] init error:', e);
+        if (!cancelled) setError(tStep3.errPayPalLoad);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [paymentMethod, isFlexOffer]);
 
   // ── Applica voucher ─────────────────────────────────────────────────────
   async function handleApplyVoucher() {
@@ -239,257 +306,273 @@ export default function WizardStep2({ locale = 'it' }: Props) {
     }
   }
 
-  // ── Vai a Step3 ─────────────────────────────────────────────────────────
-  function handleVediRiepilogo() {
-    if (!formValid) return;
-    if (voucherInput.trim()) {
-      setVoucherCode(voucherInput.trim());
+  // ── Crea booking su Beds24 ───────────────────────────────────────────────
+  async function createBooking(): Promise<number | null> {
+    if (!selectedRoomId || !checkIn || !checkOut) {
+      setError(tStep3.errDataMissing);
+      return null;
     }
-    nextStep();
+    try {
+      const bookRes = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          roomId:           selectedRoomId,
+          checkIn, checkOut,
+          numAdult:  numAdult + (childrenAges ?? []).filter((a: number) => a >= 3).length,
+          numChild:  (childrenAges ?? []).filter((a: number) => a < 3).length,
+          offerId:          selectedOfferId,
+          voucherCode:      voucherCode || undefined,
+          guestFirstName:   guestFirstName.trim(),
+          guestName:        guestLastName.trim(),
+          guestEmail:       guestEmail.trim(),
+          guestPhone:       guestPhone.trim() || undefined,
+          guestCountry:     guestCountry.trim() || undefined,
+          guestArrivalTime: guestArrivalTime.trim() || undefined,
+          guestComments:    (() => {
+            const babies = (childrenAges ?? []).filter((a: number) => a < 3).length;
+            const babyNote = babies > 0 ? `[Bambini 0-2 anni: ${babies}]` : '';
+            const userComment = guestComments.trim();
+            return [babyNote, userComment].filter(Boolean).join(' — ') || undefined;
+          })(),
+        }),
+      });
+      const bookData = await bookRes.json();
+      if (!bookRes.ok || !bookData.ok) throw new Error(bookData.error ?? `HTTP ${bookRes.status}`);
+      setPendingBooking(bookData.bookId, bookData.invoiceAmount ?? null);
+      return bookData.bookId as number;
+    } catch (e: any) {
+      setError(e.message ?? tStep3.errGeneric);
+      return null;
+    }
   }
 
-  // ── Sidebar content ──────────────────────────────────────────────────────
-  const sideBasePrice = discountedPrice !== null ? discountedPrice : offerPrice;
-  const totalDisplay  = sideBasePrice + touristTax + extrasTotal;
+  function cancelBooking(bookId: number) {
+    fetch('/api/bookings/cancel', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bookingId: bookId }),
+    }).catch(() => {});
+    setPendingBooking(null, null);
+  }
 
-  // Importo da pagare ORA (acconto). Dipende dal bookingType dell'offerta:
-  // - 100% per offerte non rimborsabili
-  // - 50% (o quanto configurato su Beds24) per parzialmente rimborsabili
-  // - 0 per offerte flex (carta salvata, nessun addebito oggi)
-  // Fallback a totalDisplay se propertyConfig non è ancora caricato.
-  const propertyCfg = findPropertyByRoom(propertyConfig, selectedRoomId);
-  const amountToChargeDisplay = computeDepositAmount(totalDisplay, offerConfig, propertyCfg);
-  const isPartialDeposit = !isFlexOffer && amountToChargeDisplay > 0 && amountToChargeDisplay < totalDisplay;
+  // ── Stripe handler ───────────────────────────────────────────────────────
+  async function handlePagaStripe() {
+    setPhase('paying');
+    setError(null);
+    let bookId: number | null = null;
+    try {
+      bookId = await createBooking();
+      if (!bookId) { setPhase('ready'); return; }
 
-  // Aggiorna rate PayPal sull'importo effettivo (acconto invece di totale)
-  installment = Math.round(amountToChargeDisplay / 3);
+      const stripeRes = await fetch('/api/stripe-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bookingId:   bookId,
+          amount:      amountToCharge,
+          total,
+          offerId:     selectedOfferId,
+          bookingType: offerConfig?.bookingType ?? null,
+          locale,
+          description: `LivingApple · ${room?.name ?? ''} · ${checkIn} → ${checkOut}`,
+        }),
+      });
+      const stripeData = await stripeRes.json();
+      if (!stripeRes.ok || !stripeData.ok) throw new Error(stripeData.error ?? `HTTP ${stripeRes.status}`);
 
-  // Etichetta e importo del radio Stripe "Paga tutto ora / acconto / salva carta"
-  const stripeRadioLabel = isFlexOffer
-    ? t.paySaveCard
-    : isPartialDeposit
-      ? t.payDeposit
-      : t.payFull;
-  const stripeRadioAmount = isFlexOffer ? null : amountToChargeDisplay;
-  const stripeRadioNote = isFlexOffer
-    ? t.paySaveCardNote
-    : isPartialDeposit
-      ? `${t.payDepositNote} ${fmt(totalDisplay - amountToChargeDisplay)}`
-      : null;
+      try {
+        sessionStorage.setItem('stripe_pending', JSON.stringify({
+          bookingId:      bookId,
+          capture:        stripeData.capture,
+          accommodation:  offerPrice,
+          touristTax:     touristTax,
+          discountAmount: discountAmount,
+          voucherCode:    voucherCode || null,
+          extras:         (selectedExtras ?? []).map(e => ({
+            description: e.name.it,
+            price:       e.price,
+            quantity:    e.quantity,
+          })),
+        }));
+      } catch {}
 
-  const SidebarContent = () => (
-    <div>
-      {/* Foto + nome */}
-      {room && (
-        <div className="wizard-step2-mobile__hero">
-          {coverUrl ? (
-            <img
-              src={coverUrl}
-              alt={room.name}
-              className="wizard-step2-mobile__hero-img"
-            />
-          ) : (
-            <div className="wizard-step2-mobile__hero-placeholder">
-              <i className="bi bi-house-fill" aria-hidden="true" />
-            </div>
-          )}
-          <div className="wizard-step2-mobile__hero-info">
-            <p className="wizard-step2-mobile__hero-name">{room.name}</p>
-            <p className="wizard-step2-mobile__hero-type">{room.type}</p>
-          </div>
-        </div>
-      )}
+      window.location.href = stripeData.url;
+    } catch (e: any) {
+      if (bookId) cancelBooking(bookId);
+      setError(e.message ?? tStep3.errGeneric);
+      setPhase('ready');
+    }
+  }
 
-      {/* Consumi energetici */}
-      <div className="wizard-step2-mobile__energy">
-        <p className="wizard-step2-mobile__energy-title">
-          <i className="bi bi-lightning-fill me-1" aria-hidden="true" />
-          {t.energyTitle}
-        </p>
-        <p className="wizard-step2-mobile__energy-text">{ENERGY_BOX[locale] ?? ENERGY_BOX.it}</p>
-      </div>
+  // ── PayPal Non Rimborsabile / Rimborsabile (capture one-shot via SDK v6) ──
+  async function handlePayPalOneTime() {
+    if (!paypalSessionRef.current) {
+      setError(tStep3.errPayPalGeneric);
+      return;
+    }
+    setError(null);
 
-      <div className="wizard-step2-mobile__divider" />
+    const createOrderPromise = (async () => {
+      const bookId = await createBooking();
+      if (!bookId) throw new Error(tStep3.errPayPalOrder);
+      createdBookIdRef.current = bookId;
 
-      {/* Voucher */}
-      <p className="wizard-step2-mobile__section-label">{t.voucher}</p>
-      <div className="wizard-step2-mobile__voucher-row">
-        <input
-          type="text"
-          value={voucherInput}
-          onChange={e => { setVoucherInput(e.target.value); if (voucherApplied) { setVoucherApplied(false); setDiscountedPrice(null); setVoucherCode(''); } }}
-          placeholder="es. ESTATE2026"
-          autoComplete="off"
-          autoCorrect="off"
-          autoCapitalize="off"
-          spellCheck={false}
-          className={`wizard-step2-mobile__voucher-input${voucherApplied ? ' is-applied' : ''}`}
-        />
-        <button
-          onClick={handleApplyVoucher}
-          disabled={!voucherInput.trim()}
-          className={`wizard-step2-mobile__voucher-btn${voucherApplied ? ' is-applied' : ''}`}
-        >
-          {voucherApplied ? (
-            <>
-              <i className="bi bi-check-lg me-1" aria-hidden="true" />
-              {tSidebar.voucherApplied}
-            </>
-          ) : t.voucherApply}
-        </button>
-      </div>
-      {voucherError && <p className="wizard-step2-mobile__voucher-error">{voucherError}</p>}
+      const res = await fetch('/api/paypal-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount:      amountToCharge,
+          bookingId:   bookId,
+          description: `LivingApple · ${room?.name ?? ''} · ${checkIn} → ${checkOut}`,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.orderID) {
+        cancelBooking(bookId);
+        createdBookIdRef.current = null;
+        throw new Error(data.error ?? tStep3.errPayPalOrder);
+      }
+      return { orderId: data.orderID as string };
+    })();
 
-      <div className="wizard-step2-mobile__divider" />
+    try {
+      await paypalSessionRef.current.start(
+        { presentationMode: 'auto' },
+        createOrderPromise,
+      );
+    } catch (e: any) {
+      console.error('[PayPal v6] session.start failed:', e);
+      if (createdBookIdRef.current) {
+        cancelBooking(createdBookIdRef.current);
+        createdBookIdRef.current = null;
+      }
+      setError(e?.message ?? tStep3.errPayPalGeneric);
+    }
+  }
 
-      {/* Date + Modifica */}
-      <SideRow
-        label={t.dates}
-        value={checkIn && checkOut ? `${formatDate(checkIn, locale)} – ${formatDate(checkOut, locale)}` : '—'}
-        onEdit={() => setCurrentStep(2)}
-        editLabel={t.edit}
-      />
-      {nights > 0 && <p className="wizard-step2-mobile__nights-sub">{nights} {nights === 1 ? t.night : t.nights}</p>}
+  // ── PayPal Flex Vault (setup-token + redirect) ───────────────────────────
+  async function handlePayPalFlexVault() {
+    setError(null);
+    setVaultPhase('saving');
 
-      {/* Ospiti + Modifica */}
-      <SideRow
-        label={t.guests}
-        value={`${numAdult} ${t.adults}${numChild > 0 ? `, ${numChild} ${t.children}` : ''}`}
-        onEdit={() => setCurrentStep(1)}
-        editLabel={t.edit}
-      />
+    try {
+      const bookId = await createBooking();
+      if (!bookId) { setVaultPhase('idle'); return; }
+      createdBookIdRef.current = bookId;
 
-      <div className="wizard-step2-mobile__divider" />
+      const chargeAt = computeVaultChargeAt(
+        checkIn,
+        offerConfig?.cancellationDaysBeforeArrival,
+      );
+      if (!chargeAt) {
+        cancelBooking(bookId);
+        throw new Error(tStep3.errDataMissing);
+      }
 
-      {/* Dettagli prezzo */}
-      <p className="wizard-step2-mobile__section-label">{t.priceDetail}</p>
-      {offerPrice > 0 && perNight > 0 && (
-        <div className="wizard-step2-mobile__price-row">
-          <span>{nights} {nights === 1 ? t.night : t.nights} × {fmt(perNight)}</span>
-          <span className={voucherApplied ? 'wizard-step2-mobile__price-row-strike' : ''}>
-            {fmt(offerPrice)}
-          </span>
-        </div>
-      )}
+      const origin    = window.location.origin;
+      const returnUrl = `${origin}/${locale}/paypal-return?bookingId=${bookId}`;
+      const cancelUrl = `${origin}/${locale}/prenota?cancelled=1&bookingId=${bookId}`;
 
-      {/* Riga sconto voucher */}
-      {voucherApplied && discountedPrice !== null && (
-        <div className="wizard-step2-mobile__discount-row">
-          <span className="wizard-step2-mobile__discount-label">
-            <i className="bi bi-tag-fill me-1" aria-hidden="true" />
-            Sconto ({voucherCode})
-          </span>
-          <span className="wizard-step2-mobile__discount-value">− {fmt(offerPrice - discountedPrice)}</span>
-        </div>
-      )}
+      try {
+        sessionStorage.setItem('paypal_vault_pending', JSON.stringify({
+          bookingId:      bookId,
+          policy:         'flex',
+          chargeAt,
+          totalAmount:    total,
+          accommodation:  offerPrice,
+          touristTax,
+          discountAmount,
+          voucherCode:    voucherCode || null,
+          extras: (selectedExtras ?? []).map(e => ({
+            description: e.name.it,
+            price:       e.price,
+            quantity:    e.quantity,
+          })),
+        }));
+      } catch {}
 
-      {/* Righe extras selezionati */}
-      {selectedExtras.map(extra => (
-        <div key={extra.id} className="wizard-step2-mobile__price-row">
-          <span>{extra.name[loc] ?? extra.name.it}{extra.quantity > 1 ? ` ×${extra.quantity}` : ''}</span>
-          <span>+{fmt(extra.price * extra.quantity)}</span>
-        </div>
-      ))}
+      const res = await fetch('/api/paypal-setup-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bookingId:  bookId,
+          amount:     total,
+          returnUrl,
+          cancelUrl,
+          guestEmail: guestEmail.trim() || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.setupTokenId || !data.approveUrl) {
+        cancelBooking(bookId);
+        createdBookIdRef.current = null;
+        throw new Error(data.error ?? tStep3.errPayPalVault);
+      }
 
-      {/* Stepper upsell — visibile in sidebar desktop e accordion mobile */}
-      {upsellItems.length > 0 && (
-        <>
-          <div className="wizard-step2-mobile__divider wizard-step2-mobile__divider--sm" />
-          <p className="wizard-step2-mobile__section-label">{t.sec2title}</p>
-          <div className="wizard-step2-mobile__extras-list">
-            {upsellItems.map(item => {
-              const sel = selectedExtras.find(e => e.id === item.id);
-              const qty = sel?.quantity ?? 0;
-              const MAX_QTY = 4;
-              return (
-                <div
-                  key={item.id}
-                  className={`wizard-step2-mobile__extra-item${qty > 0 ? ' is-selected' : ''}`}
-                >
-                  <span className="wizard-step2-mobile__extra-icon" aria-hidden="true">
-                    <i className="bi bi-bag-plus-fill" />
-                  </span>
-                  <div className="wizard-step2-mobile__extra-info">
-                    <p className="wizard-step2-mobile__extra-name">
-                      {item.name[loc] ?? item.name.it}
-                    </p>
-                    <p className="wizard-step2-mobile__extra-price-unit">
-                      +{fmt(item.price)} / unità
-                    </p>
-                  </div>
-                  {/* Stepper */}
-                  <div className="wizard-step2-mobile__extra-stepper">
-                    <button
-                      onClick={() => setExtraQuantity(item, qty - 1)}
-                      disabled={qty === 0}
-                      className={`wizard-step2-mobile__extra-stepper-btn${qty > 0 ? ' is-active-minus' : ''}`}
-                    >−</button>
-                    <span className={`wizard-step2-mobile__extra-qty${qty > 0 ? ' is-active' : ''}`}>{qty}</span>
-                    <button
-                      onClick={() => setExtraQuantity(item, qty + 1)}
-                      disabled={qty >= MAX_QTY}
-                      className={`wizard-step2-mobile__extra-stepper-btn${qty < MAX_QTY ? ' is-active-plus' : ' is-disabled-plus'}`}
-                    >+</button>
-                  </div>
-                  <span
-                    aria-hidden={qty === 0}
-                    className={`wizard-step2-mobile__extra-total${qty === 0 ? ' is-hidden' : ''}`}
-                  >
-                    {fmt(item.price * Math.max(qty, 1))}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </>
-      )}
+      try { sessionStorage.setItem('paypal_vault_setupToken', data.setupTokenId); } catch {}
 
-      {touristTax > 0 && (
-        <div className="wizard-step2-mobile__price-row">
-          <span>{t.touristTax}</span>
-          <span>{fmt(touristTax)}</span>
-        </div>
-      )}
+      setVaultPhase('redirecting');
+      window.location.href = data.approveUrl;
+    } catch (e: any) {
+      setError(e?.message ?? tStep3.errPayPalVault);
+      setVaultPhase('idle');
+    }
+  }
 
-      {/* Totale */}
-      <div className="wizard-step2-mobile__total-row">
-        <span className="wizard-step2-mobile__total-label">{t.total}</span>
-        <div className="wizard-step2-mobile__total-wrap">
-          {voucherApplied && discountedPrice !== null && (
-            <span className="wizard-step2-mobile__total-old">
-              {fmt(offerPrice + touristTax + extrasTotal)}
-            </span>
-          )}
-          <span className="wizard-step2-mobile__total-new">{fmt(totalDisplay)}</span>
-        </div>
-      </div>
-      {touristTax > 0 && (
-        <p className="wizard-step2-mobile__tourist-tax-note">{formatTouristTaxNote(t.touristTaxNote)}</p>
-      )}
+  // ── Click CTA "Conferma prenotazione" ────────────────────────────────────
+  function handleConfirm() {
+    if (!formValid || phase === 'paying') return;
+    if (paymentMethod === 'stripe') {
+      handlePagaStripe();
+      return;
+    }
+    if (paymentMethod === 'paypal') {
+      if (isFlexOffer) {
+        handlePayPalFlexVault();
+      } else {
+        handlePayPalOneTime();
+      }
+      return;
+    }
+  }
 
-      {/* Deposito cauzionale */}
-      {depositAmount && (
-        <div className="wizard-step2-mobile__deposit">
-          <p className="wizard-step2-mobile__deposit-title">
-            <i className="bi bi-shield-lock-fill me-1" aria-hidden="true" />
-            {t.depositTitle}
-          </p>
-          <p className="wizard-step2-mobile__deposit-text">
-            {(DEPOSIT_BOX[locale] ?? DEPOSIT_BOX.it)(depositAmount)}
-          </p>
-        </div>
-      )}
+  // ── Modale "Modifica metodo": apertura/chiusura + lazy-load PayPal ───────
+  function openPaymentModal() { setShowPaymentModal(true); }
+  function closePaymentModal() { setShowPaymentModal(false); }
+  function onPaymentConfirm(_method: any) {
+    // Nessun lazy-load esplicito qui: il useEffect su paymentMethod si attiva
+    // automaticamente al cambio di store e fa init SDK + crea session.
+  }
 
-      {/* Politica cancellazione */}
-      {cancelPolicy && (
-        <>
-          <div className="wizard-step2-mobile__divider" />
-          <p className="wizard-step2-mobile__section-label">{t.cancelPolicy}</p>
-          <p className="wizard-step2-mobile__cancel-text">{cancelPolicy}</p>
-        </>
-      )}
-    </div>
-  );
+  // ── Riepilogo metodo pagamento (Card 1) ──────────────────────────────────
+  function paymentSummary(): { icon: string; label: string; isEmpty: boolean } {
+    if (paymentMethod === 'stripe') {
+      return { icon: 'bi-credit-card-2-front-fill', label: tr.components.paymentModal.methods.stripe.label, isEmpty: false };
+    }
+    if (paymentMethod === 'paypal') {
+      return { icon: 'bi-paypal', label: tr.components.paymentModal.methods.paypal.label, isEmpty: false };
+    }
+    return { icon: 'bi-credit-card', label: t.cardPagamentoEmpty, isEmpty: true };
+  }
+  const ps = paymentSummary();
+
+  // CTA label dinamica
+  const ctaLabel = (() => {
+    if (phase === 'paying') return tStep3.paying;
+    if (vaultPhase === 'saving') return tStep3.paypalVaultSaving ?? tStep3.paying;
+    if (vaultPhase === 'redirecting') return tStep3.paypalVaultRedirect ?? tStep3.paying;
+    if (paymentMethod === 'paypal' && !sdkReady && !isFlexOffer) return tStep3.paypalLoading;
+    if (isFlexOffer) return t.ctaConfirm;
+    const amt = amountToCharge > 0 ? amountToCharge : total;
+    return `${t.ctaConfirmAndPay} · ${fmt(amt)}`;
+  })();
+
+  // CTA disabled
+  const ctaDisabled = !formValid
+    || phase === 'paying'
+    || vaultPhase !== 'idle'
+    || (paymentMethod === 'paypal' && !isFlexOffer && !sdkReady);
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
@@ -501,95 +584,55 @@ export default function WizardStep2({ locale = 'it' }: Props) {
         {/* ── Colonna sinistra: form ── */}
         <div className="wizard-step2__main">
 
-          {/* Mobile: accordion riepilogo */}
-          <div className="wizard-step2__summary-accordion">
-            <button
-              onClick={() => setSummaryOpen(o => !o)}
-              className="wizard-step2__summary-accordion-btn"
-            >
-              <span>{t.summaryTitle} — {fmt(totalDisplay)}</span>
-              <span className={`wizard-step2__summary-accordion-chevron${summaryOpen ? ' is-open' : ''}`}>›</span>
-            </button>
-            {summaryOpen && (
-              <div className="wizard-step2__summary-accordion-body">
-                <SidebarContent />
-              </div>
-            )}
-          </div>
-
-          {/* Sezione 1: Pagamento */}
+          {/* CARD 1 — Metodo di pagamento */}
           <div className="step2-section-card">
             <div className="step2-section-header">
               <div className="step2-section-number">1</div>
-              <p className="step2-section-title">{t.sec1title.replace('1. ', '')}</p>
+              <p className="step2-section-title">{t.cardPagamentoTitle}</p>
             </div>
 
-            <label
-              className={`step2-radio-row${paymentMethod === 'stripe' ? ' is-selected' : ''}`}
-              onClick={() => setPaymentMethod('stripe')}
-            >
-              <div className="step2-radio-dot">
-                {paymentMethod === 'stripe' && <div className="step2-radio-dot-inner" />}
-              </div>
-              <div>
-                <p className="step2-radio-label">
-                  {stripeRadioLabel}
-                  {stripeRadioAmount !== null && ` · ${fmt(stripeRadioAmount)}`}
-                </p>
-                {stripeRadioNote && (
-                  <p className="step2-radio-note">{stripeRadioNote}</p>
-                )}
-              </div>
-            </label>
-
-            <label
-              className={`step2-radio-row${paymentMethod === 'paypal' ? ' is-selected' : ''}`}
-              onClick={() => setPaymentMethod('paypal')}
-            >
-              <div className="step2-radio-dot">
-                {paymentMethod === 'paypal' && <div className="step2-radio-dot-inner" />}
-              </div>
-              <div>
-                <div className="d-flex align-items-center gap-2">
-                  <p className="step2-radio-label">{t.payInstall}</p>
-                  <span className="step2-paypal-chip">PayPal</span>
-                </div>
-                <p className="step2-radio-note">
-                  {isFlexOffer
-                    ? (t as any).paypalFlexVaultNote ?? t.paypalFlexNote
-                    : (PAY_INSTALL_NOTE[loc]?.(installment) ?? '')}
+            <div className="step2-pagamento-row">
+              <i
+                className={`bi ${ps.icon} step2-pagamento-icon${ps.isEmpty ? ' is-empty' : ''}`}
+                aria-hidden="true"
+              />
+              <div className="step2-pagamento-content">
+                <p className={`step2-pagamento-label${ps.isEmpty ? ' is-empty' : ''}`}>
+                  {ps.label}
                 </p>
               </div>
-            </label>
+              <button
+                type="button"
+                onClick={openPaymentModal}
+                className="step2-pagamento-edit-btn"
+              >
+                {t.edit}
+              </button>
+            </div>
 
-            {showPaypalFlexVaultInfo && (
-              <div className="banner banner--success banner--with-icon">
-                <i className="bi bi-shield-lock" aria-hidden="true"></i>
-                <span>{(t as any).paypalFlexVaultNote ?? t.paypalFlexNote}</span>
-              </div>
-            )}
-
-            {showStripeFlexInfo && (
-              <div className="banner banner--success banner--with-icon">
-                <i className="bi bi-credit-card-2-back" aria-hidden="true"></i>
-                <span>{t.stripeFlexNote}</span>
-              </div>
-            )}
+            {/* Logo strip metodi accettati */}
+            <div className="step2-pagamento-logos" aria-hidden="true">
+              <i className="bi bi-credit-card-2-front-fill" title="Visa" />
+              <i className="bi bi-credit-card-2-back-fill" title="Mastercard" />
+              <i className="bi bi-credit-card" title="Amex" />
+              <i className="bi bi-paypal" title="PayPal" />
+              <i className="bi bi-shield-lock-fill" title="Stripe" />
+            </div>
           </div>
 
-
-          {/* Sezione 2: Dati ospite */}
+          {/* CARD 2 — Dati ospite */}
           <div className="step2-section-card">
             <div className="step2-section-header">
               <div className="step2-section-number">2</div>
-              <p className="step2-section-title">{t.sec3title.replace('2. ', '')}</p>
+              <p className="step2-section-title">{t.cardOspiteTitle}</p>
             </div>
+            <p className="step2-section-sub">{t.cardOspiteSub}</p>
 
             <div className="step2-form-grid-2">
               <Field label={t.firstName} value={guestFirstName} onChange={v => setGuestField('guestFirstName', v)} autoComplete="given-name" />
               <Field label={t.lastName}  value={guestLastName}  onChange={v => setGuestField('guestLastName', v)}  autoComplete="family-name" />
             </div>
-            <Field label={t.email}   value={guestEmail}   onChange={v => setGuestField('guestEmail', v)}   type="email"   autoComplete="email" />
+            <Field label={t.email} value={guestEmail} onChange={v => setGuestField('guestEmail', v)} type="email" autoComplete="email" />
             <div className="step2-form-grid-2">
               <Field label={t.phone}   value={guestPhone}   onChange={v => setGuestField('guestPhone', v)}   type="tel" autoComplete="tel" />
               <Field label={t.country} value={guestCountry} onChange={v => setGuestField('guestCountry', v)} autoComplete="country-name" />
@@ -605,35 +648,98 @@ export default function WizardStep2({ locale = 'it' }: Props) {
             </div>
           </div>
 
-          {/* Errore */}
-          {error && (
-            <div className="banner banner--error">
-              <p className="banner__title">{t.errTitle}</p>
-              <p className="banner__text">{error}</p>
+          {/* CARD 3 — Servizi opzionali (solo se l'API ha restituito upsell) */}
+          {upsellItems.length > 0 && (
+            <div className="step2-section-card">
+              <div className="step2-section-header">
+                <div className="step2-section-number">3</div>
+                <p className="step2-section-title">{t.cardUpsellTitle}</p>
+              </div>
+
+              <div className="extras-catalog">
+                {upsellItems.map(item => {
+                  const sel = selectedExtras.find(e => e.id === item.id);
+                  const qty = sel?.quantity ?? 0;
+                  const MAX_QTY = 4;
+                  return (
+                    <div key={item.id} className={`extras-catalog__item${qty > 0 ? ' is-selected' : ''}`}>
+                      <span className="extras-catalog__item-icon" aria-hidden="true">
+                        <i className="bi bi-bag-plus-fill" />
+                      </span>
+                      <div className="extras-catalog__item-info">
+                        <p className="extras-catalog__item-name">
+                          {item.name[loc] ?? item.name.it}
+                        </p>
+                        <p className="extras-catalog__item-price">
+                          +{fmt(item.price)} {t.perUnit}
+                        </p>
+                      </div>
+                      <div className="extras-catalog__stepper">
+                        <button
+                          onClick={() => setExtraQuantity(item, qty - 1)}
+                          disabled={qty === 0}
+                          className={`extras-stepper-btn extras-stepper-btn--minus${qty > 0 ? ' is-active' : ''}`}
+                        >−</button>
+                        <span className={`extras-catalog__stepper-qty${qty > 0 ? ' is-active' : ''}`}>
+                          {qty}
+                        </span>
+                        <button
+                          onClick={() => setExtraQuantity(item, qty + 1)}
+                          disabled={qty >= MAX_QTY}
+                          className={`extras-stepper-btn extras-stepper-btn--plus${qty < MAX_QTY ? ' is-active' : ''}`}
+                        >+</button>
+                      </div>
+                      <span
+                        className={`extras-catalog__item-total${qty === 0 ? ' is-hidden' : ''}`}
+                        aria-hidden={qty === 0}
+                      >
+                        {fmt(item.price * Math.max(qty, 1))}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
 
-          {/* CTA — mostra totale aggiornato */}
-          <button
-            onClick={handleVediRiepilogo}
-            disabled={!formValid}
-            className="btn btn--primary step2-cta"
-          >
-            {isFlexOffer
-              ? t.vediRiepilogoFlex
-              : `${t.vediRiepilogo} → ${fmt(amountToChargeDisplay || totalDisplay)}`}
-          </button>
+          {/* Errore inline */}
+          {error && (
+            <div className="banner banner--error banner--with-icon">
+              <i className="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+              <div>
+                <p className="banner__title">{t.errTitle}</p>
+                <p className="banner__text">{error}</p>
+              </div>
+            </div>
+          )}
 
+          {/* Disclaimer terms+privacy sopra CTA */}
           <p className="step2-terms">
             {t.terms}{' '}
-            <a href={`/${locale}/condizioni`} target="_blank" rel="noopener noreferrer">{t.termsLink}</a>
+            <a href={`/${locale}/condizioni`} target="_blank" rel="noopener noreferrer">{t.termsLink}</a>{' '}
+            {t.termsAnd}{' '}
+            <a href={`/${locale}/privacy`} target="_blank" rel="noopener noreferrer">{t.privacyLink}</a>.
           </p>
-          <button onClick={handleBack} className="step2-back-link">
+
+          {/* CTA finale */}
+          <button
+            onClick={handleConfirm}
+            disabled={ctaDisabled}
+            className="btn btn--primary step2-cta"
+          >
+            {ctaLabel}
+          </button>
+
+          {isFlexOffer && phase !== 'paying' && (
+            <p className="wizard-step3__cta-note">{tStep3.payBtnFlexNote}</p>
+          )}
+
+          <button onClick={handleBack} disabled={phase === 'paying'} className="step2-back-link">
             {t.back}
           </button>
         </div>
 
-        {/* ── Sidebar destra (desktop) — usa BookingSidebar con slot voucher+extras ── */}
+        {/* ── Sidebar destra (desktop) — voucher slot, niente extras (passati a Card 3) ── */}
         <div className="wizard-step2__sidebar">
           <BookingSidebar
             locale={locale}
@@ -651,7 +757,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                       setVoucherInput(e.target.value);
                       if (voucherApplied) { setVoucherApplied(false); setDiscountedPrice(null); setVoucherCode(''); }
                     }}
-                    placeholder={tSidebar.voucherPlaceholder}
+                    placeholder={(tSidebar as any).voucherPlaceholder}
                     autoComplete="off"
                     autoCorrect="off"
                     autoCapitalize="off"
@@ -666,7 +772,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                     {voucherApplied ? (
                       <>
                         <i className="bi bi-check-lg me-1" aria-hidden="true" />
-                        {tSidebar.voucherApplied}
+                        {(tSidebar as any).voucherApplied}
                       </>
                     ) : t.voucherApply}
                   </button>
@@ -674,80 +780,23 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                 {voucherError && <p className="voucher-block__error">{voucherError}</p>}
               </>
             }
-            step2ExtrasSlot={upsellItems.length > 0 ? (
-              <>
-                <p className="label-uppercase-muted">{t.sec2title}</p>
-                <div className="extras-catalog">
-                  {upsellItems.map(item => {
-                    const sel = selectedExtras.find(e => e.id === item.id);
-                    const qty = sel?.quantity ?? 0;
-                    const MAX_QTY = 4;
-                    return (
-                      <div key={item.id} className={`extras-catalog__item${qty > 0 ? ' is-selected' : ''}`}>
-                        <span className="extras-catalog__item-icon" aria-hidden="true">
-                          <i className="bi bi-bag-plus-fill" />
-                        </span>
-                        <div className="extras-catalog__item-info">
-                          <p className="extras-catalog__item-name">
-                            {item.name[loc] ?? item.name.it}
-                          </p>
-                          <p className="extras-catalog__item-price">
-                            +{fmt(item.price)} {t.perUnit}
-                          </p>
-                        </div>
-                        <div className="extras-catalog__stepper">
-                          <button
-                            onClick={() => setExtraQuantity(item, qty - 1)}
-                            disabled={qty === 0}
-                            className={`extras-stepper-btn extras-stepper-btn--minus${qty > 0 ? ' is-active' : ''}`}
-                          >−</button>
-                          <span className={`extras-catalog__stepper-qty${qty > 0 ? ' is-active' : ''}`}>
-                            {qty}
-                          </span>
-                          <button
-                            onClick={() => setExtraQuantity(item, qty + 1)}
-                            disabled={qty >= MAX_QTY}
-                            className={`extras-stepper-btn extras-stepper-btn--plus${qty < MAX_QTY ? ' is-active' : ''}`}
-                          >+</button>
-                        </div>
-                        <span
-                          className={`extras-catalog__item-total${qty === 0 ? ' is-hidden' : ''}`}
-                          aria-hidden={qty === 0}
-                        >
-                          {fmt(item.price * Math.max(qty, 1))}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </>
-            ) : null}
           />
         </div>
       </div>
 
+      {/* Modale metodo pagamento */}
+      {showPaymentModal && (
+        <PaymentMethodModal
+          locale={locale}
+          onClose={closePaymentModal}
+          onConfirm={onPaymentConfirm}
+        />
+      )}
     </div>
   );
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
-function SideRow({ label, value, onEdit, editLabel }: { label: string; value: string; onEdit: () => void; editLabel: string }) {
-  return (
-    <div className="wizard-step2-mobile__side-row">
-      <div>
-        <p className="wizard-step2-mobile__side-row-label">{label}</p>
-        <p className="wizard-step2-mobile__side-row-value">{value}</p>
-      </div>
-      <button
-        onClick={onEdit}
-        className="wizard-step2-mobile__side-row-edit"
-      >
-        {editLabel}
-      </button>
-    </div>
-  );
-}
-
 function Field({ label, value, onChange, type = 'text', autoComplete }: {
   label: string; value: string; onChange: (v: string) => void;
   type?: string; autoComplete?: string;
@@ -765,4 +814,3 @@ function Field({ label, value, onChange, type = 'text', autoComplete }: {
     </div>
   );
 }
-

@@ -1092,7 +1092,16 @@
       "stripeFlexNote": "Con Stripe la carta viene solo salvata — nessun addebito immediato.",
       "flexOnlyCardNote": "Per questa tariffa accettiamo solo pagamento con carta.",
       "vediRiepilogo": "Vedi riepilogo finale",
-      "vediRiepilogoFlex": "Continua"
+      "vediRiepilogoFlex": "Continua",
+      "cardPagamentoTitle": "Metodo di pagamento",
+      "cardPagamentoEmpty": "Scegli il metodo di pagamento",
+      "cardOspiteTitle": "Dati ospite",
+      "cardOspiteSub": "I dati che inserisci sono usati per la conferma di prenotazione e il check-in.",
+      "cardUpsellTitle": "Servizi opzionali",
+      "ctaConfirm": "Conferma prenotazione",
+      "ctaConfirmAndPay": "Conferma e paga",
+      "termsAnd": "e la",
+      "privacyLink": "privacy"
     },
     "wizardStep3": {
       "title": "Riepilogo prenotazione",

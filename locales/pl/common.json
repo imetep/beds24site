@@ -1074,7 +1074,16 @@
       "stripeFlexNote": "W przypadku Stripe karta jest tylko zapisywana — bez natychmiastowego obciążenia.",
       "flexOnlyCardNote": "Dla tej taryfy akceptujemy tylko płatność kartą.",
       "vediRiepilogo": "Zobacz podsumowanie",
-      "vediRiepilogoFlex": "Dalej"
+      "vediRiepilogoFlex": "Dalej",
+      "cardPagamentoTitle": "Metoda płatności",
+      "cardPagamentoEmpty": "Wybierz metodę płatności",
+      "cardOspiteTitle": "Dane gościa",
+      "cardOspiteSub": "Używane do potwierdzenia rezerwacji i zameldowania.",
+      "cardUpsellTitle": "Usługi opcjonalne",
+      "ctaConfirm": "Potwierdź rezerwację",
+      "ctaConfirmAndPay": "Potwierdź i zapłać",
+      "termsAnd": "oraz",
+      "privacyLink": "polityką prywatności"
     },
     "wizardStep3": {
       "title": "Podsumowanie rezerwacji",
