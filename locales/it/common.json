@@ -983,6 +983,7 @@
     "wizardStep1": {
       "titleSingle": "Quale tariffa preferite?",
       "titleMulti": "Scegli appartamento e tariffa",
+      "titleMultiCount": "{count} alloggi a Scauri",
       "loading": "Ricerca prezzi e disponibilità...",
       "noResults": "Nessun appartamento disponibile per le date selezionate.",
       "nightsSing": "notte",

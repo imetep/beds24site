@@ -965,6 +965,7 @@
     "wizardStep1": {
       "titleSingle": "Którą taryfę preferujecie?",
       "titleMulti": "Wybierz apartament i taryfę",
+      "titleMultiCount": "{count} obiektów w Scauri",
       "loading": "Wyszukiwanie cen i dostępności...",
       "noResults": "Brak dostępnych apartamentów dla wybranych dat.",
       "nightsSing": "noc",

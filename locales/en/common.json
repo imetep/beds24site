@@ -965,6 +965,7 @@
     "wizardStep1": {
       "titleSingle": "Which rate do you prefer?",
       "titleMulti": "Choose apartment and rate",
+      "titleMultiCount": "{count} accommodations in Scauri",
       "loading": "Searching prices and availability...",
       "noResults": "No apartments available for the selected dates.",
       "nightsSing": "night",

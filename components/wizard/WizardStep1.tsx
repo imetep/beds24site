@@ -252,65 +252,36 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
   return (
     <div>
 
-      {/* ── Box riassunto prenotazione ── */}
-      {checkIn && checkOut && (
-        <div className="card-info card-info--compact">
-          <div className="layout-row-between layout-row-between--start">
-            <div>
-              <div className="step1-summary__dates">
-                {fmtShort(checkIn, loc)} – {fmtShort(checkOut, loc)}
-              </div>
-              <div className="step1-summary__meta">
-                {nights} {nights === 1 ? t.nightsSing : t.nightsPlur}
-                {' · '}
-                {numAdult} {locale === 'it' ? (numAdult === 1 ? 'adulto' : 'adulti') : locale === 'de' ? 'Erw.' : locale === 'pl' ? 'dorosłych' : (numAdult === 1 ? 'adult' : 'adults')}
-                {numChild > 0 && (
-                  <>, {numChild} {locale === 'it' ? (numChild === 1 ? 'bambino' : 'bambini') : locale === 'de' ? (numChild === 1 ? 'Kind' : 'Kinder') : locale === 'pl' ? 'dzieci' : (numChild === 1 ? 'child' : 'children')}
-                  {(() => {
-                    const ages = (childrenAges ?? []).slice(0, numChild).filter((a: number) => a >= 0);
-                    if (ages.length !== numChild) return null;
-                    const suffix = locale === 'it' || locale === 'de' ? 'a' : locale === 'pl' ? 'l' : 'y';
-                    return ` (${ages.map((a: number) => `${a}${suffix}`).join(', ')})`;
-                  })()}</>
-                )}
-              </div>
-            </div>
+      {/* Box riassunto rimosso (sessione 2026-04-29):
+          date/ospiti ora vivono nella BookingSidebar dx, sempre visibile. */}
+
+      {/* ── Toolbar: h1 sx + filtri dx (sulla stessa riga, pattern Airbnb /s) ── */}
+      <div className="step1-toolbar">
+        <h2 className="section-title-main section-title-main--inline step1-toolbar__title">
+          {isSingleRoom
+            ? t.titleSingle
+            : (filteredRoomOffers.length > 0 && t.titleMultiCount
+                ? t.titleMultiCount.replace('{count}', String(filteredRoomOffers.length))
+                : t.titleMulti)}
+        </h2>
+
+        {/* Filtri (bottone + chip attivi) — solo se multi-room */}
+        {!isSingleRoom && !loading && !error && roomOffers.length > 0 && (
+          <div className="step1-filter-bar step1-toolbar__filters">
+
+            {/* Bottone apri modale */}
             <button
-              onClick={onBack ?? prevStep}
-              className="step1-summary__edit-btn"
-              aria-label={t.indietro}
+              onClick={() => setShowFilterPanel(true)}
+              className={`step1-filter-btn${activeFiltersCount > 0 ? ' is-active' : ''}`}
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                <path d="M11 4H4v7"/><path d="M4 4l7 7"/><path d="M20 20v-7h-7"/><path d="M20 20l-7-7"/>
-              </svg>
+              <i className="bi bi-sliders" aria-hidden="true" />
+              {t.filtriBtn}
+              {activeFiltersCount > 0 && (
+                <span className="step1-filter-btn__count">{activeFiltersCount}</span>
+              )}
             </button>
-          </div>
-        </div>
-      )}
 
-      <h2 className="section-title-main">
-        {isSingleRoom ? t.titleSingle : t.titleMulti}
-      </h2>
-
-      {/* ── Filter bar ── */}
-      {!isSingleRoom && !loading && !error && roomOffers.length > 0 && (
-        <div className="step1-filter-bar">
-
-          {/* Bottone apri modale */}
-          <button
-            onClick={() => setShowFilterPanel(true)}
-            className={`step1-filter-btn${activeFiltersCount > 0 ? ' is-active' : ''}`}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="20" y2="12"/><line x1="12" y1="18" x2="20" y2="18"/>
-            </svg>
-            {t.filtriBtn}
-            {activeFiltersCount > 0 && (
-              <span className="step1-filter-btn__count">{activeFiltersCount}</span>
-            )}
-          </button>
-
-          {/* Chip filtri attivi (chiudibili) */}
+            {/* Chip filtri attivi (chiudibili) */}
           {activeFilter !== 'all' && (
             <button onClick={() => setActiveFilter('all')} className="step1-filter-chip">
               {activeFilter === 'priceLow' ? t.sortPriceLow : activeFilter === 'priceHigh' ? t.sortPriceHigh : activeFilter === 'size' ? t.sortBiggest : t.sortSmallest}
@@ -341,8 +312,10 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
               <span className="step1-filter-chip__x">×</span>
             </button>
           )}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
+      {/* /step1-toolbar */}
 
       {/* ── Filter modal (bottom-sheet mobile / centered desktop) ── */}
       {showFilterPanel && (
@@ -577,32 +550,32 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                     </div>
                   )}
 
-                  {/* COL 2: Nome + dettagli */}
+                  {/* COL 2: Nome + dettagli (uniformato a .feature-list, no chip) */}
                   <div className="step1-room-card__details">
                     <div className="step1-room-card__name">{room.name}</div>
-                    {isSingleRoom && <span className="badge-feature">{room.type}</span>}
-                    <div className="step1-room-card__meta-chips">
-                      <span className="badge-feature">
-                        <i className="bi bi-door-closed-fill me-1" aria-hidden="true" />
+                    {isSingleRoom && <span className="feature-list__item">{room.type}</span>}
+                    <ul className="feature-list step1-room-card__meta-chips">
+                      <li className="feature-list__item">
+                        <i className="bi bi-door-closed-fill" aria-hidden="true" />
                         {room.bedrooms} {t.camere}
-                      </span>
-                      <span className="badge-feature">
-                        <i className="bi bi-people-fill me-1" aria-hidden="true" />
+                      </li>
+                      <li className="feature-list__item">
+                        <i className="bi bi-people-fill" aria-hidden="true" />
                         {t.maxPers} {room.maxPeople} {t.persone}
-                      </span>
-                      <span className="badge-feature">
-                        <i className="bi bi-aspect-ratio me-1" aria-hidden="true" />
+                      </li>
+                      <li className="feature-list__item">
+                        <i className="bi bi-aspect-ratio" aria-hidden="true" />
                         {room.sqm} mq
-                      </span>
-                      <span className="badge-feature">
-                        <i className={`bi ${getPoolIcon(room)} me-1`} aria-hidden="true" />
+                      </li>
+                      <li className="feature-list__item">
+                        <i className={`bi ${getPoolIcon(room)}`} aria-hidden="true" />
                         {getPoolLabel(room, t)}
-                      </span>
-                      <span className="badge-feature">
-                        <i className="bi bi-geo-alt-fill me-1" aria-hidden="true" />
+                      </li>
+                      <li className="feature-list__item">
+                        <i className="bi bi-geo-alt-fill" aria-hidden="true" />
                         {getLocationLabel(room, t)}
-                      </span>
-                    </div>
+                      </li>
+                    </ul>
                   </div>
 
                   {/* COL 3: Tariffe */}

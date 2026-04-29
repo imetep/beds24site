@@ -105,13 +105,11 @@
   --container-page: 1200px;        /* Wrapper pagina unificato (era 1100, ora allineato a --container-lg) */
   --container-lg: 1200px;          /* Hero, gallerie, pagine marketing wide */
 
-  /* Checkout — pattern Airbnb /book adattato (proporzioni 540/105/340 = 985 max-width).
-     Usato dalle classi .checkout-* per wizardstep1 (lista offerte) e wizardstep2 (form unificato). */
-  --container-checkout: 985px;     /* form 540 + gap 105 + summary 340 */
-  --col-checkout-form: 540px;      /* colonna sx (lista offerte / form dati+pagamento) */
-  --col-checkout-summary: 340px;   /* colonna dx sticky (riepilogo + CTA) */
-  --gap-checkout: 105px;           /* spazio fra le 2 colonne (Airbnb-like) */
-  --top-checkout-sticky: 32px;     /* offset sticky della summary card */
+  /* Wizard checkout — proporzioni Airbnb /book (985 = 540 + 105 + 340) */
+  --wizard-container-max: 985px;   /* Wrapper esterno wizard (sostituisce --container-lg in .wizard-container) */
+  --wizard-main-max: 540px;        /* Colonna SX (lista offerte step1, form step2) */
+  --wizard-sidebar-w: 340px;       /* Colonna DX BookingSidebar */
+  --wizard-sidebar-top: 32px;      /* Offset sticky della BookingSidebar (era 90) */
 
   /* Z-index scale — evita numeri magici sparsi */
   --z-header: 10;                  /* Header sticky */
@@ -474,7 +472,7 @@ body {
    autonomo, step 3 è single-column. Una sidebar esterna duplicherebbe info.
 */
 .wizard-container {
-  max-width: var(--container-lg);
+  max-width: var(--wizard-container-max);  /* 985 — pattern Airbnb /book */
   margin: 0 auto;
   padding: var(--space-lg) var(--space-base) var(--space-xl);
 }
@@ -512,7 +510,7 @@ body {
 .wizard-container__main {
   flex: 1;
   min-width: 0;
-  max-width: var(--container-sm);
+  max-width: var(--wizard-main-max);  /* 540 — pattern Airbnb /book */
 }
 .wizard-container__main--full {
   max-width: none;
@@ -523,14 +521,17 @@ body {
 @media (min-width: 768px) {
   .wizard-container__sidebar {
     display: block;
+    /* Allinea l'inizio della sidebar alla prima room-card
+       (sotto il toolbar h1+filtri). Toolbar ≈ 36px contenuto + 16 margin = ~52px. */
+    margin-top: 52px;
   }
 }
 
 /* ── BookingSidebar (Sessione 3b) ─────────────────────────────────────────── */
-/* Box del riepilogo soggiorno nel wizard. Larghezza fissa 380px su desktop,
-   sticky top 90. Usato in step 1 e step 2 con stesso DNA (design doc §2.1). */
+/* Box del riepilogo soggiorno nel wizard. Larghezza fissa 340px su desktop,
+   sticky top 32 (pattern Airbnb /book). Usato in step 1 e step 2 con stesso DNA. */
 .booking-sidebar {
-  width: 380px;
+  width: var(--wizard-sidebar-w);  /* 340 — pattern Airbnb /book */
   flex-shrink: 0;
   background: var(--color-bg);
   border: 1px solid var(--color-border);
@@ -538,7 +539,7 @@ body {
   box-shadow: var(--shadow-sm);
   padding: var(--space-lg);
   position: sticky;
-  top: 90px;
+  top: var(--wizard-sidebar-top);  /* 32 — pattern Airbnb /book */
   align-self: flex-start;
   box-sizing: border-box;
 }
@@ -555,6 +556,34 @@ body {
   object-fit: cover;
   display: block;
 }
+/* Lista features alloggio — master class condivisa fra:
+   - WizardStep1 room-card (orizzontale, wrappante)
+   - BookingSidebar (verticale, modifier --stack)
+   - residenze RoomCard (orizzontale)
+   Sostituisce: .badge-feature (room-card) + d-flex flex-wrap gap-1 mb-3 (residenze).
+   Stile sobrio Airbnb-like: icona + testo inline, NO chip/pillola. */
+.feature-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px var(--space-md);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.feature-list--stack {
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+.feature-list__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+/* Alias retro-compat sidebar (eredita .feature-list--stack) */
 .booking-sidebar__feature-list {
   display: flex;
   flex-direction: column;
@@ -660,432 +689,6 @@ body {
 .booking-sidebar .label-row-between__value {
   font-size: var(--text-base);
 }
-
-/* ==========================================================================
-   CHECKOUT layout (Airbnb /book pattern, adattato a colori LivingApple).
-   Usato in /paga-mock-v2 (mockup) e — quando ratificato — in WizardStep1+2.
-   Token: --container-checkout 985 (form 540 + gap 105 + summary 340).
-   Mobile <768: stacked 1-col, summary IN ALTO, CTA sticky bottom.
-   Riferimento: docs/ux/airbnb-checkout-analysis.xlsx + docs/ux/mio desiderio.xlsx
-   ========================================================================== */
-
-/* ── Wrapper pagina checkout ── */
-.checkout-page {
-  width: 100%;
-  max-width: var(--container-checkout);
-  margin-inline: auto;
-  padding: var(--space-lg) var(--space-base) var(--space-xl);
-  box-sizing: border-box;
-}
-@media (min-width: 768px) {
-  .checkout-page {
-    padding: var(--space-xl) var(--space-lg) 4rem;
-  }
-}
-.checkout-page__title {
-  margin-bottom: var(--space-lg);
-}
-
-/* ── Grid 2-col desktop / stacked mobile ── */
-.checkout-grid {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-}
-@media (min-width: 1024px) {
-  .checkout-grid {
-    flex-direction: row;
-    gap: var(--gap-checkout);
-    align-items: flex-start;
-  }
-}
-
-/* ── Form column (sx desktop, sotto mobile) ── */
-.checkout-form-col {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-  /* Mobile: la summary va prima */
-  order: 2;
-}
-@media (min-width: 1024px) {
-  .checkout-form-col {
-    flex: 0 0 var(--col-checkout-form);
-    max-width: var(--col-checkout-form);
-    order: 1;
-  }
-}
-
-/* ── Summary column (dx desktop sticky, sopra mobile) ── */
-.checkout-summary-col {
-  flex: 1;
-  min-width: 0;
-  order: 1;
-}
-@media (min-width: 1024px) {
-  .checkout-summary-col {
-    flex: 0 0 var(--col-checkout-summary);
-    max-width: var(--col-checkout-summary);
-    order: 2;
-    position: sticky;
-    top: var(--top-checkout-sticky);
-    align-self: flex-start;
-  }
-}
-
-/* ── Card singola del form (gap 24 fra cards via .checkout-form-col gap) ── */
-.checkout-card {
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg);
-  box-sizing: border-box;
-}
-.checkout-card__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--space-md);
-  margin-bottom: var(--space-md);
-}
-.checkout-card__title {
-  font-size: var(--text-lg);
-  font-weight: 700;
-  color: var(--color-text);
-  margin: 0;
-}
-.checkout-card__subtitle {
-  font-size: var(--text-sm);
-  color: var(--color-text-subtle);
-  margin: var(--space-xs) 0 0;
-  line-height: 1.4;
-}
-/* Variante quando il subtitle viene SUBITO dopo header (annulla margin-top, aggiunge md sotto) */
-.checkout-card__subtitle--lead {
-  margin-top: 0;
-  margin-bottom: var(--space-md);
-}
-/* Wrapper textarea che compare in fondo a una card (annulla margin-bottom) */
-.checkout-card__textarea-wrap {
-  margin-top: var(--space-md);
-  margin-bottom: 0;
-}
-
-/* ── Modifica btn (81×32 Airbnb-like, ma colori LivingApple) ── */
-.checkout-modify-btn {
-  background: var(--color-bg-muted, #f3f4f6);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: 6px 14px;
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--color-text);
-  cursor: pointer;
-  white-space: nowrap;
-  min-height: 32px;
-  flex-shrink: 0;
-}
-.checkout-modify-btn:hover {
-  background: var(--color-bg-hover, #e5e7eb);
-}
-.checkout-modify-btn:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-}
-
-/* ── Riga metodo pagamento dentro la card (saved card display) ── */
-.checkout-pay-current {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  font-size: var(--text-base);
-  color: var(--color-text);
-}
-.checkout-pay-current__icon {
-  font-size: 1.2em;
-  color: var(--color-primary);
-}
-.checkout-pay-current__brand {
-  font-weight: 700;
-  letter-spacing: 0.05em;
-}
-.checkout-pay-brands-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  margin-top: var(--space-md);
-  font-size: var(--text-xs);
-  color: var(--color-text-muted);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-/* ── Grid input dati ospite (2x2 desktop, 1col mobile) ── */
-.checkout-guest-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-md);
-}
-@media (min-width: 540px) {
-  .checkout-guest-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-/* ── Upsell list ── */
-.checkout-upsell-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.checkout-upsell-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-md);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-}
-.checkout-upsell-item:hover {
-  border-color: var(--color-primary);
-  background: var(--color-primary-soft);
-}
-.checkout-upsell-item.is-selected {
-  border-color: var(--color-primary);
-  background: var(--color-primary-soft);
-}
-.checkout-upsell-item__text {
-  flex: 1;
-  min-width: 0;
-}
-.checkout-upsell-item__title {
-  font-size: var(--text-base);
-  font-weight: 600;
-  color: var(--color-text);
-  margin: 0;
-}
-.checkout-upsell-item__sub {
-  font-size: var(--text-sm);
-  color: var(--color-text-subtle);
-  margin: var(--space-xs) 0 0;
-}
-.checkout-upsell-item__price {
-  font-size: var(--text-base);
-  font-weight: 700;
-  color: var(--color-primary);
-  white-space: nowrap;
-}
-
-/* ── Disclaimer testi (terms, host policy, ecc.) ── */
-.checkout-disclaimer {
-  font-size: var(--text-xs);
-  color: var(--color-text-muted);
-  line-height: 1.5;
-  margin: var(--space-md) 0 0;
-}
-.checkout-disclaimer a,
-.checkout-disclaimer button {
-  color: var(--color-text);
-  text-decoration: underline;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  font: inherit;
-}
-
-/* ── CTA finale (full-width della form-col) — usa .btn .btn--primary già esistente ── */
-.checkout-cta {
-  width: 100%;
-  margin-top: var(--space-md);
-}
-
-/* ── Summary card content (riusa stile .booking-sidebar ma con classe propria
-        per non rompere le wizard step esistenti) ── */
-.checkout-summary {
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg);
-  box-sizing: border-box;
-}
-.checkout-summary__hero {
-  width: 100%;
-  height: 160px;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  margin-bottom: var(--space-md);
-}
-.checkout-summary__hero-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-/* Placeholder gradient mock-only (rimuovere quando si aggancia a Cloudinary) */
-.checkout-summary__hero-placeholder {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #b89e85 0%, #8b6f50 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: 0.85rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-.checkout-summary__title {
-  font-size: var(--text-lg);
-  font-weight: 700;
-  color: var(--color-text);
-  margin: 0 0 var(--space-xs);
-}
-.checkout-summary__features {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px var(--space-sm);
-  margin: 0 0 var(--space-md);
-  padding: 0;
-  list-style: none;
-  font-size: var(--text-sm);
-  color: var(--color-text-subtle);
-}
-.checkout-summary__features li {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-.checkout-summary__divider {
-  height: 1px;
-  background: var(--color-border);
-  margin: var(--space-md) 0;
-  border: none;
-}
-.checkout-summary__data-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
-}
-.checkout-summary__data-row:last-of-type {
-  margin-bottom: 0;
-}
-.checkout-summary__data-cell {
-  flex: 1;
-  min-width: 0;
-}
-.checkout-summary__data-label {
-  font-size: var(--text-sm);
-  font-weight: 700;
-  color: var(--color-text);
-  margin: 0;
-}
-.checkout-summary__data-value {
-  font-size: var(--text-sm);
-  color: var(--color-text-subtle);
-  margin: var(--space-xs) 0 0;
-}
-.checkout-summary__price-title {
-  margin-bottom: var(--space-sm);
-}
-.checkout-summary__price-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: var(--space-xs);
-  font-size: var(--text-sm);
-  color: var(--color-text);
-}
-.checkout-summary__price-row--strike {
-  color: var(--color-text-muted);
-  text-decoration: line-through;
-  font-size: var(--text-xs);
-}
-.checkout-summary__total {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-top: var(--space-md);
-  padding-top: var(--space-md);
-  border-top: 1px solid var(--color-border);
-}
-.checkout-summary__total-label {
-  font-size: var(--text-base);
-  font-weight: 700;
-  color: var(--color-text);
-}
-.checkout-summary__total-value {
-  font-size: var(--text-xl);
-  font-weight: 800;
-  color: var(--color-primary);
-}
-.checkout-summary__breakdown-link {
-  display: inline-block;
-  margin-top: var(--space-sm);
-  background: none;
-  border: none;
-  padding: 0;
-  font-size: var(--text-sm);
-  color: var(--color-text);
-  text-decoration: underline;
-  cursor: pointer;
-}
-/* Policy text inline (es. "Questa prenotazione è flessibile per 60 giorni")
-   Pattern Airbnb: testo grigio sotto il titolo del summary, NON banner colorato. */
-.checkout-summary__policy-text {
-  font-size: var(--text-sm);
-  color: var(--color-text-subtle);
-  margin: 0 0 var(--space-md);
-  line-height: 1.4;
-}
-
-/* ── CTA sticky bottom mobile (visibile solo <1024) ── */
-.checkout-cta-mobile-sticky {
-  display: block;
-  position: sticky;
-  bottom: 0;
-  margin-top: var(--space-lg);
-  padding: var(--space-md);
-  background: var(--color-bg);
-  border-top: 1px solid var(--color-border);
-  z-index: var(--z-sticky);
-  margin-inline: calc(var(--space-base) * -1);
-}
-.checkout-cta-mobile-sticky .btn {
-  width: 100%;
-}
-@media (min-width: 1024px) {
-  .checkout-cta-mobile-sticky {
-    display: none;
-  }
-}
-
-/* ── CTA dentro summary card (visibile solo desktop) ── */
-.checkout-summary__cta-desktop {
-  display: none;
-}
-@media (min-width: 1024px) {
-  .checkout-summary__cta-desktop {
-    display: block;
-    width: 100%;
-    margin-top: var(--space-md);
-  }
-}
-
-/* NOTA: il mock /wizardstep1-mock-v2 RIUSA le classi .step1-* esistenti
-   (.step1-room-card, .step1-offer-option, .step1-filter-bar/btn/chip)
-   già definite più avanti in questo file (sezione WizardStep1).
-   I banner alloggio (cancellazione/consumi/deposito) usano le classi
-   .banner.banner--success / --info / --warning anch'esse esistenti. */
 
 /* ==========================================================================
    Slot step 2 BookingSidebar — voucher input + catalogo upsell extras
@@ -1579,6 +1182,13 @@ body {
   color: var(--color-text);
   margin: 0 0 var(--space-lg);
   line-height: var(--line-height-tight);
+}
+/* Modifier inline: usato nel toolbar wizard step1 (h1 + filtri sulla stessa riga).
+   Font ridotto a --text-lg, no margin (l'allineamento e' gestito dal flex parent). */
+.section-title-main--inline {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  margin: 0;
 }
 
 .section-title-secondary {
@@ -2122,6 +1732,23 @@ body {
   color: var(--color-primary);
 }
 
+/* ── Toolbar step1 (h1 + filtri sulla stessa riga, sopra la lista) ── */
+.step1-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin: 0 0 var(--space-md);
+  flex-wrap: wrap;
+}
+.step1-toolbar__title {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.step1-toolbar__filters {
+  flex: 0 0 auto;
+}
+
 /* ── Filter bar (riga scrollabile orizzontale con bottone + chip attivi) ── */
 .step1-filter-bar {
   display: flex;
@@ -2136,20 +1763,25 @@ body {
 }
 
 /* ── Filter toggle button (apre il modale) ── */
+/* Restyle 2026-04-29: era 1.5px+font-weight 600+min-height touch-target.
+   Pattern Airbnb /s "Filtri 83x40": pillola sottile, neutra, no doppio bordo. */
 .step1-filter-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: var(--space-sm) var(--space-base);
-  min-height: var(--touch-target);
-  border: 1.5px solid var(--color-text);
+  gap: 6px;
+  padding: 6px 14px;
+  min-height: 36px;
+  border: 1px solid var(--color-border);
   background: var(--color-bg);
   color: var(--color-text);
-  font-size: var(--text-base);
-  font-weight: 600;
+  font-size: var(--text-sm);
+  font-weight: 500;
   border-radius: var(--radius-pill);
   flex-shrink: 0;
   cursor: pointer;
+}
+.step1-filter-btn:hover {
+  border-color: var(--color-text);
 }
 .step1-filter-btn.is-active {
   border-color: var(--color-cta);
@@ -2467,27 +2099,37 @@ body {
   padding: var(--space-sm) var(--space-md) 14px;
 }
 @media (min-width: 768px) {
+  /* Desktop: grid 2-col (foto sx · details+offers stacked dx).
+     Pattern adattato dopo restringimento main col 680→540 in Step B
+     (.step1-room-card__details aveva ~60px residui in 3-col → chip illeggibili). */
   .step1-room-card__row {
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    grid-template-rows: auto 1fr;
     align-items: stretch;
   }
   .step1-room-card__photo {
-    width: 220px;
-    height: auto;
+    width: auto;
+    height: 100%;
     min-height: 180px;
+    grid-row: 1 / 3;
+    grid-column: 1;
   }
   .step1-room-card__details {
-    border-bottom: none;
-    border-right: 1px solid #f0f0f0;
-    flex: 1;
+    /* border-bottom resta (mobile inheritance) come separatore orizzontale fra details e offers */
+    border-right: none;
+    grid-row: 1;
+    grid-column: 2;
+    flex: initial;
   }
   .step1-room-card__offers {
-    width: 260px;
-    flex-shrink: 0;
+    width: auto;
+    grid-row: 2;
+    grid-column: 2;
     padding: var(--space-base) 14px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
   }
 }
 
@@ -2924,7 +2566,7 @@ body {
 .wizard-step2__main {
   flex: 1;
   min-width: 0;
-  max-width: var(--container-sm);
+  max-width: var(--wizard-main-max);  /* 540 — allineato a .wizard-container__main */
 }
 .wizard-step2__sidebar {
   flex-shrink: 0;

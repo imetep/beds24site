@@ -3,13 +3,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
-import { getTranslations } from '@/lib/i18n';
-import Stepper from '@/components/ui/Stepper';
 import BookingSidebar from './BookingSidebar';
 import WizardStep1 from './WizardStep1';
 import WizardStep2 from './WizardStep2';
 import WizardStep3 from './WizardStep3';
-import type { Locale } from '@/config/i18n';
 
 interface Props {
   translations: any;
@@ -152,18 +149,6 @@ export default function Wizard({ translations: t, locale }: Props) {
   const showSidebar = logicalStep === 1;
   const fullWidth   = logicalStep >= 2;
 
-  // ── Stepper labels (i18n) ─────────────────────────────────────────────────
-  const tr = getTranslations(locale as Locale);
-  const stepperT = tr.components.wizardStepper;
-  const steps = [
-    { label: stepperT.stepScegli },
-    { label: stepperT.stepOspite },
-    { label: stepperT.stepPaga },
-  ];
-  // Click su step precedente = torna indietro, solo se l'utente è arrivato
-  // dal flusso completo (non da link ospite che salta step 1).
-  const canGoBack = !fromRoom && !isGuestLink;
-
   if (isGuestLink && !ready) {
     return (
       <div className="wizard-loading">
@@ -175,13 +160,6 @@ export default function Wizard({ translations: t, locale }: Props) {
 
   return (
     <div className="wizard-container">
-      <Stepper
-        steps={steps}
-        current={logicalStep}
-        onGoBack={canGoBack ? (s) => setCurrentStep(s) : undefined}
-        ariaLabel={stepperT.ariaLabel}
-      />
-
       <div className="wizard-container__layout">
 
         <div className={`wizard-container__main${fullWidth ? ' wizard-container__main--full' : ''}`}>

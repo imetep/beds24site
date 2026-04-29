@@ -965,6 +965,7 @@
     "wizardStep1": {
       "titleSingle": "Welchen Tarif bevorzugen Sie?",
       "titleMulti": "Unterkunft und Tarif wählen",
+      "titleMultiCount": "{count} Unterkünfte in Scauri",
       "loading": "Preise und Verfügbarkeit suchen...",
       "noResults": "Keine Unterkünfte für die gewählten Daten verfügbar.",
       "nightsSing": "Nacht",

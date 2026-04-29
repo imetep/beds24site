@@ -45,28 +45,28 @@ export default function RoomCard({ room, locale, coverUrl }: Props) {
       <div className="card-body">
         <h3 className="fs-4 fw-bold text-primary mb-2">{room.name}</h3>
 
-        <div className="d-flex flex-wrap gap-1 mb-3">
-          <span className="badge bg-light text-secondary border">
-            <i className="bi bi-door-closed-fill me-1" aria-hidden="true" />
+        <ul className="feature-list mb-3">
+          <li className="feature-list__item">
+            <i className="bi bi-door-closed-fill" aria-hidden="true" />
             {room.bedrooms} {pl(ui, 'bedroom', room.bedrooms)}
-          </span>
-          <span className="badge bg-light text-secondary border">
-            <i className="bi bi-droplet-fill me-1" aria-hidden="true" />
+          </li>
+          <li className="feature-list__item">
+            <i className="bi bi-droplet-fill" aria-hidden="true" />
             {room.bathrooms} {pl(ui, 'bathroom', room.bathrooms)}
-          </span>
-          <span className="badge bg-light text-secondary border">
-            <i className="bi bi-people-fill me-1" aria-hidden="true" />
+          </li>
+          <li className="feature-list__item">
+            <i className="bi bi-people-fill" aria-hidden="true" />
             {ui.maxPeople} {room.maxPeople} {pl(ui, 'person', room.maxPeople)}
-          </span>
-          <span className="badge bg-light text-secondary border">
-            <i className="bi bi-aspect-ratio me-1" aria-hidden="true" />
+          </li>
+          <li className="feature-list__item">
+            <i className="bi bi-aspect-ratio" aria-hidden="true" />
             {room.sqm} {ui.sqm}
-          </span>
-          <span className="badge bg-light text-secondary border">
-            <i className={`bi ${poolIcon} me-1`} aria-hidden="true" />
+          </li>
+          <li className="feature-list__item">
+            <i className={`bi ${poolIcon}`} aria-hidden="true" />
             {poolLabel}
-          </span>
-        </div>
+          </li>
+        </ul>
 
         <Link
           href={roomHref}
