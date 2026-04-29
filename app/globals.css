@@ -1346,33 +1346,6 @@ body {
   background: var(--color-primary-soft);
 }
 
-.btn--ghost {
-  padding: var(--space-xs) var(--space-sm);
-  font-size: var(--text-sm);
-  background: transparent;
-  color: var(--color-primary);
-}
-.btn--ghost:hover:not(:disabled):not(.is-disabled) {
-  text-decoration: underline;
-}
-
-.btn--stepper {
-  width: var(--touch-target);
-  height: var(--touch-target);
-  padding: 0;
-  border-radius: var(--radius-pill);
-  border: 1.5px solid var(--color-border);
-  background: var(--color-bg);
-  color: var(--color-text-muted);
-  font-size: var(--text-lg);
-  font-weight: 700;
-}
-.btn--stepper.is-active {
-  background: var(--color-primary);
-  color: var(--color-on-dark);
-  border-color: var(--color-primary);
-}
-
 /* ── Card (Caso C audit) ── */
 .card-option {
   width: 100%;
@@ -1593,23 +1566,6 @@ body {
   font-weight: 400;
 }
 
-.label-row-between {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--space-sm);
-}
-.label-row-between__label {
-  font-size: var(--text-xs);
-  color: var(--color-text-muted);
-}
-.label-row-between__value {
-  font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--color-text);
-  text-align: right;
-}
-
 /* ── Section title / heading ── */
 .section-title-main {
   font-size: var(--text-xl);
@@ -1662,12 +1618,6 @@ body {
   align-items: center;
   gap: var(--space-sm);
 }
-.layout-row-between--start {
-  align-items: flex-start;
-}
-.layout-row-between--baseline {
-  align-items: baseline;
-}
 
 /* Price row del breakdown sidebar: label a sx che può wrappare su 2+ righe,
    valore a dx che resta sempre su una riga. Risolve il caso con upsell
@@ -1689,44 +1639,6 @@ body {
   white-space: nowrap;
 }
 
-.layout-grid-2col {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-md);
-}
-@media (min-width: 640px) {
-  .layout-grid-2col {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-.layout-form-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  margin-bottom: var(--space-md);
-}
-
-.layout-accordion-toggle {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-md) 0;
-  background: transparent;
-  border: none;
-  font: inherit;
-  color: inherit;
-  cursor: pointer;
-  text-align: left;
-}
-.layout-accordion-toggle:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-  border-radius: var(--radius-sm);
-}
-
 .layout-sticky-mobile-bar {
   position: fixed;
   bottom: 0;
@@ -1741,23 +1653,6 @@ body {
 @media (min-width: 768px) {
   .layout-sticky-mobile-bar {
     display: none;
-  }
-}
-
-.layout-sidebar-desktop {
-  display: none;
-}
-@media (min-width: 768px) {
-  .layout-sidebar-desktop {
-    display: block;
-    width: 320px;
-    flex-shrink: 0;
-    position: sticky;
-    top: 90px;
-    background: var(--color-bg-muted);
-    border-radius: var(--radius-lg);
-    padding: var(--space-lg);
-    box-sizing: border-box;
   }
 }
 
