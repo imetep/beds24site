@@ -3,6 +3,7 @@ import { locales, isValidLocale, type Locale } from '@/config/i18n';
 import { notFound } from 'next/navigation';
 import RoomCard from '@/components/residenze/RoomCard';
 import { getCovers } from '@/lib/cloudinary-covers';
+import { Icon, type IconName } from '@/components/ui/Icon';
 
 interface Props {
   params: Promise<{ locale: Locale }>;
@@ -19,9 +20,9 @@ const LABELS: Record<string, { title: string; subtitle: string }> = {
   pl: { title: 'Nasze Rezydencje',   subtitle: 'Wybierz apartament i zarezerwuj bezpośrednio u nas' },
 };
 
-const SECTION_ICON: Record<number, string> = {
-  46487: 'bi-tree-fill',
-  46871: 'bi-umbrella-fill',
+const SECTION_ICON: Record<number, IconName> = {
+  46487: 'tree-fill',
+  46871: 'umbrella-fill',
 };
 
 export default async function ResidenzePage({ params }: Props) {
@@ -43,7 +44,7 @@ export default async function ResidenzePage({ params }: Props) {
         <section key={property.propertyId} className={idx < PROPERTIES.length - 1 ? 'mb-5' : ''}>
           <header className={`residenze-section__header residenze-section__header--p${property.propertyId}`}>
             <div className="residenze-section__icon-wrap">
-              <i className={`bi ${SECTION_ICON[property.propertyId] ?? 'bi-house-fill'}`} aria-hidden="true" />
+              <Icon name={SECTION_ICON[property.propertyId] ?? 'house-fill'} />
             </div>
             <div className="residenze-section__text">
               <h2 className="residenze-section__title">{property.name}</h2>
