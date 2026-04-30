@@ -2,23 +2,6 @@
 
 import { useState } from 'react';
 
-const C = {
-  blue:       'var(--color-primary)',
-  blueLight:  '#EEF5FC',
-  orange:     '#FCAF1A',
-  text:       '#111111',
-  textMid:    '#555555',
-  textMuted:  '#888888',
-  border:     '#e5e7eb',
-  bg:         '#f9fafb',
-  success:    '#16a34a',
-  successBg:  '#f0fdf4',
-  error:      '#c0392b',
-  errorBg:    '#fef2f2',
-  orangePale: '#FFF8EC',
-  orangeDark: '#B07820',
-};
-
 interface Message { from: 'host' | 'guest'; text: string; time: string; }
 interface CheckinData { status: 'PENDING' | 'APPROVED' | 'REJECTED'; rejectReason: string | null; messages: Message[]; }
 interface Props { locale: string; t: any; bookId: string; checkin: CheckinData; }
@@ -31,10 +14,10 @@ export default function CheckinSection({ locale, t, bookId, checkin }: Props) {
   const [sendError, setSendError] = useState('');
 
   const statusConfig = {
-    PENDING:  { label: tC.statusPending,  color: C.orangeDark, bg: C.orangePale, icon: 'bi-hourglass-split' },
-    APPROVED: { label: tC.statusApproved, color: C.success,    bg: C.successBg,  icon: 'bi-check-circle-fill' },
-    REJECTED: { label: tC.statusRejected, color: C.error,      bg: C.errorBg,    icon: 'bi-x-circle-fill' },
-  };
+    PENDING:  { label: tC.statusPending,  modifier: 'pending',  icon: 'bi-hourglass-split' },
+    APPROVED: { label: tC.statusApproved, modifier: 'approved', icon: 'bi-check-circle-fill' },
+    REJECTED: { label: tC.statusRejected, modifier: 'rejected', icon: 'bi-x-circle-fill' },
+  } as const;
   const st = statusConfig[checkin.status] ?? statusConfig.PENDING;
 
   const sendMessage = async () => {
@@ -51,30 +34,24 @@ export default function CheckinSection({ locale, t, bookId, checkin }: Props) {
   };
 
   return (
-    <div className="bg-white border shadow-sm" style={sectionCard}>
-      <div className="d-flex align-items-center gap-2 mb-3">
-        <i className="bi bi-house-fill" style={{ fontSize: '1.1rem', color: 'var(--color-primary)' }} aria-hidden="true" />
-        <h3 className="m-0 fw-bold" style={{ fontSize: '1rem', color: C.text }}>{tC.title}</h3>
+    <div className="guest-section">
+      <div className="section-header">
+        <i className="bi bi-house-fill section-header__icon" aria-hidden="true" />
+        <h3 className="section-header__title">{tC.title}</h3>
       </div>
 
       {/* Badge status */}
-      <div
-        className="d-inline-flex align-items-center gap-2 mb-3 rounded-pill"
-        style={{ padding: '0.4rem 0.9rem', background: st.bg }}
-      >
-        <i className={`bi ${st.icon}`} style={{ color: st.color }} aria-hidden="true" />
-        <span className="fw-bold" style={{ fontSize: '0.85rem', color: st.color }}>{st.label}</span>
+      <div className={`status-badge status-badge--${st.modifier} status-badge--mb`}>
+        <i className={`bi ${st.icon}`} aria-hidden="true" />
+        <span>{st.label}</span>
       </div>
 
       {/* Motivo rifiuto */}
       {checkin.status === 'REJECTED' && checkin.rejectReason && (
-        <div
-          className="mb-3"
-          style={{ background: C.errorBg, border: '1px solid #fecaca', borderRadius: 10, padding: '0.9rem 1rem', fontSize: '0.88rem', lineHeight: 1.6 }}
-        >
-          <strong style={{ color: C.error }}>{tC.rejectPrefix}</strong>
-          <span style={{ color: C.error }}>{checkin.rejectReason}</span>
-          <p className="mt-2 mb-0" style={{ color: C.textMuted, fontSize: '0.82rem' }}>{tC.rejectNote}</p>
+        <div className="checkin-section__reject">
+          <strong>{tC.rejectPrefix}</strong>
+          <span>{checkin.rejectReason}</span>
+          <p className="checkin-section__reject-note">{tC.rejectNote}</p>
         </div>
       )}
 
@@ -82,8 +59,7 @@ export default function CheckinSection({ locale, t, bookId, checkin }: Props) {
       {checkin.status === 'PENDING' && (
         <a
           href={`/${locale}/self-checkin/wizard`}
-          className="d-block fw-bold text-center text-decoration-none mb-2"
-          style={btnOrange}
+          className="btn-cta-orange"
         >
           <i className="bi bi-clipboard-fill me-1" aria-hidden="true" />
           {tC.wizardBtn}
@@ -92,30 +68,21 @@ export default function CheckinSection({ locale, t, bookId, checkin }: Props) {
 
       {/* Thread messaggi */}
       <div className="mt-4">
-        <p
-          className="fw-bold text-uppercase mb-2"
-          style={{ fontSize: '0.82rem', color: C.textMid, letterSpacing: '0.05em' }}
-        >
+        <p className="checkin-section__messages-title">
           <i className="bi bi-chat-fill me-1" aria-hidden="true" />
           {tC.messagesTitle}
         </p>
 
         {messages.length === 0 ? (
-          <p className="fst-italic" style={{ color: C.textMuted, fontSize: '0.875rem' }}>{tC.noMessages}</p>
+          <p className="checkin-section__no-messages">{tC.noMessages}</p>
         ) : (
-          <div
-            className="d-flex flex-column gap-2 mb-3"
-            style={{ maxHeight: 280, overflowY: 'auto' }}
-          >
+          <div className="checkin-section__messages">
             {messages.map((m, i) => (
-              <div key={i} style={{ alignSelf: m.from === 'guest' ? 'flex-end' : 'flex-start', maxWidth: '82%' }}>
-                <div style={{ background: m.from === 'guest' ? C.blueLight : C.bg, border: `1px solid ${m.from === 'guest' ? '#bfdbfe' : C.border}`, borderRadius: m.from === 'guest' ? '14px 14px 3px 14px' : '14px 14px 14px 3px', padding: '0.6rem 0.9rem', fontSize: '0.875rem', color: C.text, lineHeight: 1.5 }}>
+              <div key={i} className={`checkin-section__msg checkin-section__msg--${m.from}`}>
+                <div className="checkin-section__msg-bubble">
                   {m.text}
                 </div>
-                <p
-                  className="mb-0"
-                  style={{ marginTop: '0.2rem', fontSize: '0.71rem', color: C.textMuted, textAlign: m.from === 'guest' ? 'right' : 'left' }}
-                >
+                <p className="checkin-section__msg-time">
                   {m.from === 'guest' ? tC.youLabel : tC.hostLabel} · {new Date(m.time).toLocaleString(locale, { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
                 </p>
               </div>
@@ -123,22 +90,18 @@ export default function CheckinSection({ locale, t, bookId, checkin }: Props) {
           </div>
         )}
 
-        <div className="d-flex gap-2">
-          <input type="text" value={newMsg} onChange={e => setNewMsg(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendMessage()}
+        <div className="checkin-section__send-row">
+          <input
+            type="text" value={newMsg} onChange={e => setNewMsg(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendMessage()}
             placeholder={tC.messagePlaceholder}
-            className="flex-fill"
-            style={{ padding: '0.65rem 0.9rem', border: `1.5px solid ${C.border}`, borderRadius: 9, fontSize: '0.9rem', outline: 'none', color: C.text }} />
-          <button onClick={sendMessage} disabled={sending || !newMsg.trim()}
-            className="fw-bold border-0"
-            style={{ padding: '0.65rem 1.1rem', background: sending || !newMsg.trim() ? '#e0e0e0' : C.orange, color: sending || !newMsg.trim() ? C.textMid : C.text, borderRadius: 9, cursor: sending || !newMsg.trim() ? 'not-allowed' : 'pointer', fontSize: '0.9rem' }}>
+            className="checkin-section__input"
+          />
+          <button onClick={sendMessage} disabled={sending || !newMsg.trim()} className="checkin-section__send-btn">
             {sending ? tC.sending : tC.sendBtn}
           </button>
         </div>
-        {sendError && <p className="mb-0" style={{ marginTop: '0.4rem', color: C.error, fontSize: '0.82rem' }}>{sendError}</p>}
+        {sendError && <p className="checkin-section__send-error">{sendError}</p>}
       </div>
     </div>
   );
 }
-
-const sectionCard: React.CSSProperties = { borderRadius: 16, padding: '1.5rem' };
-const btnOrange: React.CSSProperties   = { padding: '0.8rem 1.25rem', background: '#FCAF1A', color: '#111111', borderRadius: 10, fontSize: '0.92rem' };

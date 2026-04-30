@@ -5420,6 +5420,9 @@ body {
   background: var(--color-bg-muted);
   color: var(--color-text-subtle);
 }
+.status-badge--mb {
+  margin-bottom: var(--space-md);
+}
 
 /* ── Info box (bg neutro, contenuto descrittivo dentro card) ── */
 .info-box {
