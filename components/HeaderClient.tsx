@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { locales, localeLabels, localeSlugs, type Locale } from '@/config/i18n';
+import { Icon, type IconName } from '@/components/ui/Icon';
 
 interface Props {
   locale: Locale;
@@ -94,7 +95,7 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
                 onClick={() => setLangOpen(o => !o)}
                 aria-expanded={langOpen}
               >
-                <i className="bi bi-globe me-1"></i>
+                <Icon name="globe" className="me-1" />
                 {locale.toUpperCase()}
               </button>
               {langOpen && (
@@ -120,7 +121,7 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
               title="Area Ospiti"
               className="text-muted text-decoration-none"
             >
-              <i className="bi bi-lock header-portal-icon"></i>
+              <Icon name="lock" className="header-portal-icon" />
             </a>
           </nav>
 
@@ -150,10 +151,10 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
               { href: `/${locale}/${localeSlugs.residences[locale]}`, label: nav.residences },
               { href: `/${locale}/${localeSlugs.location[locale]}`, label: nav.location },
               { href: `/${locale}/${localeSlugs.contact[locale]}`, label: nav.contact },
-              { href: `/${locale}/guest/portal`, label: 'Area Ospiti', iconClass: 'bi-shield-lock-fill' },
-            ].map(({ href, label, iconClass }: { href: string; label: string; iconClass?: string }) => (
+              { href: `/${locale}/guest/portal`, label: 'Area Ospiti', iconName: 'shield-lock-fill' as IconName },
+            ].map(({ href, label, iconName }: { href: string; label: string; iconName?: IconName }) => (
               <a key={href} href={href} className="d-block fw-semibold text-dark text-decoration-none py-3 border-bottom header-mobile-link">
-                {iconClass && <i className={`bi ${iconClass} me-2`} aria-hidden="true" />}
+                {iconName && <Icon name={iconName} className="me-2" />}
                 {label}
               </a>
             ))}
@@ -169,7 +170,7 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
           {/* Language selector mobile */}
           <div className="px-3 pt-2">
             <p className="small text-muted text-uppercase fw-semibold mb-2 header-mobile-lang-label">
-              <i className="bi bi-globe me-1"></i> Lingua
+              <Icon name="globe" className="me-1" /> Lingua
             </p>
             <div className="d-flex gap-2 flex-wrap">
               {locales.map(l => (
