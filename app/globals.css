@@ -104,11 +104,11 @@
   --bp-md: 768px;
   --bp-lg: 1024px;
 
-  /* Container max-width scale — larghezza pagina unificata a 1200px (vedi .page-container) */
+  /* Container max-width scale — wrapper pagina fisso a 985px (Airbnb-pattern grid, vedi .page-container) */
   --container-sm: 680px;           /* Form, single-column reading (legali, wizard step) */
   --container-md: 1024px;          /* Layout standard desktop */
-  --container-page: 1200px;        /* Wrapper pagina unificato (era 1100, ora allineato a --container-lg) */
-  --container-lg: 1200px;          /* Hero, gallerie, pagine marketing wide */
+  --container-page: 985px;         /* Wrapper pagina — fisso a 985 (Airbnb-grid container centrale) */
+  --container-lg: 1200px;          /* Hero, gallerie, opt-out --wide */
 
   /* Wizard checkout — proporzioni Airbnb /book (985 = 540 + 105 + 340) */
   --wizard-container-max: 985px;   /* Wrapper esterno wizard (sostituisce --container-lg in .wizard-container) */
@@ -135,9 +135,12 @@ body {
 /* ── Wrapper pagina unificato — usa su ogni page wrapper per coerenza larghezza desktop ── */
 .page-container {
   width: 100%;
-  max-width: var(--container-lg);
+  max-width: var(--container-page);
   margin-inline: auto;
   padding-inline: 16px;
+}
+.page-container--wide {
+  max-width: var(--container-lg);  /* 1200 — opt-out per layout 2-col (es. /paga checkout) */
 }
 
 /* Top spacing standard sotto header sticky.
