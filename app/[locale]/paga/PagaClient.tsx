@@ -6,6 +6,7 @@ import { PROPERTIES, CIN } from '@/config/properties';
 import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
+import { Icon } from '@/components/ui/Icon';
 
 // ─── UI translations ──────────────────────────────────────────────────────────
 
@@ -297,7 +298,7 @@ export default function PagaClient({ locale }: Props) {
   if (error && !booking) return (
     <div className="page-state">
       <div className="page-state__icon page-state__icon--lg page-state__icon--error">
-        <i className="bi bi-exclamation-triangle-fill" aria-hidden="true" />
+        <Icon name="exclamation-triangle-fill" />
       </div>
       <h2 className="page-state__title page-state__title--error">{t.errTitle}</h2>
       <p className="page-state__text">{error}</p>
@@ -316,7 +317,7 @@ export default function PagaClient({ locale }: Props) {
   if (phase === 'done') return (
     <div className="page-state">
       <div className="page-state__icon page-state__icon--xl page-state__icon--success">
-        <i className="bi bi-check-circle-fill" aria-hidden="true" />
+        <Icon name="check-circle-fill" />
       </div>
       <h2 className="page-state__title page-state__title--success">{t.paid}</h2>
       <p className="page-state__text">{booking.guestName} · {booking.guestEmail}</p>
@@ -363,7 +364,7 @@ export default function PagaClient({ locale }: Props) {
 
           {/* Banner consumi energetici (info) */}
           <div className="banner banner--info banner--with-icon">
-            <i className="bi bi-lightning-fill" aria-hidden="true" />
+            <Icon name="lightning-fill" />
             <div>
               <p className="banner__title">{tSidebar.energyTitle}</p>
               <p className="banner__text">{tSidebar.energyText}</p>
@@ -419,7 +420,7 @@ export default function PagaClient({ locale }: Props) {
 
           {/* Banner deposito cauzionale (warning) */}
           <div className="banner banner--warning banner--with-icon">
-            <i className="bi bi-shield-lock-fill" aria-hidden="true" />
+            <Icon name="shield-lock-fill" />
             <div>
               <p className="banner__title">
                 {tSidebar.depositTitle}{room?.securityDeposit ? ` — €${room.securityDeposit}` : ''}
@@ -449,12 +450,12 @@ export default function PagaClient({ locale }: Props) {
             >
               {m === 'stripe' ? (
                 <>
-                  <i className="bi bi-credit-card-fill me-1" aria-hidden="true" />
+                  <Icon name="credit-card-fill" className="me-1" />
                   Carta
                 </>
               ) : (
                 <>
-                  <i className="bi bi-paypal me-1" aria-hidden="true" />
+                  <Icon name="paypal" className="me-1" />
                   PayPal
                 </>
               )}
@@ -480,12 +481,12 @@ export default function PagaClient({ locale }: Props) {
           >
             {phase === 'paying' ? (
               <>
-                <i className="bi bi-hourglass-split" aria-hidden="true" />
+                <Icon name="hourglass-split" />
                 {t.paying}
               </>
             ) : (
               <>
-                <i className="bi bi-credit-card-fill" aria-hidden="true" />
+                <Icon name="credit-card-fill" />
                 {t.payBtn} · {fmt(depositAmount)}
               </>
             )}
@@ -497,7 +498,7 @@ export default function PagaClient({ locale }: Props) {
           <div className="wizard-step3__paypal-wrapper">
             {!paypalReady && phase !== 'paying' && (
               <div className="wizard-step3__paypal-loading">
-                <i className="bi bi-hourglass-split me-1" aria-hidden="true" />
+                <Icon name="hourglass-split" className="me-1" />
                 {t.paypalLoading}
               </div>
             )}
@@ -507,13 +508,13 @@ export default function PagaClient({ locale }: Props) {
                 className="wizard-step3__paypal-v6-btn"
                 type="button"
               >
-                <i className="bi bi-paypal" aria-hidden="true"></i>
+                <Icon name="paypal" />
                 <span>{t.payBtn} · {fmt(depositAmount)}</span>
               </button>
             )}
             {phase === 'paying' && (
               <div className="wizard-step3__paypal-loading">
-                <i className="bi bi-hourglass-split me-1" aria-hidden="true" />
+                <Icon name="hourglass-split" className="me-1" />
                 {t.payingPaypal}
               </div>
             )}
