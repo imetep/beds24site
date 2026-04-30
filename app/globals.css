@@ -4887,6 +4887,461 @@ body {
   letter-spacing: 3px;
 }
 
+/* ──────────────────────────────────────────────────────────────────────────
+   GUEST PORTAL + GUEST LOGIN (Sessione 16 Fase 2)
+   File: GuestPortal.tsx, GuestLogin.tsx
+   Pattern: dashboard-card riusabile, support-footer condiviso, faq-list,
+   pay-row, guest-login__* per form login.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* ── Wrapper portale ── */
+.guest-portal {
+  background: var(--color-bg-muted);
+  min-height: 70vh;
+  padding-bottom: calc(var(--space-xl) * 2);
+}
+.guest-portal__notice {
+  padding: var(--space-md) var(--space-lg);
+  text-align: center;
+  font-weight: 700;
+  font-size: var(--text-sm);
+  border-bottom: 1px solid;
+}
+.guest-portal__notice--success {
+  background: var(--color-success-bg);
+  border-bottom-color: var(--color-success-border);
+  color: var(--color-success-text);
+}
+.guest-portal__notice--info {
+  background: var(--color-primary-soft);
+  border-bottom-color: var(--color-primary-soft-border);
+  color: var(--color-primary);
+}
+
+/* ── Header portale ── */
+.guest-portal__header {
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-md) var(--space-base);
+}
+.guest-portal__title {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+}
+.guest-portal__subtitle {
+  margin: var(--space-xs) 0 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+.guest-portal__logout {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-xs) var(--space-md);
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
+  cursor: pointer;
+  min-height: var(--touch-target);
+}
+.guest-portal__logout:hover {
+  background: var(--color-bg-muted);
+}
+
+/* ── Content area ── */
+.guest-portal__content {
+  padding: var(--space-sm) var(--space-sm) var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* ── Hero struttura (banner blu in cima dashboard) ── */
+.guest-portal__hero {
+  background: var(--color-primary);
+  border-radius: 14px;
+  padding: var(--space-base);
+  position: relative;
+  overflow: hidden;
+}
+.guest-portal__hero-label {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-primary-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.guest-portal__hero-name {
+  display: block;
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--color-on-dark);
+  text-decoration: none;
+  line-height: 1.2;
+  margin-bottom: var(--space-xs);
+}
+.guest-portal__hero-prop {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-primary-soft);
+  opacity: 0.8;
+}
+
+/* ── Date row (check-in / nights / check-out) ── */
+.guest-portal__dates {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--space-sm);
+  align-items: stretch;
+}
+.guest-portal__date-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: var(--space-sm);
+}
+.guest-portal__date-label {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+.guest-portal__date-value {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--text-md);
+  font-weight: 700;
+  color: var(--color-text);
+}
+.guest-portal__date-time {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+.guest-portal__nights {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: 0 var(--space-xs);
+}
+.guest-portal__nights-line {
+  width: 1px;
+  flex: 1;
+  background: var(--color-border);
+}
+.guest-portal__nights-label {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* ── Loading phase wrapper (portal) ── */
+.guest-portal-loading {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-disabled);
+}
+
+/* ── Dashboard card (riusato per booking info / FAQ / sezioni guest portal) ── */
+.dashboard-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: var(--space-base);
+  box-shadow: var(--shadow-sm);
+}
+.dashboard-card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--space-sm);
+  margin-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+.dashboard-card__title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-base);
+}
+.dashboard-card__title {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+/* ── Avatar circolare (icon dentro cerchio bg primary-soft) ── */
+.icon-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  border-radius: var(--radius-pill);
+  width: 36px;
+  height: 36px;
+  font-size: var(--text-md);
+  flex-shrink: 0;
+}
+
+/* ── Pay row (riga totale prezzo / pagato / saldo dovuto) ── */
+.pay-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--text-sm);
+}
+.pay-row--small {
+  font-size: var(--text-xs);
+}
+.pay-row__label {
+  color: var(--color-text-subtle);
+}
+.pay-row--small .pay-row__label {
+  color: var(--color-text-disabled);
+}
+.pay-row__value {
+  font-weight: 700;
+  color: var(--color-text);
+}
+.pay-row--small .pay-row__value {
+  font-weight: 400;
+}
+.pay-row__value--success {
+  color: var(--color-success);
+}
+.pay-row__divider {
+  border-top: 1px solid var(--color-border);
+  margin-top: var(--space-xs);
+  padding-top: var(--space-xs);
+}
+.pay-row__balance-banner {
+  background: var(--color-warning-bg);
+  border: 1px solid var(--color-cta);
+  border-radius: 10px;
+  padding: var(--space-sm) var(--space-sm);
+  margin-top: var(--space-xs);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pay-row__balance-label {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-text-accent);
+}
+.pay-row__balance-value {
+  font-size: var(--text-md);
+  font-weight: 700;
+  color: var(--color-text-accent);
+}
+.pay-row__balance-value--paid {
+  color: var(--color-success);
+}
+.pay-row__paid-confirm {
+  font-size: var(--text-sm);
+  color: var(--color-success);
+  font-weight: 600;
+  text-align: center;
+  padding-top: var(--space-xs);
+}
+
+/* ── FAQ accordion ── */
+.faq-list {
+  margin: 0;
+  padding: 0;
+}
+.faq-item {
+  border-bottom: 1px solid var(--color-border);
+}
+.faq-item:last-child {
+  border-bottom: none;
+}
+.faq-item__btn {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: var(--space-sm) 0;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: var(--touch-target);
+}
+.faq-item__q {
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--color-text);
+}
+.faq-item__chevron {
+  color: var(--color-primary);
+  font-size: var(--text-xs);
+  flex-shrink: 0;
+  margin-left: var(--space-sm);
+}
+.faq-item__a {
+  margin: 0 0 var(--space-sm);
+  font-size: var(--text-sm);
+  color: var(--color-text-subtle);
+  line-height: 1.65;
+}
+
+/* ── Support footer (condiviso login + portal) ── */
+.support-footer {
+  text-align: center;
+  padding-top: var(--space-xs);
+}
+.support-footer--bordered {
+  margin-top: var(--space-base);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+}
+.support-footer__hint {
+  margin: 0 0 var(--space-sm);
+  font-size: var(--text-xs);
+  color: var(--color-text-disabled);
+}
+.support-footer__links {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-lg);
+}
+.support-footer__link {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+/* ── Guest login (pre-dashboard) ── */
+.guest-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-base) var(--space-md);
+  min-height: 70vh;
+  background: var(--color-bg-muted);
+}
+.guest-login__card {
+  background: var(--color-bg);
+  border-radius: 20px;
+  padding: var(--space-xl);
+  width: 100%;
+  max-width: 420px;
+  box-shadow: var(--shadow-lg);
+}
+.guest-login__avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary-soft);
+  font-size: var(--text-xl);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-base);
+}
+.guest-login__title {
+  font-size: var(--text-xl);
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--space-sm);
+  text-align: center;
+}
+.guest-login__subtitle {
+  margin: 0;
+  text-align: center;
+  color: var(--color-text-subtle);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+.guest-login__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-top: var(--space-base);
+}
+.guest-login__date-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1.4fr;
+  gap: var(--space-sm);
+}
+.guest-login__error {
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  border-radius: 8px;
+  padding: var(--space-sm) var(--space-base);
+  color: var(--color-danger);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+.guest-login__submit {
+  width: 100%;
+  padding: var(--space-md);
+  min-height: var(--touch-target);
+  background: var(--color-cta);
+  color: var(--color-text);
+  border: none;
+  border-radius: 10px;
+  font-size: var(--text-base);
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: var(--space-xs);
+}
+.guest-login__submit:disabled {
+  background: var(--color-bg-muted);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+.guest-login__rate-limited-icon {
+  font-size: 2.5rem;
+  color: var(--color-text-subtle);
+  text-align: center;
+  margin-bottom: var(--space-sm);
+}
+.guest-login__rate-limited-title {
+  font-size: var(--text-lg);
+  color: var(--color-text);
+  text-align: center;
+  margin: 0 0 var(--space-xs);
+}
+.guest-login__rate-limited-msg {
+  text-align: center;
+  margin: 0 0 var(--space-base);
+  color: var(--color-text-subtle);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+/* ── Field label/input modifier per pattern login uppercase ── */
+.ui-field-label--uppercase {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-text-subtle);
+  margin-bottom: var(--space-xs);
+}
+.ui-field-input--select {
+  appearance: auto;
+  cursor: pointer;
+  background: var(--color-bg);
+}
+
 /* Layout 2-col Airbnb-style (mobile single col, desktop ≥1024px due colonne):
    - main 680px (riepilogo soggiorno + prezzo + dati ospite)
    - side 480px sticky (consumi/deposito + metodo + CTA) */
