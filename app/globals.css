@@ -4817,6 +4817,75 @@ body {
   font-size: var(--text-sm);
   margin-top: var(--space-sm);
 }
+.page-state__text--error {
+  color: var(--color-warning-text);
+}
+.page-state__text--subtle {
+  color: var(--color-text-disabled);
+}
+.page-state__icon--brand {
+  color: var(--color-primary);
+}
+.page-state__icon--cta {
+  color: var(--color-cta);
+}
+.page-state__title--brand {
+  color: var(--color-primary);
+}
+.page-state__spinner {
+  width: 22px;
+  height: 22px;
+  margin: 0 auto var(--space-base);
+  border: 2px solid var(--color-border);
+  border-top: 2px solid var(--color-primary);
+  border-radius: var(--radius-pill);
+  animation: wizard-spin 0.8s linear infinite;
+}
+.page-state__spinner--lg {
+  width: 48px;
+  height: 48px;
+  border-width: 3px;
+  margin-bottom: var(--space-lg);
+}
+.page-state__cta {
+  display: inline-block;
+  margin-top: var(--space-lg);
+  padding: 14px var(--space-xl);
+  background: var(--color-primary);
+  color: var(--color-on-dark);
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: var(--text-md);
+  text-decoration: none;
+  min-height: var(--touch-target);
+}
+.page-state__cta:hover {
+  filter: brightness(0.95);
+}
+
+/* Booking confirmation ID badge — pagina /successo (post-pagamento) */
+.booking-confirmation-id {
+  display: inline-block;
+  background: var(--color-primary-soft);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-base) calc(var(--space-base) * 1.75);
+  margin: var(--space-md) 0;
+}
+.booking-confirmation-id__label {
+  margin: 0 0 4px;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.booking-confirmation-id__value {
+  font-size: 28px;  /* page-state booking ID — fuori scala token (>22 var(--text-xl)), evidenza primaria post-pagamento */
+  font-weight: 900;
+  color: var(--color-primary);
+  letter-spacing: 3px;
+}
 
 /* Layout 2-col Airbnb-style (mobile single col, desktop ≥1024px due colonne):
    - main 680px (riepilogo soggiorno + prezzo + dati ospite)
