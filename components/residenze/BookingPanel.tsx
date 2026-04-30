@@ -6,6 +6,7 @@ import { useWizardStore } from '@/store/wizard-store';
 import { calculateTouristTax } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
+import { Icon } from '@/components/ui/Icon';
 
 function calcNights(ci: string, co: string) {
   return Math.round((new Date(co).getTime() - new Date(ci).getTime()) / 86_400_000);
@@ -149,7 +150,7 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
 
         {overCapacity && (
           <p className="mt-2 mb-0 text-danger booking-panel__overcapacity-warning">
-            <i className="bi bi-exclamation-triangle-fill me-1" />
+            <Icon name="exclamation-triangle-fill" className="me-1" />
             {(maxPeople === 1 ? t.maxPeopleOne : t.maxPeopleMany).replace('{n}', String(maxPeople))}
           </p>
         )}
@@ -189,7 +190,7 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
                       <span className="booking-panel__offer-name">{name}</span>
                       {isPicked && (
                         <span className="booking-panel__offer-pill-selected">
-                          <i className="bi bi-check-lg me-1" aria-hidden="true" />
+                          <Icon name="check-lg" className="me-1" />
                           {t.selezionata}
                         </span>
                       )}
