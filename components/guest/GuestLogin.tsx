@@ -2,19 +2,6 @@
 
 import { useState } from 'react';
 
-const C = {
-  blue:        'var(--color-primary)',
-  blueLight:   '#EEF5FC',
-  orange:      '#FCAF1A',
-  text:        '#111111',
-  textMid:     '#555555',
-  textMuted:   '#888888',
-  border:      '#e5e7eb',
-  error:       '#c0392b',
-  errorBg:     '#fef2f2',
-  errorBorder: '#fecaca',
-};
-
 interface Props {
   locale:         string;
   t:              any;   // t.login
@@ -66,15 +53,15 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
 
   if (rateLimited) {
     return (
-      <div className="d-flex align-items-center justify-content-center px-3 py-4" style={wrap}>
-        <div className="bg-white shadow-lg" style={card}>
-          <div className="text-center mb-3" style={{ fontSize: '2.5rem', color: C.textMid }}>
+      <div className="guest-login">
+        <div className="guest-login__card">
+          <div className="guest-login__rate-limited-icon">
             <i className="bi bi-clock-fill" aria-hidden="true" />
           </div>
-          <h2 className="text-center mb-2" style={{ fontSize: '1.2rem', color: C.text }}>{tL.rateLimited}</h2>
-          <p className="text-center mb-4" style={{ color: C.textMid, fontSize: '0.9rem', lineHeight: 1.6 }}>{tL.rateLimitedMsg}</p>
+          <h2 className="guest-login__rate-limited-title">{tL.rateLimited}</h2>
+          <p className="guest-login__rate-limited-msg">{tL.rateLimitedMsg}</p>
           <div className="text-center">
-            <a href="https://wa.me/393283131500" style={supportLink}>
+            <a href="https://wa.me/393283131500" className="support-footer__link">
               <i className="bi bi-whatsapp me-1" aria-hidden="true" />
               WhatsApp
             </a>
@@ -85,44 +72,34 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
   }
 
   return (
-    <div className="d-flex align-items-center justify-content-center px-3 py-4" style={wrap}>
-      <div className="bg-white shadow-lg" style={card}>
+    <div className="guest-login">
+      <div className="guest-login__card">
         {/* Header */}
-        <div className="text-center mb-4">
-          <div
-            className="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
-            style={{ width: 56, height: 56, background: C.blueLight, fontSize: '1.6rem', color: 'var(--color-primary)' }}
-          >
+        <div className="text-center">
+          <div className="guest-login__avatar">
             <i className="bi bi-shield-lock-fill" aria-hidden="true" />
           </div>
-          <h1
-            className="fw-bolder mb-2"
-            style={{ fontSize: '1.45rem', color: C.text, letterSpacing: '-0.02em' }}
-          >
-            {tL.title}
-          </h1>
-          <p className="m-0" style={{ color: C.textMid, fontSize: '0.88rem', lineHeight: 1.6 }}>
-            {tL.subtitle}
-          </p>
+          <h1 className="guest-login__title">{tL.title}</h1>
+          <p className="guest-login__subtitle">{tL.subtitle}</p>
         </div>
 
         {/* Form */}
-        <div className="d-flex flex-column gap-3">
+        <div className="guest-login__form">
           <div>
-            <label style={labelStyle}>{tL.bookingId}</label>
+            <label className="ui-field-label ui-field-label--uppercase">{tL.bookingId}</label>
             <input
               type="text" value={bookId} onChange={e => setBookId(e.target.value)}
-              placeholder="es. 84750124" style={inputStyle}
+              placeholder="es. 84750124" className="ui-field-input"
               onKeyDown={e => e.key === 'Enter' && handleSubmit()}
             />
           </div>
           <div>
-            <label style={labelStyle}>{tL.arrival}</label>
-            <div className="d-grid" style={{ gridTemplateColumns: '1fr 2fr 1.4fr', gap: '0.5rem' }}>
+            <label className="ui-field-label ui-field-label--uppercase">{tL.arrival}</label>
+            <div className="guest-login__date-grid">
               <select
                 value={arrDay}
                 onChange={e => setArrDay(e.target.value)}
-                style={selectStyle}
+                className="ui-field-input ui-field-input--select"
               >
                 <option value="">{tL.dayPlaceholder}</option>
                 {Array.from({ length: 31 }, (_, i) => i + 1).map(d => (
@@ -132,7 +109,7 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
               <select
                 value={arrMonth}
                 onChange={e => setArrMonth(e.target.value)}
-                style={selectStyle}
+                className="ui-field-input ui-field-input--select"
               >
                 <option value="">{tL.monthPlaceholder}</option>
                 {months.map((m, i) => (
@@ -142,7 +119,7 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
               <select
                 value={arrYear}
                 onChange={e => setArrYear(e.target.value)}
-                style={selectStyle}
+                className="ui-field-input ui-field-input--select"
               >
                 <option value="">{tL.yearPlaceholder}</option>
                 {years.map(y => (
@@ -153,34 +130,28 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
           </div>
 
           {error && (
-            <div
-              style={{ background: C.errorBg, border: `1px solid ${C.errorBorder}`, borderRadius: 8, padding: '0.75rem 1rem', color: C.error, fontSize: '0.875rem', lineHeight: 1.5 }}
-            >
+            <div className="guest-login__error">
               {error}
             </div>
           )}
 
           <button
             onClick={handleSubmit} disabled={loading}
-            className="w-100 fw-bold border-0"
-            style={{ padding: '0.85rem', minHeight: 'var(--touch-target)', background: loading ? '#e0e0e0' : C.orange, color: loading ? C.textMid : C.text, borderRadius: 10, fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer', marginTop: '0.25rem' }}
+            className="guest-login__submit"
           >
             {loading ? tL.loading : tL.btn}
           </button>
         </div>
 
         {/* Supporto */}
-        <div
-          className="text-center mt-4"
-          style={{ paddingTop: '1.5rem', borderTop: `1px solid ${C.border}` }}
-        >
-          <p className="mb-2" style={{ fontSize: '0.82rem', color: C.textMuted }}>{tL.noBooking}</p>
-          <div className="d-flex justify-content-center" style={{ gap: '1.5rem' }}>
-            <a href="https://wa.me/393283131500" style={supportLink}>
+        <div className="support-footer support-footer--bordered">
+          <p className="support-footer__hint">{tL.noBooking}</p>
+          <div className="support-footer__links">
+            <a href="https://wa.me/393283131500" className="support-footer__link">
               <i className="bi bi-whatsapp me-1" aria-hidden="true" />
               WhatsApp
             </a>
-            <a href="mailto:contattolivingapple@gmail.com" style={supportLink}>
+            <a href="mailto:contattolivingapple@gmail.com" className="support-footer__link">
               <i className="bi bi-envelope-fill me-1" aria-hidden="true" />
               Email
             </a>
@@ -190,10 +161,3 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
     </div>
   );
 }
-
-const wrap: React.CSSProperties = { minHeight: '70vh', background: '#f9fafb' };
-const card: React.CSSProperties = { borderRadius: 20, padding: '2.5rem', width: '100%', maxWidth: 420 };
-const labelStyle: React.CSSProperties = { display: 'block', fontSize: '0.82rem', fontWeight: 700, color: '#555555', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.04em' };
-const inputStyle: React.CSSProperties = { width: '100%', padding: '0.7rem 0.95rem', minHeight: 'var(--touch-target)', border: '1.5px solid #e5e7eb', borderRadius: 9, fontSize: '0.95rem', color: '#111', outline: 'none', boxSizing: 'border-box' };
-const selectStyle: React.CSSProperties = { width: '100%', padding: '0.7rem 0.5rem', minHeight: 'var(--touch-target)', border: '1.5px solid #e5e7eb', borderRadius: 9, fontSize: '0.92rem', color: '#111', outline: 'none', background: '#fff', cursor: 'pointer', appearance: 'auto' };
-const supportLink: React.CSSProperties = { color: 'var(--color-primary)', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 600 };
