@@ -7,6 +7,7 @@ import { PROPERTIES } from '@/config/properties';
 import { fetchCoversCached, fetchFolderPhotosCached } from '@/lib/cloudinary-client-cache';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
+import { Icon } from '@/components/ui/Icon';
 
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -231,7 +232,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
           </p>
           {phase === 'co' && (
             <div className="home-search__cal-min-stay">
-              <i className="bi bi-moon-stars-fill home-search__cal-min-stay-icon" aria-hidden="true" />
+              <Icon name="moon-stars-fill" className="home-search__cal-min-stay-icon" />
               <div>
                 <div className="home-search__cal-min-stay-title">
                   {locale === 'it' ? 'Soggiorno minimo consigliato: 3 notti'
