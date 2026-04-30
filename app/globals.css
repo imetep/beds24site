@@ -5561,6 +5561,7 @@ body {
 .bed-config-portal__hint {
   font-size: var(--text-sm);
   color: var(--color-text-muted);
+  margin: 0;
 }
 
 /* ── Save button ── */

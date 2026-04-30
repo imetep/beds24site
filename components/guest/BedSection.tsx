@@ -3,21 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { ApartmentBedConfig, Bed, BedBaseType, BedVariant } from '@/lib/bedConfig';
 
-const C = {
-  blue:       'var(--color-primary)',
-  blueLight:  '#DBEAFE',
-  blueMid:    '#93C5FD',
-  orange:     '#FCAF1A',
-  orangeDark: '#B07820',
-  text:       '#111111',
-  textMid:    '#555555',
-  textMuted:  '#888888',
-  border:     '#e5e7eb',
-  bg:         '#f9fafb',
-  success:    '#16a34a',
-  gray:       '#9ca3af',
-};
-
 type LC = 'it' | 'en' | 'de' | 'pl';
 type BedState = 'off' | 'A' | 'B';
 
@@ -121,6 +106,8 @@ function resolveIcon(bed: Bed, displayState: 'A' | 'B'): IconVariant {
 }
 
 function BedIcon({ variant, active }: { variant: IconVariant; active: boolean }) {
+  // Colori SVG dinamici (active vs idle) — non migrabili a token CSS perché
+  // si applicano agli attributi fill/stroke del SVG, non a style CSS.
   const fill   = active ? '#DBEAFE' : '#E5E7EB';
   const stroke = active ? 'var(--color-primary)' : '#9CA3AF';
   const pil    = active ? '#93C5FD' : '#D1D5DB';
@@ -190,27 +177,21 @@ function BedChip({ bed, displayState, isActive, label, slots, onClick, isSommier
   label: string; slots: number; onClick: () => void; isSommier?: boolean;
 }) {
   const icon = resolveIcon(bed, displayState);
+  const isWide = icon === 'matrimoniale' || icon === 'sommier_b' || icon === 'impilabile_b' || icon === 'divano';
   return (
     <button
       onClick={e => { e.stopPropagation(); onClick(); }}
-      style={{
-        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
-        padding: '10px 8px', minWidth: '88px',
-        border: isActive ? `2px solid ${C.blue}` : `1px solid ${C.border}`,
-        borderRadius: '12px', background: isActive ? C.blueLight : '#fff',
-        cursor: 'pointer', transition: 'all .15s', position: 'relative',
-        flex: (icon === 'matrimoniale' || icon === 'sommier_b' || icon === 'impilabile_b' || icon === 'divano') ? '1' : 'none',
-      }}
+      className={`bed-chip ${isActive ? 'is-active' : ''} ${isWide ? 'bed-chip--wide' : ''}`}
     >
       {isSommier && displayState === 'A' && (
-        <span style={{ position: 'absolute', top: '4px', right: '4px', fontSize: '0.6rem', fontWeight: 700, background: '#FFF3CD', color: C.orangeDark, border: `1px solid ${C.orange}`, borderRadius: '3px', padding: '1px 4px' }}>⭐</span>
+        <span className="bed-chip__star">
+          <i className="bi bi-star-fill" aria-hidden="true" />
+        </span>
       )}
       <BedIcon variant={icon} active={isActive} />
-      <span style={{ fontSize: '0.72rem', fontWeight: isActive ? 700 : 400, color: isActive ? C.blue : C.textMuted, textAlign: 'center', lineHeight: 1.3, maxWidth: '100px' }}>
-        {label}
-      </span>
+      <span className="bed-chip__label">{label}</span>
       {isActive && slots > 0 && (
-        <span style={{ fontSize: '0.65rem', color: C.blue, background: '#fff', border: `1px solid ${C.blueMid}`, borderRadius: '10px', padding: '1px 6px' }}>
+        <span className="bed-chip__slots">
           {slots === 1 ? '1p' : `${slots}p`}
         </span>
       )}
@@ -232,30 +213,22 @@ function RoomCard({ room, lc, bedStates, roomTouched, onBedClick, onCardClick, t
   const confirmed = roomTouched || anyActive || allOff;
 
   return (
-    <div
-      onClick={() => onCardClick(room.id)}
-      style={{
-        background: confirmed ? '#F0F9FF' : '#fff',
-        border: confirmed ? `2px solid ${C.blue}` : `1px solid ${C.border}`,
-        borderRadius: '14px', padding: '1rem',
-        transition: 'all .2s', position: 'relative',
-      }}
-    >
+    <div onClick={() => onCardClick(room.id)} className={`bed-room-card ${confirmed ? 'is-confirmed' : ''}`}>
       {confirmed && (
-        <div style={{ position: 'absolute', top: '10px', right: '10px', width: '22px', height: '22px', borderRadius: '50%', background: C.success, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="bed-room-card__check">
           <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3 3 7-7" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
         </div>
       )}
-      <p style={{ margin: '0 0 0.75rem', fontSize: '0.7rem', fontWeight: 700, color: confirmed ? C.blue : C.textMuted, textTransform: 'uppercase', letterSpacing: '0.07em' }}>{label}</p>
+      <p className="bed-room-card__label">{label}</p>
 
       {/* Letti */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+      <div className="bed-room-card__beds">
         {room.beds.map((bed: Bed) => {
           const state = bedStates[bed.id] ?? 'off';
           if (hasTwoChips(bed)) {
             // DUE chip affiancati — scelta esclusiva
             return (
-              <div key={bed.id} style={{ display: 'flex', gap: '6px', width: '100%' }}>
+              <div key={bed.id} className="bed-room-card__chip-pair">
                 {(['A', 'B'] as const).map(ds => (
                   <BedChip
                     key={ds}
@@ -290,13 +263,14 @@ function RoomCard({ room, lc, bedStates, roomTouched, onBedClick, onCardClick, t
       {room.beds.filter((b: Bed) => b.note && (
         (b as any).showNoteAlways || (bedStates[b.id] ?? 'off') !== 'off'
       )).map((bed: Bed) => (
-        <p key={bed.id} style={{ margin: '8px 0 0', fontSize: '0.74rem', color: C.textMuted, lineHeight: 1.4 }}>
-          ℹ️ {bed.note![lc] ?? bed.note!.it}
+        <p key={bed.id} className="bed-room-card__note">
+          <i className="bi bi-info-circle me-1" aria-hidden="true" />
+          {bed.note![lc] ?? bed.note!.it}
         </p>
       ))}
 
       {!confirmed && (
-        <p style={{ margin: '10px 0 0', fontSize: '0.74rem', color: C.textMuted, fontStyle: 'italic' }}>{t.confirmHint}</p>
+        <p className="bed-room-card__hint">{t.confirmHint}</p>
       )}
     </div>
   );
@@ -307,9 +281,9 @@ function ProgressBar({ confirmed, total, t }: { confirmed: number; total: number
   const pct = total === 0 ? 0 : Math.round((confirmed / total) * 100);
   const done = confirmed === total;
   return (
-    <div style={{ marginBottom: '1rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
-        <p style={{ margin: 0, fontSize: '0.8rem', color: done ? C.success : C.textMid, fontWeight: done ? 700 : 400 }}>
+    <div className="bed-progress">
+      <div className="bed-progress__row">
+        <p className={`bed-progress__label ${done ? 'is-done' : ''}`}>
           {done ? (
             <>
               <i className="bi bi-check-circle-fill me-1" aria-hidden="true" />
@@ -317,10 +291,11 @@ function ProgressBar({ confirmed, total, t }: { confirmed: number; total: number
             </>
           ) : `${confirmed} ${t.progressOf} ${total} ${t.progressLabel}`}
         </p>
-        <p style={{ margin: 0, fontSize: '0.78rem', color: C.textMuted }}>{pct}%</p>
+        <p className="bed-progress__pct">{pct}%</p>
       </div>
-      <div style={{ height: '6px', background: C.border, borderRadius: '3px', overflow: 'hidden' }}>
-        <div style={{ height: '100%', borderRadius: '3px', background: done ? C.success : C.blue, width: `${pct}%`, transition: 'width .3s' }}/>
+      <div className="bed-progress__bar">
+        {/* Larghezza dinamica calcolata a runtime — eccezione style legittima */}
+        <div className={`bed-progress__fill ${done ? 'is-done' : ''}`} style={{ width: `${pct}%` }}/>
       </div>
     </div>
   );
@@ -331,9 +306,7 @@ function PersonCounter({ current, total, lc }: { current: number; total: number;
   if (total === 0) return null;
   const tooFew = current < total;
   const exact  = current === total;
-  const color  = tooFew ? C.orangeDark : exact ? C.success : C.textMid;
-  const bg     = tooFew ? '#FFF8EC' : exact ? '#f0fdf4' : C.bg;
-  const bdr    = tooFew ? C.orange : exact ? '#86efac' : C.border;
+  const modifier = tooFew ? 'low' : exact ? 'exact' : 'neutral';
   const text: Record<LC, string> = {
     it: `${current} ${current === 1 ? 'posto' : 'posti'} su ${total} ospiti${tooFew ? ` — mancano ${total - current}` : ''}`,
     en: `${current} of ${total} ${total === 1 ? 'guest' : 'guests'} placed${tooFew ? ` — ${total - current} more needed` : ''}`,
@@ -341,8 +314,8 @@ function PersonCounter({ current, total, lc }: { current: number; total: number;
     pl: `${current} z ${total} ${total === 1 ? 'gościa' : 'gości'}${tooFew ? ` — brakuje ${total - current}` : ''}`,
   };
   return (
-    <div style={{ padding: '9px 12px', background: bg, border: `1px solid ${bdr}`, borderRadius: '10px', marginBottom: '1rem' }}>
-      <span style={{ fontSize: '0.84rem', fontWeight: tooFew || exact ? 700 : 400, color }}>
+    <div className={`person-counter person-counter--${modifier}`}>
+      <span className="person-counter__text">
         <i className="bi bi-door-closed-fill me-1" aria-hidden="true" />
         {text[lc]}
         {exact && <i className="bi bi-check-lg ms-1" aria-hidden="true" />}
@@ -354,15 +327,15 @@ function PersonCounter({ current, total, lc }: { current: number; total: number;
 // ─── Culla ───────────────────────────────────────────────────────────────────
 function CribSection({ cribs, onChange, t }: { cribs: number; onChange: (n: number) => void; t: any }) {
   return (
-    <div style={{ marginBottom: '1.25rem', padding: '1rem', background: C.bg, borderRadius: '12px', border: `1px solid ${C.border}` }}>
-      <p style={{ margin: '0 0 3px', fontSize: '0.88rem', fontWeight: 700, color: C.text }}>
+    <div className="crib-section">
+      <p className="crib-section__title">
         <i className="bi bi-egg-fill me-1" aria-hidden="true" />
         {t.cribTitle}
       </p>
-      <p style={{ margin: '0 0 10px', fontSize: '0.78rem', color: C.textMuted, lineHeight: 1.5 }}>{t.cribDesc}</p>
-      <div style={{ display: 'flex', gap: '6px' }}>
+      <p className="crib-section__desc">{t.cribDesc}</p>
+      <div className="crib-section__choices">
         {[{ n: 0, l: t.cribNo }, { n: 1, l: t.crib1 }, { n: 2, l: t.crib2 }].map(({ n, l }) => (
-          <button key={n} onClick={() => onChange(n)} style={{ flex: 1, padding: '7px 4px', fontSize: '0.8rem', fontWeight: cribs === n ? 700 : 400, border: cribs === n ? `2px solid ${C.blue}` : `1px solid ${C.border}`, borderRadius: '8px', cursor: 'pointer', background: cribs === n ? C.blueLight : '#fff', color: cribs === n ? C.blue : C.textMid, transition: 'all .15s' }}>{l}</button>
+          <button key={n} onClick={() => onChange(n)} className={`crib-section__btn ${cribs === n ? 'is-active' : ''}`}>{l}</button>
         ))}
       </div>
     </div>
@@ -377,13 +350,6 @@ export default function BedSection({ locale, t, numGuests }: { locale: string; t
   const [roomTouched, setRoomTouched] = useState<Record<string, boolean>>({});
   const [cribs,       setCribs]       = useState(0);
   const [status,      setStatus]      = useState<'loading'|'idle'|'saving'|'saved'|'error'>('loading');
-  const [mobile,      setMobile]      = useState(false);
-
-  useEffect(() => {
-    const check = () => setMobile(window.innerWidth < 640);
-    check(); window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, []);
 
   const load = useCallback(async () => {
     try {
@@ -444,28 +410,31 @@ export default function BedSection({ locale, t, numGuests }: { locale: string; t
   const allConfirmed   = config !== null && confirmedCount === totalRooms;
   const currentSlots   = config ? config.rooms.flatMap((r: any) => r.beds).reduce((s: number, b: Bed) => s + slotsForState(b, bedStates[b.id] ?? 'off'), 0) : 0;
 
-  if (status === 'loading') return <div className="bg-white border shadow-sm" style={card}><p className="m-0" style={{ color: C.textMuted, fontSize: '0.84rem' }}>{t.loading}</p></div>;
+  if (status === 'loading') return (
+    <div className="guest-section">
+      <p className="bed-config-portal__hint">{t.loading}</p>
+    </div>
+  );
   if (!config) return null;
 
   return (
-    <div className="bg-white border shadow-sm" style={card}>
-      <div className="d-flex align-items-center gap-2 mb-1">
-        <i className="bi bi-door-closed-fill" style={{ fontSize: '1.1rem', color: 'var(--color-primary)' }} aria-hidden="true" />
-        <h3 className="m-0 fw-bold" style={{ fontSize: '1rem', color: C.text }}>{t.title}</h3>
+    <div className="guest-section">
+      <div className="section-header">
+        <i className="bi bi-door-closed-fill section-header__icon" aria-hidden="true" />
+        <h3 className="section-header__title">{t.title}</h3>
       </div>
-      <p className="mb-3" style={{ fontSize: '0.84rem', color: C.textMid, lineHeight: 1.6 }}>{t.subtitle}</p>
+      <p className="bed-config-portal__subtitle">{t.subtitle}</p>
       <ProgressBar confirmed={confirmedCount} total={totalRooms} t={t} />
-      <div className="d-grid mb-3" style={{ gridTemplateColumns: mobile ? '1fr' : 'repeat(2, 1fr)', gap: '0.75rem' }}>
+      <div className="bed-config-portal__rooms">
         {config.rooms.map((room: any) => (
           <RoomCard key={room.id} room={room} lc={lc} bedStates={bedStates} roomTouched={roomTouched[room.id] ?? false} onBedClick={handleBedClick} onCardClick={handleCardClick} t={t} />
         ))}
       </div>
       <PersonCounter current={currentSlots} total={numGuests} lc={lc} />
       <CribSection cribs={cribs} onChange={n => { setCribs(n); setStatus('idle'); }} t={t} />
-      <div className="d-flex align-items-center gap-3">
+      <div className="bed-config-portal__footer">
         <button onClick={save} disabled={!allConfirmed || status === 'saving' || status === 'saved'}
-          className="text-white fw-bold border-0"
-          style={{ background: status === 'saved' ? C.success : allConfirmed ? C.blue : C.gray, borderRadius: 10, padding: '0.65rem 1.5rem', fontSize: '0.88rem', cursor: !allConfirmed || status === 'saving' || status === 'saved' ? 'not-allowed' : 'pointer', transition: 'background .2s' }}>
+          className={`bed-section__save ${status === 'saved' ? 'is-saved' : ''}`}>
           {status === 'saving' ? t.saving : status === 'saved' ? (
             <>
               <i className="bi bi-check-lg me-1" aria-hidden="true" />
@@ -473,11 +442,9 @@ export default function BedSection({ locale, t, numGuests }: { locale: string; t
             </>
           ) : t.save}
         </button>
-        {status === 'error' && <span style={{ fontSize: '0.82rem', color: '#dc2626' }}>{t.errorSave}</span>}
-        {!allConfirmed && status !== 'saved' && <span style={{ fontSize: '0.8rem', color: C.textMuted }}>{t.saveHint}</span>}
+        {status === 'error' && <span className="bed-config-portal__error">{t.errorSave}</span>}
+        {!allConfirmed && status !== 'saved' && <span className="bed-config-portal__hint">{t.saveHint}</span>}
       </div>
     </div>
   );
 }
-
-const card: React.CSSProperties = { borderRadius: 16, padding: '1.5rem' };
