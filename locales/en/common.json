@@ -1175,6 +1175,50 @@
       "paypalVaultChargeNote": "Charge will happen automatically when the free-cancellation window ends.",
       "errPayPalVault": "PayPal save error. Try again or use a card."
     },
+    "doveSiamo": {
+      "metaTitle": "Where We Are — Scauri (LT) | LivingApple",
+      "metaDescription": "Scauri is a hidden gem on the Tyrrhenian coast, between Rome and Naples. Find out how to reach us by car, train or plane and why it's the perfect holiday destination.",
+      "heroTitle": "Scauri, halfway between Rome and Naples",
+      "heroSub": "Where Lazio meets the sea — nature, history and authentic southern Italian flavours.",
+      "whyTitle": "Why Scauri",
+      "pillSeaTitle": "Sea a short walk away",
+      "pillSeaText": "LivingApple countryside is 1.5 km from the beach. LivingApple beach is just 250 m away.",
+      "pillLocationTitle": "Strategic location",
+      "pillLocationText": "2h from Rome and 1h15 from Naples by car, also reachable by train.",
+      "pillClimateTitle": "Mediterranean climate",
+      "pillClimateText": "Long sunny summers from May to October, with mild temperatures and little rain.",
+      "pillNatureTitle": "Peace and nature",
+      "pillNatureText": "No crowds, no chaos. Just sea, countryside and genuine hospitality.",
+      "mapTitle": "How far are we?",
+      "mapSub": "Scauri is reachable in a day from all major Italian cities.",
+      "howTitle": "How to reach us",
+      "tabPlane": "By plane",
+      "tabTrain": "By train",
+      "tabCar": "By car",
+      "planeIntro": "The most convenient airport is Naples Capodichino, just 80 km away. Rome Fiumicino offers more international flights. Rome Ciampino is ideal for low-cost airlines.",
+      "planeAirports": [
+        { "code": "NAP", "name": "Naples Capodichino", "km": "~80 km",  "time": "~1h by car" },
+        { "code": "FCO", "name": "Rome Fiumicino",     "km": "~165 km", "time": "~2h by car" },
+        { "code": "CIA", "name": "Rome Ciampino",      "km": "~145 km", "time": "~1h30 by car" }
+      ],
+      "trainIntro": "Minturno-Scauri station is served by Intercity and Regional trains, with direct connections from Roma Termini and Napoli Centrale.",
+      "trainRoutes": [
+        { "label": "From Roma Termini",    "time": "~1h45" },
+        { "label": "From Napoli Centrale", "time": "~1h" }
+      ],
+      "trainNote": "From the station to the property: ~10 min by taxi or rental car (no bus service).",
+      "carIntro": "Driving is the best way to enjoy full freedom in Scauri. Take the A1 motorway (Autostrada del Sole) and exit at Cassino.",
+      "carFrom": [
+        { "city": "Rome",     "time": "~2h",       "detail": "155 km · A1" },
+        { "city": "Naples",   "time": "~1h 15min", "detail": "80 km · A1 or SS7" },
+        { "city": "Florence", "time": "~4h",       "detail": "413 km · A1" },
+        { "city": "Milan",    "time": "~6h 30min", "detail": "730 km · A1" }
+      ],
+      "carNoteTitle": "A car is essential",
+      "carNote": "Once you arrive, a car is not optional — it is necessary. Supermarkets, beaches and restaurants are not walkable from the property: the rural roads have no pavements and it is not safe to walk. A car will give you total freedom to explore the coastline, countryside and the villages of the Aurunci Mountains.",
+      "byCar": "by car",
+      "byPlane": "by plane"
+    },
     "homeSearch": {
       "ui": {
         "dates": "Dates",
