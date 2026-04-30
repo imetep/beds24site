@@ -3,6 +3,7 @@ import CardPhotoGallery from './CardPhotoGallery';
 import Link from 'next/link';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
+import { Icon } from '@/components/ui/Icon';
 
 interface Props {
   room: Room;
@@ -20,7 +21,7 @@ function pl(t: Record<string, string>, key: 'bedroom' | 'bathroom' | 'person', c
 export default function RoomCard({ room, locale, coverUrl }: Props) {
   const ui = getTranslations(locale as Locale).components.roomCard;
 
-  const poolIcon   = room.privatePool ? 'bi-water' : room.sharedPool ? 'bi-water' : 'bi-umbrella-fill';
+  const poolIcon   = room.privatePool ? 'water' : room.sharedPool ? 'water' : 'umbrella-fill';
   const poolLabel  = room.privatePool ? ui.privatePool : room.sharedPool ? ui.sharedPool : ui.noPool;
   const floorLabel = room.floor < 0 ? ui.basement : room.floor === 0 ? ui.floorGround : `${ui.floor} ${room.floor}`;
   const roomHref   = `/${locale}/residenze/${room.slug}`;
@@ -47,23 +48,23 @@ export default function RoomCard({ room, locale, coverUrl }: Props) {
 
         <ul className="feature-list mb-3">
           <li className="feature-list__item">
-            <i className="bi bi-door-closed-fill" aria-hidden="true" />
+            <Icon name="door-closed-fill" />
             {room.bedrooms} {pl(ui, 'bedroom', room.bedrooms)}
           </li>
           <li className="feature-list__item">
-            <i className="bi bi-droplet-fill" aria-hidden="true" />
+            <Icon name="droplet-fill" />
             {room.bathrooms} {pl(ui, 'bathroom', room.bathrooms)}
           </li>
           <li className="feature-list__item">
-            <i className="bi bi-people-fill" aria-hidden="true" />
+            <Icon name="people-fill" />
             {ui.maxPeople} {room.maxPeople} {pl(ui, 'person', room.maxPeople)}
           </li>
           <li className="feature-list__item">
-            <i className="bi bi-aspect-ratio" aria-hidden="true" />
+            <Icon name="aspect-ratio" />
             {room.sqm} {ui.sqm}
           </li>
           <li className="feature-list__item">
-            <i className={`bi ${poolIcon}`} aria-hidden="true" />
+            <Icon name={poolIcon} />
             {poolLabel}
           </li>
         </ul>
