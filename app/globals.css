@@ -5881,6 +5881,267 @@ body {
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
+   ChangeRequestWizard (Sessione 18 Fase 2)
+   Wizard 3-step inline (collapsed/open) per richiesta modifica prenotazione.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.change-req__toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: var(--color-primary-soft);
+  border: 1px solid var(--color-primary);
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-primary);
+  min-height: var(--touch-target);
+}
+.change-req__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+.change-req__close-btn {
+  background: transparent;
+  border: none;
+  padding: var(--space-xs);
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.change-req__hint {
+  margin: 0 0 var(--space-base);
+  font-size: var(--text-sm);
+  color: var(--color-text-subtle);
+}
+
+/* Lista opzioni (step 1) */
+.change-req__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+.change-req__option-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-base);
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  font-size: var(--text-base);
+  font-weight: 400;
+  color: var(--color-text);
+  transition: all 0.15s;
+  min-height: var(--touch-target);
+  width: 100%;
+}
+.change-req__option-btn.is-active {
+  border: 2px solid var(--color-primary);
+  background: var(--color-primary-soft);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+.change-req__option-icon {
+  font-size: var(--text-md);
+}
+.change-req__option-check {
+  margin-left: auto;
+  font-size: var(--text-base);
+}
+
+/* Pannelli dettaglio (step 2 — dates/guests/apt) */
+.change-req__panel {
+  margin-bottom: var(--space-base);
+  padding: var(--space-base);
+  background: var(--color-bg-muted);
+  border-radius: 10px;
+}
+.change-req__panel-label {
+  margin: 0 0 var(--space-sm);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-text-subtle);
+  text-transform: uppercase;
+}
+.change-req__date-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+.change-req__field-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
+  display: block;
+}
+.change-req__field-label--mb {
+  display: block;
+  margin-bottom: var(--space-base);
+}
+.change-req__input {
+  display: block;
+  width: 100%;
+  margin-top: var(--space-xs);
+  padding: var(--space-sm);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: var(--text-sm);
+  box-sizing: border-box;
+  font-family: inherit;
+  color: var(--color-text);
+  background: var(--color-bg);
+  outline: none;
+  min-height: var(--touch-target);
+}
+.change-req__input:focus-visible {
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+.change-req__textarea {
+  resize: vertical;
+}
+
+/* Counter -/+ (guests adult/child) */
+.change-req__counter-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+}
+.change-req__counter-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg);
+  cursor: pointer;
+  font-size: var(--text-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.change-req__counter-value {
+  font-size: var(--text-base);
+  font-weight: 700;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* Step navigation (back / next / send) */
+.change-req__nav {
+  display: flex;
+  gap: var(--space-sm);
+}
+.change-req__nav-back {
+  flex: 1;
+  padding: var(--space-sm);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: var(--text-sm);
+  color: var(--color-text-subtle);
+  min-height: var(--touch-target);
+}
+.change-req__nav-next {
+  flex: 2;
+  padding: var(--space-sm);
+  background: var(--color-cta);
+  color: var(--color-on-dark);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: var(--text-base);
+  font-weight: 700;
+  min-height: var(--touch-target);
+}
+.change-req__nav-next:disabled,
+.change-req__nav-next.is-disabled {
+  background: var(--color-border);
+  color: var(--color-text-muted);
+  cursor: default;
+}
+.change-req__nav-next.is-loading {
+  opacity: 0.6;
+}
+.change-req__step1-cta {
+  width: 100%;
+  padding: var(--space-md);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-on-dark);
+  background: var(--color-cta);
+  min-height: var(--touch-target);
+}
+.change-req__step1-cta:disabled {
+  background: var(--color-border);
+  color: var(--color-text-muted);
+  cursor: default;
+}
+
+/* Recap step 3 */
+.change-req__recap {
+  background: var(--color-bg-muted);
+  border-radius: 10px;
+  padding: var(--space-base);
+  margin-bottom: var(--space-md);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.change-req__error {
+  font-size: var(--text-xs);
+  color: var(--color-danger);
+  margin-bottom: var(--space-sm);
+}
+
+/* Sent confirmation */
+.change-req__sent {
+  text-align: center;
+  padding: var(--space-base) 0;
+}
+.change-req__sent-title {
+  font-weight: 700;
+  margin-bottom: var(--space-xs);
+  font-size: var(--text-md);
+  color: var(--color-text);
+}
+.change-req__sent-sub {
+  margin-bottom: var(--space-md);
+  font-size: var(--text-sm);
+  color: var(--color-text-subtle);
+}
+.change-req__sent-btn {
+  padding: var(--space-sm) var(--space-lg);
+  background: var(--color-primary);
+  color: var(--color-on-dark);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  min-height: var(--touch-target);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
    CheckinSection (guest portal — chat host/ospite + status)
    ────────────────────────────────────────────────────────────────────────── */
 
