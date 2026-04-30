@@ -91,6 +91,8 @@ export default function WizardStep2({ locale = 'it' }: Props) {
   const [error, setError]                       = useState<string | null>(null);
   const [phase, setPhase]                       = useState<'ready' | 'paying'>('ready');
   const [vaultPhase, setVaultPhase]             = useState<'idle' | 'saving' | 'redirecting'>('idle');
+  // Mobile: accordion riepilogo prenotazione (la sidebar desktop è nascosta sotto 768px)
+  const [summaryOpen, setSummaryOpen]           = useState(true);
 
   // PayPal SDK v6 refs
   const sdkInstanceRef   = useRef<any>(null);
@@ -575,6 +577,42 @@ export default function WizardStep2({ locale = 'it' }: Props) {
     || vaultPhase !== 'idle'
     || (paymentMethod === 'paypal' && !isFlexOffer && !sdkReady);
 
+  // ── Voucher slot riusato sia da accordion mobile sia da sidebar desktop ──
+  const voucherSlot = (
+    <>
+      <p className="label-uppercase-muted">{t.voucher}</p>
+      <div className="voucher-block__row">
+        <input
+          type="text"
+          value={voucherInput}
+          onChange={e => {
+            setVoucherInput(e.target.value);
+            if (voucherApplied) { setVoucherApplied(false); setDiscountedPrice(null); setVoucherCode(''); }
+          }}
+          placeholder={(tSidebar as any).voucherPlaceholder}
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck={false}
+          className={`voucher-block__input${voucherApplied ? ' is-applied' : ''}`}
+        />
+        <button
+          onClick={handleApplyVoucher}
+          disabled={!voucherInput.trim()}
+          className={`voucher-block__apply-btn${voucherApplied ? ' is-applied' : ''}`}
+        >
+          {voucherApplied ? (
+            <>
+              <i className="bi bi-check-lg me-1" aria-hidden="true" />
+              {(tSidebar as any).voucherApplied}
+            </>
+          ) : t.voucherApply}
+        </button>
+      </div>
+      {voucherError && <p className="voucher-block__error">{voucherError}</p>}
+    </>
+  );
+
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="wizard-step2">
@@ -584,6 +622,30 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
         {/* ── Colonna sinistra: form ── */}
         <div className="wizard-step2__main">
+
+          {/* Mobile only: accordion riepilogo prenotazione (sidebar desktop nascosta sotto 768px) */}
+          <div className="wizard-step2__summary-accordion">
+            <button
+              type="button"
+              onClick={() => setSummaryOpen(o => !o)}
+              className="wizard-step2__summary-accordion-btn"
+              aria-expanded={summaryOpen}
+            >
+              <span>{t.summaryTitle} — {fmt(total)}</span>
+              <span className={`wizard-step2__summary-accordion-chevron${summaryOpen ? ' is-open' : ''}`} aria-hidden="true">›</span>
+            </button>
+            {summaryOpen && (
+              <div className="wizard-step2__summary-accordion-body">
+                <BookingSidebar
+                  locale={locale}
+                  step={2}
+                  onEditDates={() => setCurrentStep(2)}
+                  onEditGuests={() => setCurrentStep(1)}
+                  step2VoucherSlot={voucherSlot}
+                />
+              </div>
+            )}
+          </div>
 
           {/* CARD 1 — Metodo di pagamento */}
           <div className="step2-section-card">
@@ -740,47 +802,14 @@ export default function WizardStep2({ locale = 'it' }: Props) {
           </button>
         </div>
 
-        {/* ── Sidebar destra (desktop) — voucher slot, niente extras (passati a Card 3) ── */}
+        {/* ── Sidebar destra (desktop) — nascosta sotto 768px (vedi accordion mobile sopra) ── */}
         <div className="wizard-step2__sidebar">
           <BookingSidebar
             locale={locale}
             step={2}
             onEditDates={() => setCurrentStep(2)}
             onEditGuests={() => setCurrentStep(1)}
-            step2VoucherSlot={
-              <>
-                <p className="label-uppercase-muted">{t.voucher}</p>
-                <div className="voucher-block__row">
-                  <input
-                    type="text"
-                    value={voucherInput}
-                    onChange={e => {
-                      setVoucherInput(e.target.value);
-                      if (voucherApplied) { setVoucherApplied(false); setDiscountedPrice(null); setVoucherCode(''); }
-                    }}
-                    placeholder={(tSidebar as any).voucherPlaceholder}
-                    autoComplete="off"
-                    autoCorrect="off"
-                    autoCapitalize="off"
-                    spellCheck={false}
-                    className={`voucher-block__input${voucherApplied ? ' is-applied' : ''}`}
-                  />
-                  <button
-                    onClick={handleApplyVoucher}
-                    disabled={!voucherInput.trim()}
-                    className={`voucher-block__apply-btn${voucherApplied ? ' is-applied' : ''}`}
-                  >
-                    {voucherApplied ? (
-                      <>
-                        <i className="bi bi-check-lg me-1" aria-hidden="true" />
-                        {(tSidebar as any).voucherApplied}
-                      </>
-                    ) : t.voucherApply}
-                  </button>
-                </div>
-                {voucherError && <p className="voucher-block__error">{voucherError}</p>}
-              </>
-            }
+            step2VoucherSlot={voucherSlot}
           />
         </div>
       </div>
