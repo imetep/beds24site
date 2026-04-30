@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Icon } from '@/components/ui/Icon';
 
 interface Message { from: 'host' | 'guest'; text: string; time: string; }
 interface CheckinData { status: 'PENDING' | 'APPROVED' | 'REJECTED'; rejectReason: string | null; messages: Message[]; }
@@ -14,9 +15,9 @@ export default function CheckinSection({ locale, t, bookId, checkin }: Props) {
   const [sendError, setSendError] = useState('');
 
   const statusConfig = {
-    PENDING:  { label: tC.statusPending,  modifier: 'pending',  icon: 'bi-hourglass-split' },
-    APPROVED: { label: tC.statusApproved, modifier: 'approved', icon: 'bi-check-circle-fill' },
-    REJECTED: { label: tC.statusRejected, modifier: 'rejected', icon: 'bi-x-circle-fill' },
+    PENDING:  { label: tC.statusPending,  modifier: 'pending',  icon: 'hourglass-split' },
+    APPROVED: { label: tC.statusApproved, modifier: 'approved', icon: 'check-circle-fill' },
+    REJECTED: { label: tC.statusRejected, modifier: 'rejected', icon: 'x-circle-fill' },
   } as const;
   const st = statusConfig[checkin.status] ?? statusConfig.PENDING;
 
@@ -36,13 +37,13 @@ export default function CheckinSection({ locale, t, bookId, checkin }: Props) {
   return (
     <div className="guest-section">
       <div className="section-header">
-        <i className="bi bi-house-fill section-header__icon" aria-hidden="true" />
+        <Icon name="house-fill" className="section-header__icon" />
         <h3 className="section-header__title">{tC.title}</h3>
       </div>
 
       {/* Badge status */}
       <div className={`status-badge status-badge--${st.modifier} status-badge--mb`}>
-        <i className={`bi ${st.icon}`} aria-hidden="true" />
+        <Icon name={st.icon} />
         <span>{st.label}</span>
       </div>
 
@@ -61,7 +62,7 @@ export default function CheckinSection({ locale, t, bookId, checkin }: Props) {
           href={`/${locale}/self-checkin/wizard`}
           className="btn-cta-orange"
         >
-          <i className="bi bi-clipboard-fill me-1" aria-hidden="true" />
+          <Icon name="clipboard-fill" className="me-1" />
           {tC.wizardBtn}
         </a>
       )}
@@ -69,7 +70,7 @@ export default function CheckinSection({ locale, t, bookId, checkin }: Props) {
       {/* Thread messaggi */}
       <div className="mt-4">
         <p className="checkin-section__messages-title">
-          <i className="bi bi-chat-fill me-1" aria-hidden="true" />
+          <Icon name="chat-fill" className="me-1" />
           {tC.messagesTitle}
         </p>
 
