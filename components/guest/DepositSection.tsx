@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Icon, type IconName } from '@/components/ui/Icon';
 
 interface DepositInfo {
   url?:      string;
@@ -36,14 +37,14 @@ export default function DepositSection({ locale, t, bookId, amount, deposit, onD
 
     return (
       <div className="guest-section">
-        <SectionHeader icon="bi-credit-card-fill" title={tD.title} />
+        <SectionHeader icon="credit-card-fill" title={tD.title} />
         <div className="deposit-section__amount-row">
           <span className="deposit-section__amount">€ {deposit.amount.toFixed(2)}</span>
           <span className={`status-badge status-badge--${st.modifier}`}>{st.label}</span>
         </div>
         {deposit.status === 'pending' && deposit.url && (
           <a href={deposit.url} target="_blank" rel="noopener noreferrer" className="btn-cta-orange">
-            <i className="bi bi-link-45deg me-1" aria-hidden="true" />
+            <Icon name="link-45deg" className="me-1" />
             {tD.completePayment}
           </a>
         )}
@@ -61,11 +62,11 @@ export default function DepositSection({ locale, t, bookId, amount, deposit, onD
   if (mode === 'choose') {
     return (
       <div className="guest-section">
-        <SectionHeader icon="bi-credit-card-fill" title={tD.title} badge={amount ? `€ ${amount}` : undefined} />
+        <SectionHeader icon="credit-card-fill" title={tD.title} badge={amount ? `€ ${amount}` : undefined} />
         <p className="deposit-section__description">{tD.description}</p>
         <div className="deposit-section__choices">
-          <ChoiceCard icon="bi-tag-fill" title={tD.offlineTitle} sub={tD.offlineSub} onClick={() => setMode('offline')} />
-          {amount && <ChoiceCard icon="bi-credit-card-fill" title={tD.onlineTitle} sub={tD.onlineSub} onClick={() => setMode('online')} highlight />}
+          <ChoiceCard icon="tag-fill" title={tD.offlineTitle} sub={tD.offlineSub} onClick={() => setMode('offline')} />
+          {amount && <ChoiceCard icon="credit-card-fill" title={tD.onlineTitle} sub={tD.onlineSub} onClick={() => setMode('online')} highlight />}
         </div>
       </div>
     );
@@ -76,7 +77,7 @@ export default function DepositSection({ locale, t, bookId, amount, deposit, onD
     return (
       <div className="guest-section">
         <BackBtn label={tD.back} onClick={() => setMode('choose')} />
-        <SectionHeader icon="bi-tag-fill" title={tD.offlineTitle} />
+        <SectionHeader icon="tag-fill" title={tD.offlineTitle} />
         <div className="info-box">
           <p className="info-box__title">{tD.offlineHowTitle}</p>
           <ol className="info-box__list">
@@ -95,10 +96,10 @@ export default function DepositSection({ locale, t, bookId, amount, deposit, onD
   return (
     <div className="guest-section">
       <BackBtn label={tD.back} onClick={() => setMode('choose')} />
-      <SectionHeader icon="bi-credit-card-fill" title={tD.onlineTitle} />
+      <SectionHeader icon="credit-card-fill" title={tD.onlineTitle} />
       <div className="info-box info-box--accent">
         <p className="info-box__title info-box__title--brand">
-          <i className="bi bi-lock-fill me-1" aria-hidden="true" />
+          <Icon name="lock-fill" className="me-1" />
           {tD.stripeTitle}
         </p>
         <ul className="info-box__list info-box__list--brand">
@@ -131,7 +132,7 @@ export default function DepositSection({ locale, t, bookId, amount, deposit, onD
       >
         {loading ? tD.btnPayLoading : (
           <>
-            <i className="bi bi-lock-fill me-1" aria-hidden="true" />
+            <Icon name="lock-fill" className="me-1" />
             {tD.btnPay}
           </>
         )}
@@ -143,24 +144,24 @@ export default function DepositSection({ locale, t, bookId, amount, deposit, onD
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function SectionHeader({ icon, title, badge: b }: { icon: string; title: string; badge?: string }) {
+function SectionHeader({ icon, title, badge: b }: { icon: IconName; title: string; badge?: string }) {
   return (
     <div className="section-header">
-      <i className={`bi ${icon} section-header__icon`} aria-hidden="true" />
+      <Icon name={icon} className="section-header__icon" />
       <h3 className="section-header__title">{title}</h3>
       {b && <span className="section-header__badge">{b}</span>}
     </div>
   );
 }
 
-function ChoiceCard({ icon, title, sub, onClick, highlight }: { icon: string; title: string; sub: string; onClick: () => void; highlight?: boolean }) {
+function ChoiceCard({ icon, title, sub, onClick, highlight }: { icon: IconName; title: string; sub: string; onClick: () => void; highlight?: boolean }) {
   return (
     <button
       onClick={onClick}
       className={`choice-card ${highlight ? 'choice-card--highlight' : ''}`}
     >
       <div className="choice-card__icon">
-        <i className={`bi ${icon}`} aria-hidden="true" />
+        <Icon name={icon} />
       </div>
       <div className="choice-card__title">{title}</div>
       <div className="choice-card__sub">{sub}</div>
@@ -171,7 +172,7 @@ function ChoiceCard({ icon, title, sub, onClick, highlight }: { icon: string; ti
 function BackBtn({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button onClick={onClick} className="back-btn">
-      <i className="bi bi-arrow-left me-1" aria-hidden="true" />
+      <Icon name="arrow-left" className="me-1" />
       {label}
     </button>
   );
