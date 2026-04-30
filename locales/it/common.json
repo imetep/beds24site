@@ -994,6 +994,40 @@
               }
             }
           ]
+        },
+        {
+          "icon": "bi-car-front-fill",
+          "label": "Auto e spostamenti",
+          "items": [
+            {
+              "q": "È indispensabile avere l'auto?",
+              "a": "Sì, l'automobile è fortemente consigliata — quasi indispensabile. Le strutture si trovano in zone di campagna o residenziali con strade prive di marciapiedi. Senza auto è difficile raggiungere supermercati, spiagge e i centri di Minturno e Scauri."
+            },
+            {
+              "q": "Ci sono mezzi pubblici vicino alla struttura?",
+              "a": "No. Non esistono fermate di autobus nel raggio di 200-300 metri dalle strutture. Le strade circostanti sono rurali o residenziali senza marciapiedi: camminare non è sicuro, soprattutto di sera o con bambini. L'unico mezzo pubblico utile è il treno dalla stazione di Minturno-Scauri (circa 2 km, non raggiungibile a piedi in sicurezza)."
+            },
+            {
+              "q": "Posso raggiungere a piedi il supermercato o la spiaggia?",
+              "a": "No, non è praticabile in sicurezza. Le strade rurali non hanno marciapiedi e il traffico scorre senza protezioni per i pedoni. Il supermercato più vicino è a circa 3-5 minuti in auto; le spiagge a 5-10 minuti. Con bambini piccoli o anziani la camminata lungo le strade di campagna è sconsigliata."
+            },
+            {
+              "q": "Dove posso noleggiare un'auto vicino alla struttura?",
+              "a": "Le agenzie di noleggio più vicine si trovano a Formia (circa 15 minuti). Si consiglia di prenotare online prima della partenza e ritirare l'auto in aeroporto. Alcune agenzie offrono ritiro/consegna in struttura su prenotazione."
+            },
+            {
+              "q": "Come visito Roma e Napoli senza auto?",
+              "a": "Roma e Napoli sono raggiungibili in treno dalla stazione di Minturno-Scauri (circa 1h40 per Roma Termini, circa 60 minuti per Napoli Centrale). Per raggiungere la stazione dalla struttura è necessaria l'auto o un taxi. Su richiesta ti aiutiamo a organizzare il trasferimento."
+            },
+            {
+              "q": "Come mi sposto localmente senza auto?",
+              "a": "Le opzioni senza auto sono limitate:\n• Taxi: disponibili su prenotazione (possiamo fornirti i numeri locali)\n• Bicicletta: possibile su alcune strade secondarie, ma le strade rurali senza marciapiedi non sono sempre sicure\nLa nostra posizione tranquilla offre un ottimo rapporto qualità-prezzo, ma richiede l'auto per gli spostamenti quotidiani."
+            },
+            {
+              "q": "Offrite un servizio di trasferimento dalla stazione? Quanto costa?",
+              "a": "Sì, su richiesta organizziamo il trasferimento dalla stazione di Minturno-Scauri alla struttura LivingApple.\nCosto: 40 € andata e ritorno.\nPer prenotare scrivici su WhatsApp almeno 2 giorni prima dell'arrivo indicando l'orario del treno."
+            }
+          ]
         }
       ]
     },
