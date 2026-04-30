@@ -6,6 +6,7 @@ import DepositSection        from './DepositSection';
 import CheckinSection        from './CheckinSection';
 import BedSection            from './BedSection';
 import ChangeRequestWizard   from './ChangeRequestWizard';
+import { Icon } from '@/components/ui/Icon';
 
 interface BookingData {
   bookId: string; roomId: number; roomName: string; roomSlug: string;
@@ -95,13 +96,13 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
       {/* Banner Stripe return */}
       {depositResult === 'success' && (
         <div className="guest-portal__notice guest-portal__notice--success">
-          <i className="bi bi-check-circle-fill me-1" aria-hidden="true" />
+          <Icon name="check-circle-fill" className="me-1" />
           {tD.depositSuccess}
         </div>
       )}
       {depositResult === 'cancel' && (
         <div className="guest-portal__notice guest-portal__notice--info">
-          <i className="bi bi-info-circle-fill me-1" aria-hidden="true" />
+          <Icon name="info-circle-fill" className="me-1" />
           {tD.depositCancel}
         </div>
       )}
@@ -111,7 +112,7 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
         <div className="page-container d-flex justify-content-between align-items-center">
           <div>
             <h1 className="guest-portal__title">
-              <i className="bi bi-shield-lock-fill me-2" aria-hidden="true" />
+              <Icon name="shield-lock-fill" className="me-2" />
               {tD.title}
             </h1>
             <p className="guest-portal__subtitle">
@@ -129,12 +130,12 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
 
         {/* UX 3.6 — Stato prenotazione (primo elemento visibile dopo login) */}
         {checkin && (() => {
-          const statusMap: Record<string, { cls: string; icon: string; label: Record<string, string> }> = {
-            APPROVED: { cls: 'bg-success',        icon: 'bi-check-circle-fill',       label: { it: 'Approvato',   en: 'Approved',  de: 'Genehmigt',   pl: 'Zatwierdzone' } },
-            PENDING:  { cls: 'bg-warning text-dark', icon: 'bi-hourglass-split',       label: { it: 'In attesa',   en: 'Pending',   de: 'Ausstehend',  pl: 'Oczekujące' } },
-            REJECTED: { cls: 'bg-danger',         icon: 'bi-x-circle-fill',           label: { it: 'Rifiutato',   en: 'Rejected',  de: 'Abgelehnt',   pl: 'Odrzucone' } },
-          };
-          const s = statusMap[checkin.status];
+          const statusMap = {
+            APPROVED: { cls: 'bg-success',        icon: 'check-circle-fill',       label: { it: 'Approvato',   en: 'Approved',  de: 'Genehmigt',   pl: 'Zatwierdzone' } },
+            PENDING:  { cls: 'bg-warning text-dark', icon: 'hourglass-split',       label: { it: 'In attesa',   en: 'Pending',   de: 'Ausstehend',  pl: 'Oczekujące' } },
+            REJECTED: { cls: 'bg-danger',         icon: 'x-circle-fill',           label: { it: 'Rifiutato',   en: 'Rejected',  de: 'Abgelehnt',   pl: 'Odrzucone' } },
+          } as const;
+          const s = statusMap[checkin.status as keyof typeof statusMap];
           if (!s) return null;
           return (
             <div className="card border-0 shadow-sm">
@@ -143,8 +144,8 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
                   {t.checkin?.title ?? 'Check-in'}
                 </span>
                 <span className={`badge rounded-pill fw-semibold ${s.cls}`}>
-                  <i className={`bi ${s.icon} me-1`}></i>
-                  {s.label[locale] ?? s.label.it}
+                  <Icon name={s.icon} className="me-1" />
+                  {(s.label as Record<string, string>)[locale] ?? s.label.it}
                 </span>
               </div>
             </div>
@@ -195,7 +196,7 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
                 </p>
               </div>
               <div className="icon-avatar">
-                <i className="bi bi-people-fill" aria-hidden="true" />
+                <Icon name="people-fill" />
               </div>
             </div>
 
@@ -203,14 +204,14 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
             {booking.totalCharged > 0 && (
               <>
                 <p className="guest-portal__date-label">
-                  <i className="bi bi-cash-coin me-1" aria-hidden="true" />
+                  <Icon name="cash-coin" className="me-1" />
                   {tD.payments}
                 </p>
                 {booking.isAirbnb ? (
                   <>
                     <PayRow label={tD.total} value={`€ ${booking.totalCharged.toFixed(2)}`} />
                     <div className="pay-row__paid-confirm">
-                      <i className="bi bi-check-circle-fill me-1" aria-hidden="true" />
+                      <Icon name="check-circle-fill" className="me-1" />
                       {tD.paidViaAirbnb}
                     </div>
                   </>
@@ -231,7 +232,7 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
                     </div>
                     {booking.balanceDue === 0 && (
                       <div className="pay-row__paid-confirm">
-                        <i className="bi bi-check-circle-fill me-1" aria-hidden="true" />
+                        <Icon name="check-circle-fill" className="me-1" />
                         {tD.fullyPaid}
                       </div>
                     )}
@@ -268,7 +269,7 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
         {/* 4. FAQ */}
         <div className="dashboard-card">
           <div className="dashboard-card__title-row">
-            <i className="bi bi-question-circle-fill text-primary-brand" aria-hidden="true" />
+            <Icon name="question-circle-fill" className="text-primary-brand" />
             <h3 className="dashboard-card__title">{tFQ.title}</h3>
           </div>
           <div className="faq-list">
@@ -289,11 +290,11 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
           <p className="support-footer__hint">{tD.needHelp}</p>
           <div className="support-footer__links">
             <a href="https://wa.me/393283131500" className="support-footer__link">
-              <i className="bi bi-whatsapp me-1" aria-hidden="true" />
+              <Icon name="whatsapp" className="me-1" />
               WhatsApp
             </a>
             <a href="mailto:contattolivingapple@gmail.com" className="support-footer__link">
-              <i className="bi bi-envelope-fill me-1" aria-hidden="true" />
+              <Icon name="envelope-fill" className="me-1" />
               Email
             </a>
           </div>
