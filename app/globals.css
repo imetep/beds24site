@@ -6373,6 +6373,592 @@ body {
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
+   DepositoClient + PrenotazioneSicuraClient + UtenzeClient + AnimaliClient
+   (Sessione 24-25 Fase 2)
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* ── Step circolare (numero) ── */
+.step-circle {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.step-circle__num {
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+  color: var(--color-on-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  font-size: var(--text-sm);
+  margin-top: 2px;
+}
+.step-circle__text {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: #4b5563;
+  line-height: 1.65;
+}
+
+/* FAQ semplice (deposito/utenze/prenotazione-sicura) */
+.faq-simple {
+  border-bottom: 1px solid var(--color-border);
+}
+.faq-simple__btn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) 0;
+  text-align: start;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  min-height: var(--touch-target);
+}
+.faq-simple__q {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.4;
+}
+.faq-simple__chevron {
+  transition: transform 200ms;
+  flex-shrink: 0;
+  stroke: #9ca3af;
+}
+.faq-simple.is-open .faq-simple__chevron {
+  transform: rotate(180deg);
+}
+.faq-simple__a {
+  font-size: var(--text-sm);
+  color: #4b5563;
+  margin-bottom: var(--space-md);
+  line-height: 1.65;
+}
+
+/* Hero badge generico (deposito/utenze) */
+.page-hero-badge {
+  display: inline-block;
+  margin-bottom: var(--space-sm);
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
+  padding: 4px var(--space-md);
+}
+.page-hero-badge--warning {
+  background: #FFF8E7;
+  color: var(--color-warning-text);
+}
+
+/* Sezione bianca semplice (deposito/utenze) */
+.page-section-white {
+  background: var(--color-bg);
+  padding: var(--space-md);
+  margin-bottom: var(--space-sm);
+}
+.page-section-white__title {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--space-sm);
+}
+.page-section-white__text {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: #4b5563;
+  line-height: 1.7;
+}
+
+/* Box online (sfondo primary-soft) */
+.deposito__box-online {
+  padding: var(--space-md);
+  border-top: 2px solid var(--color-primary);
+  background: var(--color-primary-soft);
+}
+.deposito__box-online-title {
+  font-size: var(--text-base);
+  font-weight: 700;
+  margin: 0;
+  color: #0C447C;
+}
+.deposito__box-online-badge {
+  display: inline-block;
+  margin-bottom: var(--space-sm);
+  font-weight: 700;
+  color: var(--color-on-dark);
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+  font-size: 10px;
+  padding: 3px var(--space-sm);
+}
+.deposito__box-online-note {
+  margin: var(--space-md) 0 0;
+  font-size: var(--text-xs);
+  color: #185FA5;
+  line-height: 1.5;
+}
+
+/* Importi grid */
+.deposito__amounts-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.deposito__amounts-row:last-child {
+  border-bottom: none;
+}
+.deposito__amounts-label {
+  font-size: var(--text-sm);
+  color: #374151;
+}
+.deposito__amounts-value {
+  font-weight: 700;
+  font-size: var(--text-md);
+  color: var(--color-primary);
+}
+
+/* Box danni (warning) */
+.deposito__damages {
+  border: 1px solid #FDE68A;
+  padding: var(--space-md);
+  margin-bottom: var(--space-sm);
+  background: #FFF8E7;
+}
+.deposito__damages-title {
+  font-size: var(--text-base);
+  font-weight: 700;
+  margin-bottom: var(--space-sm);
+  color: var(--color-warning-text);
+}
+.deposito__damages-text {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: #78350f;
+  line-height: 1.7;
+}
+
+/* CTA box generico (deposito) */
+.deposito__cta-box {
+  padding: var(--space-md);
+  margin-bottom: var(--space-sm);
+  border-top: 2px solid var(--color-primary);
+  background: var(--color-primary-soft);
+}
+.deposito__cta-title {
+  font-size: var(--text-md);
+  font-weight: 700;
+  margin-bottom: var(--space-sm);
+  color: #0C447C;
+}
+.deposito__cta-text {
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-md);
+  color: #185FA5;
+  line-height: 1.6;
+}
+.deposito__cta-btn {
+  display: inline-block;
+  color: var(--color-on-dark);
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 12px;
+  margin-bottom: var(--space-sm);
+  background: var(--color-primary);
+  padding: 13px var(--space-lg);
+  font-size: var(--text-md);
+  min-height: var(--touch-target);
+}
+.deposito__cta-note {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: #185FA5;
+}
+.deposito__contact-link {
+  font-size: var(--text-sm);
+  text-decoration: none;
+  color: var(--color-primary);
+}
+
+.deposito__methods-grid {
+  display: grid;
+  gap: var(--space-sm);
+  padding-bottom: var(--space-sm);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+/* ── PrenotazioneSicuraClient ── */
+.prenotazione-sicura__hero-icon {
+  font-size: 44px;
+  color: var(--color-primary);
+  margin-bottom: var(--space-md);
+}
+.prenotazione-sicura__hero-title {
+  font-size: 26px;
+  line-height: 1.2;
+}
+.prenotazione-sicura__hero-sub {
+  font-size: var(--text-md);
+  color: #4b5563;
+  line-height: 1.55;
+  max-width: 600px;
+}
+.prenotazione-sicura__pillar {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: var(--space-md);
+}
+.prenotazione-sicura__pillar-icon {
+  font-size: 28px;
+  color: var(--color-primary);
+  display: block;
+  margin-bottom: var(--space-sm);
+}
+.prenotazione-sicura__pillar-title {
+  font-weight: 700;
+  margin: 0 0 var(--space-xs);
+  color: var(--color-text);
+  font-size: var(--text-md);
+}
+.prenotazione-sicura__pillar-text {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: #4b5563;
+  line-height: 1.6;
+}
+.prenotazione-sicura__pillars-grid {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+.prenotazione-sicura__chapter {
+  background: var(--color-bg);
+  border-radius: 12px;
+  padding: var(--space-lg);
+  margin-bottom: var(--space-base);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+}
+.prenotazione-sicura__chapter-title {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0 0 var(--space-md);
+}
+.prenotazione-sicura__chapter-text {
+  margin: 0;
+  font-size: var(--text-base);
+  color: var(--color-text);
+  line-height: 1.7;
+  white-space: pre-line;
+}
+.prenotazione-sicura__cta-section {
+  background: var(--color-primary);
+  color: var(--color-on-dark);
+  border-radius: 14px;
+  padding: var(--space-lg);
+  text-align: center;
+  margin-top: var(--space-lg);
+}
+.prenotazione-sicura__cta-title {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  margin-bottom: var(--space-md);
+}
+.prenotazione-sicura__cta-text {
+  font-size: var(--text-base);
+  margin-bottom: var(--space-base);
+  opacity: 0.95;
+  line-height: 1.55;
+}
+.prenotazione-sicura__cta-btn {
+  display: inline-block;
+  background: var(--color-cta);
+  color: var(--color-text);
+  font-weight: 700;
+  text-decoration: none;
+  padding: 14px var(--space-xl);
+  border-radius: 12px;
+  font-size: var(--text-md);
+  min-height: var(--touch-target);
+}
+.prenotazione-sicura__chapter-toggle {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  margin-bottom: var(--space-sm);
+  overflow: hidden;
+}
+.prenotazione-sicura__chapter-btn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: start;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: var(--color-bg);
+  border: none;
+  cursor: pointer;
+  min-height: var(--touch-target);
+}
+.prenotazione-sicura__chapter-toggle.is-open .prenotazione-sicura__chapter-btn {
+  background: var(--color-primary-soft);
+}
+.prenotazione-sicura__chapter-arrow {
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.prenotazione-sicura__chapter-para {
+  line-height: 1.65;
+}
+.prenotazione-sicura__chapter-warn {
+  margin-top: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: #FFF8E7;
+  border: 1px solid var(--color-cta);
+  border-radius: 6px;
+  color: var(--color-warning-text);
+  line-height: 1.6;
+}
+.prenotazione-sicura__chapter-tip {
+  margin-top: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-primary-soft);
+  border: 1px solid var(--color-info-border);
+  border-radius: 6px;
+  color: #1E4E8C;
+  line-height: 1.6;
+}
+.prenotazione-sicura__checklist {
+  background: var(--color-primary-soft);
+  border: 1px solid var(--color-primary);
+  border-radius: 12px;
+  padding: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+.prenotazione-sicura__checklist-list li {
+  color: #1E4E8C;
+  line-height: 1.55;
+}
+.prenotazione-sicura__scam {
+  background: #FFF8E7;
+  border: 1px solid var(--color-cta);
+  border-radius: 12px;
+  padding: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+.prenotazione-sicura__scam-title {
+  font-weight: 700;
+  margin-bottom: var(--space-md);
+  color: var(--color-warning-text);
+}
+.prenotazione-sicura__scam-list li {
+  color: #78350f;
+  line-height: 1.5;
+}
+
+/* ── UtenzeClient ── */
+.utenze__hero-icon {
+  font-size: 40px;
+  color: var(--color-primary);
+}
+.utenze__pills-grid {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.utenze__pill {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: var(--space-md);
+  text-align: center;
+}
+.utenze__pill-icon {
+  font-size: 32px;
+  color: var(--color-primary);
+  display: block;
+  margin-bottom: var(--space-sm);
+}
+.utenze__pill-title {
+  font-weight: 700;
+  margin: 0 0 var(--space-xs);
+  color: var(--color-text);
+}
+.utenze__pill-text {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: #4b5563;
+  line-height: 1.55;
+}
+.utenze__chapter {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: var(--space-md);
+  margin-bottom: var(--space-base);
+}
+.utenze__chapter-title {
+  font-size: var(--text-md);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--space-sm);
+}
+.utenze__list {
+  margin: 0;
+  padding-left: var(--space-base);
+  color: #4b5563;
+  line-height: 1.7;
+}
+.utenze__rates-grid {
+  display: grid;
+  gap: var(--space-sm);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: var(--space-sm);
+}
+.utenze__season-label {
+  letter-spacing: 0.05em;
+}
+.utenze__season-btn {
+  flex: 1;
+}
+.utenze__season-btn--winter {
+  background: #E6F1FB;
+  color: #0C447C;
+}
+.utenze__season-btn--summer {
+  background: #FAEEDA;
+  color: #633806;
+}
+.utenze__season-btn--inactive {
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+}
+.utenze__cost-box {
+  border-radius: 12px;
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+  border: 1px solid;
+}
+.utenze__cost-box--winter {
+  background: #FAEEDA;
+  border-color: #FDE68A;
+}
+.utenze__cost-box--summer {
+  background: #FEF9C3;
+  border-color: #FDE047;
+}
+.utenze__cost-label--winter {
+  color: #633806;
+}
+.utenze__cost-label--summer {
+  color: var(--color-warning-text);
+}
+.utenze__cost-text--winter {
+  color: #854F0B;
+}
+.utenze__cost-text--summer {
+  color: var(--color-warning-text);
+}
+.utenze__intro-text {
+  line-height: 1.7;
+}
+.utenze__acc-item {
+  border-top: 1px solid var(--color-border);
+}
+.utenze__acc-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  text-align: start;
+  padding: var(--space-md);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  min-height: 56px;
+}
+.utenze__acc-chevron {
+  flex-shrink: 0;
+  transition: transform 260ms ease;
+  stroke: #9ca3af;
+}
+.utenze__acc-item.is-open .utenze__acc-chevron {
+  transform: rotate(180deg);
+}
+.utenze__acc-body {
+  padding: 0 var(--space-md);
+  font-size: var(--text-sm);
+  color: #4b5563;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 280ms ease;
+  line-height: 1.7;
+}
+.utenze__acc-item.is-open .utenze__acc-body {
+  max-height: 800px;
+  padding-bottom: 18px;
+  padding-top: var(--space-xs);
+}
+.utenze__honest-section {
+  background: var(--color-bg);
+  margin-bottom: var(--space-sm);
+  padding: var(--space-md);
+  border-left: 4px solid var(--color-primary);
+}
+.utenze__honest-text {
+  line-height: 1.7;
+}
+.utenze__honest-caution {
+  line-height: 1.7;
+}
+
+/* ── AnimaliClient ── */
+.animali__hero-icon {
+  font-size: 44px;
+  color: var(--color-cta);
+  margin-bottom: var(--space-md);
+}
+.animali__rules-grid {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.animali__rule-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: var(--space-base);
+  text-align: center;
+}
+.animali__rule-icon {
+  font-size: 32px;
+  color: var(--color-primary);
+  display: block;
+  margin-bottom: var(--space-sm);
+}
+.animali__rule-title {
+  font-weight: 700;
+  margin: 0 0 var(--space-xs);
+}
+.animali__rule-text {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: #4b5563;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
    ContattiClient + DoveSiamoClient (Sessione 23 Fase 2)
    ────────────────────────────────────────────────────────────────────────── */
 

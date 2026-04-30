@@ -198,33 +198,27 @@ const T: Record<Locale, {
 function Chapter({ chapter, index }: { chapter: typeof T['it']['chapters'][0]; index: number }) {
   const [open, setOpen] = useState(index < 2);
   return (
-    <div className="border rounded mb-2 overflow-hidden">
-      <button
-        onClick={() => setOpen(!open)}
-        className="btn w-100 d-flex justify-content-between align-items-center text-start gap-2 px-3 py-3"
-        style={{ background: open ? '#EEF5FC' : '#fff' }}
-      >
+    <div className={`prenotazione-sicura__chapter-toggle ${open ? 'is-open' : ''}`}>
+      <button onClick={() => setOpen(!open)} className="prenotazione-sicura__chapter-btn">
         <span className="fw-semibold text-primary flex-fill">{chapter.title}</span>
-        <span className="text-muted" style={{ fontSize: '1.1rem', flexShrink: 0 }}>
-          {open ? '▲' : '▼'}
-        </span>
+        <span className="prenotazione-sicura__chapter-arrow">{open ? '▲' : '▼'}</span>
       </button>
       {open && (
         <div className="p-3 border-top">
           {chapter.body.split('\n\n').map((para, i) => (
-            <p key={i} className="text-secondary mb-2" style={{ lineHeight: 1.65 }}>{para}</p>
+            <p key={i} className="text-secondary mb-2 prenotazione-sicura__chapter-para">{para}</p>
           ))}
           {chapter.warn && (
-            <div className="alert alert-warning mt-2 mb-0" style={{ background: '#FFF8E7', borderColor: '#FCAF1A' }}>
-              <p className="small mb-0" style={{ color: '#92400e', lineHeight: 1.6 }}>
+            <div className="prenotazione-sicura__chapter-warn">
+              <p className="small mb-0">
                 <i className="bi bi-exclamation-triangle-fill me-1" aria-hidden="true" />
                 {chapter.warn}
               </p>
             </div>
           )}
           {chapter.tip && (
-            <div className="alert alert-primary mt-2 mb-0" style={{ background: '#EEF5FC' }}>
-              <p className="small mb-0" style={{ color: '#1E4E8C', lineHeight: 1.6 }}>
+            <div className="prenotazione-sicura__chapter-tip">
+              <p className="small mb-0">
                 <i className="bi bi-lightbulb-fill me-1" aria-hidden="true" />
                 {chapter.tip}
               </p>
@@ -250,71 +244,55 @@ export default function PrenotazioneSicuraClient({
 
       {/* Hero */}
       <section className="text-center pb-5">
-        <div className="mb-2" style={{ fontSize: '2.5rem' }}>🔍</div>
-        <h1 className="fw-bold text-primary mb-3" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.1rem)', lineHeight: 1.3 }}>
-          {t.hero_title}
-        </h1>
-        <p className="fs-5 text-secondary mx-auto mb-0" style={{ maxWidth: 600, lineHeight: 1.6 }}>
-          {t.hero_sub}
-        </p>
+        <div className="prenotazione-sicura__hero-icon">
+          <i className="bi bi-search" aria-hidden="true" />
+        </div>
+        <h1 className="fw-bold text-primary mb-3 prenotazione-sicura__hero-title">{t.hero_title}</h1>
+        <p className="fs-5 text-secondary mx-auto mb-0 prenotazione-sicura__hero-sub">{t.hero_sub}</p>
       </section>
 
       {/* 5 pillole trust */}
       <section className="mb-5">
         <h2 className="fw-bold text-primary fs-3 mb-3">{t.trust_title}</h2>
-        <div
-          className="d-grid gap-3"
-          style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}
-        >
+        <div className="prenotazione-sicura__pillars-grid">
           {t.trust_pills.map((pill, i) => (
-            <div key={i} className="card">
-              <div className="card-body d-flex flex-column gap-2">
-                <i className={`bi ${pill.icon}`} style={{ fontSize: '1.6rem', color: 'var(--color-primary)' }} aria-hidden="true" />
-                <strong className="text-primary">{pill.title}</strong>
-                <p className="small text-secondary mb-0 flex-fill" style={{ lineHeight: 1.55 }}>{pill.text}</p>
-                {pill.link && (
-                  <a
-                    href={pill.link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="small fw-semibold text-primary text-decoration-none mt-1"
-                  >
-                    {pill.link.label}
-                  </a>
-                )}
-              </div>
+            <div key={i} className="prenotazione-sicura__pillar">
+              <i className={`bi ${pill.icon} prenotazione-sicura__pillar-icon`} aria-hidden="true" />
+              <strong className="prenotazione-sicura__pillar-title">{pill.title}</strong>
+              <p className="prenotazione-sicura__pillar-text">{pill.text}</p>
+              {pill.link && (
+                <a
+                  href={pill.link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="small fw-semibold text-primary text-decoration-none mt-1"
+                >
+                  {pill.link.label}
+                </a>
+              )}
             </div>
           ))}
         </div>
       </section>
 
       {/* Checklist rapida */}
-      <section className="card border-primary mb-5" style={{ background: '#EEF5FC' }}>
-        <div className="card-body p-4">
-          <h2 className="fw-bold text-primary fs-3 mb-3">✅ {t.checklist_title}</h2>
-          <ol className="ps-4 d-flex flex-column gap-2 mb-3">
-            {t.checklist.map((item, i) => (
-              <li key={i} className="small" style={{ color: '#1E4E8C', lineHeight: 1.55 }}>{item}</li>
-            ))}
-          </ol>
-          <div className="d-flex gap-2 flex-wrap">
-            <a
-              href={UFFICIOCAMERALE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-outline-primary btn-sm"
-            >
-              🏢 {t.cta_verify_ri}
-            </a>
-            <a
-              href={AIRBNB_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-outline-primary btn-sm"
-            >
-              ⭐ {t.cta_verify_airbnb}
-            </a>
-          </div>
+      <section className="prenotazione-sicura__checklist">
+        <h2 className="fw-bold text-primary fs-3 mb-3">
+          <i className="bi bi-check-circle-fill me-1" aria-hidden="true" />
+          {t.checklist_title}
+        </h2>
+        <ol className="ps-4 d-flex flex-column gap-2 mb-3 prenotazione-sicura__checklist-list">
+          {t.checklist.map((item, i) => (
+            <li key={i} className="small">{item}</li>
+          ))}
+        </ol>
+        <div className="d-flex gap-2 flex-wrap">
+          <a href={UFFICIOCAMERALE_URL} target="_blank" rel="noopener noreferrer" className="btn btn-outline-primary btn-sm">
+            <i className="bi bi-building me-1" aria-hidden="true" /> {t.cta_verify_ri}
+          </a>
+          <a href={AIRBNB_URL} target="_blank" rel="noopener noreferrer" className="btn btn-outline-primary btn-sm">
+            <i className="bi bi-star-fill me-1" aria-hidden="true" /> {t.cta_verify_airbnb}
+          </a>
         </div>
       </section>
 
@@ -328,26 +306,21 @@ export default function PrenotazioneSicuraClient({
       </section>
 
       {/* In caso di truffa */}
-      <section className="card border mb-5" style={{ background: '#FFF8E7', borderColor: '#FCAF1A' }}>
-        <div className="card-body p-4">
-          <h3 className="fw-bold mb-3" style={{ color: '#92400e' }}>🚨 {t.scam_title}</h3>
-          <ol className="ps-4 d-flex flex-column gap-2 mb-0">
-            {t.scam_steps.map((step, i) => (
-              <li key={i} className="small" style={{ color: '#78350f', lineHeight: 1.5 }}>{step}</li>
-            ))}
-          </ol>
-        </div>
+      <section className="prenotazione-sicura__scam">
+        <h3 className="prenotazione-sicura__scam-title">
+          <i className="bi bi-exclamation-octagon-fill me-1" aria-hidden="true" />
+          {t.scam_title}
+        </h3>
+        <ol className="ps-4 d-flex flex-column gap-2 mb-0 prenotazione-sicura__scam-list">
+          {t.scam_steps.map((step, i) => (
+            <li key={i} className="small">{step}</li>
+          ))}
+        </ol>
       </section>
 
       {/* CTA finale */}
       <section className="text-center">
-        <a
-          href={bookHref}
-          className="btn btn-warning btn-lg fw-bold"
-          style={{ color: '#111' }}
-        >
-          {t.cta_book}
-        </a>
+        <a href={bookHref} className="btn btn-warning btn-lg fw-bold dove-siamo__cta-btn">{t.cta_book}</a>
         <p className="small text-muted mt-2 mb-0">{t.cta_book_sub}</p>
       </section>
 

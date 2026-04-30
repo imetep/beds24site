@@ -10,33 +10,18 @@ function AccItem({ title, text }: { title: string; text: string }) {
   const [open, setOpen] = useState(false);
   const lines = text.split('\n');
   return (
-    <div className="border-top">
+    <div className={`utenze__acc-item ${open ? 'is-open' : ''}`}>
       <button
         onClick={() => setOpen(o => !o)}
         aria-expanded={open}
-        className="btn w-100 d-flex align-items-center justify-content-between gap-3 text-start px-3 py-3"
-        style={{ minHeight: 56 }}
+        className="utenze__acc-btn"
       >
         <span className="flex-fill fw-medium lh-base">{title}</span>
-        <svg
-          width="18" height="18" viewBox="0 0 24 24"
-          fill="none" stroke="#9ca3af" strokeWidth="2.5"
-          style={{ flexShrink: 0, transition: 'transform 260ms ease', transform: open ? 'rotate(180deg)' : 'none' }}
-        >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" strokeWidth="2.5" className="utenze__acc-chevron">
           <path d="M6 9l6 6 6-6" />
         </svg>
       </button>
-      <div
-        className="px-3 small text-secondary"
-        style={{
-          overflow: 'hidden',
-          maxHeight: open ? 800 : 0,
-          transition: 'max-height 280ms ease',
-          lineHeight: 1.7,
-          paddingBottom: open ? 18 : 0,
-          paddingTop: open ? 4 : 0,
-        }}
-      >
+      <div className="utenze__acc-body">
         {lines.map((line, i) => (
           <span key={i}>{line}{i < lines.length - 1 && <br />}</span>
         ))}
@@ -79,7 +64,7 @@ export default function UtenzeClient({ locale }: Props) {
       {/* Tariffe */}
       <div className="bg-white p-3 mb-2">
         <p className="small fw-semibold text-secondary mb-2">{t.ratesTitle}</p>
-        <div className="d-grid gap-2 mb-2" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
+        <div className="utenze__rates-grid">
           <RateCard label={t.elec} value={t.elecUnit} />
           <RateCard label={t.gas} value={t.gasUnit} />
           <RateCard label={t.water} value={t.waterUnit} />
@@ -89,28 +74,18 @@ export default function UtenzeClient({ locale }: Props) {
 
       {/* Toggle stagione */}
       <div className="bg-white p-3 mb-2">
-        <p className="small fw-semibold text-muted text-uppercase mb-2" style={{ letterSpacing: '0.05em' }}>
-          {t.seasonLabel}
-        </p>
+        <p className="small fw-semibold text-muted text-uppercase mb-2 utenze__season-label">{t.seasonLabel}</p>
         <div className="d-flex gap-2">
           <button
             onClick={() => setSeason('winter')}
-            className={`btn flex-fill ${isWinter ? 'fw-semibold' : 'border'}`}
-            style={{
-              background: isWinter ? '#E6F1FB' : '#fff',
-              color: isWinter ? '#0C447C' : '#6b7280',
-            }}
+            className={`btn utenze__season-btn ${isWinter ? 'fw-semibold utenze__season-btn--winter' : 'border utenze__season-btn--inactive'}`}
           >
             <i className="bi bi-snow me-1" aria-hidden="true" />
             {t.seasonWinter}
           </button>
           <button
             onClick={() => setSeason('summer')}
-            className={`btn flex-fill ${!isWinter ? 'fw-semibold' : 'border'}`}
-            style={{
-              background: !isWinter ? '#FAEEDA' : '#fff',
-              color: !isWinter ? '#633806' : '#6b7280',
-            }}
+            className={`btn utenze__season-btn ${!isWinter ? 'fw-semibold utenze__season-btn--summer' : 'border utenze__season-btn--inactive'}`}
           >
             <i className="bi bi-sun-fill me-1" aria-hidden="true" />
             {t.seasonSummer}
@@ -124,32 +99,26 @@ export default function UtenzeClient({ locale }: Props) {
           <h2 className="fs-5 fw-bold mb-2">
             {isWinter ? t.wIntroTitle : t.sIntroTitle}
           </h2>
-          <p className="text-secondary mb-3" style={{ lineHeight: 1.7 }}>
+          <p className="text-secondary mb-3 utenze__intro-text">
             {isWinter ? t.wIntroText : t.sIntroText}
           </p>
 
           {/* Box costi stimati */}
-          <div
-            className="rounded-3 p-3 mb-3 border"
-            style={{
-              background: isWinter ? '#FAEEDA' : '#FEF9C3',
-              borderColor: isWinter ? '#FDE68A' : '#FDE047',
-            }}
-          >
-            <p className="small fw-semibold mb-2" style={{ color: isWinter ? '#633806' : '#713f12' }}>
+          <div className={`utenze__cost-box ${isWinter ? 'utenze__cost-box--winter' : 'utenze__cost-box--summer'}`}>
+            <p className={`small fw-semibold mb-2 ${isWinter ? 'utenze__cost-label--winter' : 'utenze__cost-label--summer'}`}>
               {isWinter ? t.wCostLabel : t.sCostLabel}
             </p>
             <div className="d-flex flex-column gap-1">
               <div className="d-flex justify-content-between align-items-center gap-2">
-                <span className="small" style={{ color: isWinter ? '#854F0B' : '#713f12' }}>
+                <span className={`small ${isWinter ? 'utenze__cost-text--winter' : 'utenze__cost-text--summer'}`}>
                   {isWinter ? t.wCostCareful : t.sCostCareful}
                 </span>
-                <span className="fw-bold text-nowrap" style={{ color: isWinter ? '#633806' : '#713f12' }}>
+                <span className={`fw-bold text-nowrap ${isWinter ? 'utenze__cost-label--winter' : 'utenze__cost-label--summer'}`}>
                   {isWinter ? t.wCostCarefulVal : t.sCostCarefulVal}
                 </span>
               </div>
               <div className="d-flex justify-content-between align-items-center gap-2">
-                <span className="small" style={{ color: isWinter ? '#854F0B' : '#713f12' }}>
+                <span className={`small ${isWinter ? 'utenze__cost-text--winter' : 'utenze__cost-text--summer'}`}>
                   {isWinter ? t.wCostIntense : t.sCostIntense}
                 </span>
                 <span className="fw-bold text-nowrap text-danger">
@@ -177,13 +146,11 @@ export default function UtenzeClient({ locale }: Props) {
       </div>
 
       {/* Consiglio onesto */}
-      <div className="bg-white mb-2 p-3 border-start border-4 border-primary">
+      <div className="utenze__honest-section">
         <p className="fs-6 fw-bold text-primary mb-2">{t.honestTitle}</p>
-        <p className="text-secondary mb-3" style={{ lineHeight: 1.7 }}>
-          {t.honestText}
-        </p>
+        <p className="text-secondary mb-3 utenze__honest-text">{t.honestText}</p>
         <div className="bg-light border rounded p-3">
-          <p className="small text-secondary mb-0" style={{ lineHeight: 1.7 }}>
+          <p className="small text-secondary mb-0 utenze__honest-caution">
             <i className="bi bi-exclamation-triangle-fill me-1" aria-hidden="true" />
             {t.honestCaution.split('\n').map((line, i) => (
               <span key={i}>{line}{i < t.honestCaution.split('\n').length - 1 && <br />}</span>

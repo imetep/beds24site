@@ -7,14 +7,9 @@ import type { Locale } from '@/config/i18n';
 // ─── Componente step ────────────────────────────────────────────────────────
 function StepCard({ n, text }: { n: number; text: string }) {
   return (
-    <div className="d-flex gap-3 py-3 border-bottom">
-      <div
-        className="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
-        style={{ width: 28, height: 28, background: 'var(--color-primary)', fontSize: 13, marginTop: 2 }}
-      >
-        {n}
-      </div>
-      <p className="m-0 small text-secondary" style={{ lineHeight: 1.65 }}>{text}</p>
+    <div className="step-circle">
+      <div className="step-circle__num">{n}</div>
+      <p className="step-circle__text">{text}</p>
     </div>
   );
 }
@@ -23,22 +18,16 @@ function StepCard({ n, text }: { n: number; text: string }) {
 function FaqItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border-bottom">
-      <button
-        onClick={() => setOpen(!open)}
-        className="btn w-100 d-flex justify-content-between align-items-center gap-2 py-3 px-0 text-start"
-      >
-        <span className="small fw-semibold text-dark" style={{ lineHeight: 1.4 }}>{q}</span>
+    <div className={`faq-simple ${open ? 'is-open' : ''}`}>
+      <button onClick={() => setOpen(!open)} className="faq-simple__btn">
+        <span className="faq-simple__q">{q}</span>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-          stroke="#9ca3af" strokeWidth="2.5"
-          className="flex-shrink-0"
-          style={{ transition: 'transform 200ms', transform: open ? 'rotate(180deg)' : 'none' }}>
+          strokeWidth="2.5"
+          className="faq-simple__chevron">
           <path d="M6 9l6 6 6-6"/>
         </svg>
       </button>
-      {open && (
-        <p className="small text-secondary mb-3" style={{ lineHeight: 1.65 }}>{a}</p>
-      )}
+      {open && <p className="faq-simple__a">{a}</p>}
     </div>
   );
 }
@@ -54,65 +43,51 @@ export default function DepositoClient({ locale, contactHref, portalHref }: Prop
 
       {/* ── Hero ────────────────────────────────────────────────────────────── */}
       <div className="bg-white px-3 pb-3 border-bottom mb-2">
-        <div
-          className="d-inline-block mb-2 fw-bold rounded-pill"
-          style={{ background: '#FFF8E7', color: '#92400e', fontSize: 12, padding: '4px 12px' }}
-        >
+        <div className="page-hero-badge page-hero-badge--warning">
           <i className="bi bi-credit-card-fill me-1" aria-hidden="true" />
           {t.badge}
         </div>
-        <h1 className="fs-2 fw-bold text-dark mb-2" style={{ lineHeight: 1.2 }}>
+        <h1 className="fs-2 fw-bold text-dark mb-2 prenotazione-sicura__hero-title">
           {t.title}
         </h1>
-        <p className="m-0 text-secondary" style={{ fontSize: 15, lineHeight: 1.55 }}>
-          {t.subtitle}
-        </p>
+        <p className="m-0 text-secondary prenotazione-sicura__hero-sub">{t.subtitle}</p>
       </div>
 
       {/* ── Perché ──────────────────────────────────────────────────────────── */}
-      <div className="bg-white p-3 mb-2">
-        <h2 className="fs-6 fw-bold text-dark mb-2">
-          {t.whyTitle}
-        </h2>
-        <p className="m-0 small text-secondary" style={{ lineHeight: 1.7 }}>
-          {t.whyText}
-        </p>
+      <div className="page-section-white">
+        <h2 className="page-section-white__title">{t.whyTitle}</h2>
+        <p className="page-section-white__text">{t.whyText}</p>
       </div>
 
       {/* ── Due metodi ──────────────────────────────────────────────────────── */}
-      <div className="d-grid gap-2 pb-2" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+      <div className="deposito__methods-grid">
 
         {/* Offline */}
-        <div className="bg-white p-3">
+        <div className="page-section-white">
           <div className="d-flex align-items-center gap-2 mb-3">
-            <i className="bi bi-building" style={{ fontSize: 20 }} aria-hidden="true" />
-            <h2 className="fs-6 fw-bold text-dark m-0">{t.offlineTitle}</h2>
+            <i className="bi bi-building section-header__icon" aria-hidden="true" />
+            <h2 className="page-section-white__title m-0">{t.offlineTitle}</h2>
           </div>
           {t.offlineSteps.map((step, i) => (
             <StepCard key={i} n={i + 1} text={step} />
           ))}
-          <p className="mt-3 mb-0 text-muted" style={{ fontSize: 12, lineHeight: 1.5 }}>
+          <p className="mt-3 mb-0 text-muted utenze__pill-text">
             <i className="bi bi-info-circle-fill me-1" aria-hidden="true" />
             {t.offlineNote}
           </p>
         </div>
 
         {/* Online */}
-        <div className="p-3 border-top border-2" style={{ background: '#EEF5FC', borderColor: 'var(--color-primary)' }}>
+        <div className="deposito__box-online">
           <div className="d-flex align-items-center gap-2 mb-2">
-            <i className="bi bi-lock-fill" style={{ fontSize: 20, color: '#0C447C' }} aria-hidden="true" />
-            <h2 className="fs-6 fw-bold m-0" style={{ color: '#0C447C' }}>{t.onlineTitle}</h2>
+            <i className="bi bi-lock-fill section-header__icon" aria-hidden="true" />
+            <h2 className="deposito__box-online-title">{t.onlineTitle}</h2>
           </div>
-          <div
-            className="d-inline-block mb-2 fw-bold text-white rounded-pill"
-            style={{ background: 'var(--color-primary)', fontSize: 10, padding: '3px 8px' }}
-          >
-            {t.onlineBadge}
-          </div>
+          <div className="deposito__box-online-badge">{t.onlineBadge}</div>
           {t.onlineSteps.map((step, i) => (
             <StepCard key={i} n={i + 1} text={step} />
           ))}
-          <p className="mt-3 mb-0" style={{ fontSize: 12, color: '#185FA5', lineHeight: 1.5 }}>
+          <p className="deposito__box-online-note">
             <i className="bi bi-shield-lock-fill me-1" aria-hidden="true" />
             {t.onlineNote}
           </p>
@@ -121,80 +96,57 @@ export default function DepositoClient({ locale, contactHref, portalHref }: Prop
       </div>
 
       {/* ── Importi ─────────────────────────────────────────────────────────── */}
-      <div className="bg-white p-3 mb-2">
-        <h2 className="fs-6 fw-bold text-dark mb-2">
-          {t.amountsTitle}
-        </h2>
-        <p className="text-muted mb-3" style={{ fontSize: 13 }}>{t.amountsNote}</p>
+      <div className="page-section-white">
+        <h2 className="page-section-white__title">{t.amountsTitle}</h2>
+        <p className="text-muted mb-3 utenze__pill-text">{t.amountsNote}</p>
         <div className="d-flex flex-column">
           {t.amounts.map((row, i) => (
-            <div
-              key={i}
-              className={`d-flex justify-content-between align-items-center py-2${i < t.amounts.length - 1 ? ' border-bottom' : ''}`}
-            >
-              <span className="small" style={{ color: '#374151' }}>{row.label}</span>
-              <span className="fw-bold" style={{ fontSize: 15, color: 'var(--color-primary)' }}>{row.value}</span>
+            <div key={i} className="deposito__amounts-row">
+              <span className="deposito__amounts-label">{row.label}</span>
+              <span className="deposito__amounts-value">{row.value}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* ── Restituzione ────────────────────────────────────────────────────── */}
-      <div className="bg-white p-3 mb-2">
-        <h2 className="fs-6 fw-bold text-dark mb-1">
-          {t.returnTitle}
-        </h2>
+      <div className="page-section-white">
+        <h2 className="page-section-white__title">{t.returnTitle}</h2>
         {t.returnSteps.map((step, i) => (
           <StepCard key={i} n={i + 1} text={step} />
         ))}
       </div>
 
       {/* ── Danni ───────────────────────────────────────────────────────────── */}
-      <div className="border p-3 mb-2" style={{ background: '#FFF8E7', borderColor: '#FDE68A' }}>
-        <h2 className="fs-6 fw-bold mb-2" style={{ color: '#92400e' }}>
+      <div className="deposito__damages">
+        <h2 className="deposito__damages-title">
           <i className="bi bi-exclamation-triangle-fill me-1" aria-hidden="true" />
           {t.damagesTitle}
         </h2>
-        <p className="m-0 small" style={{ color: '#78350f', lineHeight: 1.7 }}>
-          {t.damagesText}
-        </p>
+        <p className="deposito__damages-text">{t.damagesText}</p>
       </div>
 
       {/* ── FAQ ─────────────────────────────────────────────────────────────── */}
-      <div className="bg-white p-3 mb-2">
-        <h2 className="fs-6 fw-bold text-dark mb-1">
-          {t.faqTitle}
-        </h2>
+      <div className="page-section-white">
+        <h2 className="page-section-white__title">{t.faqTitle}</h2>
         {t.faqs.map((f, i) => (
           <FaqItem key={i} {...f} />
         ))}
       </div>
 
       {/* ── CTA ─────────────────────────────────────────────────────────────── */}
-      <div className="p-3 mb-2 border-top border-2" style={{ background: '#EEF5FC', borderColor: 'var(--color-primary)' }}>
-        <h2 className="fs-5 fw-bold mb-2" style={{ color: '#0C447C' }}>
-          {t.ctaTitle}
-        </h2>
-        <p className="small mb-3" style={{ color: '#185FA5', lineHeight: 1.6 }}>
-          {t.ctaText}
-        </p>
-        <a
-          href={portalHref}
-          className="d-inline-block text-white fw-bold text-decoration-none rounded-3 mb-2"
-          style={{ background: 'var(--color-primary)', padding: '13px 24px', fontSize: 15 }}
-        >
-          {t.ctaBtn} →
-        </a>
-        <p className="mb-0" style={{ fontSize: 12, color: '#185FA5' }}>
-          ℹ️ {t.ctaNote}
+      <div className="deposito__cta-box">
+        <h2 className="deposito__cta-title">{t.ctaTitle}</h2>
+        <p className="deposito__cta-text">{t.ctaText}</p>
+        <a href={portalHref} className="deposito__cta-btn">{t.ctaBtn} →</a>
+        <p className="deposito__cta-note">
+          <i className="bi bi-info-circle me-1" aria-hidden="true" /> {t.ctaNote}
         </p>
       </div>
 
       {/* ── Link contatti ────────────────────────────────────────────────────── */}
       <div className="p-3 text-center">
-        <a href={contactHref} className="small text-decoration-none" style={{ color: 'var(--color-primary)' }}>
-          {t.questionsLink}
-        </a>
+        <a href={contactHref} className="deposito__contact-link">{t.questionsLink}</a>
       </div>
 
     </div>
