@@ -36,6 +36,28 @@ import type { Locale } from '@/config/i18n';
 import BookingSidebar from './BookingSidebar';
 import PaymentMethodModal from './PaymentMethodModal';
 
+// Refetch offers entry: ricarica i prezzi quando l'utente cambia date/ospiti
+// dalle modali Edit aperte dalla BookingSidebar in checkout (Step1 non è più
+// montato qui, quindi il suo useEffect non scatta).
+async function refetchOffersForRoom(roomId: number, params: {
+  checkIn: string; checkOut: string; numAdultsForBeds24: number;
+}): Promise<any[] | null> {
+  try {
+    const qs = new URLSearchParams({
+      roomIds:   String(roomId),
+      arrival:   params.checkIn,
+      departure: params.checkOut,
+      numAdults: String(params.numAdultsForBeds24),
+    });
+    const res = await fetch(`/api/offers?${qs}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return (data.data ?? []).filter((x: any) => x.offers?.length > 0);
+  } catch {
+    return null;
+  }
+}
+
 const SUPPORTED_LOCALES = ['it', 'en', 'de', 'pl'] as const;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -68,10 +90,10 @@ export default function WizardStep2({ locale = 'it' }: Props) {
   const fromRoom     = searchParams.get('from') === 'room';
 
   const {
-    numAdult, childrenAges,
+    numAdult, numChild, childrenAges,
     checkIn, checkOut,
     selectedRoomId, selectedOfferId,
-    cachedOffers,
+    cachedOffers, setOffers, setSelectedOfferId,
     selectedExtras, setExtraQuantity,
     paymentMethod, setPaymentMethod,
     voucherCode, setVoucherCode,
@@ -158,6 +180,41 @@ export default function WizardStep2({ locale = 'it' }: Props) {
       })
       .catch(() => {});
   }, [selectedRoomId]);
+
+  // ── Refetch offerte quando l'utente cambia date/ospiti dalla BookingSidebar
+  // (modali EditDates / EditGuests). WizardStep1 non è montato qui, quindi
+  // serve ripetere il fetch per mantenere il prezzo allineato.
+  // Skippa il primo render: lo store ha già le offerte caricate da Step1.
+  const refetchSkipFirstRef = useRef(true);
+  useEffect(() => {
+    if (refetchSkipFirstRef.current) {
+      refetchSkipFirstRef.current = false;
+      return;
+    }
+    if (!selectedRoomId || !checkIn || !checkOut) return;
+
+    let cancelled = false;
+    const numAdultsForBeds24 = numAdult + (childrenAges ?? []).filter((a: number) => a >= 3).length;
+
+    (async () => {
+      const list = await refetchOffersForRoom(selectedRoomId, {
+        checkIn, checkOut, numAdultsForBeds24,
+      });
+      if (cancelled || !list) return;
+      setOffers(list);
+      // Mantieni l'offerta selezionata se ancora disponibile, altrimenti
+      // fallback alla più economica.
+      const offers = list.find((ro: any) => ro.roomId === selectedRoomId)?.offers ?? [];
+      const stillAvailable = offers.some((o: any) => o.offerId === selectedOfferId);
+      if (!stillAvailable && offers.length > 0) {
+        const best = offers.reduce((a: any, b: any) => a.price <= b.price ? a : b);
+        setSelectedOfferId(best.offerId);
+      }
+    })();
+
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [numAdult, numChild, childrenAges, checkIn, checkOut]);
 
   // ── PayPal SDK v6: inizializzazione (solo per offerte non-flex) ──────────
   // Triggerato quando paymentMethod === 'paypal' (settato dal modale onConfirm).
