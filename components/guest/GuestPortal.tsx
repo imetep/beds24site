@@ -7,19 +7,6 @@ import CheckinSection        from './CheckinSection';
 import BedSection            from './BedSection';
 import ChangeRequestWizard   from './ChangeRequestWizard';
 
-const C = {
-  blue:        'var(--color-primary)',
-  blueLight:   '#EEF5FC',
-  orange:      '#FCAF1A',
-  text:        '#111111',
-  textMid:     '#555555',
-  textMuted:   '#888888',
-  border:      '#e5e7eb',
-  borderLight: '#f0f0f0',
-  bg:          '#f9fafb',
-  success:     '#16a34a',
-};
-
 interface BookingData {
   bookId: string; roomId: number; roomName: string; roomSlug: string;
   propertyName: string; checkIn: string; checkOut: string;
@@ -77,7 +64,11 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
   };
 
   if (phase === 'loading') {
-    return <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ color: C.textMuted }}>{tD.loading}</span></div>;
+    return (
+      <div className="guest-portal-loading">
+        <span>{tD.loading}</span>
+      </div>
+    );
   }
 
   if (phase === 'login') return <GuestLogin locale={locale} t={t} onLoginSuccess={loadBooking} />;
@@ -99,42 +90,42 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
   ];
 
   return (
-    <div style={{ background: C.bg, minHeight: '70vh', paddingBottom: '4rem' }}>
+    <div className="guest-portal">
 
       {/* Banner Stripe return */}
       {depositResult === 'success' && (
-        <div style={{ background: '#d1fae5', borderBottom: '1px solid #6ee7b7', padding: '0.85rem 1.5rem', textAlign: 'center', color: '#065f46', fontWeight: 700, fontSize: '0.88rem' }}>
+        <div className="guest-portal__notice guest-portal__notice--success">
           <i className="bi bi-check-circle-fill me-1" aria-hidden="true" />
           {tD.depositSuccess}
         </div>
       )}
       {depositResult === 'cancel' && (
-        <div style={{ background: C.blueLight, borderBottom: `1px solid #bfdbfe`, padding: '0.85rem 1.5rem', textAlign: 'center', color: C.blue, fontWeight: 700, fontSize: '0.88rem' }}>
+        <div className="guest-portal__notice guest-portal__notice--info">
           <i className="bi bi-info-circle-fill me-1" aria-hidden="true" />
           {tD.depositCancel}
         </div>
       )}
 
       {/* Header */}
-      <div style={{ background: '#fff', borderBottom: `1px solid ${C.border}`, padding: '0.85rem 1rem' }}>
+      <div className="guest-portal__header">
         <div className="page-container d-flex justify-content-between align-items-center">
           <div>
-            <h1 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: C.text, letterSpacing: '-0.02em' }}>
+            <h1 className="guest-portal__title">
               <i className="bi bi-shield-lock-fill me-2" aria-hidden="true" />
               {tD.title}
             </h1>
-            <p style={{ margin: '0.15rem 0 0', fontSize: '0.79rem', color: C.textMuted }}>
+            <p className="guest-portal__subtitle">
               {tD.hi} {booking.guestName.split(' ')[0]} · #{booking.bookId}
             </p>
           </div>
-          <button onClick={handleLogout} style={{ background: 'none', border: `1px solid ${C.border}`, borderRadius: '8px', padding: '0.4rem 0.9rem', fontSize: '0.82rem', color: C.textMid, cursor: 'pointer' }}>
+          <button onClick={handleLogout} className="guest-portal__logout">
             {t.login.logout}
           </button>
         </div>
       </div>
 
       {/* Contenuto */}
-      <div className="page-container" style={{ padding: '0.75rem 0.75rem 3rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+      <div className="page-container guest-portal__content">
 
         {/* UX 3.6 — Stato prenotazione (primo elemento visibile dopo login) */}
         {checkin && (() => {
@@ -148,7 +139,7 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
           return (
             <div className="card border-0 shadow-sm">
               <div className="card-body d-flex justify-content-between align-items-center py-2">
-                <span className="small fw-semibold text-muted text-uppercase" style={{ letterSpacing: '0.07em' }}>
+                <span className="small fw-semibold text-muted text-uppercase letter-tracking-wide">
                   {t.checkin?.title ?? 'Check-in'}
                 </span>
                 <span className={`badge rounded-pill fw-semibold ${s.cls}`}>
@@ -161,49 +152,49 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
         })()}
 
         {/* 1. Info prenotazione */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <div className="d-flex flex-column gap-3">
 
           {/* Hero struttura */}
-          <div style={{ background: C.blue, borderRadius: '14px', padding: '1rem 1.1rem', position: 'relative', overflow: 'hidden' }}>
-            <p style={{ margin: '0 0 0.2rem', fontSize: '0.7rem', fontWeight: 600, color: C.blueLight, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{tD.yourProperty}</p>
+          <div className="guest-portal__hero">
+            <p className="guest-portal__hero-label">{tD.yourProperty}</p>
             {booking.roomSlug
-              ? <a href={`/${locale}/residenze/${booking.roomSlug}`} target="_blank" rel="noopener noreferrer" style={{ display: 'block', fontSize: '1.3rem', fontWeight: 700, color: '#fff', textDecoration: 'none', lineHeight: 1.2, marginBottom: '0.2rem' }}>{booking.roomName} ↗</a>
-              : <p style={{ margin: '0 0 0.2rem', fontSize: '1.3rem', fontWeight: 700, color: '#fff' }}>{booking.roomName}</p>
+              ? <a href={`/${locale}/residenze/${booking.roomSlug}`} target="_blank" rel="noopener noreferrer" className="guest-portal__hero-name">{booking.roomName} ↗</a>
+              : <p className="guest-portal__hero-name">{booking.roomName}</p>
             }
-            {booking.propertyName && <p style={{ margin: 0, fontSize: '0.78rem', color: C.blueLight, opacity: 0.8 }}>{booking.propertyName}</p>}
+            {booking.propertyName && <p className="guest-portal__hero-prop">{booking.propertyName}</p>}
           </div>
 
           {/* Date affiancate */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '0.5rem', alignItems: 'stretch' }}>
-            <div style={{ background: '#fff', border: `1px solid ${C.border}`, borderRadius: '12px', padding: '0.75rem' }}>
-              <p style={{ margin: '0 0 0.2rem', fontSize: '0.7rem', fontWeight: 600, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.07em' }}>Check-in</p>
-              <p style={{ margin: '0 0 0.25rem', fontSize: '0.95rem', fontWeight: 700, color: C.text }}>{fmtDate(booking.checkIn)}</p>
-              <p style={{ margin: 0, fontSize: '0.72rem', color: C.blue, fontWeight: 600 }}>dalle 15:00 alle 19:00</p>
+          <div className="guest-portal__dates">
+            <div className="guest-portal__date-card">
+              <p className="guest-portal__date-label">Check-in</p>
+              <p className="guest-portal__date-value">{fmtDate(booking.checkIn)}</p>
+              <p className="guest-portal__date-time">dalle 15:00 alle 19:00</p>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.2rem', padding: '0 0.25rem' }}>
-              <div style={{ width: 1, flex: 1, background: C.border }} />
-              <p style={{ margin: 0, fontSize: '0.68rem', color: C.textMuted, whiteSpace: 'nowrap' }}>{nights} {tD.nights.toLowerCase()}</p>
-              <div style={{ width: 1, flex: 1, background: C.border }} />
+            <div className="guest-portal__nights">
+              <div className="guest-portal__nights-line" />
+              <p className="guest-portal__nights-label">{nights} {tD.nights.toLowerCase()}</p>
+              <div className="guest-portal__nights-line" />
             </div>
-            <div style={{ background: '#fff', border: `1px solid ${C.border}`, borderRadius: '12px', padding: '0.75rem' }}>
-              <p style={{ margin: '0 0 0.2rem', fontSize: '0.7rem', fontWeight: 600, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.07em' }}>Check-out</p>
-              <p style={{ margin: '0 0 0.25rem', fontSize: '0.95rem', fontWeight: 700, color: C.text }}>{fmtDate(booking.checkOut)}</p>
-              <p style={{ margin: 0, fontSize: '0.72rem', color: C.blue, fontWeight: 600 }}>dalle 8:00 alle 10:00</p>
+            <div className="guest-portal__date-card">
+              <p className="guest-portal__date-label">Check-out</p>
+              <p className="guest-portal__date-value">{fmtDate(booking.checkOut)}</p>
+              <p className="guest-portal__date-time">dalle 8:00 alle 10:00</p>
             </div>
           </div>
 
           {/* Ospiti + Pagamenti */}
-          <div style={{ background: '#fff', border: `1px solid ${C.border}`, borderRadius: '14px', padding: '1rem' }}>
+          <div className="dashboard-card">
 
             {/* Ospiti */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '0.75rem', marginBottom: '0.75rem', borderBottom: `1px solid ${C.borderLight}` }}>
+            <div className="dashboard-card__row">
               <div>
-                <p style={{ margin: '0 0 0.15rem', fontSize: '0.7rem', fontWeight: 600, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.07em' }}>{tD.guests}</p>
-                <p style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: C.text }}>
+                <p className="guest-portal__date-label">{tD.guests}</p>
+                <p className="dashboard-card__title">
                   {booking.numAdult} {tD.adults}{booking.numChild > 0 ? ` · ${booking.numChild} ${tD.children}` : ''}
                 </p>
               </div>
-              <div style={{ background: C.blueLight, borderRadius: '50%', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', color: 'var(--color-primary)' }}>
+              <div className="icon-avatar">
                 <i className="bi bi-people-fill" aria-hidden="true" />
               </div>
             </div>
@@ -211,37 +202,39 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
             {/* Pagamenti */}
             {booking.totalCharged > 0 && (
               <>
-                <p style={{ margin: '0 0 0.5rem', fontSize: '0.7rem', fontWeight: 600, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+                <p className="guest-portal__date-label">
                   <i className="bi bi-cash-coin me-1" aria-hidden="true" />
                   {tD.payments}
                 </p>
                 {booking.isAirbnb ? (
                   <>
                     <PayRow label={tD.total} value={`€ ${booking.totalCharged.toFixed(2)}`} />
-                    <div style={{ marginTop: '0.4rem', fontSize: '0.82rem', color: C.success, fontWeight: 600 }}>
+                    <div className="pay-row__paid-confirm">
                       <i className="bi bi-check-circle-fill me-1" aria-hidden="true" />
                       {tD.paidViaAirbnb}
                     </div>
                   </>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                  <div className="d-flex flex-column gap-1">
                     {/* Voci invoice dettagliate */}
                     {(booking.invoiceItems ?? []).map((item, i) => (
                       <PayRow key={i} label={item.description} value={`€ ${item.amount.toFixed(2)}`} small />
                     ))}
                     {(booking.invoiceItems ?? []).length > 0 && (
-                      <div style={{ borderTop: `1px solid ${C.borderLight}`, marginTop: '0.25rem', paddingTop: '0.25rem' }} />
+                      <div className="pay-row__divider" />
                     )}
                     <PayRow label={tD.total} value={`€ ${booking.totalCharged.toFixed(2)}`} />
-                    <PayRow label={tD.paid}  value={`€ ${booking.totalPaid.toFixed(2)}`} color={C.success} />
-                    <div style={{ background: '#FFF8EC', border: `1px solid ${C.orange}`, borderRadius: '10px', padding: '0.6rem 0.75rem', marginTop: '0.4rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#B07820' }}>{tD.balanceDue}</span>
-                      <span style={{ fontSize: '1rem', fontWeight: 700, color: booking.balanceDue === 0 ? C.success : '#B07820' }}>€ {booking.balanceDue.toFixed(2)}</span>
+                    <PayRow label={tD.paid}  value={`€ ${booking.totalPaid.toFixed(2)}`} success />
+                    <div className="pay-row__balance-banner">
+                      <span className="pay-row__balance-label">{tD.balanceDue}</span>
+                      <span className={`pay-row__balance-value ${booking.balanceDue === 0 ? 'pay-row__balance-value--paid' : ''}`}>€ {booking.balanceDue.toFixed(2)}</span>
                     </div>
-                    {booking.balanceDue === 0 && <div style={{ fontSize: '0.82rem', color: C.success, fontWeight: 600, textAlign: 'center', paddingTop: '0.25rem' }}>
-                      <i className="bi bi-check-circle-fill me-1" aria-hidden="true" />
-                      {tD.fullyPaid}
-                    </div>}
+                    {booking.balanceDue === 0 && (
+                      <div className="pay-row__paid-confirm">
+                        <i className="bi bi-check-circle-fill me-1" aria-hidden="true" />
+                        {tD.fullyPaid}
+                      </div>
+                    )}
                   </div>
                 )}
               </>
@@ -273,32 +266,33 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
         {checkin && <CheckinSection locale={locale} t={t} bookId={booking.bookId} checkin={checkin} />}
 
         {/* 4. FAQ */}
-        <div style={card}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-            <i className="bi bi-question-circle-fill" style={{ color: 'var(--color-primary)' }} aria-hidden="true" />
-            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: C.text }}>{tFQ.title}</h3>
+        <div className="dashboard-card">
+          <div className="dashboard-card__title-row">
+            <i className="bi bi-question-circle-fill text-primary-brand" aria-hidden="true" />
+            <h3 className="dashboard-card__title">{tFQ.title}</h3>
           </div>
-          {faqs.map((faq, i) => (
-            <div key={i} style={{ borderBottom: i < faqs.length - 1 ? `1px solid ${C.borderLight}` : 'none' }}>
-              <button onClick={() => setFaqOpen(faqOpen === i ? null : i)}
-                style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: '0.85rem 0', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontWeight: 600, fontSize: '0.88rem', color: C.text }}>{faq.q}</span>
-                <span style={{ color: C.blue, fontSize: '0.75rem', flexShrink: 0, marginLeft: '0.5rem' }}>{faqOpen === i ? '▲' : '▼'}</span>
-              </button>
-              {faqOpen === i && <p style={{ margin: '0 0 0.85rem', fontSize: '0.86rem', color: C.textMid, lineHeight: 1.65 }}>{faq.a}</p>}
-            </div>
-          ))}
+          <div className="faq-list">
+            {faqs.map((faq, i) => (
+              <div key={i} className="faq-item">
+                <button onClick={() => setFaqOpen(faqOpen === i ? null : i)} className="faq-item__btn">
+                  <span className="faq-item__q">{faq.q}</span>
+                  <span className="faq-item__chevron">{faqOpen === i ? '▲' : '▼'}</span>
+                </button>
+                {faqOpen === i && <p className="faq-item__a">{faq.a}</p>}
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Supporto */}
-        <div style={{ textAlign: 'center', paddingTop: '0.25rem' }}>
-          <p style={{ margin: '0 0 0.6rem', fontSize: '0.82rem', color: C.textMuted }}>{tD.needHelp}</p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem' }}>
-            <a href="https://wa.me/393283131500" style={supportLink}>
-            <i className="bi bi-whatsapp me-1" aria-hidden="true" />
-            WhatsApp
-          </a>
-            <a href="mailto:contattolivingapple@gmail.com" style={supportLink}>
+        <div className="support-footer">
+          <p className="support-footer__hint">{tD.needHelp}</p>
+          <div className="support-footer__links">
+            <a href="https://wa.me/393283131500" className="support-footer__link">
+              <i className="bi bi-whatsapp me-1" aria-hidden="true" />
+              WhatsApp
+            </a>
+            <a href="mailto:contattolivingapple@gmail.com" className="support-footer__link">
               <i className="bi bi-envelope-fill me-1" aria-hidden="true" />
               Email
             </a>
@@ -309,24 +303,11 @@ export default function GuestPortal({ locale, t }: { locale: string; t: any }) {
   );
 }
 
-function InfoTile({ label, value, icon, sub }: { label: string; value: string; icon: string; sub?: string }) {
+function PayRow({ label, value, success, small }: { label: string; value: string; success?: boolean; small?: boolean }) {
   return (
-    <div style={{ background: '#f9fafb', borderRadius: '10px', padding: '0.75rem', border: '1px solid #e5e7eb' }}>
-      <p style={{ margin: '0 0 0.25rem', fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{icon} {label}</p>
-      <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 700, color: '#111111' }}>{value}</p>
-      {sub && <p style={{ margin: '0.15rem 0 0', fontSize: '0.75rem', color: '#9ca3af' }}>{sub}</p>}
+    <div className={`pay-row ${small ? 'pay-row--small' : ''}`}>
+      <span className="pay-row__label">{label}</span>
+      <span className={`pay-row__value ${success ? 'pay-row__value--success' : ''}`}>{value}</span>
     </div>
   );
 }
-
-function PayRow({ label, value, color, small }: { label: string; value: string; color?: string; small?: boolean }) {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: small ? '0.8rem' : '0.875rem' }}>
-      <span style={{ color: small ? '#888888' : '#555555' }}>{label}</span>
-      <span style={{ fontWeight: small ? 400 : 700, color: color ?? '#111111' }}>{value}</span>
-    </div>
-  );
-}
-
-const card: React.CSSProperties        = { background: '#fff', borderRadius: '14px', border: '1px solid #e5e7eb', padding: '1rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' };
-const supportLink: React.CSSProperties = { color: 'var(--color-primary)', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 700 };
