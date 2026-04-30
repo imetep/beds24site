@@ -1193,6 +1193,50 @@
       "paypalVaultChargeNote": "L'addebito avverrà automaticamente alla scadenza della cancellazione gratuita.",
       "errPayPalVault": "Errore salvataggio PayPal. Riprova o usa la carta."
     },
+    "doveSiamo": {
+      "metaTitle": "Dove siamo — Scauri (LT) | LivingApple",
+      "metaDescription": "Scauri è una piccola perla sul Tirreno, tra Roma e Napoli. Scopri come raggiungerci in auto, treno o aereo e perché è la meta ideale per le tue vacanze.",
+      "heroTitle": "Scauri, a metà strada tra Roma e Napoli",
+      "heroSub": "Dove il Lazio incontra il mare, tra natura, storia e sapori autentici del Sud.",
+      "whyTitle": "Perché Scauri",
+      "pillSeaTitle": "Mare a pochi passi",
+      "pillSeaText": "LivingApple campagna è a 1,5 km dalla spiaggia. LivingApple beach è a soli 250 m.",
+      "pillLocationTitle": "Posizione strategica",
+      "pillLocationText": "A 2h da Roma e 1h15 da Napoli in auto, raggiungibile anche in treno.",
+      "pillClimateTitle": "Clima mediterraneo",
+      "pillClimateText": "Estate lunga e soleggiata da maggio a ottobre, con temperature miti e poca pioggia.",
+      "pillNatureTitle": "Silenzio e natura",
+      "pillNatureText": "Nessuna folla, nessun caos. Solo mare, campagna e autentica ospitalità laziale.",
+      "mapTitle": "Quanto siamo lontani?",
+      "mapSub": "Scauri è raggiungibile in giornata da tutte le grandi città italiane.",
+      "howTitle": "Come raggiungerci",
+      "tabPlane": "Aereo",
+      "tabTrain": "Treno",
+      "tabCar": "Auto",
+      "planeIntro": "L'aeroporto più comodo è Napoli Capodichino, a soli 80 km. Roma Fiumicino offre più voli internazionali. Roma Ciampino è ideale per compagnie low cost.",
+      "planeAirports": [
+        { "code": "NAP", "name": "Napoli Capodichino", "km": "~80 km",  "time": "~1h in auto" },
+        { "code": "FCO", "name": "Roma Fiumicino",     "km": "~165 km", "time": "~2h in auto" },
+        { "code": "CIA", "name": "Roma Ciampino",      "km": "~145 km", "time": "~1h30 in auto" }
+      ],
+      "trainIntro": "La stazione di Minturno-Scauri è servita da treni Intercity e Regionali. Collegamento diretto da Roma Termini e da Napoli Centrale.",
+      "trainRoutes": [
+        { "label": "Da Roma Termini",    "time": "~1h45" },
+        { "label": "Da Napoli Centrale", "time": "~1h" }
+      ],
+      "trainNote": "Dalla stazione alla struttura: ~10 min in taxi o auto a noleggio (non ci sono autobus).",
+      "carIntro": "In auto è il modo migliore per vivere Scauri in piena libertà. Percorri l'A1 (Autostrada del Sole) e prendi il casello di Cassino.",
+      "carFrom": [
+        { "city": "Roma",    "time": "~2h",       "detail": "155 km · A1" },
+        { "city": "Napoli",  "time": "~1h 15min", "detail": "80 km · A1 o SS7" },
+        { "city": "Firenze", "time": "~4h",       "detail": "413 km · A1" },
+        { "city": "Milano",  "time": "~6h 30min", "detail": "730 km · A1" }
+      ],
+      "carNoteTitle": "L'auto è indispensabile",
+      "carNote": "Una volta arrivati, l'auto non è un optional — è necessaria. Supermercati, spiagge e ristoranti non sono raggiungibili a piedi dalla struttura: le strade rurali non hanno marciapiedi ed è pericoloso camminare. L'auto ti darà libertà totale per esplorare la costa, l'entroterra e i borghi dei Monti Aurunci.",
+      "byCar": "in auto",
+      "byPlane": "in aereo"
+    },
     "homeSearch": {
       "ui": {
         "dates": "Date",
