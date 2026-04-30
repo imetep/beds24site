@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import type { Locale } from '@/config/i18n';
+import { Icon } from '@/components/ui/Icon';
 
 // ─── Fonti (statiche — stessa lista in tutte le lingue) ───────────────────────
 const SOURCES_INTL = [
@@ -262,7 +263,7 @@ export default function SelfCheckinPage({ locale, wizardHref, contactHref }: Pro
           {t.ctaBtn} →
         </a>
         <p className="small text-muted mt-2 mb-0">
-          <i className="bi bi-info-circle me-1"></i> {t.ctaNote}
+          <Icon name="info-circle" className="me-1" /> {t.ctaNote}
         </p>
       </div>
 
@@ -275,7 +276,7 @@ export default function SelfCheckinPage({ locale, wizardHref, contactHref }: Pro
         <div className={`self-checkin-page__sources ${sourcesOpen ? 'is-open' : ''}`}>
           <button onClick={() => setSourcesOpen(o => !o)} className="self-checkin-page__sources-toggle">
             <span className="self-checkin-page__sources-toggle-text">
-              <i className="bi bi-newspaper me-1" aria-hidden="true" />
+              <Icon name="newspaper" className="me-1" />
               {t.sourcesTitle}
             </span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
@@ -314,7 +315,7 @@ export default function SelfCheckinPage({ locale, wizardHref, contactHref }: Pro
 
         <div className="self-checkin-page__legal">
           <p className="self-checkin-page__legal-text">
-            <i className="bi bi-bank2 me-1" aria-hidden="true" />
+            <Icon name="bank2" className="me-1" />
             {t.legalNote}
           </p>
         </div>
@@ -334,13 +335,13 @@ export default function SelfCheckinPage({ locale, wizardHref, contactHref }: Pro
         <ul className="self-checkin-page__needs-list">
           {t.needs.map((need, i) => (
             <li key={i} className="self-checkin-page__needs-item">
-              <i className="bi bi-check-lg self-checkin-page__needs-icon" aria-hidden="true" />
+              <Icon name="check-lg" className="self-checkin-page__needs-icon" />
               {need}
             </li>
           ))}
         </ul>
         <p className="self-checkin-page__time-note">
-          <i className="bi bi-clock-fill me-1" aria-hidden="true" /> {t.timeNote}
+          <Icon name="clock-fill" className="me-1" /> {t.timeNote}
         </p>
       </div>
 
@@ -360,7 +361,7 @@ export default function SelfCheckinPage({ locale, wizardHref, contactHref }: Pro
           {t.ctaBtn} →
         </a>
         <p className="self-checkin-page__cta-note">
-          <i className="bi bi-info-circle me-1" aria-hidden="true" /> {t.ctaNote}
+          <Icon name="info-circle" className="me-1" /> {t.ctaNote}
         </p>
       </div>
 
