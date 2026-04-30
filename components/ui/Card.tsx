@@ -14,17 +14,17 @@ interface Props {
   style?: CSSProperties;
 }
 
-const PADDINGS: Record<Padding, string> = {
-  sm: 'var(--space-sm)',
-  md: 'var(--space-md)',
-  base: 'var(--space-base)',
-  lg: 'var(--space-lg)',
+const PADDING_CLASS: Record<Padding, string> = {
+  sm:   'ui-card--p-sm',
+  md:   'ui-card--p-md',
+  base: '', // default su .ui-card
+  lg:   'ui-card--p-lg',
 };
 
-const RADII: Record<Radius, string> = {
-  sm: 'var(--radius-sm)',
-  md: 'var(--radius-md)',
-  lg: 'var(--radius-lg)',
+const RADIUS_CLASS: Record<Radius, string> = {
+  sm: 'ui-card--r-sm',
+  md: '', // default su .ui-card
+  lg: 'ui-card--r-lg',
 };
 
 export default function Card({
@@ -32,23 +32,33 @@ export default function Card({
   padding = 'base',
   radius = 'md',
   shadow = false,
-  background = 'var(--color-bg)',
-  borderColor = 'var(--color-border)',
+  background,
+  borderColor,
   className,
   style,
 }: Props) {
+  // Se background/borderColor sono override (raro), li applichiamo
+  // come inline style legittimo (sovrascrive default --color-bg/--color-border).
+  // Eccezione documentata: pattern API legacy, override puntuale.
+  const overrideStyle: CSSProperties | undefined =
+    (background || borderColor || style)
+      ? {
+          ...(background ? { background } : {}),
+          ...(borderColor ? { borderColor } : {}),
+          ...(style ?? {}),
+        }
+      : undefined;
+
+  const classes = [
+    'ui-card',
+    PADDING_CLASS[padding],
+    RADIUS_CLASS[radius],
+    shadow ? 'ui-card--shadow' : '',
+    className,
+  ].filter(Boolean).join(' ');
+
   return (
-    <div
-      className={className}
-      style={{
-        padding: PADDINGS[padding],
-        borderRadius: RADII[radius],
-        border: `1px solid ${borderColor}`,
-        background,
-        boxShadow: shadow ? '0 2px 8px rgba(0,0,0,0.06)' : undefined,
-        ...style,
-      }}
-    >
+    <div className={classes} style={overrideStyle}>
       {children}
     </div>
   );

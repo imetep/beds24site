@@ -6974,6 +6974,68 @@ body {
   flex: 2;
 }
 
+/* ── UI primitive Card / Button (Sessione 26 Fase 2) ── */
+.ui-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-base);
+}
+.ui-card--p-sm  { padding: var(--space-sm); }
+.ui-card--p-md  { padding: var(--space-md); }
+.ui-card--p-lg  { padding: var(--space-lg); }
+.ui-card--r-sm  { border-radius: var(--radius-sm); }
+.ui-card--r-lg  { border-radius: var(--radius-lg); }
+.ui-card--shadow {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.ui-button {
+  min-height: var(--touch-target);
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  border: none;
+}
+.ui-button:disabled,
+.ui-button.is-disabled {
+  cursor: not-allowed;
+}
+.ui-button--full {
+  width: 100%;
+}
+.ui-button--sm {
+  padding: 8px 14px;
+  font-size: var(--text-sm);
+}
+.ui-button--md {
+  padding: 10px 18px;
+  font-size: var(--text-base);
+}
+.ui-button--lg {
+  padding: 14px 20px;
+  font-size: var(--text-md);
+}
+.ui-button--primary {
+  background: var(--color-cta);
+  color: var(--color-on-dark);
+}
+.ui-button--primary:disabled,
+.ui-button--primary.is-disabled {
+  background: var(--color-bg-muted);
+  color: var(--color-text-muted);
+}
+.ui-button--secondary {
+  background: var(--color-bg);
+  color: var(--color-primary);
+  border: 1.5px solid var(--color-primary);
+}
+.ui-button--ghost {
+  background: transparent;
+  color: var(--color-primary);
+}
+
 /* ──────────────────────────────────────────────────────────────────────────
    ContattiClient + DoveSiamoClient (Sessione 23 Fase 2)
    ────────────────────────────────────────────────────────────────────────── */
