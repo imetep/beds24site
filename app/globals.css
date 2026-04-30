@@ -9315,3 +9315,8 @@ body {
   background: var(--color-primary-soft);
   color: var(--color-primary);
 }
+
+/* /mappa — pagina interna di servizio (non indicizzata) */
+.mappa-page {
+  max-width: 900px;
+}
