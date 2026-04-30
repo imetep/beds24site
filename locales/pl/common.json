@@ -976,6 +976,40 @@
               }
             }
           ]
+        },
+        {
+          "icon": "bi-car-front-fill",
+          "label": "Samochód i transport",
+          "items": [
+            {
+              "q": "Czy samochód jest niezbędny?",
+              "a": "Tak, samochód jest zdecydowanie zalecany — prawie niezbędny. Obiekty znajdują się w strefach wiejskich lub mieszkalnych z drogami bez chodników. Bez samochodu trudno dotrzeć do supermarketów, plaż i centrów Minturno i Scauri."
+            },
+            {
+              "q": "Czy w pobliżu obiektu jest komunikacja publiczna?",
+              "a": "Nie. W promieniu 200-300 metrów od obiektów nie ma przystanków autobusowych. Okoliczne drogi są wiejskie lub mieszkalne bez chodników: chodzenie pieszo nie jest bezpieczne, zwłaszcza wieczorem lub z dziećmi. Jedynym przydatnym środkiem transportu publicznego jest pociąg ze stacji Minturno-Scauri (ok. 2 km, niedostępnej bezpiecznie pieszo)."
+            },
+            {
+              "q": "Czy mogę dojść pieszo do supermarketu lub na plażę?",
+              "a": "Nie, nie jest to bezpieczne. Drogi wiejskie nie mają chodników, a ruch odbywa się bez ochrony pieszych. Najbliższy supermarket jest ok. 3-5 minut jazdy samochodem; plaże 5-10 minut. Chodzenie po drogach wiejskich nie jest zalecane z małymi dziećmi lub starszymi gośćmi."
+            },
+            {
+              "q": "Gdzie można wynająć samochód w pobliżu obiektu?",
+              "a": "Najbliższe wypożyczalnie samochodów znajdują się w Formia (ok. 15 minut). Zalecamy rezerwację online przed wyjazdem i odbiór samochodu na lotnisku. Niektóre agencje oferują odbiór/dostawę do obiektu na życzenie."
+            },
+            {
+              "q": "Jak odwiedzić Rzym i Neapol bez samochodu?",
+              "a": "Rzym i Neapol można osiągnąć pociągiem ze stacji Minturno-Scauri (ok. 1h40 do Roma Termini, ok. 60 minut do Napoli Centrale). Aby dotrzeć na stację z obiektu, potrzebny jest samochód lub taksówka. Na życzenie pomagamy zorganizować transfer."
+            },
+            {
+              "q": "Jak poruszać się lokalnie bez samochodu?",
+              "a": "Opcje bez samochodu są ograniczone:\n• Taksówka: dostępna na życzenie (możemy podać lokalne numery)\n• Rower: możliwy na niektórych drogach bocznych, ale drogi wiejskie bez chodników nie zawsze są bezpieczne\nNasza spokojna lokalizacja oferuje doskonały stosunek jakości do ceny, ale wymaga samochodu do codziennych podróży."
+            },
+            {
+              "q": "Czy oferujecie usługę transferu z dworca? Ile to kosztuje?",
+              "a": "Tak, na życzenie organizujemy transfer ze stacji Minturno-Scauri do obiektu LivingApple.\nKoszt: 40 € w obie strony.\nAby zarezerwować, napisz do nas na WhatsApp co najmniej 2 dni przed przyjazdem, podając godzinę pociągu."
+            }
+          ]
         }
       ]
     },
