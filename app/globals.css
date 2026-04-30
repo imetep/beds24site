@@ -5881,6 +5881,498 @@ body {
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
+   WizardCheckin / Self-checkin (Sessione 19-20 Fase 2)
+   Wizard 4-step + upload documenti + status pages.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* ── Section header con border-top (separatore visivo tra sezioni form) ── */
+.section-header--with-border {
+  margin: var(--space-lg) 0 var(--space-md);
+  padding-top: var(--space-xs);
+  border-top: 1.5px solid var(--color-bg-muted);
+}
+.section-header__label-up {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ── Wizard checkin layout ── */
+.checkin-wizard {
+  /* Wrapper è .page-container — niente padding orizzontale custom (eredita 16px da .page-container) */
+}
+.checkin-wizard__progress {
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-md) var(--space-md) var(--space-sm);
+}
+.checkin-wizard__progress-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-sm);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+.checkin-wizard__progress-bar {
+  background: var(--color-bg-muted);
+  border-radius: var(--radius-pill);
+  height: 4px;
+  overflow: hidden;
+}
+.checkin-wizard__progress-fill {
+  background: var(--color-primary);
+  border-radius: var(--radius-pill);
+  height: 4px;
+  transition: width 0.3s ease;
+}
+.checkin-wizard__step {
+  background: var(--color-bg);
+  padding: var(--space-lg) var(--space-md) 28px;
+}
+.checkin-wizard__title {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 var(--space-xs);
+}
+.checkin-wizard__sub {
+  margin: 0 0 var(--space-lg);
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+/* ── Form row (2-col responsive con flex-wrap) ── */
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.form-row__half {
+  flex: 1 1 200px;
+  margin-bottom: 14px;
+}
+.form-row__full {
+  margin-bottom: 14px;
+  width: 100%;
+}
+.form-row__full--mb-lg {
+  margin-bottom: 20px;
+}
+.form-row__full--mb-0 {
+  margin-bottom: 0;
+}
+
+/* ── Modifier label esistente .ui-field-label per pattern wizard checkin ── */
+.ui-field-input--mb {
+  /* Padding scuro / sfondo bianco-tenue per match design originale wizard */
+  background: var(--color-bg-muted);
+}
+.ui-field-input--select-native {
+  appearance: none;
+}
+
+/* ── Found booking summary (verde, conferma trovata) ── */
+.checkin-wizard__found {
+  background: #EAF3DE;
+  border-radius: 10px;
+  padding: 14px var(--space-base);
+  margin-bottom: var(--space-lg);
+  border: 1px solid #C0DD97;
+}
+.checkin-wizard__found-title {
+  margin: 0 0 4px;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: #27500A;
+}
+.checkin-wizard__found-line {
+  margin: 0 0 2px;
+  font-size: var(--text-sm);
+  color: #3B6D11;
+}
+.checkin-wizard__found-line:last-child {
+  margin-bottom: 0;
+}
+
+/* ── Email warning yellow box (TULPS warning) ── */
+.checkin-wizard__email-note {
+  margin-top: 6px;
+  background: var(--color-warning-bg);
+  border: 1px solid var(--color-warning-border);
+  border-radius: 8px;
+  padding: var(--space-sm) var(--space-md);
+}
+.checkin-wizard__email-note-text {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: #713f12;
+}
+
+/* ── Altro ospite (subform card) ── */
+.checkin-wizard__altro {
+  margin-bottom: var(--space-base);
+  padding: var(--space-base) 14px;
+  background: var(--color-bg-muted);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+}
+.checkin-wizard__altro-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+.checkin-wizard__altro-label {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+.checkin-wizard__remove-btn {
+  font-size: var(--text-xs);
+  padding: 4px 10px;
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+  color: var(--color-danger);
+  border: 1.5px solid #fca5a5;
+  border-radius: 10px;
+  background: var(--color-bg);
+  cursor: pointer;
+}
+
+/* ── Add guest button + step nav (back / continue) ── */
+.checkin-wizard__add-guest {
+  width: 100%;
+  margin-bottom: var(--space-lg);
+  text-align: center;
+  padding: var(--space-md) var(--space-base);
+  font-size: var(--text-base);
+  background: var(--color-bg);
+  color: #374151;
+  border: 1.5px solid var(--color-border);
+  border-radius: 10px;
+  cursor: pointer;
+  min-height: var(--touch-target);
+}
+.checkin-wizard__primary-btn {
+  width: 100%;
+  padding: 14px var(--space-lg);
+  font-size: var(--text-base);
+  font-weight: 700;
+  background: var(--color-primary);
+  color: var(--color-on-dark);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  min-height: var(--touch-target);
+}
+.checkin-wizard__primary-btn:disabled,
+.checkin-wizard__primary-btn.is-disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.checkin-wizard__primary-btn.is-loading {
+  opacity: 0.6;
+}
+.checkin-wizard__secondary-btn {
+  padding: var(--space-md) var(--space-base);
+  font-size: var(--text-base);
+  background: var(--color-bg);
+  color: #374151;
+  border: 1.5px solid var(--color-border);
+  border-radius: 10px;
+  cursor: pointer;
+  min-height: var(--touch-target);
+}
+.checkin-wizard__nav {
+  display: flex;
+  gap: 10px;
+  margin-top: var(--space-sm);
+}
+.checkin-wizard__nav-back {
+  flex: 1;
+}
+.checkin-wizard__nav-next {
+  flex: 2;
+}
+
+/* ── Errors panel (rosso, lista campi mancanti) ── */
+.checkin-wizard__errors {
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  border-radius: 10px;
+  padding: var(--space-md) 14px;
+  margin-bottom: 14px;
+}
+.checkin-wizard__errors-title {
+  margin: 0 0 4px;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: #991B1B;
+}
+.checkin-wizard__errors-list {
+  margin: 0;
+  padding: 0 0 0 var(--space-base);
+}
+.checkin-wizard__errors-list li {
+  font-size: var(--text-sm);
+  color: var(--color-danger);
+}
+.checkin-wizard__inline-error {
+  font-size: var(--text-sm);
+  color: var(--color-danger);
+  margin-bottom: var(--space-md);
+}
+
+/* ── GDPR warning box (rosso) ── */
+.checkin-wizard__gdpr-warn {
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  border-radius: 10px;
+  padding: var(--space-md) 14px;
+  margin-bottom: var(--space-lg);
+}
+.checkin-wizard__gdpr-warn-title {
+  margin: 0 0 4px;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: #991B1B;
+}
+.checkin-wizard__gdpr-warn-text {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: #7f1d1d;
+}
+
+/* ── Doc slot grid (caricamento documenti front/back) ── */
+.checkin-wizard__doc-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+.checkin-wizard__doc-cell {
+  flex: 1 1 240px;
+}
+
+/* ── DocSlot (single document upload card) ── */
+.doc-slot {
+  border: 2px dashed var(--color-border);
+  border-radius: 12px;
+  padding: var(--space-md);
+  cursor: pointer;
+  background: var(--color-bg-muted);
+}
+.doc-slot.is-uploaded {
+  border-color: var(--color-success-border);
+  background: var(--color-success-bg);
+  cursor: default;
+}
+.doc-slot.is-error {
+  border-color: var(--color-error-border);
+}
+.doc-slot__preview {
+  margin-bottom: var(--space-sm);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f3f4f6;
+  line-height: 0;
+}
+.doc-slot__preview-img {
+  width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  display: block;
+}
+.doc-slot__placeholder {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-sm);
+  font-size: 40px;
+  color: var(--color-text-disabled);
+}
+.doc-slot__side {
+  margin: 0 0 2px;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: #374151;
+  text-align: center;
+}
+.doc-slot__status {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-disabled);
+  text-align: center;
+}
+.doc-slot.is-uploaded .doc-slot__status {
+  color: var(--color-success);
+}
+.doc-slot.is-error .doc-slot__status {
+  color: var(--color-danger);
+}
+.doc-slot__file-input {
+  display: none;
+}
+
+/* ── Step 4 summary recap ── */
+.checkin-wizard__summary {
+  background: var(--color-bg-muted);
+  border-radius: 12px;
+  padding: var(--space-base);
+  margin-bottom: var(--space-lg);
+  border: 1px solid var(--color-border);
+}
+.checkin-wizard__summary-title {
+  margin: 0 0 10px;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.checkin-wizard__summary-line {
+  margin: 0 0 2px;
+  font-size: var(--text-base);
+  color: #374151;
+}
+.checkin-wizard__summary-line--mb {
+  margin-bottom: 10px;
+}
+.checkin-wizard__summary-section {
+  margin: 10px 0 3px;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-text-disabled);
+  text-transform: uppercase;
+}
+.checkin-wizard__summary-line--strong {
+  color: var(--color-text);
+}
+
+/* ── Consent checkbox (TULPS / GDPR) ── */
+.checkin-wizard__consent {
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-start;
+  margin-bottom: var(--space-base);
+  cursor: pointer;
+}
+.checkin-wizard__consent--last {
+  margin-bottom: var(--space-lg);
+}
+.checkin-wizard__consent-input {
+  margin-top: 2px;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+.checkin-wizard__consent-text {
+  font-size: var(--text-sm);
+  color: #374151;
+  line-height: 1.6;
+}
+
+/* ── Done state (richiesta completata) ── */
+.checkin-wizard__done-icon {
+  font-size: 52px;
+  color: var(--color-success);
+  margin-bottom: var(--space-md);
+}
+.checkin-wizard__done-title {
+  font-weight: 700;
+  margin-bottom: var(--space-sm);
+  font-size: var(--text-xl);
+  color: var(--color-text);
+}
+.checkin-wizard__done-ref {
+  display: inline-block;
+  background: var(--color-primary-soft);
+  border-radius: 10px;
+  padding: var(--space-sm) 18px;
+}
+.checkin-wizard__done-ref-text {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: #185FA5;
+}
+.checkin-wizard__steps {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  margin-bottom: var(--space-md);
+  padding: var(--space-md);
+  border-radius: 14px;
+}
+.checkin-wizard__steps-title {
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0 0 var(--space-md);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  letter-spacing: 0.05em;
+}
+.checkin-wizard__steps-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: var(--space-base);
+}
+.checkin-wizard__steps-row:last-child {
+  margin-bottom: 0;
+}
+.checkin-wizard__steps-icon {
+  flex-shrink: 0;
+  font-size: 20px;
+  margin-top: 1px;
+  color: var(--color-primary);
+}
+.checkin-wizard__steps-text-title {
+  font-weight: 700;
+  margin: 0 0 var(--space-xs);
+  font-size: var(--text-base);
+  color: var(--color-text);
+}
+.checkin-wizard__steps-text-body {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+.checkin-wizard__track {
+  background: var(--color-bg-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 18px var(--space-lg);
+}
+.checkin-wizard__track-title {
+  font-weight: 700;
+  margin-bottom: var(--space-xs);
+  font-size: var(--text-base);
+  color: var(--color-text);
+}
+.checkin-wizard__track-text {
+  margin-bottom: var(--space-md);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+.checkin-wizard__track-cta {
+  display: block;
+  text-align: center;
+  color: var(--color-on-dark);
+  font-weight: 700;
+  text-decoration: none;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-primary);
+  border-radius: 10px;
+  font-size: var(--text-base);
+  min-height: var(--touch-target);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
    ChangeRequestWizard (Sessione 18 Fase 2)
    Wizard 3-step inline (collapsed/open) per richiesta modifica prenotazione.
    ────────────────────────────────────────────────────────────────────────── */

@@ -50,48 +50,17 @@ function useT(locale: Locale) {
   return getTranslations(locale).components.wizardCheckin;
 }
 
-// ─── Stili ────────────────────────────────────────────────────────────────────
-const inp: React.CSSProperties = {
-  width: '100%', padding: '12px 14px', fontSize: 16,
-  border: '1.5px solid #e5e7eb', borderRadius: 10,
-  background: '#fafafa', color: '#111', outline: 'none',
-  boxSizing: 'border-box', fontFamily: 'inherit',
-};
-const lbl: React.CSSProperties = {
-  fontSize: 12, fontWeight: 700, color: '#6b7280',
-  display: 'block', marginBottom: 5, letterSpacing: '0.04em',
-  textTransform: 'uppercase',
-};
-const fw: React.CSSProperties = { marginBottom: 14 };
-// Flex item per layout 2 colonne responsive
-const half: React.CSSProperties = { flex: '1 1 200px', marginBottom: 14 };
-const btnP: React.CSSProperties = {
-  width: '100%', padding: '14px 20px', fontSize: 16, fontWeight: 700,
-  background: 'var(--color-primary)', color: '#fff', border: 'none', borderRadius: 12, cursor: 'pointer',
-};
-const btnS: React.CSSProperties = {
-  padding: '12px 16px', fontSize: 14, background: '#fff', color: '#374151',
-  border: '1.5px solid #e5e7eb', borderRadius: 10, cursor: 'pointer',
-};
-
 // Helper: riga a due colonne responsive
 function Row({ children }: { children: React.ReactNode }) {
-  return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-      {children}
-    </div>
-  );
+  return <div className="form-row">{children}</div>;
 }
 
 // Helper: separatore sezione
 function SectionHeader({ label, icon }: { label: string; icon: string }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '20px 0 14px', paddingTop: 4,
-      borderTop: '1.5px solid #f3f4f6' }}>
-      <i className={`bi ${icon}`} style={{ fontSize: 16, color: 'var(--color-primary)' }} aria-hidden="true" />
-      <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-primary)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-        {label}
-      </span>
+    <div className="section-header section-header--with-border">
+      <i className={`bi ${icon} section-header__icon`} aria-hidden="true" />
+      <span className="section-header__label-up">{label}</span>
     </div>
   );
 }
@@ -246,12 +215,13 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
 
   // ── Progress bar ──────────────────────────────────────────────────────────
   const Bar = () => (
-    <div className="bg-white border-bottom px-3 pt-3 pb-2">
-      <div className="d-flex justify-content-between mb-2 text-muted" style={{ fontSize: 12 }}>
+    <div className="checkin-wizard__progress">
+      <div className="checkin-wizard__progress-row">
         <span>Step {step} {t.stepOf} 4</span><span>{Math.round((step / 4) * 100)}%</span>
       </div>
-      <div style={{ background: '#f3f4f6', borderRadius: 99, height: 4 }}>
-        <div style={{ background: 'var(--color-primary)', borderRadius: 99, height: 4, width: `${(step / 4) * 100}%`, transition: 'width 0.3s ease' }} />
+      <div className="checkin-wizard__progress-bar">
+        {/* Width dinamico calcolato a runtime — eccezione style legittima */}
+        <div className="checkin-wizard__progress-fill" style={{ width: `${(step / 4) * 100}%` }} />
       </div>
     </div>
   );
@@ -270,51 +240,44 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
       { icon: 'bi-check-circle-fill',   title: 'Email di approvazione',   text: "Riceverai una email con l'esito della tua richiesta." },
     ];
     return (
-      <div className="page-container pt-4 pb-5">
+      <div className="page-container page-top pb-5">
         <div className="text-center mb-4">
-          <div className="mb-3" style={{ fontSize: 52, color: 'var(--color-success, #16a34a)' }}>
+          <div className="checkin-wizard__done-icon">
             <i className="bi bi-check-circle-fill" aria-hidden="true" />
           </div>
-          <h1 className="fw-bold mb-2" style={{ fontSize: 22, color: '#111' }}>
+          <h1 className="checkin-wizard__done-title">
             {isEn ? 'Request submitted' : 'Richiesta inviata'}
           </h1>
-          <div className="d-inline-block" style={{ background: '#EEF5FC', borderRadius: 10, padding: '8px 18px' }}>
-            <p className="m-0" style={{ fontSize: 13, color: '#185FA5' }}>
+          <div className="checkin-wizard__done-ref">
+            <p className="checkin-wizard__done-ref-text">
               {isEn ? 'Booking reference' : 'Riferimento prenotazione'}: <strong>#{booking!.bookId}</strong>
             </p>
           </div>
         </div>
-        <div className="bg-white border mb-3 p-3" style={{ borderRadius: 14 }}>
-          <p
-            className="fw-bold text-uppercase mb-3"
-            style={{ fontSize: 12, color: '#6b7280', letterSpacing: '0.05em' }}
-          >
+        <div className="checkin-wizard__steps">
+          <p className="checkin-wizard__steps-title">
             {isEn ? 'What happens next' : 'Cosa succede adesso'}
           </p>
           {steps.map((s, i) => (
-            <div key={i} className="d-flex align-items-start" style={{ gap: 14, marginBottom: i < steps.length - 1 ? 16 : 0 }}>
-              <div className="flex-shrink-0" style={{ fontSize: 20, marginTop: 1, color: 'var(--color-primary)' }}>
+            <div key={i} className="checkin-wizard__steps-row">
+              <div className="checkin-wizard__steps-icon">
                 <i className={`bi ${s.icon}`} aria-hidden="true" />
               </div>
               <div>
-                <p className="fw-bold mb-1" style={{ fontSize: 14, color: '#111' }}>{s.title}</p>
-                <p className="m-0" style={{ fontSize: 13, color: '#6b7280', lineHeight: 1.6 }}>{s.text}</p>
+                <p className="checkin-wizard__steps-text-title">{s.title}</p>
+                <p className="checkin-wizard__steps-text-body">{s.text}</p>
               </div>
             </div>
           ))}
         </div>
-        <div className="border" style={{ background: '#f9fafb', borderRadius: 14, padding: '18px 20px' }}>
-          <p className="fw-bold mb-1" style={{ fontSize: 14, color: '#111' }}>
+        <div className="checkin-wizard__track">
+          <p className="checkin-wizard__track-title">
             {isEn ? 'Track your request' : 'Segui la tua richiesta'}
           </p>
-          <p className="mb-3" style={{ fontSize: 13, color: '#6b7280', lineHeight: 1.6 }}>
+          <p className="checkin-wizard__track-text">
             {isEn ? 'Check the status and send us messages at any time:' : 'Controlla lo stato e scrivici in qualsiasi momento:'}
           </p>
-          <a
-            href={statusUrl}
-            className="d-block text-center text-white fw-bold text-decoration-none"
-            style={{ padding: '12px 20px', background: 'var(--color-primary)', borderRadius: 10, fontSize: 14 }}
-          >
+          <a href={statusUrl} className="checkin-wizard__track-cta">
             {isEn ? 'Go to my request →' : 'Vai alla mia richiesta →'}
           </a>
         </div>
@@ -323,36 +286,37 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
   }
 
   return (
-    <div className="page-container pb-5" style={{ paddingLeft: 0, paddingRight: 0 }}>
+    <div className="page-container pb-5 checkin-wizard">
 
       {/* ── STEP 1 ────────────────────────────────────────────────────────── */}
       {step === 1 && (<>
         <Bar />
-        <div style={{ background: '#fff', padding: '24px 20px 28px' }}>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: '#111', margin: '0 0 6px' }}>{t.step1Title}</h1>
-          <p style={{ margin: '0 0 24px', fontSize: 14, color: '#6b7280', lineHeight: 1.6 }}>{t.step1Sub}</p>
-          <div style={fw}>
-            <label style={lbl}>{t.bookIdLabel}</label>
-            <input style={inp} type="number" inputMode="numeric" placeholder={t.bookIdPh}
+        <div className="checkin-wizard__step">
+          <h1 className="checkin-wizard__title">{t.step1Title}</h1>
+          <p className="checkin-wizard__sub">{t.step1Sub}</p>
+          <div className="form-row__full">
+            <label className="ui-field-label ui-field-label--uppercase">{t.bookIdLabel}</label>
+            <input className="ui-field-input" type="number" inputMode="numeric" placeholder={t.bookIdPh}
               tabIndex={1}
               value={bookIdInput}
               onChange={e => { setBookIdInput(e.target.value); setVerifyErr(''); setBooking(null); }}
               onKeyDown={e => e.key === 'Enter' && verifyBooking()} />
           </div>
-          {verifyErr && <p style={{ fontSize: 13, color: '#dc2626', marginBottom: 12 }}>{verifyErr}</p>}
+          {verifyErr && <p className="checkin-wizard__inline-error">{verifyErr}</p>}
           {booking ? (<>
-            <div style={{ background: '#EAF3DE', borderRadius: 10, padding: '14px 16px', marginBottom: 20, border: '1px solid #C0DD97' }}>
-              <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 700, color: '#27500A' }}>
+            <div className="checkin-wizard__found">
+              <p className="checkin-wizard__found-title">
                 <i className="bi bi-check-lg me-1" aria-hidden="true" />
                 {t.foundTitle}
               </p>
-              <p style={{ margin: '0 0 2px', fontSize: 13, color: '#3B6D11' }}>{t.propLabel}: <strong>{booking.roomName}</strong></p>
-              <p style={{ margin: '0 0 2px', fontSize: 13, color: '#3B6D11' }}>{t.checkinLabel}: <strong>{booking.checkIn}</strong> — {t.checkoutLabel}: <strong>{booking.checkOut}</strong></p>
-              <p style={{ margin: 0, fontSize: 13, color: '#3B6D11' }}>{t.guestsLabel}: <strong>{booking.numAdult}</strong></p>
+              <p className="checkin-wizard__found-line">{t.propLabel}: <strong>{booking.roomName}</strong></p>
+              <p className="checkin-wizard__found-line">{t.checkinLabel}: <strong>{booking.checkIn}</strong> — {t.checkoutLabel}: <strong>{booking.checkOut}</strong></p>
+              <p className="checkin-wizard__found-line">{t.guestsLabel}: <strong>{booking.numAdult}</strong></p>
             </div>
-            <button style={btnP} onClick={() => setStep(2)} tabIndex={2}>{t.continueBtn}</button>
+            <button className="checkin-wizard__primary-btn" onClick={() => setStep(2)} tabIndex={2}>{t.continueBtn}</button>
           </>) : (
-            <button style={{ ...btnP, opacity: verifying || !bookIdInput.trim() ? 0.6 : 1 }}
+            <button
+              className={`checkin-wizard__primary-btn ${verifying || !bookIdInput.trim() ? 'is-loading' : ''}`}
               onClick={verifyBooking} disabled={verifying || !bookIdInput.trim()} tabIndex={2}>
               {verifying ? t.verifying : t.verifyBtn}
             </button>
@@ -363,33 +327,33 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
       {/* ── STEP 2 ────────────────────────────────────────────────────────── */}
       {step === 2 && (<>
         <Bar />
-        <div style={{ background: '#fff', padding: '24px 20px 28px' }}>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: '#111', margin: '0 0 4px' }}>{t.step2Title}</h1>
-          <p style={{ margin: '0 0 20px', fontSize: 14, color: '#6b7280', lineHeight: 1.6 }}>{t.step2Sub}</p>
+        <div className="checkin-wizard__step">
+          <h1 className="checkin-wizard__title">{t.step2Title}</h1>
+          <p className="checkin-wizard__sub">{t.step2Sub}</p>
 
           {/* ── Capogruppo ── */}
           <SectionHeader label={t.mainGuest} icon="bi-person-fill" />
 
           <Row>
-            <div style={half}>
-              <label style={lbl}>{t.lastName} *</label>
-              <input style={inp} tabIndex={1} value={capo.lastName}
+            <div className="form-row__half">
+              <label className="ui-field-label ui-field-label--uppercase">{t.lastName} *</label>
+              <input className="ui-field-input" tabIndex={1} value={capo.lastName}
                 onChange={e => setCapo(c => ({ ...c, lastName: e.target.value }))} />
             </div>
-            <div style={half}>
-              <label style={lbl}>{t.firstName} *</label>
-              <input style={inp} tabIndex={2} value={capo.firstName}
+            <div className="form-row__half">
+              <label className="ui-field-label ui-field-label--uppercase">{t.firstName} *</label>
+              <input className="ui-field-input" tabIndex={2} value={capo.firstName}
                 onChange={e => setCapo(c => ({ ...c, firstName: e.target.value }))} />
             </div>
           </Row>
 
-          <div style={fw}>
-            <label style={lbl}>{t.emailLabel} *</label>
-            <input style={inp} type="email" inputMode="email" placeholder={t.emailPh}
+          <div className="form-row__full">
+            <label className="ui-field-label ui-field-label--uppercase">{t.emailLabel} *</label>
+            <input className="ui-field-input" type="email" inputMode="email" placeholder={t.emailPh}
               tabIndex={3} value={capo.email}
               onChange={e => setCapo(c => ({ ...c, email: e.target.value }))} />
-            <div style={{ marginTop: 6, background: '#FFF9E6', border: '1px solid #FDE68A', borderRadius: 8, padding: '8px 12px' }}>
-              <p style={{ margin: 0, fontSize: 12, color: '#713f12' }}>
+            <div className="checkin-wizard__email-note">
+              <p className="checkin-wizard__email-note-text">
                 <i className="bi bi-exclamation-triangle-fill me-1" aria-hidden="true" />
                 {t.emailNote}
               </p>
@@ -397,14 +361,14 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
           </div>
 
           <Row>
-            <div style={half}>
-              <label style={lbl}>{t.birthDate} *</label>
-              <input style={inp} type="date" tabIndex={4} value={capo.birthDate}
+            <div className="form-row__half">
+              <label className="ui-field-label ui-field-label--uppercase">{t.birthDate} *</label>
+              <input className="ui-field-input" type="date" tabIndex={4} value={capo.birthDate}
                 onChange={e => setCapo(c => ({ ...c, birthDate: e.target.value }))} />
             </div>
-            <div style={half}>
-              <label style={lbl}>{t.gender} *</label>
-              <select style={{ ...inp, appearance: 'none' }} tabIndex={5} value={capo.gender}
+            <div className="form-row__half">
+              <label className="ui-field-label ui-field-label--uppercase">{t.gender} *</label>
+              <select className="ui-field-input ui-field-input--select-native" tabIndex={5} value={capo.gender}
                 onChange={e => setCapo(c => ({ ...c, gender: e.target.value }))}>
                 <option value="M">{t.male}</option>
                 <option value="F">{t.female}</option>
@@ -412,38 +376,38 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
             </div>
           </Row>
 
-          <div style={fw}>
-            <label style={lbl}>{t.birthPlace} *</label>
-            <input style={inp} tabIndex={6} value={capo.birthPlace}
+          <div className="form-row__full">
+            <label className="ui-field-label ui-field-label--uppercase">{t.birthPlace} *</label>
+            <input className="ui-field-input" tabIndex={6} value={capo.birthPlace}
               onChange={e => setCapo(c => ({ ...c, birthPlace: e.target.value }))} />
           </div>
 
-          <div style={fw}>
-            <label style={lbl}>{t.citizenship} *</label>
-            <input style={inp} tabIndex={7} value={capo.citizenship}
+          <div className="form-row__full">
+            <label className="ui-field-label ui-field-label--uppercase">{t.citizenship} *</label>
+            <input className="ui-field-input" tabIndex={7} value={capo.citizenship}
               onChange={e => setCapo(c => ({ ...c, citizenship: e.target.value }))} />
           </div>
 
           <Row>
-            <div style={half}>
-              <label style={lbl}>{t.docType} *</label>
-              <select style={{ ...inp, appearance: 'none' }} tabIndex={8} value={capo.docType}
+            <div className="form-row__half">
+              <label className="ui-field-label ui-field-label--uppercase">{t.docType} *</label>
+              <select className="ui-field-input ui-field-input--select-native" tabIndex={8} value={capo.docType}
                 onChange={e => setCapo(c => ({ ...c, docType: e.target.value }))}>
                 <option value="passport">{t.passport}</option>
                 <option value="id_card">{t.idCard}</option>
                 <option value="license">{t.license}</option>
               </select>
             </div>
-            <div style={half}>
-              <label style={lbl}>{t.docNumber} *</label>
-              <input style={inp} tabIndex={9} value={capo.docNumber}
+            <div className="form-row__half">
+              <label className="ui-field-label ui-field-label--uppercase">{t.docNumber} *</label>
+              <input className="ui-field-input" tabIndex={9} value={capo.docNumber}
                 onChange={e => setCapo(c => ({ ...c, docNumber: e.target.value }))} />
             </div>
           </Row>
 
-          <div style={{ ...fw, marginBottom: 20 }}>
-            <label style={lbl}>{t.docIssuePlace} *</label>
-            <input style={inp} tabIndex={10} value={capo.docIssuePlace}
+          <div className="form-row__full form-row__full--mb-lg">
+            <label className="ui-field-label ui-field-label--uppercase">{t.docIssuePlace} *</label>
+            <input className="ui-field-input" tabIndex={10} value={capo.docIssuePlace}
               onChange={e => setCapo(c => ({ ...c, docIssuePlace: e.target.value }))} />
           </div>
 
@@ -453,71 +417,69 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
           )}
 
           {altri.map((a, idx) => (
-            <div key={idx} style={{ marginBottom: 16, padding: '16px 14px', background: '#f9fafb', borderRadius: 12, border: '1px solid #e5e7eb' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-primary)' }}>{t.guestN} {idx + 2}</span>
-                <button style={{ ...btnS, fontSize: 12, padding: '4px 10px', minHeight: 'var(--touch-target)', minWidth: 'var(--touch-target)', color: '#dc2626', borderColor: '#fca5a5' }}
-                  onClick={() => removeAltro(idx)}>{t.removeGuest}</button>
+            <div key={idx} className="checkin-wizard__altro">
+              <div className="checkin-wizard__altro-header">
+                <span className="checkin-wizard__altro-label">{t.guestN} {idx + 2}</span>
+                <button className="checkin-wizard__remove-btn" onClick={() => removeAltro(idx)}>{t.removeGuest}</button>
               </div>
-              <div style={fw}>
-                <label style={lbl}>{t.guestType} *</label>
-                <select style={{ ...inp, appearance: 'none' }} value={a.guestType}
+              <div className="form-row__full">
+                <label className="ui-field-label ui-field-label--uppercase">{t.guestType} *</label>
+                <select className="ui-field-input ui-field-input--select-native" value={a.guestType}
                   onChange={e => updA(idx, 'guestType', e.target.value)}>
                   <option value="familiare">{t.familiare}</option>
                   <option value="amico">{t.amico}</option>
                 </select>
               </div>
               <Row>
-                <div style={half}>
-                  <label style={lbl}>{t.lastName} *</label>
-                  <input style={inp} value={a.lastName} onChange={e => updA(idx, 'lastName', e.target.value)} />
+                <div className="form-row__half">
+                  <label className="ui-field-label ui-field-label--uppercase">{t.lastName} *</label>
+                  <input className="ui-field-input" value={a.lastName} onChange={e => updA(idx, 'lastName', e.target.value)} />
                 </div>
-                <div style={half}>
-                  <label style={lbl}>{t.firstName} *</label>
-                  <input style={inp} value={a.firstName} onChange={e => updA(idx, 'firstName', e.target.value)} />
+                <div className="form-row__half">
+                  <label className="ui-field-label ui-field-label--uppercase">{t.firstName} *</label>
+                  <input className="ui-field-input" value={a.firstName} onChange={e => updA(idx, 'firstName', e.target.value)} />
                 </div>
               </Row>
               <Row>
-                <div style={half}>
-                  <label style={lbl}>{t.birthDate} *</label>
-                  <input style={inp} type="date" value={a.birthDate} onChange={e => updA(idx, 'birthDate', e.target.value)} />
+                <div className="form-row__half">
+                  <label className="ui-field-label ui-field-label--uppercase">{t.birthDate} *</label>
+                  <input className="ui-field-input" type="date" value={a.birthDate} onChange={e => updA(idx, 'birthDate', e.target.value)} />
                 </div>
-                <div style={half}>
-                  <label style={lbl}>{t.gender} *</label>
-                  <select style={{ ...inp, appearance: 'none' }} value={a.gender} onChange={e => updA(idx, 'gender', e.target.value)}>
+                <div className="form-row__half">
+                  <label className="ui-field-label ui-field-label--uppercase">{t.gender} *</label>
+                  <select className="ui-field-input ui-field-input--select-native" value={a.gender} onChange={e => updA(idx, 'gender', e.target.value)}>
                     <option value="M">{t.male}</option>
                     <option value="F">{t.female}</option>
                   </select>
                 </div>
               </Row>
-              <div style={fw}>
-                <label style={lbl}>{t.birthPlace} *</label>
-                <input style={inp} value={a.birthPlace} onChange={e => updA(idx, 'birthPlace', e.target.value)} />
+              <div className="form-row__full">
+                <label className="ui-field-label ui-field-label--uppercase">{t.birthPlace} *</label>
+                <input className="ui-field-input" value={a.birthPlace} onChange={e => updA(idx, 'birthPlace', e.target.value)} />
               </div>
-              <div style={{ ...fw, marginBottom: 0 }}>
-                <label style={lbl}>{t.citizenship} *</label>
-                <input style={inp} value={a.citizenship} onChange={e => updA(idx, 'citizenship', e.target.value)} />
+              <div className="form-row__full form-row__full--mb-0">
+                <label className="ui-field-label ui-field-label--uppercase">{t.citizenship} *</label>
+                <input className="ui-field-input" value={a.citizenship} onChange={e => updA(idx, 'citizenship', e.target.value)} />
               </div>
             </div>
           ))}
 
-          <button style={{ ...btnS, width: '100%', marginBottom: 20, textAlign: 'center' }}
-            onClick={addAltro}>
+          <button className="checkin-wizard__add-guest" onClick={addAltro}>
             {t.addGuest}
           </button>
 
           {step2Errors.length > 0 && (
-            <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 10, padding: '12px 14px', marginBottom: 14 }}>
-              <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 700, color: '#991B1B' }}>Campi mancanti:</p>
-              <ul style={{ margin: 0, padding: '0 0 0 16px' }}>
-                {step2Errors.map((e, i) => <li key={i} style={{ fontSize: 13, color: '#dc2626' }}>{e}</li>)}
+            <div className="checkin-wizard__errors">
+              <p className="checkin-wizard__errors-title">Campi mancanti:</p>
+              <ul className="checkin-wizard__errors-list">
+                {step2Errors.map((e, i) => <li key={i}>{e}</li>)}
               </ul>
             </div>
           )}
 
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button style={{ ...btnS, flex: 1 }} onClick={() => setStep(1)}>{t.back}</button>
-            <button style={{ ...btnP, flex: 2 }} onClick={tryStep3}>{t.continueBtn}</button>
+          <div className="checkin-wizard__nav">
+            <button className="checkin-wizard__secondary-btn checkin-wizard__nav-back" onClick={() => setStep(1)}>{t.back}</button>
+            <button className="checkin-wizard__primary-btn checkin-wizard__nav-next" onClick={tryStep3}>{t.continueBtn}</button>
           </div>
         </div>
       </>)}
@@ -525,23 +487,23 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
       {/* ── STEP 3 ────────────────────────────────────────────────────────── */}
       {step === 3 && (<>
         <Bar />
-        <div style={{ background: '#fff', padding: '24px 20px 28px' }}>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: '#111', margin: '0 0 6px' }}>{t.step3Title}</h1>
-          <p style={{ margin: '0 0 16px', fontSize: 14, color: '#6b7280', lineHeight: 1.6 }}>{t.step3Sub}</p>
+        <div className="checkin-wizard__step">
+          <h1 className="checkin-wizard__title">{t.step3Title}</h1>
+          <p className="checkin-wizard__sub">{t.step3Sub}</p>
 
-          <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 10, padding: '12px 14px', marginBottom: 20 }}>
-            <p style={{ margin: '0 0 4px', fontSize: 12, fontWeight: 700, color: '#991B1B' }}>
+          <div className="checkin-wizard__gdpr-warn">
+            <p className="checkin-wizard__gdpr-warn-title">
               <i className="bi bi-exclamation-triangle-fill me-1" aria-hidden="true" />
               {t.docWarning}
             </p>
-            <p style={{ margin: 0, fontSize: 12, color: '#7f1d1d' }}>{t.gdprNote}</p>
+            <p className="checkin-wizard__gdpr-warn-text">{t.gdprNote}</p>
           </div>
 
           {/* Capogruppo docs */}
           <SectionHeader label={`${capo.lastName} ${capo.firstName}`} icon="bi-person-fill" />
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
+          <div className="checkin-wizard__doc-grid">
             {docs.map((doc, idx) => (
-              <div key={doc.label} style={{ flex: '1 1 240px' }}>
+              <div key={doc.label} className="checkin-wizard__doc-cell">
                 <DocSlot doc={doc}
                   side={doc.label.endsWith('_front') ? t.frontLabel : t.backLabel}
                   onFile={f => uploadDoc(idx, f)}
@@ -554,20 +516,23 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
           {altri.map((a, idx) => (
             <div key={idx}>
               <SectionHeader label={`${a.lastName} ${a.firstName}`} icon="bi-person-fill" />
-              <div style={{ marginBottom: 20 }}>
+              <div className="checkin-wizard__doc-grid">
                 {altriDocs[idx] && (
-                  <DocSlot doc={altriDocs[idx]}
-                    side={t.frontLabel}
-                    onFile={f => uploadAltroDoc(idx, f)}
-                    uploadTxt={t.uploadBtn} uploadingTxt={t.uploading} uploadedTxt={t.uploaded} />
+                  <div className="checkin-wizard__doc-cell">
+                    <DocSlot doc={altriDocs[idx]}
+                      side={t.frontLabel}
+                      onFile={f => uploadAltroDoc(idx, f)}
+                      uploadTxt={t.uploadBtn} uploadingTxt={t.uploading} uploadedTxt={t.uploaded} />
+                  </div>
                 )}
               </div>
             </div>
           ))}
 
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button style={{ ...btnS, flex: 1 }} onClick={() => setStep(2)}>{t.back}</button>
-            <button style={{ ...btnP, flex: 2, opacity: validateDocs() ? 1 : 0.5 }}
+          <div className="checkin-wizard__nav">
+            <button className="checkin-wizard__secondary-btn checkin-wizard__nav-back" onClick={() => setStep(2)}>{t.back}</button>
+            <button
+              className={`checkin-wizard__primary-btn checkin-wizard__nav-next ${validateDocs() ? '' : 'is-disabled'}`}
               onClick={() => validateDocs() && setStep(4)} disabled={!validateDocs()}>{t.continueBtn}</button>
           </div>
         </div>
@@ -576,48 +541,47 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
       {/* ── STEP 4 ────────────────────────────────────────────────────────── */}
       {step === 4 && (<>
         <Bar />
-        <div style={{ background: '#fff', padding: '24px 20px 28px' }}>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: '#111', margin: '0 0 4px' }}>{t.step4Title}</h1>
-          <p style={{ margin: '0 0 20px', fontSize: 14, color: '#6b7280', lineHeight: 1.6 }}>{t.step4Sub}</p>
+        <div className="checkin-wizard__step">
+          <h1 className="checkin-wizard__title">{t.step4Title}</h1>
+          <p className="checkin-wizard__sub">{t.step4Sub}</p>
 
           {/* Riepilogo */}
-          <div style={{ background: '#f9fafb', borderRadius: 12, padding: '16px', marginBottom: 24, border: '1px solid #e5e7eb' }}>
-            <p style={{ margin: '0 0 10px', fontSize: 12, fontWeight: 700, color: '#6b7280', letterSpacing: '0.04em', textTransform: 'uppercase' }}>{t.summaryTitle}</p>
-            <p style={{ margin: '0 0 2px', fontSize: 14, color: '#374151' }}>{t.propLabel}: <strong>{booking!.roomName}</strong></p>
-            <p style={{ margin: '0 0 10px', fontSize: 14, color: '#374151' }}>{t.checkinLabel}: <strong>{booking!.checkIn}</strong> → <strong>{booking!.checkOut}</strong></p>
-            <p style={{ margin: '0 0 3px', fontSize: 12, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase' }}>{t.summaryCapo}</p>
-            <p style={{ margin: '0 0 2px', fontSize: 14, color: '#111' }}>{capo.lastName} {capo.firstName} — {capo.docType} {capo.docNumber}</p>
+          <div className="checkin-wizard__summary">
+            <p className="checkin-wizard__summary-title">{t.summaryTitle}</p>
+            <p className="checkin-wizard__summary-line">{t.propLabel}: <strong>{booking!.roomName}</strong></p>
+            <p className="checkin-wizard__summary-line checkin-wizard__summary-line--mb">{t.checkinLabel}: <strong>{booking!.checkIn}</strong> → <strong>{booking!.checkOut}</strong></p>
+            <p className="checkin-wizard__summary-section">{t.summaryCapo}</p>
+            <p className="checkin-wizard__summary-line checkin-wizard__summary-line--strong">{capo.lastName} {capo.firstName} — {capo.docType} {capo.docNumber}</p>
             {altri.length > 0 && (<>
-              <p style={{ margin: '10px 0 3px', fontSize: 12, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase' }}>{t.summaryOspiti}</p>
+              <p className="checkin-wizard__summary-section">{t.summaryOspiti}</p>
               {altri.map((a, i) => (
-                <p key={i} style={{ margin: '0 0 2px', fontSize: 14, color: '#374151' }}>
+                <p key={i} className="checkin-wizard__summary-line">
                   {a.lastName} {a.firstName} ({(t as any)[a.guestType] ?? a.guestType})
                 </p>
               ))}
             </>)}
           </div>
 
-          <label style={{ display: 'flex', gap: 12, alignItems: 'flex-start', marginBottom: 16, cursor: 'pointer' }}>
-            <input type="checkbox" checked={consentTulps} onChange={e => setTulps(e.target.checked)}
-              style={{ marginTop: 2, flexShrink: 0, width: 18, height: 18 }} />
-            <span style={{ fontSize: 13, color: '#374151', lineHeight: 1.6 }}>{t.consentTulps} *</span>
+          <label className="checkin-wizard__consent">
+            <input type="checkbox" checked={consentTulps} onChange={e => setTulps(e.target.checked)} className="checkin-wizard__consent-input" />
+            <span className="checkin-wizard__consent-text">{t.consentTulps} *</span>
           </label>
-          <label style={{ display: 'flex', gap: 12, alignItems: 'flex-start', marginBottom: 24, cursor: 'pointer' }}>
-            <input type="checkbox" checked={consentGdpr} onChange={e => setGdpr(e.target.checked)}
-              style={{ marginTop: 2, flexShrink: 0, width: 18, height: 18 }} />
-            <span style={{ fontSize: 13, color: '#374151', lineHeight: 1.6 }}>{t.consentGdpr} *</span>
+          <label className="checkin-wizard__consent checkin-wizard__consent--last">
+            <input type="checkbox" checked={consentGdpr} onChange={e => setGdpr(e.target.checked)} className="checkin-wizard__consent-input" />
+            <span className="checkin-wizard__consent-text">{t.consentGdpr} *</span>
           </label>
 
-          <div style={fw}>
-            <label style={lbl}>{t.signLabel} *</label>
-            <input style={inp} value={signature} onChange={e => setSignature(e.target.value)} placeholder={t.signPh} />
+          <div className="form-row__full">
+            <label className="ui-field-label ui-field-label--uppercase">{t.signLabel} *</label>
+            <input className="ui-field-input" value={signature} onChange={e => setSignature(e.target.value)} placeholder={t.signPh} />
           </div>
 
-          {submitErr && <p style={{ fontSize: 13, color: '#dc2626', marginBottom: 12 }}>{submitErr}</p>}
+          {submitErr && <p className="checkin-wizard__inline-error">{submitErr}</p>}
 
-          <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
-            <button style={{ ...btnS, flex: 1 }} onClick={() => setStep(3)} disabled={submitting}>{t.back}</button>
-            <button style={{ ...btnP, flex: 2, opacity: (consentTulps && consentGdpr && signature.trim() && !submitting) ? 1 : 0.5 }}
+          <div className="checkin-wizard__nav">
+            <button className="checkin-wizard__secondary-btn checkin-wizard__nav-back" onClick={() => setStep(3)} disabled={submitting}>{t.back}</button>
+            <button
+              className={`checkin-wizard__primary-btn checkin-wizard__nav-next ${(consentTulps && consentGdpr && signature.trim() && !submitting) ? '' : 'is-disabled'}`}
               onClick={submit} disabled={!consentTulps || !consentGdpr || !signature.trim() || submitting}>
               {submitting ? t.submitting : t.submitBtn}
             </button>
@@ -634,34 +598,25 @@ function DocSlot({ doc, side, onFile, uploadTxt, uploadingTxt, uploadedTxt }: {
   uploadTxt: string; uploadingTxt: string; uploadedTxt: string;
 }) {
   const ref = useRef<HTMLInputElement>(null);
+  const slotClass = `doc-slot ${doc.publicId ? 'is-uploaded' : ''} ${doc.error ? 'is-error' : ''}`;
   return (
-    <div onClick={() => !doc.publicId && !doc.uploading && ref.current?.click()} style={{
-      border: `2px dashed ${doc.publicId ? '#86efac' : doc.error ? '#fca5a5' : '#d1d5db'}`,
-      borderRadius: 12, padding: '12px',
-      cursor: doc.publicId ? 'default' : 'pointer',
-      background: doc.publicId ? '#f0fdf4' : '#fafafa',
-    }}>
+    <div onClick={() => !doc.publicId && !doc.uploading && ref.current?.click()} className={slotClass}>
       <input ref={ref} type="file" accept="image/*" capture="environment"
-        style={{ display: 'none' }} onChange={e => e.target.files?.[0] && onFile(e.target.files[0])} />
+        className="doc-slot__file-input" onChange={e => e.target.files?.[0] && onFile(e.target.files[0])} />
 
       {/* Preview immagine — grande e leggibile */}
       {doc.preview ? (
-        <div style={{ marginBottom: 8, borderRadius: 8, overflow: 'hidden', background: '#f3f4f6', lineHeight: 0 }}>
-          <img src={doc.preview} alt={side} style={{
-            width: '100%',
-            maxHeight: 180,
-            objectFit: 'contain',
-            display: 'block',
-          }} />
+        <div className="doc-slot__preview">
+          <img src={doc.preview} alt={side} className="doc-slot__preview-img" />
         </div>
       ) : (
-        <div style={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
-          <span style={{ fontSize: 40 }}>📄</span>
+        <div className="doc-slot__placeholder">
+          <i className="bi bi-file-earmark-image" aria-hidden="true" />
         </div>
       )}
 
-      <p style={{ margin: '0 0 2px', fontSize: 13, fontWeight: 700, color: '#374151', textAlign: 'center' }}>{side}</p>
-      <p style={{ margin: 0, fontSize: 12, color: doc.publicId ? '#15803d' : doc.error ? '#dc2626' : '#9ca3af', textAlign: 'center' }}>
+      <p className="doc-slot__side">{side}</p>
+      <p className="doc-slot__status">
         {doc.uploading ? uploadingTxt : doc.publicId ? uploadedTxt : doc.error || uploadTxt}
       </p>
     </div>
