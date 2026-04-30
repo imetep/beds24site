@@ -691,6 +691,43 @@ body {
   border-color: #f97316;
 }
 
+/* ── Mobile optimisations (touch target ≥44px, leggibilità label) ──
+   Memoria progetto design system: densità Booking.com compatta su desktop,
+   ma su mobile i touch target devono salire a ≥44px (linea Apple HIG /
+   WCAG 2.5.5). Questi override si applicano solo sotto 768px. */
+@media (max-width: 767px) {
+  /* Drag handle decorativo in cima al bottom-sheet (affordance visiva) */
+  .edit-modal__panel::before {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--color-border);
+    margin: 8px auto 0;
+    flex-shrink: 0;
+  }
+  /* Calendar: celle giorno + bottoni nav mese ≥44px */
+  .edit-modal__cell-btn        { height: 44px; font-size: var(--text-base); }
+  .edit-modal__month-nav-btn   { width: 44px; height: 44px; font-size: 26px; }
+  .edit-modal__weekday         { font-size: var(--text-xs); padding-bottom: 6px; }
+  /* Guests stepper: bottoni +/- ≥44px */
+  .edit-modal__stepper-btn     { width: 44px; height: 44px; font-size: 22px; }
+  .edit-modal__stepper-row     { padding: 16px 0; }
+  /* Pills check-in/out: label leggibile */
+  .edit-modal__pill            { padding: 10px 12px; }
+  .edit-modal__pill-label      { font-size: var(--text-xs); }
+  .edit-modal__pill-value      { font-size: var(--text-md); }
+  /* Footer più alto per pollice */
+  .edit-modal__btn-primary     { padding: 12px 24px; min-height: var(--touch-target); }
+  .edit-modal__btn-secondary   { padding: var(--space-sm) var(--space-md); min-height: var(--touch-target); }
+  /* Age select più alto */
+  .edit-modal__age-select      { padding: 10px 12px; font-size: var(--text-base); }
+  .edit-modal__age-label       { font-size: var(--text-xs); }
+  /* Payment modal: option row più alta per pollice */
+  .payment-modal__option       { padding: 16px; }
+}
+
 /* ──────────────────────────────────────────────────────────────────────────
    PAYMENT METHOD MODAL (E.1 sessione 2026-04-29)
    Modale "Modifica metodo di pagamento" stile Airbnb /book.
