@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
+import { Icon } from '@/components/ui/Icon';
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
 interface CheckinSummary {
@@ -73,7 +74,7 @@ function LoginForm({ onLogin }: { onLogin: () => void }) {
     <div className="container" style={{ maxWidth: 360 }}>
       <div className="card shadow-sm mt-5">
         <div className="card-body p-4">
-          <p className="fs-4 fw-bold mb-1"><i className="bi bi-lock-fill me-1"></i> Admin</p>
+          <p className="fs-4 fw-bold mb-1"><Icon name="lock-fill" className="me-1" /> Admin</p>
           <p className="text-muted small mb-3">Pannello gestione check-in</p>
           <input
             type="password"
@@ -450,7 +451,7 @@ Operazione irreversibile.`);
                     <StatusBadge status={selected.status} />
                   </div>
                   <div className="d-flex gap-2">
-                    <button className="btn btn-outline-danger btn-sm" onClick={doDelete}><i className="bi bi-trash me-1"></i> Elimina</button>
+                    <button className="btn btn-outline-danger btn-sm" onClick={doDelete}><Icon name="trash" className="me-1" /> Elimina</button>
                     <button className="btn btn-outline-secondary btn-sm" onClick={generateCsv}>⬇ Scarica .csv</button>
                     <button className="btn btn-outline-secondary btn-sm" onClick={() => setSelected(null)}>✕</button>
                   </div>
