@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { ApartmentBedConfig, Bed, BedBaseType, BedVariant } from '@/lib/bedConfig';
+import { Icon } from '@/components/ui/Icon';
 
 type LC = 'it' | 'en' | 'de' | 'pl';
 type BedState = 'off' | 'A' | 'B';
@@ -185,7 +186,7 @@ function BedChip({ bed, displayState, isActive, label, slots, onClick, isSommier
     >
       {isSommier && displayState === 'A' && (
         <span className="bed-chip__star">
-          <i className="bi bi-star-fill" aria-hidden="true" />
+          <Icon name="star-fill" />
         </span>
       )}
       <BedIcon variant={icon} active={isActive} />
@@ -264,7 +265,7 @@ function RoomCard({ room, lc, bedStates, roomTouched, onBedClick, onCardClick, t
         (b as any).showNoteAlways || (bedStates[b.id] ?? 'off') !== 'off'
       )).map((bed: Bed) => (
         <p key={bed.id} className="bed-room-card__note">
-          <i className="bi bi-info-circle me-1" aria-hidden="true" />
+          <Icon name="info-circle" className="me-1" />
           {bed.note![lc] ?? bed.note!.it}
         </p>
       ))}
@@ -286,7 +287,7 @@ function ProgressBar({ confirmed, total, t }: { confirmed: number; total: number
         <p className={`bed-progress__label ${done ? 'is-done' : ''}`}>
           {done ? (
             <>
-              <i className="bi bi-check-circle-fill me-1" aria-hidden="true" />
+              <Icon name="check-circle-fill" className="me-1" />
               {t.allConfirmed}
             </>
           ) : `${confirmed} ${t.progressOf} ${total} ${t.progressLabel}`}
@@ -316,9 +317,9 @@ function PersonCounter({ current, total, lc }: { current: number; total: number;
   return (
     <div className={`person-counter person-counter--${modifier}`}>
       <span className="person-counter__text">
-        <i className="bi bi-door-closed-fill me-1" aria-hidden="true" />
+        <Icon name="door-closed-fill" className="me-1" />
         {text[lc]}
-        {exact && <i className="bi bi-check-lg ms-1" aria-hidden="true" />}
+        {exact && <Icon name="check-lg" className="ms-1" />}
       </span>
     </div>
   );
@@ -329,7 +330,7 @@ function CribSection({ cribs, onChange, t }: { cribs: number; onChange: (n: numb
   return (
     <div className="crib-section">
       <p className="crib-section__title">
-        <i className="bi bi-egg-fill me-1" aria-hidden="true" />
+        <Icon name="egg-fill" className="me-1" />
         {t.cribTitle}
       </p>
       <p className="crib-section__desc">{t.cribDesc}</p>
@@ -420,7 +421,7 @@ export default function BedSection({ locale, t, numGuests }: { locale: string; t
   return (
     <div className="guest-section">
       <div className="section-header">
-        <i className="bi bi-door-closed-fill section-header__icon" aria-hidden="true" />
+        <Icon name="door-closed-fill" className="section-header__icon" />
         <h3 className="section-header__title">{t.title}</h3>
       </div>
       <p className="bed-config-portal__subtitle">{t.subtitle}</p>
@@ -437,7 +438,7 @@ export default function BedSection({ locale, t, numGuests }: { locale: string; t
           className={`bed-section__save ${status === 'saved' ? 'is-saved' : ''}`}>
           {status === 'saving' ? t.saving : status === 'saved' ? (
             <>
-              <i className="bi bi-check-lg me-1" aria-hidden="true" />
+              <Icon name="check-lg" className="me-1" />
               {t.saved}
             </>
           ) : t.save}
