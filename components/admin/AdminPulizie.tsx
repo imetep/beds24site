@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { Icon } from '@/components/ui/Icon';
 
 interface DepartureRoom {
   roomId:   number;
@@ -77,7 +78,7 @@ function LoginForm({ onLogin }: { onLogin: () => void }) {
     <div className="container" style={{ maxWidth: 360 }}>
       <div className="card shadow-sm mt-5">
         <div className="card-body p-4">
-          <p className="fs-4 fw-bold mb-1"><i className="bi bi-lock-fill me-1"></i> Admin</p>
+          <p className="fs-4 fw-bold mb-1"><Icon name="lock-fill" className="me-1" /> Admin</p>
           <p className="text-muted small mb-3">Pannello pulizie</p>
           <input
             type="password"
@@ -442,7 +443,7 @@ export default function AdminPulizie() {
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-2">
         <div>
-          <h1 className="h4 fw-bold mb-0"><i className="bi bi-brush-fill me-1"></i> Pulizie</h1>
+          <h1 className="h4 fw-bold mb-0"><Icon name="brush-fill" className="me-1" /> Pulizie</h1>
           {data && (
             <p className="small text-muted mb-0">
               {data.totalePrenotazioni} prenotazioni · aggiornato {new Date(data.lastUpdated).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
@@ -458,7 +459,7 @@ export default function AdminPulizie() {
 
       {error && (
         <div className="alert alert-danger py-2 my-3 small">
-          <i className="bi bi-exclamation-circle-fill me-1"></i> {error}
+          <Icon name="exclamation-circle-fill" className="me-1" /> {error}
         </div>
       )}
 
