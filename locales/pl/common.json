@@ -1175,6 +1175,50 @@
       "paypalVaultChargeNote": "Obciążenie nastąpi automatycznie po upływie okresu bezpłatnej anulacji.",
       "errPayPalVault": "Błąd zapisu PayPal. Spróbuj ponownie lub użyj karty."
     },
+    "doveSiamo": {
+      "metaTitle": "Lokalizacja — Scauri (LT) | LivingApple",
+      "metaDescription": "Scauri to ukryty klejnot wybrzeża Tyrreńskiego, między Rzymem a Neapolem. Dowiedz się, jak do nas dotrzeć samochodem, pociągiem lub samolotem.",
+      "heroTitle": "Scauri, w połowie drogi między Rzymem a Neapolem",
+      "heroSub": "Tam, gdzie Lacjum spotyka morze — natura, historia i autentyczne smaki południa Włoch.",
+      "whyTitle": "Dlaczego Scauri",
+      "pillSeaTitle": "Morze w pobliżu",
+      "pillSeaText": "LivingApple campagna jest 1,5 km od plaży. LivingApple beach zaledwie 250 m.",
+      "pillLocationTitle": "Strategiczna lokalizacja",
+      "pillLocationText": "2h od Rzymu i 1h15 od Neapolu samochodem, dostępne też pociągiem.",
+      "pillClimateTitle": "Klimat śródziemnomorski",
+      "pillClimateText": "Długie słoneczne lato od maja do października, łagodne temperatury i mało deszczu.",
+      "pillNatureTitle": "Cisza i natura",
+      "pillNatureText": "Bez tłumów, bez chaosu. Tylko morze, wieś i autentyczna gościnność.",
+      "mapTitle": "Jak daleko jesteśmy?",
+      "mapSub": "Do Scauri można dotrzeć w ciągu jednego dnia z każdego większego włoskiego miasta.",
+      "howTitle": "Jak do nas dotrzeć",
+      "tabPlane": "Samolotem",
+      "tabTrain": "Pociągiem",
+      "tabCar": "Samochodem",
+      "planeIntro": "Najbliższe lotnisko to Neapol Capodichino, zaledwie 80 km. Rzym Fiumicino oferuje więcej połączeń międzynarodowych. Rzym Ciampino jest idealny dla tanich linii lotniczych.",
+      "planeAirports": [
+        { "code": "NAP", "name": "Neapol Capodichino", "km": "~80 km",  "time": "~1h samochodem" },
+        { "code": "FCO", "name": "Rzym Fiumicino",     "km": "~165 km", "time": "~2h samochodem" },
+        { "code": "CIA", "name": "Rzym Ciampino",      "km": "~145 km", "time": "~1h30 samochodem" }
+      ],
+      "trainIntro": "Stacja Minturno-Scauri obsługiwana jest przez pociągi Intercity i regionalne, z bezpośrednimi połączeniami z Roma Termini i Napoli Centrale.",
+      "trainRoutes": [
+        { "label": "Z Roma Termini",    "time": "~1h45" },
+        { "label": "Z Napoli Centrale", "time": "~1h" }
+      ],
+      "trainNote": "Ze stacji do obiektu: ~10 min taksówką lub wynajętym samochodem (brak autobusów).",
+      "carIntro": "Samochodem możesz cieszyć się pełną swobodą w Scauri. Jedź autostradą A1 (Autostrada del Sole) i zjedź na węźle Cassino.",
+      "carFrom": [
+        { "city": "Rzym",      "time": "~2h",       "detail": "155 km · A1" },
+        { "city": "Neapol",    "time": "~1h 15min", "detail": "80 km · A1 lub SS7" },
+        { "city": "Florencja", "time": "~4h",       "detail": "413 km · A1" },
+        { "city": "Mediolan",  "time": "~6h 30min", "detail": "730 km · A1" }
+      ],
+      "carNoteTitle": "Samochód jest niezbędny",
+      "carNote": "Na miejscu samochód nie jest luksusem — jest koniecznością. Supermarkety, plaże i restauracje nie są osiągalne pieszo od obiektu: wiejskie drogi nie mają chodników i chodzenie jest niebezpieczne. Samochód da Ci pełną swobodę odkrywania wybrzeża, okolic i miejscowości gór Aurunci.",
+      "byCar": "samochodem",
+      "byPlane": "samolotem"
+    },
     "homeSearch": {
       "ui": {
         "dates": "Daty",
