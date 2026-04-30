@@ -151,62 +151,38 @@ export default function SuccessContent({ locale }: Props) {
   // ── Spinner: conferma in corso ─────────────────────────────────────────────
   if (confirming) {
     return (
-      <div className="page-container" style={{
-        textAlign: 'center', padding: '3rem 1.5rem',
-        fontFamily: 'sans-serif',
-      }}>
-        <div style={{
-          width: 48, height: 48, margin: '0 auto 24px',
-          border: '3px solid #e5e7eb',
-          borderTop: '3px solid #006CB7',
-          borderRadius: '50%',
-          animation: 'spin 0.75s linear infinite',
-        }} />
-        <p style={{ fontSize: 16, color: '#555', margin: 0 }}>{t.confirming}</p>
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      <div className="page-state">
+        <div className="page-state__spinner page-state__spinner--lg" aria-hidden="true" />
+        <p className="page-state__text">{t.confirming}</p>
       </div>
     );
   }
 
   // ── Contenuto principale ───────────────────────────────────────────────────
   return (
-    <div className="page-container" style={{
-      textAlign: 'center', padding: '3rem 1.5rem',
-      fontFamily: 'sans-serif',
-    }}>
-      <div style={{ fontSize: 56, marginBottom: 20, color: isCardSaved ? 'var(--color-primary)' : 'var(--color-cta)' }}>
+    <div className="page-state">
+      <div className={`page-state__icon page-state__icon--xl ${isCardSaved ? 'page-state__icon--brand' : 'page-state__icon--cta'}`}>
         <i className={`bi ${isCardSaved ? 'bi-shield-lock-fill' : 'bi-check-circle-fill'}`} aria-hidden="true" />
       </div>
 
-      <h1 style={{
-        fontSize: 28, fontWeight: 800,
-        color: 'var(--color-primary)', margin: '0 0 12px',
-        lineHeight: 1.2,
-      }}>
+      <h1 className="page-state__title page-state__title--brand">
         {t.title}
       </h1>
 
-      <p style={{ fontSize: 16, color: '#555', margin: '0 0 6px', lineHeight: 1.5 }}>
+      <p className="page-state__text">
         {isCardSaved ? t.pending : t.sub}
       </p>
 
-      <p style={{ fontSize: 14, color: confirmError ? '#e67e22' : '#888', margin: '0 0 28px', lineHeight: 1.5 }}>
+      <p className={`page-state__text ${confirmError ? 'page-state__text--error' : 'page-state__text--subtle'}`}>
         {confirmError ? t.confirmErr : isCardSaved ? t.pending2 : t.sub2}
       </p>
 
       {displayBookingId && (
-        <div style={{
-          background: '#EEF5FC',
-          border: '2px solid #006CB7',
-          borderRadius: 14,
-          padding: '16px 28px',
-          display: 'inline-block',
-          marginBottom: 36,
-        }}>
-          <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-primary)', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+        <div className="booking-confirmation-id">
+          <p className="booking-confirmation-id__label">
             {t.bookNum}
           </p>
-          <span style={{ fontSize: 28, fontWeight: 900, color: 'var(--color-primary)', letterSpacing: 3 }}>
+          <span className="booking-confirmation-id__value">
             {displayBookingId}
           </span>
         </div>
@@ -214,23 +190,9 @@ export default function SuccessContent({ locale }: Props) {
 
       <br />
 
-      <a
-        href={`/${locale}/residenze`}
-        style={{
-          display: 'inline-block',
-          padding: '14px 36px',
-          background: 'var(--color-primary)',
-          color: '#fff',
-          borderRadius: 12,
-          fontWeight: 700,
-          fontSize: 15,
-          textDecoration: 'none',
-        }}
-      >
+      <a href={`/${locale}/residenze`} className="page-state__cta">
         {t.back}
       </a>
-
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }
