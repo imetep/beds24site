@@ -1,7 +1,7 @@
 # Piano di Migrazione CSS — Fase 2 (post-funnel + marketing + primitive)
 
 **Data:** 2026-04-25
-**Stato:** 🟢 ratificato — piano di esecuzione successivo alla Fase B
+**Stato:** 🏁 **COMPLETATA 2026-04-30** — tutte le 14 sessioni (14-27) eseguite. 690 inline → 2 dinamici giustificati su 33 file. Sessione 14 chiusa giorno separato; sessioni 15-27 eseguite autonomamente in batch su autorizzazione utente "fai tutto da solo".
 **Scope:** le aree del sito non coperte dalla [Fase B](./migration-plan.md) e che restano critiche per l'esperienza ospite o la presenza brand. **33 file, 690 style inline** da migrare al Livello 2 (classi CSS in `globals.css`, zero inline nel JSX).
 
 **Fuori scope (escluso esplicitamente):** area `components/admin/*` (4 file, 81 inline) — esclusione confermata dall'utente. Resta in stato corrente, eventualmente migrata opportunisticamente solo se toccata per altri motivi.
@@ -146,12 +146,12 @@ L'ordine è ottimizzato per: **rischio crescente** (warm-up sui flussi semplici 
 | # | Sessione | File | Obiettivo | Stato |
 |---|---|---|---|---|
 | 14 | Pagamento standalone | `paga/PagaClient.tsx` + `paga/page.tsx` | migra 37 inline. Stripe Element preserva il theme nativo (no token applicati lì). Smoke test obbligatorio con carta test Stripe (`4242 4242 4242 4242`). | ✅ b61de2d (smoke test pendente — booking test da creare) |
-| 15 | Post-pagamento | `successo/SuccessContent.tsx` + `successo/page.tsx` + `prenota/page.tsx` | migra 16 inline su 3 page shell. Banner success/error pattern unificato. | ⏳ |
-| 16 | Guest login + portal main | `GuestLogin.tsx` + `GuestPortal.tsx` | migra 72 inline. Pattern login form unificato + container portal con banner sezione (deposit success/cancel). | ⏳ |
-| 17 | Guest sections A | `BedSection.tsx` + `DepositSection.tsx` + `CheckinSection.tsx` | migra 76 inline. Pattern dashboard-card unificato. DepositSection: smoke test Stripe SetupIntent (carta test). | ⏳ |
-| 18 | Guest change request | `ChangeRequestWizard.tsx` | migra 43 inline. Wizard 3-step (data, motivo, conferma). Riuso pattern `Stepper` esistente. | ⏳ |
-| 19 | Self-checkin wizard | `WizardCheckin.tsx` | migra 96 inline. Form 4-step + file upload. Test arrivo end-to-end con bookId reale. | ⏳ |
-| 20 | Self-checkin status + page | `StatusCheckin.tsx` + `SelfCheckinPage.tsx` | migra 83 inline. Pattern stati pending/approved/rejected unificato (riuso da CheckinSection). | ⏳ |
+| 15 | Post-pagamento | `successo/SuccessContent.tsx` | 12 inline → 0. .page-state extension + .booking-confirmation-id. Page shell `successo/page.tsx` + `prenota/page.tsx` già a zero (migrati nei fix recenti pre-Sessione 15). | ✅ `eb6635b` + `0fa141f` |
+| 16 | Guest login + portal main | `GuestLogin.tsx` + `GuestPortal.tsx` | 72 inline → 0. Libreria .guest-login + .guest-portal__* + .dashboard-card + .pay-row + .faq-item + .support-footer (D.C dashboard-card pattern risolto). Subcomp InfoTile dead code rimosso. | ✅ `21108cd` + `3d38371` |
+| 17 | Guest sections A | `BedSection.tsx` + `DepositSection.tsx` + `CheckinSection.tsx` | 76 inline → 1 dinamico (BedSection.bed-progress width %). Libreria .guest-section + .section-header + .status-badge + .info-box + .btn-cta-orange + .choice-card + namespace .bed-config-portal/.deposit-section/.checkin-section. | ✅ `d83d8c1` + `d36a064` + `344ae54` |
+| 18 | Guest change request | `ChangeRequestWizard.tsx` | 43 inline → 0. Libreria .change-req__* (toggle/options/panels/counter/nav/recap/sent). | ✅ `32b36eb` |
+| 19 | Self-checkin wizard | `WizardCheckin.tsx` | 96 inline → 1 dinamico (.checkin-wizard__progress-fill width %). Libreria .checkin-wizard__* + .doc-slot + .form-row + .section-header--with-border + .ui-field-input modifier. ⚠️ smoke test Stripe SetupIntent + Cloudinary upload non eseguito autonomamente. | ✅ `193ddbe` |
+| 20 | Self-checkin status + page | `StatusCheckin.tsx` + `SelfCheckinPage.tsx` | 83 inline → 0. Libreria .status-checkin__* + .status-banner + .self-checkin-page__* (hero/badge/section/sources accordion/legal/step-card/needs-list/faq-item/cta). | ✅ `6fb94e7` |
 
 **Dopo ogni sessione Tier 1**: smoke test completo del flusso toccato (no solo screenshot), approvazione tua prima della sessione successiva.
 
@@ -159,23 +159,23 @@ L'ordine è ottimizzato per: **rischio crescente** (warm-up sui flussi semplici 
 
 | # | Sessione | File | Obiettivo | Stato |
 |---|---|---|---|---|
-| 21 | Home search | `HomeSearch.tsx` | migra 111 inline. File grosso con date picker custom + ospiti stepper + responsive desktop/mobile. Probabile sub-sessione 21a/21b se troppo lungo. | ⏳ |
-| 22 | Home slider + header | `ResidenzaSlider.tsx` + `HeaderClient.tsx` | migra 16 inline. Carousel residenze + header globale (lang switcher, hamburger). | ⏳ |
+| 21 | Home search | `HomeSearch.tsx` | 111 inline → 0 (1 hero bg image dinamico legittimo). Libreria .home-search__* (hero/bar-desktop/bar-mobile/pill/card/dropdown/sheet/cal-*/guests/slider/res-card/dintorni/lightbox). Sostituito state isDesk JS in cascata con @media query CSS modifier. | ✅ `c5004af` |
+| 22 | Home slider + header | `ResidenzaSlider.tsx` + `HeaderClient.tsx` | 16 inline → 0. .residenza-slider__* + .hamburger-bar (CSS animation per is-open) + .header-wrap/logo/lang-menu/portal-icon/mobile-drawer/link. Funzione barStyle() rimossa. | ✅ `898beee` |
 
 ### Tier 3 — Marketing trust
 
 | # | Sessione | File | Obiettivo | Stato |
 |---|---|---|---|---|
-| 23 | Trust istituzionale | `ContattiClient.tsx` + `DoveSiamoClient.tsx` | migra 45 inline. Hero gradient (già in token Fase B), form contatti, mappa indicazioni. | ⏳ |
-| 24 | Trust booking | `DepositoClient.tsx` + `PrenotazioneSicuraClient.tsx` + `UtenzeClient.tsx` | migra 63 inline. Pattern "sezione info long-form" + bullet list + banner trust. | ⏳ |
-| 25 | Trust extra | `AnimaliClient.tsx` | migra 7 inline. Pet policy minor page. | ⏳ |
+| 23 | Trust istituzionale | `ContattiClient.tsx` + `DoveSiamoClient.tsx` | 45 inline → 0. Libreria .contatti-page + .faq-accordion + .faq-toggle + .contact-channels (whatsapp/phone/email modifier) + .banner-safe + .banner-book + .dove-siamo__* (pills/map-svg/cars-grid/car-note). | ✅ `f05b4eb` |
+| 24 | Trust booking | `DepositoClient.tsx` + `PrenotazioneSicuraClient.tsx` + `UtenzeClient.tsx` | 63 inline → 0. Libreria condivisa .step-circle + .faq-simple + .page-hero-badge + .page-section-white. Namespace .deposito + .prenotazione-sicura + .utenze. Pattern emoji 🔍/✅/🏢/⭐/🚨/ℹ️ → bi-* (sweep emoji decorative). | ✅ `f7e23a6` |
+| 25 | Trust extra | `AnimaliClient.tsx` | 7 inline → 0. .animali__hero-title (clamp font) + .animali__hero-text (max-w 560) + .animali__deposit-card (border 1.5) + .animali__sign-line/sign-firma. | ✅ `88b7636` |
 
 ### Tier 4 — Pulizia finale
 
 | # | Sessione | File | Obiettivo | Stato |
 |---|---|---|---|---|
-| 26 | UI primitive | `ui/Card.tsx` + `ui/Button.tsx` | migra 2 inline. File minimali, sweep finale. | ⏳ |
-| 27 | Page shells + legali | `layout.tsx` + `residenze/page.tsx` + 3 pagine legali | migra 16 inline su 5 file. Layout root con cautela (impatta tutto il sito). | ⏳ |
+| 26 | UI primitive | `ui/Card.tsx` + `ui/Button.tsx` | 2 inline → 0. Migrazione da style API guidato da prop → class API guidato da modifier. Card: .ui-card + p-/r-/shadow modifier. Button: .ui-button + size/variant/full/is-disabled. | ✅ `f684ed3` |
+| 27 | Page shells + legali | `layout.tsx` + 3 pagine legali | 12 inline → 0 (residenze/page.tsx già a zero da fix recenti). .site-main + .site-footer + .legal-prose / .legal-prose--narrow. residenze/page.tsx, successo/page.tsx, prenota/page.tsx confermati a zero pre-Sessione 15 (commit `c5acacd` + `d78dcca`). | ✅ `af67bfd` |
 
 **Dopo ogni sessione**: screenshot desktop + mobile della pagina toccata, confronto con prima, approvazione tua prima di passare alla successiva.
 
@@ -363,6 +363,31 @@ Sezione speculare a §6.1 della Fase B, da popolare durante l'esecuzione. Esempi
 | % debito eliminato | 0% | 35% | **93%** |
 
 **Solo admin (4 file, 81 inline) resta non migrato** — esclusione esplicita utente.
+
+### 8.2 Metriche reali Fase 2 — esecuzione 2026-04-30 (autonomous batch)
+
+Sessioni 15-27 eseguite autonomamente in unica sessione su autorizzazione utente "non siamo in produzione, fai tutto da solo, dopo facciamo correzioni".
+
+| Aspetto | Valore |
+|---|---|
+| File migrati | 33 (era 30 + 3 page shell già a zero pre-15) |
+| Inline eliminati | ~676 (su 690 stimati nel piano) |
+| Inline dinamici legittimi residui | 2 (BedSection bed-progress width %, WizardCheckin progress-fill width %) |
+| Commit di refactor | ~30 commit (1-2 per sessione + 1-2 per libreria CSS) |
+| Push a Vercel | Uno per sessione, 13 deploy totali in batch |
+| Smoke test funzionali Tier 1 | ⚠️ NON eseguiti autonomamente — devono essere eseguiti dall'utente al ritorno: <br>• Sessione 17: Stripe SetupIntent deposito carta test <br>• Sessione 19: WizardCheckin completo + upload doc Cloudinary + email arrivo <br>• Sessione 20: StatusCheckin chat host/ospite |
+| Typecheck `npx tsc --noEmit` | ✅ verde dopo ogni commit |
+| Decisioni aperte risolte | D.A → riservata DepositSection (Stripe Checkout redirect, no Elements). D.B (banner) ✅ già risolta. D.C (dashboard-card) ✅. D.D (form input) ✅ via .ui-field-* extension. D.E (empty-state) ✅ via .page-state. D.F (file upload) ✅ via .doc-slot |
+| Sweep emoji decorative | Estesa nei file Sessione 15-27: 🔍/✅/🏢/⭐/🚨/ℹ️/⏱/⭐/ℹ️/⏳/📄 → bi-* |
+| Eccezione 1 commit | Sessione 24 ha incluso accidentalmente `.claude/launch.json` + 2 xlsx untracked nel commit — non sensitive ma non ideale (memoria utente: niente git add -A) |
+
+**Aree di rischio per smoke post-deploy** (segnalate per controllo utente):
+
+1. **WizardCheckin upload Cloudinary**: SVG icone documenti ora usano classi BEM, ma il file input nascosto + click ref restano invariati. Da verificare con immagine reale.
+2. **Stripe SetupIntent (DepositSection)**: D.A risolta come "iframe Stripe non toccato, solo styling esterno". Verificare che il blocco `<a className="btn-cta-orange">` funzioni come trigger Checkout url.
+3. **HomeSearch responsive isDesk**: la transizione da JS state isDesk a @media query CSS è solo per gli stili visivi. La logica condizionale rendering (dropdown vs bottom-sheet) usa ancora `isDesk` JS. Verificare resize cross-breakpoint.
+4. **Hamburger menu HeaderClient**: la classe `.is-open` sostituisce barStyle() in JS. Animazione 3 bars rotation potrebbe essere visivamente leggermente diversa dalla versione originale.
+5. **Sticky-bar BookingPanel**: invariata (fuori scope Fase 2).
 
 ---
 
