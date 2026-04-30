@@ -10,6 +10,8 @@
  *
  * Da rimuovere quando la decisione è ratificata.
  */
+import { Icon } from '@/components/ui/Icon';
+
 export default function PagaMockPage() {
   return (
     <main className="page-container page-top pb-5">
@@ -19,13 +21,13 @@ export default function PagaMockPage() {
         <ol className="ui-stepper-list">
           <li className="ui-stepper-item is-done">
             <div className="ui-stepper-inner">
-              <span className="ui-stepper-dot"><i className="bi bi-check" aria-hidden="true" /></span>
+              <span className="ui-stepper-dot"><Icon name="check" /></span>
               <span className="ui-stepper-label">Scegli</span>
             </div>
           </li>
           <li className="ui-stepper-item is-done">
             <div className="ui-stepper-inner">
-              <span className="ui-stepper-dot"><i className="bi bi-check" aria-hidden="true" /></span>
+              <span className="ui-stepper-dot"><Icon name="check" /></span>
               <span className="ui-stepper-label">Dati ospite</span>
             </div>
           </li>
@@ -70,7 +72,7 @@ export default function PagaMockPage() {
                 <span className="paga-mock__pay-title">
                   Paga in 3 rate con PayPal{' '}
                   <span className="paga-mock__paypal-badge">
-                    <i className="bi bi-paypal" aria-hidden="true" /> PayPal
+                    <Icon name="paypal" /> PayPal
                   </span>
                 </span>
                 <span className="paga-mock__pay-sub">Con PayPal il tuo conto viene solo salvato — nessun addebito immediato.</span>
@@ -79,7 +81,7 @@ export default function PagaMockPage() {
 
             {/* Banner verde info Stripe */}
             <div className="banner banner--success banner--with-icon" style={{ marginTop: 'var(--space-md)' }}>
-              <i className="bi bi-credit-card-fill" aria-hidden="true" />
+              <Icon name="credit-card-fill" />
               <p className="banner__text">Con Stripe la carta viene solo salvata — nessun addebito immediato.</p>
             </div>
           </div>
@@ -155,7 +157,7 @@ export default function PagaMockPage() {
 
             {/* Banner consumi energetici */}
             <div className="banner banner--info banner--with-icon">
-              <i className="bi bi-lightning-fill" aria-hidden="true" />
+              <Icon name="lightning-fill" />
               <div>
                 <p className="banner__title">Consumi energetici</p>
                 <p className="banner__text">I consumi energetici vengono conteggiati in base all&apos;utilizzo reale, tramite contatori presenti in ogni abitazione. Non si tratta di un costo aggiuntivo per guadagno, ma di una misura per evitare sprechi.</p>
@@ -206,7 +208,7 @@ export default function PagaMockPage() {
             <p className="label-uppercase-muted">2. Servizi extra (opzionale)</p>
             <div className="paga-mock__extra-row">
               <span className="paga-mock__extra-icon" aria-hidden="true">
-                <i className="bi bi-bag-fill" />
+                <Icon name="bag-fill" />
               </span>
               <div className="paga-mock__extra-info">
                 <p className="paga-mock__extra-name">Lettino da campeggio con biancheria</p>
@@ -232,7 +234,7 @@ export default function PagaMockPage() {
 
             {/* Banner deposito */}
             <div className="banner banner--warning banner--with-icon">
-              <i className="bi bi-shield-lock-fill" aria-hidden="true" />
+              <Icon name="shield-lock-fill" />
               <div>
                 <p className="banner__title">Deposito cauzionale — €500</p>
                 <p className="banner__text">Questo alloggio richiede un deposito cauzionale di €500. Sarà necessaria una Carta di Credito (no Debit Card) al momento del check-in.</p>
