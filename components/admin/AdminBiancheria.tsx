@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { ApartmentBedConfig, Bed } from '@/lib/bedConfig';
 import { calcDefaultBedStates, calcLinenSetsFromBedStates } from '@/lib/bedConfig';
+import { Icon } from '@/components/ui/Icon';
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
 
@@ -174,7 +175,7 @@ function RangeCalendar({ from, to, onChange }: {
           marginBottom: open ? 12 : 0,
         }}
       >
-        <i className="bi bi-calendar-event"></i>
+        <Icon name="calendar-event" />
         <span>
           <span className="fw-bold text-primary">{fmtPill(from)}</span>
           <span className="text-muted mx-2">→</span>
@@ -194,9 +195,9 @@ function RangeCalendar({ from, to, onChange }: {
         >
           <p className="small text-muted mb-2">
             {phase === 'from' ? (
-              <><i className="bi bi-calendar-event me-1"></i> Seleziona la data di inizio</>
+              <><Icon name="calendar-event" className="me-1" /> Seleziona la data di inizio</>
             ) : (
-              <><i className="bi bi-calendar-event me-1"></i> Seleziona la data di fine</>
+              <><Icon name="calendar-event" className="me-1" /> Seleziona la data di fine</>
             )}
           </p>
           {isDesktop ? (
@@ -480,7 +481,7 @@ function LoginForm({ onLogin }: { onLogin: () => void }) {
     <div className="container" style={{ maxWidth: 360 }}>
       <div className="card shadow-sm mt-5">
         <div className="card-body p-4">
-          <p className="fs-4 fw-bold mb-1"><i className="bi bi-lock-fill me-1"></i> Admin</p>
+          <p className="fs-4 fw-bold mb-1"><Icon name="lock-fill" className="me-1" /> Admin</p>
           <p className="text-muted small mb-3">Biancheria — LivingApple</p>
           <input
             type="password"
@@ -751,7 +752,7 @@ export default function AdminBiancheria() {
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-3">
         <div>
-          <h1 className="h4 fw-bold mb-0"><i className="bi bi-moon-stars-fill me-1"></i> Biancheria</h1>
+          <h1 className="h4 fw-bold mb-0"><Icon name="moon-stars-fill" className="me-1" /> Biancheria</h1>
           <p className="small text-muted mb-0">Calcolo per check-in nel periodo</p>
         </div>
         <div className="d-flex gap-2 flex-wrap">
@@ -775,7 +776,7 @@ export default function AdminBiancheria() {
           <button
             className="btn btn-primary align-self-start"
             onClick={load} disabled={loading}>
-            {loading ? 'Caricamento…' : <><i className="bi bi-search me-1"></i> Carica</>}
+            {loading ? 'Caricamento…' : <><Icon name="search" className="me-1" /> Carica</>}
           </button>
         </div>
       </div>
