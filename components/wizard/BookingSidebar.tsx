@@ -147,13 +147,14 @@ export default function BookingSidebar({
 
   // Round 1 sidebar 2026-04-29 — toggle banner consumi cliccabile
   const [energyExpanded, setEnergyExpanded] = useState(false);
-  // Round 2 sidebar 2026-04-29 — modali Modifica Date / Ospiti
+  // Round 2 sidebar 2026-04-29 — modali Modifica Date / Ospiti.
+  // Default (step 1 e step 2): aprono i modali interni della BookingSidebar.
+  // Il caller può overridare passando onEditDates / onEditGuests (es. per
+  // navigare a un altro step invece di aprire la modale).
   const [showEditDates, setShowEditDates] = useState(false);
   const [showEditGuests, setShowEditGuests] = useState(false);
-  // In step=1 i bottoni Modifica funzionano (aprono modale).
-  // In step=2 il caller passa onEditDates/Guests con la sua logica.
-  const editDatesHandler = step === 1 ? () => setShowEditDates(true) : onEditDates;
-  const editGuestsHandler = step === 1 ? () => setShowEditGuests(true) : onEditGuests;
+  const editDatesHandler = onEditDates ?? (() => setShowEditDates(true));
+  const editGuestsHandler = onEditGuests ?? (() => setShowEditGuests(true));
 
   // i18n fallback per cancellation (pre-tariffa) — chiavi nuove possono mancare a runtime
   const tAny = t as any;
@@ -369,7 +370,9 @@ export default function BookingSidebar({
       )}
       {/* Footer CIN rimosso (Round 1 sidebar 2026-04-29) */}
 
-      {/* Round 2: modali Modifica Date / Ospiti (solo step 1 di default) */}
+      {/* Modali Modifica Date / Ospiti — disponibili sia in step 1 che in
+          step 2 (checkout). Il caller può sopprimerle passando un proprio
+          onEditDates / onEditGuests come override. */}
       {showEditDates && (
         <EditDatesModal locale={locale} onClose={() => setShowEditDates(false)} />
       )}
