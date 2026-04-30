@@ -2865,6 +2865,17 @@ body {
 .wizard-step2__summary-accordion-body {
   padding: var(--space-sm) 0 var(--space-md);
 }
+/* La BookingSidebar ha width:340 fissa per il pattern desktop. Dentro
+   l'accordion mobile dev'essere full-width senza bordi/padding/sticky
+   (è già dentro la colonna form, non a fianco). */
+.wizard-step2__summary-accordion-body .booking-sidebar {
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  position: static;
+}
 
 /* Section card (1. Pagamento / 2. Dati ospite) — audit §2.3 shadow-sm */
 .step2-section-card {
