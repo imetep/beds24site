@@ -118,7 +118,7 @@ export default async function PrivacyPage({ params }: Props) {
       <h1 className="fs-1 fw-bold mb-1">{t.h1}</h1>
       <p className="text-muted mb-3">{t.subtitle}</p>
       <div className="alert alert-primary"><strong>{t.infoBox}</strong></div>
-      <div className="text-secondary" style={{ lineHeight: 1.8 }}>
+      <div className="text-secondary legal-prose">
         <p>{t.p1}</p>
         <p>{t.p2}</p>
         <p>{t.p3}</p>
@@ -143,7 +143,7 @@ export default async function PrivacyPage({ params }: Props) {
 
         <h2 className="fs-5 fw-bold text-primary border-bottom pb-2 mt-4 mb-2">{t.h2Contact}</h2>
         <p>{t.contactIntro}</p>
-        <div className="bg-light border rounded p-3 mt-2" style={{ lineHeight: 1.8 }}>
+        <div className="bg-light border rounded p-3 mt-2 legal-prose">
           <strong>Livingapple S.r.l.</strong><br />
           Loc. LeTore, Traversa Carmen Rosati n. 2<br />
           04028 Scauri di Minturno (LT) — Italy

@@ -51,52 +51,35 @@ export default async function LocaleLayout({ children, params }: Props) {
         }}
       />
 
-      <main style={{ paddingBottom: '80px', overflowX: 'clip' }}>{children}</main>
+      <main className="site-main">{children}</main>
 
       {/* ── Footer ─────────────────────────────────────────────────────── */}
-      <footer style={{
-        backgroundColor: 'var(--color-bg-dark)',
-        color: 'var(--color-text-muted)',
-        padding: '3rem 1.5rem 5.5rem', // extra bottom per bottone fisso
-        marginTop: '4rem',
-      }}>
+      <footer className="site-footer">
         <div className="page-container">
 
           {/* Griglia 3 colonne desktop, 1 mobile */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '2.5rem',
-            paddingBottom: '2rem',
-            borderBottom: '1px solid var(--color-border-dark)',
-          }}>
+          <div className="site-footer__grid">
 
             {/* Colonna 1 — Brand + contatti */}
             <div>
-              <p style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--color-on-dark)', margin: '0 0 0.75rem' }}>
-                {t.footer.company}
-              </p>
-              <p style={fLine}>{t.footer.address}</p>
-              <p style={fLine}>WhatsApp: <a href={`https://wa.me/${t.footer.whatsapp.replace(/\D/g,'')}`} style={fLink}>{t.footer.whatsapp}</a></p>
-              <p style={fLine}>Tel: <a href={`tel:${t.footer.phone}`} style={fLink}>{t.footer.phone}</a></p>
+              <p className="site-footer__company">{t.footer.company}</p>
+              <p className="site-footer__line">{t.footer.address}</p>
+              <p className="site-footer__line">WhatsApp: <a href={`https://wa.me/${t.footer.whatsapp.replace(/\D/g,'')}`} className="site-footer__link">{t.footer.whatsapp}</a></p>
+              <p className="site-footer__line">Tel: <a href={`tel:${t.footer.phone}`} className="site-footer__link">{t.footer.phone}</a></p>
             </div>
 
             {/* Colonna 2 — Fiscale e legale */}
             <div>
-              <p style={{ fontWeight: 700, fontSize: '0.75rem', color: 'var(--color-text-label)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 0.75rem' }}>
-                {t.footer.legal_data}
-              </p>
-              <p style={fLine}>{t.footer.vat}</p>
-              <p style={fLine}>{t.footer.rea}</p>
-              <p style={fLine}>CIN {CIN}</p>
-              <p style={fLine}>CIR {CIR}</p>
+              <p className="site-footer__col-title">{t.footer.legal_data}</p>
+              <p className="site-footer__line">{t.footer.vat}</p>
+              <p className="site-footer__line">{t.footer.rea}</p>
+              <p className="site-footer__line">CIN {CIN}</p>
+              <p className="site-footer__line">CIR {CIR}</p>
             </div>
 
             {/* Colonna 3 — Link navigazione (nascosta su mobile — sono nell'hamburger) */}
             <div className="footer-links-col">
-              <p style={{ fontWeight: 700, fontSize: '0.75rem', color: 'var(--color-text-label)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 0.75rem' }}>
-                {t.footer.useful_links}
-              </p>
+              <p className="site-footer__col-title">{t.footer.useful_links}</p>
               {[
                 { href: `/${locale}/contatti`,           label: t.footer.contact },
                 { href: `/${locale}/dove-siamo`,         label: t.footer.location },
@@ -105,7 +88,7 @@ export default async function LocaleLayout({ children, params }: Props) {
                 { href: `/${locale}/privacy`,            label: t.footer.privacy },
                 { href: `/${locale}/trattamento-dati`,   label: t.footer.data },
               ].map(({ href, label }) => (
-                <a key={href} href={href} style={{ ...fLink, display: 'block', marginBottom: '0.4rem', fontSize: '0.875rem' }}>
+                <a key={href} href={href} className="site-footer__nav-link">
                   {label}
                 </a>
               ))}
@@ -114,7 +97,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           </div>
 
           {/* Bottom bar */}
-          <p style={{ margin: '1.25rem 0 0', fontSize: '0.78rem', color: 'var(--color-text-subtle)', textAlign: 'center' }}>
+          <p className="site-footer__bottom">
             © {new Date().getFullYear()} {t.footer.company} · {t.footer.all_rights_reserved}
           </p>
 
@@ -124,6 +107,3 @@ export default async function LocaleLayout({ children, params }: Props) {
     </>
   );
 }
-
-const fLine: React.CSSProperties = { fontSize: '0.85rem', margin: '0 0 0.35rem', color: 'var(--color-text-muted)', lineHeight: 1.5 };
-const fLink: React.CSSProperties = { color: 'var(--color-text-muted)', textDecoration: 'none' };

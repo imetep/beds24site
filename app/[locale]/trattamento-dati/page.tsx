@@ -110,7 +110,7 @@ export default async function TrattamentoDatiPage({ params }: Props) {
     <div className="page-container page-top pb-5">
       <h1 className="fs-1 fw-bold mb-3">{t.h1}</h1>
       <div className="alert alert-primary"><strong>{t.infoBox}</strong></div>
-      <div className="text-secondary" style={{ lineHeight: 1.8 }}>
+      <div className="text-secondary legal-prose">
         <p>{t.intro}</p>
         <ul className="ps-4 my-2">
           <li><strong>{t.purposeA}</strong></li>

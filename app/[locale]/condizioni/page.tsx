@@ -225,7 +225,7 @@ export default async function CondizioniPage({ params }: Props) {
       {sections.map(({ title, body }) => (
         <div key={title} className="mb-4">
           <h2 className="fs-5 fw-bold text-primary border-bottom pb-2 mb-2">{title}</h2>
-          <div className="text-secondary" style={{ lineHeight: 1.7 }}>{body}</div>
+          <div className="text-secondary legal-prose--narrow">{body}</div>
         </div>
       ))}
     </div>
