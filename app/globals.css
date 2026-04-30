@@ -6957,6 +6957,22 @@ body {
   font-size: var(--text-sm);
   color: #4b5563;
 }
+.animali__hero-title {
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  line-height: 1.3;
+}
+.animali__hero-text {
+  max-width: 560px;
+}
+.animali__deposit-card {
+  border-width: 1.5px;
+}
+.animali__sign-line {
+  height: 24px;
+}
+.animali__sign-firma {
+  flex: 2;
+}
 
 /* ──────────────────────────────────────────────────────────────────────────
    ContattiClient + DoveSiamoClient (Sessione 23 Fase 2)

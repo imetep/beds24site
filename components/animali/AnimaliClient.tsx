@@ -188,15 +188,9 @@ export default function AnimaliClient({ locale }: { locale: Locale }) {
         <div className="display-3 mb-2 text-primary">
           <i className="bi bi-heart-fill" aria-hidden="true" />
         </div>
-        <h1 className="fw-bold text-primary mb-2" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.2rem)', lineHeight: 1.3 }}>
-          {t.hero_title}
-        </h1>
-        <p className="text-secondary mx-auto mb-2" style={{ maxWidth: 560 }}>
-          {t.hero_sub}
-        </p>
-        <p className="text-muted fst-italic mx-auto small" style={{ maxWidth: 560 }}>
-          {t.legal_note}
-        </p>
+        <h1 className="fw-bold text-primary mb-2 animali__hero-title">{t.hero_title}</h1>
+        <p className="text-secondary mx-auto mb-2 animali__hero-text">{t.hero_sub}</p>
+        <p className="text-muted fst-italic mx-auto small animali__hero-text">{t.legal_note}</p>
       </section>
 
       {/* 3 Sezioni card */}
@@ -236,7 +230,7 @@ export default function AnimaliClient({ locale }: { locale: Locale }) {
         </div>
 
         {/* Card 3 — Deposito */}
-        <div className="card border-primary" style={{ borderWidth: 1.5 }}>
+        <div className="card border-primary animali__deposit-card">
           <div className="card-body p-4">
             <h2 className="fw-semibold text-primary fs-5 mb-3">
               <i className="bi bi-credit-card-fill me-2" aria-hidden="true" />
@@ -299,11 +293,11 @@ export default function AnimaliClient({ locale }: { locale: Locale }) {
         <div className="d-flex gap-4 align-items-end border-top mt-4 pt-3">
           <div className="flex-fill">
             <p className="small text-muted mb-0">Data</p>
-            <div className="border-bottom" style={{ height: 24 }} />
+            <div className="border-bottom animali__sign-line" />
           </div>
-          <div style={{ flex: 2 }}>
+          <div className="animali__sign-firma">
             <p className="small text-muted mb-0">Firma</p>
-            <div className="border-bottom" style={{ height: 24 }} />
+            <div className="border-bottom animali__sign-line" />
           </div>
         </div>
       </section>
