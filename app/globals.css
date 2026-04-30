@@ -6373,6 +6373,333 @@ body {
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
+   ContattiClient + DoveSiamoClient (Sessione 23 Fase 2)
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* ── ContattiClient ── */
+.contatti-page {
+  background: #f8fafc;
+}
+.contatti-page__hero {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  padding: 0 var(--space-md) var(--space-base);
+}
+.contatti-page__hero-title {
+  font-weight: 800;
+  color: var(--color-on-dark);
+  margin-bottom: var(--space-sm);
+  font-size: 30px;
+  line-height: 1.15;
+}
+.contatti-page__hero-sub {
+  margin: 0;
+  font-size: var(--text-md);
+  color: rgba(255,255,255,0.82);
+  line-height: 1.5;
+}
+
+/* FAQ accordion */
+.faq-accordion {
+  border-radius: 16px;
+  background: var(--color-bg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+}
+.faq-accordion__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-md);
+  background: var(--color-primary);
+}
+.faq-accordion__header-icon {
+  font-size: var(--space-lg);
+  line-height: 1;
+  color: var(--color-on-dark);
+}
+.faq-accordion__header-label {
+  font-weight: 700;
+  color: var(--color-on-dark);
+  font-size: var(--text-base);
+  letter-spacing: 0.01em;
+}
+.faq-toggle {
+  border-bottom: 1px solid #f0f4f8;
+}
+.faq-toggle__btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  text-align: start;
+  padding: var(--space-md) var(--space-md);
+  border: none;
+  border-left: 4px solid transparent;
+  border-radius: 0;
+  background: var(--color-bg);
+  min-height: 58px;
+  transition: background 180ms;
+  cursor: pointer;
+}
+.faq-toggle.is-open .faq-toggle__btn {
+  background: #fffbf2;
+  border-left-color: var(--color-cta);
+}
+.faq-toggle__q {
+  flex: 1;
+  font-weight: 600;
+  font-size: var(--text-md);
+  color: #1a1a2e;
+  line-height: 1.4;
+}
+.faq-toggle.is-open .faq-toggle__q {
+  color: var(--color-primary);
+}
+.faq-toggle__chevron-wrap {
+  border-radius: var(--radius-pill);
+  width: 28px;
+  height: 28px;
+  background: #f0f4f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 180ms;
+}
+.faq-toggle.is-open .faq-toggle__chevron-wrap {
+  background: var(--color-cta);
+}
+.faq-toggle__chevron {
+  transition: transform 220ms ease;
+  stroke: #6b7280;
+}
+.faq-toggle.is-open .faq-toggle__chevron {
+  transform: rotate(180deg);
+  stroke: var(--color-on-dark);
+}
+.faq-toggle__answer {
+  padding: 0 20px var(--space-md) 24px;
+  font-size: var(--text-base);
+  color: #374151;
+  line-height: 1.7;
+  background: #fffbf2;
+  border-left: 4px solid var(--color-cta);
+}
+.faq-toggle__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-top: var(--space-md);
+  color: var(--color-on-dark);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  background: var(--color-primary);
+  padding: 6px 14px;
+}
+
+/* Contact channels card */
+.contact-channels {
+  background: var(--color-bg);
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.contact-channels__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: var(--color-primary);
+}
+.contact-channels__header-icon {
+  font-size: 18px;
+  color: var(--color-on-dark);
+}
+.contact-channels__header-title {
+  margin: 0;
+  font-weight: 700;
+  color: var(--color-on-dark);
+  font-size: var(--text-base);
+}
+.contact-channels__header-sub {
+  margin: 1px 0 0;
+  font-size: var(--text-xs);
+  color: rgba(255,255,255,0.75);
+}
+.contact-channels__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  text-decoration: none;
+  background: var(--color-bg);
+  min-height: 68px;
+}
+.contact-channels__row + .contact-channels__row {
+  border-top: 1px solid var(--color-border);
+}
+.contact-channels__icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+}
+.contact-channels__icon-wrap--whatsapp {
+  background: #25D366;
+  box-shadow: 0 4px 12px #25D36640;
+}
+.contact-channels__icon-wrap--phone {
+  background: var(--color-primary);
+  box-shadow: 0 4px 12px rgba(0,108,183,0.25);
+}
+.contact-channels__icon-wrap--email {
+  background: var(--color-text-muted);
+  box-shadow: 0 4px 12px rgba(107,114,128,0.25);
+}
+.contact-channels__row-label {
+  margin: 0;
+  font-weight: 700;
+  color: var(--color-text);
+  font-size: var(--text-base);
+}
+.contact-channels__row-sub {
+  color: var(--color-text-muted);
+  margin: 2px 0 0;
+  font-size: var(--text-xs);
+}
+
+/* Banner prenotazione sicura */
+.banner-safe {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-md);
+  border-radius: 14px;
+}
+.banner-safe__icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--color-primary-soft);
+}
+.banner-safe__icon {
+  font-size: var(--space-lg);
+  color: var(--color-primary);
+}
+.banner-safe__text {
+  font-weight: 500;
+  font-size: var(--text-base);
+  color: #374151;
+  line-height: 1.4;
+}
+.banner-safe__btn {
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-size: var(--text-sm);
+  color: var(--color-primary);
+}
+
+/* Banner prenota (gradient orange) */
+.banner-book {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: linear-gradient(135deg, var(--color-cta) 0%, #f59e0b 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(252,175,26,0.3);
+}
+.banner-book__text {
+  margin: 0;
+  font-weight: 600;
+  color: var(--color-text);
+  font-size: var(--text-md);
+  line-height: 1.4;
+}
+.banner-book__btn {
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  background: #111;
+  color: var(--color-cta);
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: var(--text-base);
+}
+
+/* ── DoveSiamoClient ── */
+.dove-siamo__pills-grid {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+.dove-siamo__pill-icon {
+  font-size: 1.8rem;
+  color: var(--color-primary);
+  display: block;
+  margin-bottom: var(--space-sm);
+}
+.dove-siamo__hero-title {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  line-height: 1.25;
+}
+.dove-siamo__hero-sub {
+  max-width: 580px;
+}
+.dove-siamo__map-svg {
+  max-width: 400px;
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+}
+.dove-siamo__city-anim {
+  transition: opacity 0.4s;
+}
+.dove-siamo__cars-grid {
+  display: grid;
+  gap: var(--space-sm);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-bottom: var(--space-md);
+}
+.dove-siamo__car-note {
+  background: #FFF8E7;
+  border-color: var(--color-cta);
+}
+.dove-siamo__car-note-title {
+  color: #92400e;
+}
+.dove-siamo__car-note-text {
+  color: #78350f;
+  line-height: 1.6;
+}
+.dove-siamo__plane-airport-code {
+  min-width: 36px;
+}
+.dove-siamo__cta-btn {
+  color: var(--color-text);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
    ResidenzaSlider + HeaderClient (Sessione 22 Fase 2)
    ────────────────────────────────────────────────────────────────────────── */
 

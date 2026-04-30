@@ -17,40 +17,18 @@ function FaqItem({ item }: { item: FaqItemData }) {
   const lines = item.a.split('\n');
 
   return (
-    <div style={{ borderBottom: '1px solid #f0f4f8' }}>
+    <div className={`faq-toggle ${open ? 'is-open' : ''}`}>
       {/* Domanda */}
       <button
         onClick={() => setOpen(o => !o)}
         aria-expanded={open}
-        className="btn w-100 d-flex align-items-center justify-content-between gap-3 text-start px-3 py-3 border-0 rounded-0"
-        style={{
-          background: open ? '#fffbf2' : '#fff',
-          minHeight: 58,
-          transition: 'background 180ms',
-          borderLeft: open ? '4px solid #FCAF1A' : '4px solid transparent',
-        }}
+        className="faq-toggle__btn"
       >
-        <span
-          className="flex-fill fw-semibold"
-          style={{
-            fontSize: 15,
-            color: open ? 'var(--color-primary)' : '#1a1a2e',
-            lineHeight: 1.4,
-          }}
-        >
-          {item.q}
-        </span>
-        <div
-          className="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-          style={{
-            width: 28, height: 28,
-            background: open ? '#FCAF1A' : '#f0f4f8',
-            transition: 'background 180ms',
-          }}
-        >
+        <span className="faq-toggle__q">{item.q}</span>
+        <div className="faq-toggle__chevron-wrap">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-            stroke={open ? '#fff' : '#6b7280'} strokeWidth="2.5"
-            style={{ transition: 'transform 220ms ease', transform: open ? 'rotate(180deg)' : 'none' }}>
+            strokeWidth="2.5"
+            className="faq-toggle__chevron">
             <path d="M6 9l6 6 6-6"/>
           </svg>
         </div>
@@ -58,17 +36,7 @@ function FaqItem({ item }: { item: FaqItemData }) {
 
       {/* Risposta */}
       {open && (
-        <div
-          className="pb-3"
-          style={{
-            paddingLeft: 24, paddingRight: 20,
-            fontSize: 14,
-            color: '#374151',
-            lineHeight: 1.7,
-            background: '#fffbf2',
-            borderLeft: '4px solid #FCAF1A',
-          }}
-        >
+        <div className="faq-toggle__answer">
           {lines.map((line, i) => (
             <span key={i}>
               {line}
@@ -80,12 +48,7 @@ function FaqItem({ item }: { item: FaqItemData }) {
               href={item.link.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="d-inline-flex align-items-center gap-1 mt-3 text-white fw-semibold text-decoration-none rounded-pill"
-              style={{
-                fontSize: 13,
-                background: 'var(--color-primary)',
-                padding: '6px 14px',
-              }}
+              className="faq-toggle__link"
             >
               {item.link.label}
             </a>
@@ -112,7 +75,7 @@ function ContactChannels({ t }: { t: ContactT }) {
   const channels = [
     {
       href: `https://wa.me/${WA_NUMBER}`,
-      accent: '#25D366',
+      iconWrapClass: 'contact-channels__icon-wrap--whatsapp',
       label: t.wa, sub: t.waSub,
       icon: (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff">
@@ -122,7 +85,7 @@ function ContactChannels({ t }: { t: ContactT }) {
     },
     {
       href: PHONE,
-      accent: 'var(--color-primary)',
+      iconWrapClass: 'contact-channels__icon-wrap--phone',
       label: t.tel, sub: t.telSub,
       icon: (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
@@ -132,7 +95,7 @@ function ContactChannels({ t }: { t: ContactT }) {
     },
     {
       href: EMAIL,
-      accent: '#6b7280',
+      iconWrapClass: 'contact-channels__icon-wrap--email',
       label: t.mail, sub: t.mailSub,
       icon: (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
@@ -144,46 +107,30 @@ function ContactChannels({ t }: { t: ContactT }) {
   ];
 
   return (
-    <div
-      className="bg-white border overflow-hidden shadow-sm"
-      style={{ borderRadius: 16 }}
-    >
+    <div className="contact-channels">
       {/* Header sezione */}
-      <div className="d-flex align-items-center gap-2 px-3 py-3" style={{ background: 'var(--color-primary)' }}>
-        <i className="bi bi-chat-fill text-white" style={{ fontSize: 18 }} aria-hidden="true" />
+      <div className="contact-channels__header">
+        <i className="bi bi-chat-fill contact-channels__header-icon" aria-hidden="true" />
         <div>
-          <p className="m-0 fw-bold text-white" style={{ fontSize: 14 }}>
-            {t.contactTitle}
-          </p>
-          <p className="mb-0" style={{ marginTop: 1, fontSize: 12, color: 'rgba(255,255,255,0.75)' }}>
-            {t.contactSubtitle}
-          </p>
+          <p className="contact-channels__header-title">{t.contactTitle}</p>
+          <p className="contact-channels__header-sub">{t.contactSubtitle}</p>
         </div>
       </div>
 
-      {channels.map((ch, i) => (
+      {channels.map(ch => (
         <a
           key={ch.href}
           href={ch.href}
           target={ch.href.startsWith('http') ? '_blank' : undefined}
           rel={ch.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-          className={`d-flex align-items-center gap-3 px-3 py-3 text-decoration-none bg-white${i < channels.length - 1 ? ' border-bottom' : ''}`}
-          style={{ minHeight: 68 }}
+          className="contact-channels__row"
         >
-          <div
-            className="d-flex align-items-center justify-content-center flex-shrink-0"
-            style={{
-              width: 46, height: 46,
-              borderRadius: 13,
-              background: ch.accent,
-              boxShadow: `0 4px 12px ${ch.accent}40`,
-            }}
-          >
+          <div className={`contact-channels__icon-wrap ${ch.iconWrapClass}`}>
             {ch.icon}
           </div>
           <div className="flex-fill">
-            <p className="m-0 fw-bold text-dark" style={{ fontSize: 16 }}>{ch.label}</p>
-            <p className="text-muted mb-0" style={{ marginTop: 2, fontSize: 12 }}>{ch.sub}</p>
+            <p className="contact-channels__row-label">{ch.label}</p>
+            <p className="contact-channels__row-sub">{ch.sub}</p>
           </div>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" strokeWidth="2.5">
             <path d="M9 18l6-6-6-6"/>
@@ -202,22 +149,12 @@ export default function ContattiClient({ locale, bookHref }: Props) {
   const faqData: FaqCategory[] = t.faq;
 
   return (
-    <div className="page-container page-top pb-4 min-vh-100" style={{ background: '#f8fafc' }}>
+    <div className="page-container page-top pb-4 min-vh-100 contatti-page">
 
       {/* ── Hero con sfondo brand ─────────────────────────────────────────── */}
-      <div
-        className="px-3 pb-4"
-        style={{ background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%)' }}
-      >
-        <h1
-          className="fw-bolder text-white mb-2"
-          style={{ fontSize: 30, lineHeight: 1.15 }}
-        >
-          {t.pageTitle}
-        </h1>
-        <p className="m-0" style={{ fontSize: 15, color: 'rgba(255,255,255,0.82)', lineHeight: 1.5 }}>
-          {t.pageSubtitle}
-        </p>
+      <div className="contatti-page__hero">
+        <h1 className="contatti-page__hero-title">{t.pageTitle}</h1>
+        <p className="contatti-page__hero-sub">{t.pageSubtitle}</p>
       </div>
 
       {/* ── Contenuto principale ─────────────────────────────────────────── */}
@@ -226,20 +163,11 @@ export default function ContattiClient({ locale, bookHref }: Props) {
         {/* ── FAQ ──────────────────────────────────────────────────────────── */}
         <div className="d-flex flex-column gap-3 mb-3">
           {faqData.map((cat, ci) => (
-            <div
-              key={ci}
-              className="bg-white overflow-hidden shadow-sm border"
-              style={{ borderRadius: 16 }}
-            >
+            <div key={ci} className="faq-accordion">
               {/* Header categoria — blu pieno */}
-              <div className="d-flex align-items-center gap-2 px-3 py-2" style={{ background: 'var(--color-primary)' }}>
-                <i className={`bi ${cat.icon} text-white`} style={{ fontSize: 20, lineHeight: 1 }} aria-hidden="true" />
-                <span
-                  className="fw-bold text-white"
-                  style={{ fontSize: 14, letterSpacing: '0.01em' }}
-                >
-                  {cat.label}
-                </span>
+              <div className="faq-accordion__header">
+                <i className={`bi ${cat.icon} faq-accordion__header-icon`} aria-hidden="true" />
+                <span className="faq-accordion__header-label">{cat.label}</span>
               </div>
 
               {/* Domande */}
@@ -257,56 +185,21 @@ export default function ContattiClient({ locale, bookHref }: Props) {
 
         {/* ── Banner prenotazione sicura ────────────────────────────────────── */}
         <div className="mb-3">
-          <a
-            href={`/${locale}/prenotazione-sicura`}
-            className="d-flex align-items-center justify-content-between gap-2 bg-white border text-decoration-none shadow-sm px-3 py-3"
-            style={{ borderRadius: 14 }}
-          >
+          <a href={`/${locale}/prenotazione-sicura`} className="banner-safe">
             <div className="d-flex align-items-center gap-2">
-              <div
-                className="d-flex align-items-center justify-content-center flex-shrink-0"
-                style={{ width: 40, height: 40, borderRadius: 10, background: '#EEF5FC' }}
-              >
-                <i className="bi bi-search" style={{ fontSize: 20, color: 'var(--color-primary)' }} aria-hidden="true" />
+              <div className="banner-safe__icon-wrap">
+                <i className="bi bi-search banner-safe__icon" aria-hidden="true" />
               </div>
-              <span className="fw-medium" style={{ fontSize: 14, color: '#374151', lineHeight: 1.4 }}>
-                {t.safeBannerText}
-              </span>
+              <span className="banner-safe__text">{t.safeBannerText}</span>
             </div>
-            <span
-              className="fw-bold text-nowrap flex-shrink-0"
-              style={{ fontSize: 13, color: 'var(--color-primary)' }}
-            >
-              {t.safeBannerBtn}
-            </span>
+            <span className="banner-safe__btn">{t.safeBannerBtn}</span>
           </a>
         </div>
 
         {/* ── Banner prenota ────────────────────────────────────────────────── */}
-        <div
-          className="d-flex align-items-center justify-content-between gap-3 p-3"
-          style={{
-            background: 'linear-gradient(135deg, #FCAF1A 0%, #f59e0b 100%)',
-            borderRadius: 16,
-            boxShadow: '0 4px 16px rgba(252,175,26,0.3)',
-          }}
-        >
-          <p className="m-0 fw-semibold text-dark" style={{ fontSize: 15, lineHeight: 1.4 }}>
-            {t.bookBanner}
-          </p>
-          <a
-            href={bookHref}
-            className="fw-bold text-decoration-none text-nowrap flex-shrink-0"
-            style={{
-              background: '#111',
-              color: '#FCAF1A',
-              borderRadius: 10,
-              padding: '10px 18px',
-              fontSize: 14,
-            }}
-          >
-            {t.bookBtn}
-          </a>
+        <div className="banner-book">
+          <p className="banner-book__text">{t.bookBanner}</p>
+          <a href={bookHref} className="banner-book__btn">{t.bookBtn}</a>
         </div>
 
       </div>

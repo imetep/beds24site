@@ -369,8 +369,7 @@ function ItalyMap({ locale }: { locale: Locale }) {
   return (
     <svg
       viewBox="0 0 836 989"
-      className="d-block mx-auto w-100"
-      style={{ maxWidth: 400 }}
+      className="dove-siamo__map-svg"
       xmlns="http://www.w3.org/2000/svg"
     >
       <g transform="translate(0,989) scale(0.1,-0.1)">
@@ -391,9 +390,7 @@ function ItalyMap({ locale }: { locale: Locale }) {
             strokeDasharray={city.byPlane ? `6 4 ${ll}` : `${ll}`}
             strokeDashoffset={isDrawing || isVisible ? 0 : ll}
             opacity={isDrawing || isVisible ? 1 : 0}
-            style={{
-              transition: isDrawing ? 'stroke-dashoffset 0.85s ease, opacity 0.1s' : 'none',
-            }}
+            style={isDrawing ? { transition: 'stroke-dashoffset 0.85s ease, opacity 0.1s' } : undefined}
           />
         );
       })}
@@ -403,7 +400,7 @@ function ItalyMap({ locale }: { locale: Locale }) {
         const isVisible = i < visibleCount;
         const modeLabel = city.byPlane ? t.by_plane : t.by_car;
         return (
-          <g key={city.id} opacity={isVisible ? 1 : 0} style={{ transition: 'opacity 0.4s' }}>
+          <g key={city.id} opacity={isVisible ? 1 : 0} className="dove-siamo__city-anim">
             <circle cx={city.x} cy={city.y} r={6} fill="#006CB7" />
             <text
               x={city.x + lbl.ax} y={city.y + lbl.ay - 9}
@@ -452,27 +449,17 @@ export default function DoveSiamoClient({
 
       {/* Hero */}
       <section className="text-center pb-5">
-        <h1
-          className="fw-bold text-primary mb-2"
-          style={{ fontSize: 'clamp(1.6rem, 4vw, 2.4rem)', lineHeight: 1.25 }}
-        >
-          {t.hero_title}
-        </h1>
-        <p className="fs-5 text-secondary mx-auto mb-0" style={{ maxWidth: 580 }}>
-          {t.hero_sub}
-        </p>
+        <h1 className="fw-bold text-primary mb-2 dove-siamo__hero-title">{t.hero_title}</h1>
+        <p className="fs-5 text-secondary mx-auto mb-0 dove-siamo__hero-sub">{t.hero_sub}</p>
       </section>
 
       {/* Perché Scauri */}
       <section className="mb-5">
         <h2 className="fw-bold text-primary fs-3 mb-3">{t.why_title}</h2>
-        <div
-          className="d-grid gap-3"
-          style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}
-        >
+        <div className="dove-siamo__pills-grid">
           {t.pills.map((pill, i) => (
             <div key={i} className="bg-light border rounded-3 p-3">
-              <i className={`bi ${pill.icon} d-block mb-2`} style={{ fontSize: '1.8rem', color: 'var(--color-primary)' }} aria-hidden="true" />
+              <i className={`bi ${pill.icon} dove-siamo__pill-icon`} aria-hidden="true" />
               <strong className="d-block text-primary mb-1">{pill.title}</strong>
               <p className="small text-secondary mb-0">{pill.text}</p>
             </div>
@@ -518,7 +505,7 @@ export default function DoveSiamoClient({
                   key={ap.code}
                   className="d-flex align-items-center gap-3 bg-light border rounded p-2 flex-wrap"
                 >
-                  <span className="fw-bold text-primary small" style={{ minWidth: 36 }}>{ap.code}</span>
+                  <span className="fw-bold text-primary small dove-siamo__plane-airport-code">{ap.code}</span>
                   <span className="flex-fill text-secondary">{ap.name}</span>
                   <span className="small text-muted">{ap.km}</span>
                   <span className="badge bg-primary-subtle text-primary-emphasis text-nowrap">{ap.time}</span>
@@ -555,10 +542,7 @@ export default function DoveSiamoClient({
         {activeTab === 'car' && (
           <div>
             <p className="text-secondary lh-base mb-3">{t.car_intro}</p>
-            <div
-              className="d-grid gap-2 mb-3"
-              style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}
-            >
+            <div className="dove-siamo__cars-grid">
               {t.car_from.map((item, i) => (
                 <div key={i} className="bg-light border rounded p-3 text-center">
                   <p className="fw-bold mb-1">
@@ -570,12 +554,12 @@ export default function DoveSiamoClient({
                 </div>
               ))}
             </div>
-            <div className="alert alert-warning border" style={{ background: '#FFF8E7', borderColor: '#FCAF1A' }}>
-              <strong className="d-block mb-1" style={{ color: '#92400e' }}>
+            <div className="alert alert-warning border dove-siamo__car-note">
+              <strong className="d-block mb-1 dove-siamo__car-note-title">
                 <i className="bi bi-exclamation-triangle-fill me-1" aria-hidden="true" />
                 {t.car_note_title}
               </strong>
-              <p className="small mb-0" style={{ color: '#78350f', lineHeight: 1.6 }}>{t.car_note}</p>
+              <p className="small mb-0 dove-siamo__car-note-text">{t.car_note}</p>
             </div>
           </div>
         )}
@@ -583,11 +567,7 @@ export default function DoveSiamoClient({
 
       {/* CTA */}
       <section className="text-center pt-3">
-        <a
-          href={bookHref}
-          className="btn btn-warning btn-lg fw-bold"
-          style={{ color: '#111' }}
-        >
+        <a href={bookHref} className="btn btn-warning btn-lg fw-bold dove-siamo__cta-btn">
           {t.cta}
         </a>
       </section>
