@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { Icon } from '@/components/ui/Icon';
 
 const UI: Record<string, Record<string, string>> = {
   it: {
@@ -162,7 +163,7 @@ export default function SuccessContent({ locale }: Props) {
   return (
     <div className="page-state">
       <div className={`page-state__icon page-state__icon--xl ${isCardSaved ? 'page-state__icon--brand' : 'page-state__icon--cta'}`}>
-        <i className={`bi ${isCardSaved ? 'bi-shield-lock-fill' : 'bi-check-circle-fill'}`} aria-hidden="true" />
+        <Icon name={isCardSaved ? 'shield-lock-fill' : 'check-circle-fill'} />
       </div>
 
       <h1 className="page-state__title page-state__title--brand">
