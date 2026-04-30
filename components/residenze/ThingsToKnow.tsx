@@ -3,6 +3,7 @@ import { CIN, CIR } from '@/config/properties';
 import { useState } from 'react';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
+import { Icon } from '@/components/ui/Icon';
 
 interface Props {
   locale: string;
@@ -38,9 +39,9 @@ export default function ThingsToKnow({ locale, checkInStart, checkInEnd, checkOu
         aria-expanded={open}
       >
         <span>
-          <i className="bi bi-info-circle-fill me-2"></i>{ui.title}
+          <Icon name="info-circle-fill" className="me-2" />{ui.title}
         </span>
-        <i className={`bi ${open ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
+        <Icon name={open ? 'chevron-up' : 'chevron-down'} />
       </button>
 
       {/* Contenuto espandibile */}
@@ -49,7 +50,7 @@ export default function ThingsToKnow({ locale, checkInStart, checkInEnd, checkOu
 
           {/* Check-in/out */}
           <div className="pb-3 mb-3 border-bottom">
-            <div className="fw-bold mb-2"><i className="bi bi-clock me-1"></i> {ui.checkInTitle}</div>
+            <div className="fw-bold mb-2"><Icon name="clock" className="me-1" /> {ui.checkInTitle}</div>
             <div className="d-flex justify-content-between small mb-1">
               <span className="text-muted">{ui.checkIn}</span>
               <span className="fw-semibold">{checkInStart} – {checkInEnd}</span>
@@ -63,7 +64,7 @@ export default function ThingsToKnow({ locale, checkInStart, checkInEnd, checkOu
           {/* Deposito */}
           <div className="pb-3 mb-3 border-bottom">
             <div className="fw-bold mb-2">
-              <i className="bi bi-shield-lock-fill me-1"></i> {ui.depositTitle}: €{securityDeposit}
+              <Icon name="shield-lock-fill" className="me-1" /> {ui.depositTitle}: €{securityDeposit}
             </div>
             <p className="small text-secondary mb-1">{ui.depositText}</p>
             <a href={depositHref} target="_blank" rel="noopener noreferrer" className="small text-primary text-decoration-none">{ui.depositLink}</a>
@@ -72,7 +73,7 @@ export default function ThingsToKnow({ locale, checkInStart, checkInEnd, checkOu
           {/* Consumi */}
           <div className="pb-3 mb-3 border-bottom">
             <div className="fw-bold mb-2">
-              <i className="bi bi-lightning-fill me-1"></i> {ui.energyTitle}
+              <Icon name="lightning-fill" className="me-1" /> {ui.energyTitle}
             </div>
             <p className="small text-secondary mb-1">{ui.energyText}</p>
             <a href={energyHref} target="_blank" rel="noopener noreferrer" className="small text-primary text-decoration-none">{ui.energyLink}</a>
@@ -81,7 +82,7 @@ export default function ThingsToKnow({ locale, checkInStart, checkInEnd, checkOu
           {/* Imposta di soggiorno */}
           <div className="pb-3 mb-3 border-bottom">
             <div className="fw-bold mb-2">
-              <i className="bi bi-bank2 me-1"></i> {ui.taxTitle}
+              <Icon name="bank2" className="me-1" /> {ui.taxTitle}
             </div>
             <p className="small text-secondary mb-0">{ui.taxText}</p>
           </div>
@@ -89,14 +90,14 @@ export default function ThingsToKnow({ locale, checkInStart, checkInEnd, checkOu
           {/* Regole */}
           <div className="pb-3 mb-3 border-bottom">
             <div className="fw-bold mb-2">
-              <i className="bi bi-card-list me-1"></i> {ui.rulesTitle}
+              <Icon name="card-list" className="me-1" /> {ui.rulesTitle}
             </div>
             <div className="small text-secondary">
-              <i className="bi bi-x-circle me-1" aria-hidden="true"></i>
+              <Icon name="x-circle" className="me-1" />
               {ui.noPets}
             </div>
             <div className="small text-secondary">
-              <i className="bi bi-x-circle me-1" aria-hidden="true"></i>
+              <Icon name="x-circle" className="me-1" />
               {ui.noSmoking}
             </div>
           </div>
