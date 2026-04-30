@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
+import { Icon } from '@/components/ui/Icon';
 
 interface Props { locale: Locale; }
 
@@ -93,7 +94,7 @@ export default function PaypalReturnClient({ locale }: Props) {
   if (phase === 'working' || phase === 'done') {
     return (
       <div className="paypal-return-center">
-        <i className="bi bi-hourglass-split paypal-return-spinner" aria-hidden="true"></i>
+        <Icon name="hourglass-split" className="paypal-return-spinner" />
         <p className="paypal-return-text">
           {(t as any).paypalVaultConfirming ?? t.paying}
         </p>
@@ -103,7 +104,7 @@ export default function PaypalReturnClient({ locale }: Props) {
 
   return (
     <div className="paypal-return-center">
-      <i className="bi bi-exclamation-triangle-fill paypal-return-error-icon" aria-hidden="true"></i>
+      <Icon name="exclamation-triangle-fill" className="paypal-return-error-icon" />
       <h2 className="paypal-return-title">{t.errTitle}</h2>
       <p className="paypal-return-text">{error}</p>
       <a href={`/${locale}/prenota`} className="btn btn--primary">{t.errBack}</a>
