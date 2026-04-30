@@ -976,6 +976,40 @@
               }
             }
           ]
+        },
+        {
+          "icon": "bi-car-front-fill",
+          "label": "Car & getting around",
+          "items": [
+            {
+              "q": "Is it essential to have a car?",
+              "a": "Yes, a car is strongly recommended — almost essential. The properties are located in rural or residential areas with roads that have no pavements. Without a car it is difficult to reach supermarkets, beaches and the centres of Minturno and Scauri."
+            },
+            {
+              "q": "Is there public transport near the property?",
+              "a": "No. There are no bus stops within 200-300 metres of the properties. The surrounding roads are rural or residential without pavements: walking is not safe, especially at night or with children. The only useful public transport is the train from Minturno-Scauri station (approximately 2 km away, not safely reachable on foot)."
+            },
+            {
+              "q": "Can I walk to the supermarket or the beach?",
+              "a": "No, it is not safe to do so. Rural roads have no pavements and traffic flows without pedestrian protection. The nearest supermarket is about 3-5 minutes by car; the beaches 5-10 minutes. Walking along country roads is not recommended with young children or elderly guests."
+            },
+            {
+              "q": "Where can I rent a car near the property?",
+              "a": "The nearest car rental agencies are in Formia (about 15 minutes away). We recommend booking online before departure and collecting the car at the airport. Some agencies offer collection/delivery at the property on request."
+            },
+            {
+              "q": "How do I visit Rome and Naples without a car?",
+              "a": "Rome and Naples can be reached by train from Minturno-Scauri station (approximately 1h40 to Roma Termini, approximately 60 minutes to Napoli Centrale). To reach the station from the property you need a car or taxi. On request we can help you arrange the transfer."
+            },
+            {
+              "q": "How do I get around locally without a car?",
+              "a": "Options without a car are limited:\n• Taxi: available on request (we can provide local numbers)\n• Bicycle: possible on some secondary roads, but rural roads without pavements are not always safe\nOur peaceful location offers excellent value for money, but requires a car for daily travel."
+            },
+            {
+              "q": "Do you offer a transfer service from the station? How much does it cost?",
+              "a": "Yes, on request we organise the transfer from Minturno-Scauri station to the LivingApple property.\nCost: €40 return.\nTo book, write to us on WhatsApp at least 2 days before arrival, indicating your train time."
+            }
+          ]
         }
       ]
     },
