@@ -151,14 +151,12 @@ export default function ContattiClient({ locale, bookHref }: Props) {
   return (
     <div className="page-container page-top pb-4 min-vh-100 contatti-page">
 
-      {/* ── Hero con sfondo brand ─────────────────────────────────────────── */}
-      <div className="contatti-page__hero">
-        <h1 className="contatti-page__hero-title">{t.pageTitle}</h1>
-        <p className="contatti-page__hero-sub">{t.pageSubtitle}</p>
-      </div>
+      {/* ── Titolo pagina (stile scheda residenza) ─────────────────────────── */}
+      <h1 className="section-title-main mb-1">{t.pageTitle}</h1>
+      <p className="contatti-page__sub">{t.pageSubtitle}</p>
 
       {/* ── Contenuto principale ─────────────────────────────────────────── */}
-      <div className="px-2 pt-3">
+      <div className="pt-3">
 
         {/* ── FAQ ──────────────────────────────────────────────────────────── */}
         <div className="d-flex flex-column gap-3 mb-3">

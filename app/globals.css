@@ -7106,24 +7106,14 @@ body {
 
 /* ── ContattiClient ── */
 .contatti-page {
-  background: var(--color-bg-muted);
+  background: var(--color-bg);
 }
-.contatti-page__hero {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-  padding: 0 var(--space-md) var(--space-base);
-}
-.contatti-page__hero-title {
-  font-weight: 800;
-  color: var(--color-on-dark);
-  margin-bottom: var(--space-sm);
-  font-size: 30px;
-  line-height: 1.15;
-}
-.contatti-page__hero-sub {
-  margin: 0;
+/* Sub-titolo sotto h1 — coerente con .room-page__meta della scheda residenza */
+.contatti-page__sub {
+  margin: 0 0 var(--space-base);
   font-size: var(--text-md);
-  color: rgba(255,255,255,0.82);
-  line-height: 1.5;
+  color: var(--color-text-muted);
+  line-height: var(--line-height-base);
 }
 
 /* FAQ accordion */
