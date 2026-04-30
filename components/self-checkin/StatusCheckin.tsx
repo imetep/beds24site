@@ -22,32 +22,6 @@ interface StatusData {
   updatedAt:    string | null;
 }
 
-// ─── Stili ────────────────────────────────────────────────────────────────────
-const inp: React.CSSProperties = {
-  width: '100%', padding: '12px 14px', fontSize: 16,
-  border: '1.5px solid #e5e7eb', borderRadius: 10,
-  background: '#fafafa', color: '#111', outline: 'none',
-  boxSizing: 'border-box', fontFamily: 'inherit',
-};
-const lbl: React.CSSProperties = {
-  fontSize: 12, fontWeight: 700, color: '#6b7280',
-  display: 'block', marginBottom: 5,
-  letterSpacing: '0.04em', textTransform: 'uppercase',
-};
-const btnP: React.CSSProperties = {
-  padding: '12px 20px', fontSize: 15, fontWeight: 700,
-  background: 'var(--color-primary)', color: '#fff', border: 'none',
-  borderRadius: 10, cursor: 'pointer', width: '100%',
-};
-const btnS: React.CSSProperties = {
-  padding: '10px 16px', fontSize: 14, background: '#fff', color: '#374151',
-  border: '1.5px solid #e5e7eb', borderRadius: 10, cursor: 'pointer',
-};
-const card: React.CSSProperties = {
-  borderRadius: 14, padding: 20,
-};
-
-
 export default function StatusCheckin({ locale }: { locale: Locale }) {
   const t = getTranslations(locale).components.statusCheckin;
 
@@ -108,44 +82,42 @@ export default function StatusCheckin({ locale }: { locale: Locale }) {
     setSending(false);
   }
 
-  const statusLabels: Record<string, { label: string; note: string; bg: string; color: string; icon: string }> = {
-    PENDING:  { label: t.statusPending,  note: t.pendingNote,  bg: '#FEF9C3', color: '#713f12', icon: 'bi-hourglass-split' },
-    APPROVED: { label: t.statusApproved, note: t.approvedNote, bg: '#DCFCE7', color: '#14532d', icon: 'bi-check-circle-fill' },
-    REJECTED: { label: t.statusRejected, note: '',             bg: '#FEE2E2', color: '#7f1d1d', icon: 'bi-x-circle-fill' },
+  const statusLabels: Record<string, { label: string; note: string; modifier: string; icon: string }> = {
+    PENDING:  { label: t.statusPending,  note: t.pendingNote,  modifier: 'pending',  icon: 'bi-hourglass-split' },
+    APPROVED: { label: t.statusApproved, note: t.approvedNote, modifier: 'approved', icon: 'bi-check-circle-fill' },
+    REJECTED: { label: t.statusRejected, note: '',             modifier: 'rejected', icon: 'bi-x-circle-fill' },
   };
 
   // ── Form ricerca ─────────────────────────────────────────────────────────
   if (!data) return (
     <div className="page-container page-top pb-5">
-      <div className="text-center mb-4">
-        <div className="mb-2" style={{ fontSize: 40, color: 'var(--color-primary)' }}>
+      <div className="status-checkin__hero">
+        <div className="status-checkin__hero-icon">
           <i className="bi bi-search" aria-hidden="true" />
         </div>
-        <h1 className="fw-bold mb-1" style={{ fontSize: 22, color: '#111' }}>
-          {t.pageTitle}
-        </h1>
-        <p className="m-0" style={{ fontSize: 14, color: '#6b7280', lineHeight: 1.6 }}>{t.pageSubtitle}</p>
+        <h1 className="status-checkin__hero-title">{t.pageTitle}</h1>
+        <p className="status-checkin__hero-sub">{t.pageSubtitle}</p>
       </div>
-      <div className="bg-white border mb-3" style={card}>
-        <div className="mb-3">
-          <label style={lbl}>{t.bookingLabel}</label>
-          <input style={inp} type="number" inputMode="numeric"
+      <div className="status-checkin__card">
+        <div className="form-row__full">
+          <label className="ui-field-label ui-field-label--uppercase">{t.bookingLabel}</label>
+          <input className="ui-field-input" type="number" inputMode="numeric"
             placeholder={t.bookingPh}
             value={bookIdInput}
             onChange={e => { setBookIdInput(e.target.value); setErr(''); }}
             onKeyDown={e => e.key === 'Enter' && loadStatus()} />
         </div>
-        {err && <p className="mb-2" style={{ fontSize: 13, color: '#dc2626' }}>{err}</p>}
-        <button style={{ ...btnP, opacity: (loading || !bookIdInput.trim()) ? 0.6 : 1 }}
+        {err && <p className="checkin-wizard__inline-error">{err}</p>}
+        <button className={`checkin-wizard__primary-btn ${(loading || !bookIdInput.trim()) ? 'is-loading' : ''}`}
           onClick={() => loadStatus()} disabled={loading || !bookIdInput.trim()}>
           {loading ? t.loading : t.viewBtn}
         </button>
       </div>
-      <p className="text-center mt-3" style={{ fontSize: 13, color: '#9ca3af' }}>
+      <p className="status-checkin__support">
         {t.needHelp}{' '}
-        <a href="https://wa.me/393283131500" style={{ color: 'var(--color-primary)' }}>WhatsApp</a>
+        <a href="https://wa.me/393283131500" className="status-checkin__support-link">WhatsApp</a>
         {' · '}
-        <a href="mailto:contattolivingapple@gmail.com" style={{ color: 'var(--color-primary)' }}>Email</a>
+        <a href="mailto:contattolivingapple@gmail.com" className="status-checkin__support-link">Email</a>
       </p>
     </div>
   );
@@ -156,82 +128,54 @@ export default function StatusCheckin({ locale }: { locale: Locale }) {
   return (
     <div className="page-container page-top pb-5">
 
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="status-checkin__header">
         <div>
-          <p className="mb-1" style={{ fontSize: 13, color: '#9ca3af' }}>
+          <p className="status-checkin__header-meta">
             {t.booking} #{data.bookId}
           </p>
-          <h1 className="m-0 fw-bold" style={{ fontSize: 20, color: '#111' }}>{data.guestName}</h1>
+          <h1 className="status-checkin__header-name">{data.guestName}</h1>
         </div>
-        <button style={{ ...btnS, fontSize: 13 }}
+        <button className="status-checkin__change-btn"
           onClick={() => { setData(null); setBookIdInput(''); }}>
           {t.change}
         </button>
       </div>
 
-      <div className="mb-3" style={{ ...card, background: sc.bg, border: `1px solid ${sc.color}30` }}>
-        <div className="d-flex align-items-center gap-2">
-          <i className={`bi ${sc.icon}`} style={{ fontSize: 24, color: sc.color }} aria-hidden="true" />
-          <div>
-            <p className="fw-bold mb-1" style={{ fontSize: 16, color: sc.color }}>
-              {sc.label}
-            </p>
-            {data.status === 'REJECTED' && data.rejectReason
-              ? <p className="m-0" style={{ fontSize: 13, color: sc.color, opacity: 0.8 }}>{t.rejectedReason}{data.rejectReason}</p>
-              : sc.note
-                ? <p className="m-0" style={{ fontSize: 13, color: sc.color, opacity: 0.8 }}>{sc.note}</p>
-                : null
-            }
-          </div>
+      <div className={`status-banner status-banner--${sc.modifier}`}>
+        <i className={`bi ${sc.icon} status-banner__icon`} aria-hidden="true" />
+        <div>
+          <p className="status-banner__title">{sc.label}</p>
+          {data.status === 'REJECTED' && data.rejectReason
+            ? <p className="status-banner__note">{t.rejectedReason}{data.rejectReason}</p>
+            : sc.note
+              ? <p className="status-banner__note">{sc.note}</p>
+              : null
+          }
         </div>
       </div>
 
-      <div className="bg-white border mb-3" style={card}>
-        <p className="mb-2" style={lbl}>{t.details}</p>
-        <p className="mb-1" style={{ fontSize: 14, color: '#374151' }}>
-          <strong>{t.property}:</strong> {data.roomName}
-        </p>
-        <p className="mb-1" style={{ fontSize: 14, color: '#374151' }}>
-          <strong>Check-in:</strong> {data.checkIn}
-        </p>
-        <p className="m-0" style={{ fontSize: 14, color: '#374151' }}>
-          <strong>Check-out:</strong> {data.checkOut}
-        </p>
+      <div className="status-checkin__card">
+        <p className="ui-field-label ui-field-label--uppercase">{t.details}</p>
+        <p className="checkin-wizard__summary-line"><strong>{t.property}:</strong> {data.roomName}</p>
+        <p className="checkin-wizard__summary-line"><strong>Check-in:</strong> {data.checkIn}</p>
+        <p className="checkin-wizard__summary-line"><strong>Check-out:</strong> {data.checkOut}</p>
       </div>
 
-      <div className="bg-white border mb-3" style={card}>
-        <p className="mb-3" style={lbl}>
+      <div className="status-checkin__card">
+        <p className="ui-field-label ui-field-label--uppercase">
           {t.messages}
           {data.messages.length > 0 && (
-            <span
-              className="ms-2 fw-bold text-white rounded-pill"
-              style={{ background: 'var(--color-primary)', fontSize: 10, padding: '2px 7px' }}
-            >
-              {data.messages.length}
-            </span>
+            <span className="status-checkin__msg-count">{data.messages.length}</span>
           )}
         </p>
-        <div
-          className="d-flex flex-column gap-2 mb-3 p-1"
-          style={{ minHeight: 80, maxHeight: 300, overflowY: 'auto' }}
-        >
+        <div className="status-checkin__messages">
           {data.messages.length === 0 && (
-            <p className="text-center m-0 py-3" style={{ fontSize: 13, color: '#9ca3af' }}>
-              {t.noMessages}
-            </p>
+            <p className="status-checkin__no-messages">{t.noMessages}</p>
           )}
           {data.messages.map((m, i) => (
-            <div key={i} style={{ alignSelf: m.from === 'guest' ? 'flex-end' : 'flex-start', maxWidth: '85%' }}>
-              <div style={{
-                background: m.from === 'guest' ? 'var(--color-primary)' : '#f3f4f6',
-                color: m.from === 'guest' ? '#fff' : '#111',
-                borderRadius: m.from === 'guest' ? '12px 12px 2px 12px' : '12px 12px 12px 2px',
-                padding: '10px 14px', fontSize: 14, lineHeight: 1.5,
-              }}>
-                {m.text}
-              </div>
-              <p className="mb-0" style={{ marginTop: 3, marginLeft: 4, marginRight: 4, fontSize: 11, color: '#9ca3af',
-                textAlign: m.from === 'guest' ? 'right' : 'left' }}>
+            <div key={i} className={`status-checkin__msg status-checkin__msg--${m.from}`}>
+              <div className="status-checkin__msg-bubble">{m.text}</div>
+              <p className="status-checkin__msg-time">
                 {m.from === 'guest' ? t.you : 'LivingApple'}
                 {' · '}
                 {new Date(m.time).toLocaleString(t.dateLocale, {
@@ -242,35 +186,29 @@ export default function StatusCheckin({ locale }: { locale: Locale }) {
           ))}
           <div ref={bottomRef} />
         </div>
-        <div className="d-flex gap-2">
+        <div className="status-checkin__send-row">
           <textarea
             value={msgText}
             onChange={e => setMsgText(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
             placeholder={t.msgPh}
             rows={2}
-            className="flex-fill"
-            style={{ padding: '10px 12px', fontSize: 14,
-              border: '1.5px solid #e5e7eb', borderRadius: 10,
-              resize: 'none', boxSizing: 'border-box', fontFamily: 'inherit' }}
+            className="status-checkin__send-textarea"
           />
           <button
-            className="align-self-end border-0 text-white"
-            style={{ ...btnS, background: 'var(--color-primary)', color: '#fff',
-              padding: '10px 16px',
-              opacity: (sending || !msgText.trim()) ? 0.6 : 1 }}
+            className="status-checkin__send-btn"
             onClick={sendMessage} disabled={sending || !msgText.trim()}>
             {sending ? t.sending : t.send}
           </button>
         </div>
-        {msgErr && <p className="mb-0" style={{ marginTop: 6, fontSize: 12, color: '#dc2626' }}>{msgErr}</p>}
+        {msgErr && <p className="status-checkin__send-error">{msgErr}</p>}
       </div>
 
-      <p className="text-center" style={{ fontSize: 13, color: '#9ca3af' }}>
+      <p className="status-checkin__support">
         {t.urgentHelp}{' '}
-        <a href="https://wa.me/393283131500" style={{ color: 'var(--color-primary)' }}>WhatsApp</a>
+        <a href="https://wa.me/393283131500" className="status-checkin__support-link">WhatsApp</a>
         {' · '}
-        <a href="mailto:contattolivingapple@gmail.com" style={{ color: 'var(--color-primary)' }}>Email</a>
+        <a href="mailto:contattolivingapple@gmail.com" className="status-checkin__support-link">Email</a>
       </p>
     </div>
   );

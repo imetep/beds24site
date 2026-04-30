@@ -6373,6 +6373,533 @@ body {
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
+   StatusCheckin + SelfCheckinPage (Sessione 20 Fase 2)
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* ── Status checkin (form ricerca + dashboard messaggi) ── */
+.status-checkin__hero {
+  text-align: center;
+  margin-bottom: var(--space-base);
+}
+.status-checkin__hero-icon {
+  font-size: 40px;
+  color: var(--color-primary);
+  margin-bottom: var(--space-sm);
+}
+.status-checkin__hero-title {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 var(--space-xs);
+}
+.status-checkin__hero-sub {
+  margin: 0;
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+.status-checkin__card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: var(--space-md);
+}
+.status-checkin__support {
+  text-align: center;
+  margin-top: var(--space-md);
+  font-size: var(--text-sm);
+  color: var(--color-text-disabled);
+}
+.status-checkin__support-link {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+.status-checkin__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-base);
+}
+.status-checkin__header-meta {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--text-sm);
+  color: var(--color-text-disabled);
+}
+.status-checkin__header-name {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-text);
+}
+.status-checkin__change-btn {
+  padding: 10px var(--space-base);
+  font-size: var(--text-sm);
+  background: var(--color-bg);
+  color: #374151;
+  border: 1.5px solid var(--color-border);
+  border-radius: 10px;
+  cursor: pointer;
+  min-height: var(--touch-target);
+}
+
+/* Status banner colorato (pending/approved/rejected) */
+.status-banner {
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: var(--space-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+.status-banner--pending {
+  background: #FEF9C3;
+  border: 1px solid #fcd34d40;
+  color: #713f12;
+}
+.status-banner--approved {
+  background: #DCFCE7;
+  border: 1px solid #16a34a40;
+  color: #14532d;
+}
+.status-banner--rejected {
+  background: #FEE2E2;
+  border: 1px solid #dc262640;
+  color: #7f1d1d;
+}
+.status-banner__icon {
+  font-size: 24px;
+  color: inherit;
+}
+.status-banner__title {
+  font-weight: 700;
+  margin: 0 0 var(--space-xs);
+  font-size: var(--text-base);
+  color: inherit;
+}
+.status-banner__note {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: inherit;
+  opacity: 0.8;
+}
+
+/* Status messaggi badge count */
+.status-checkin__msg-count {
+  display: inline-block;
+  margin-left: var(--space-sm);
+  background: var(--color-primary);
+  color: var(--color-on-dark);
+  font-weight: 700;
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+}
+.status-checkin__messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  padding: 4px;
+  min-height: 80px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+.status-checkin__no-messages {
+  text-align: center;
+  margin: 0;
+  padding: var(--space-md) 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-disabled);
+}
+.status-checkin__msg {
+  max-width: 85%;
+}
+.status-checkin__msg--guest {
+  align-self: flex-end;
+}
+.status-checkin__msg--host {
+  align-self: flex-start;
+}
+.status-checkin__msg-bubble {
+  padding: 10px 14px;
+  font-size: var(--text-base);
+  line-height: 1.5;
+}
+.status-checkin__msg--guest .status-checkin__msg-bubble {
+  background: var(--color-primary);
+  color: var(--color-on-dark);
+  border-radius: 12px 12px 2px 12px;
+}
+.status-checkin__msg--host .status-checkin__msg-bubble {
+  background: var(--color-bg-muted);
+  color: var(--color-text);
+  border-radius: 12px 12px 12px 2px;
+}
+.status-checkin__msg-time {
+  margin: 3px 4px 0;
+  font-size: 11px;
+  color: var(--color-text-disabled);
+}
+.status-checkin__msg--guest .status-checkin__msg-time {
+  text-align: right;
+}
+.status-checkin__msg--host .status-checkin__msg-time {
+  text-align: left;
+}
+.status-checkin__send-row {
+  display: flex;
+  gap: var(--space-sm);
+}
+.status-checkin__send-textarea {
+  flex: 1;
+  padding: 10px var(--space-md);
+  font-size: var(--text-base);
+  border: 1.5px solid var(--color-border);
+  border-radius: 10px;
+  resize: none;
+  box-sizing: border-box;
+  font-family: inherit;
+  outline: none;
+  color: var(--color-text);
+}
+.status-checkin__send-textarea:focus-visible {
+  border-color: var(--color-primary);
+}
+.status-checkin__send-btn {
+  align-self: flex-end;
+  padding: 10px var(--space-base);
+  background: var(--color-primary);
+  color: var(--color-on-dark);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: var(--text-base);
+  font-weight: 700;
+  min-height: var(--touch-target);
+}
+.status-checkin__send-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.status-checkin__send-error {
+  margin: 6px 0 0;
+  font-size: var(--text-xs);
+  color: var(--color-danger);
+}
+
+/* ── SelfCheckinPage (pagina informativa multi-section) ── */
+.self-checkin-page {
+  /* page-container già applicato; padding-bottom 60 da rule extra */
+  padding-bottom: 60px;
+}
+.self-checkin-page__hero {
+  background: var(--color-bg);
+  padding: 0 20px var(--space-lg);
+  border-bottom: 0.5px solid var(--color-bg-muted);
+  margin-bottom: var(--space-sm);
+}
+.self-checkin-page__badge {
+  display: inline-block;
+  margin-bottom: var(--space-md);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  padding: 4px var(--space-md);
+  border-radius: 20px;
+}
+.self-checkin-page__title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 var(--space-sm);
+  line-height: 1.2;
+}
+.self-checkin-page__sub {
+  margin: 0;
+  font-size: var(--text-md);
+  color: var(--color-text-muted);
+  line-height: 1.55;
+}
+.self-checkin-page__cta-top {
+  background: var(--color-bg);
+  padding: var(--space-sm) var(--space-md) var(--space-md);
+  margin-bottom: var(--space-sm);
+  text-align: center;
+}
+.self-checkin-page__section {
+  background: var(--color-bg);
+  padding: 20px 20px 22px;
+  margin-bottom: var(--space-sm);
+}
+.self-checkin-page__section--steps {
+  padding: 20px 20px 6px;
+}
+.self-checkin-page__section--faq {
+  padding: 20px 20px 14px;
+}
+.self-checkin-page__h2 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 var(--space-sm);
+}
+.self-checkin-page__h2--mb-tight {
+  margin-bottom: var(--space-xs);
+}
+.self-checkin-page__p {
+  margin: 0 0 14px;
+  font-size: var(--text-base);
+  color: #4b5563;
+  line-height: 1.7;
+}
+
+/* Accordion fonti */
+.self-checkin-page__sources {
+  border: 0.5px solid var(--color-border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.self-checkin-page__sources-toggle {
+  width: 100%;
+  background: var(--color-bg-muted);
+  border: none;
+  padding: var(--space-md) var(--space-base);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  text-align: left;
+  gap: var(--space-md);
+  min-height: var(--touch-target);
+}
+.self-checkin-page__sources-toggle-text {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: #374151;
+}
+.self-checkin-page__sources-chevron {
+  flex-shrink: 0;
+  transition: transform 250ms ease;
+  color: var(--color-text-disabled);
+}
+.self-checkin-page__sources.is-open .self-checkin-page__sources-chevron {
+  transform: rotate(180deg);
+}
+.self-checkin-page__sources-body {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 300ms ease;
+}
+.self-checkin-page__sources.is-open .self-checkin-page__sources-body {
+  max-height: 1200px;
+}
+.self-checkin-page__sources-inner {
+  padding: 14px var(--space-base);
+  border-top: 0.5px solid var(--color-border);
+}
+.self-checkin-page__sources-sub {
+  margin: 0 0 var(--space-md);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+.self-checkin-page__sources-section {
+  margin: 0 0 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-disabled);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.self-checkin-page__sources-list {
+  margin: 0 0 var(--space-md);
+  padding: 0;
+  list-style: none;
+}
+.self-checkin-page__sources-list--last {
+  margin-bottom: 0;
+}
+.self-checkin-page__sources-item {
+  padding: 6px 0;
+  border-bottom: 0.5px solid var(--color-bg-muted);
+  display: flex;
+  gap: var(--space-sm);
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+.self-checkin-page__sources-item:last-child {
+  border-bottom: none;
+}
+.self-checkin-page__sources-outlet {
+  font-size: 11px;
+  color: var(--color-text-disabled);
+  flex-shrink: 0;
+  min-width: 130px;
+}
+.self-checkin-page__sources-link {
+  font-size: var(--text-sm);
+  color: var(--color-primary);
+  text-decoration: none;
+  line-height: 1.5;
+}
+
+/* Legal note yellow */
+.self-checkin-page__legal {
+  background: #FFF9E6;
+  border: 0.5px solid #FDE68A;
+  border-radius: 10px;
+  padding: var(--space-md) var(--space-base);
+}
+.self-checkin-page__legal-text {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: #713f12;
+  line-height: 1.65;
+}
+
+/* Step card (5 passi) */
+.self-checkin-page__step-card {
+  display: flex;
+  gap: var(--space-base);
+  padding: var(--space-base) 0;
+  border-bottom: 0.5px solid var(--color-bg-muted);
+}
+.self-checkin-page__step-num {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+  color: var(--color-on-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.self-checkin-page__step-title {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--text-md);
+  font-weight: 700;
+  color: var(--color-text);
+}
+.self-checkin-page__step-text {
+  margin: 0;
+  font-size: var(--text-base);
+  color: #4b5563;
+  line-height: 1.65;
+}
+
+/* Lista "cosa ti serve" */
+.self-checkin-page__needs-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.self-checkin-page__needs-item {
+  display: flex;
+  gap: 10px;
+  padding: var(--space-sm) 0;
+  border-bottom: 0.5px solid var(--color-bg-muted);
+  font-size: var(--text-base);
+  color: #4b5563;
+  line-height: 1.55;
+}
+.self-checkin-page__needs-item:last-child {
+  border-bottom: none;
+}
+.self-checkin-page__needs-icon {
+  color: var(--color-primary);
+  flex-shrink: 0;
+  font-weight: 700;
+}
+.self-checkin-page__time-note {
+  margin: 14px 0 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-disabled);
+  line-height: 1.5;
+}
+
+/* FAQ item */
+.self-checkin-page__faq-item {
+  padding: 14px 0;
+  border-bottom: 0.5px solid var(--color-bg-muted);
+}
+.self-checkin-page__faq-item:last-child {
+  border-bottom: none;
+}
+.self-checkin-page__faq-q {
+  margin: 0 0 6px;
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-text);
+}
+.self-checkin-page__faq-a {
+  margin: 0;
+  font-size: var(--text-base);
+  color: #4b5563;
+  line-height: 1.65;
+}
+.self-checkin-page__faq-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: var(--text-xs);
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* CTA bottom */
+.self-checkin-page__cta {
+  background: var(--color-primary-soft);
+  margin: 0 0 var(--space-sm);
+  padding: var(--space-lg) 20px;
+  border-top: 2px solid var(--color-primary);
+}
+.self-checkin-page__cta-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0C447C;
+  margin: 0 0 var(--space-sm);
+}
+.self-checkin-page__cta-text {
+  margin: 0 0 var(--space-base);
+  font-size: var(--text-base);
+  color: #185FA5;
+  line-height: 1.6;
+}
+.self-checkin-page__cta-btn {
+  display: inline-block;
+  background: var(--color-primary);
+  color: var(--color-on-dark);
+  border-radius: 12px;
+  padding: 13px var(--space-lg);
+  font-size: var(--text-md);
+  font-weight: 700;
+  text-decoration: none;
+  margin-bottom: 10px;
+  min-height: var(--touch-target);
+}
+.self-checkin-page__cta-note {
+  margin: var(--space-sm) 0 0;
+  font-size: var(--text-xs);
+  color: #185FA5;
+}
+.self-checkin-page__contact-link {
+  padding: var(--space-base) 20px;
+  text-align: center;
+}
+.self-checkin-page__contact-link a {
+  font-size: var(--text-base);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
    ChangeRequestWizard (Sessione 18 Fase 2)
    Wizard 3-step inline (collapsed/open) per richiesta modifica prenotazione.
    ────────────────────────────────────────────────────────────────────────── */

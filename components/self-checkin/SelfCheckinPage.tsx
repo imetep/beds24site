@@ -213,18 +213,11 @@ const T: Record<Locale, {
 // ─── Componenti interni ────────────────────────────────────────────────────────
 function StepCard({ n, title, text }: { n: string; title: string; text: string }) {
   return (
-    <div style={{ display: 'flex', gap: 16, padding: '16px 0', borderBottom: '0.5px solid #f3f4f6' }}>
-      <div style={{
-        width: 32, height: 32, borderRadius: '50%',
-        background: 'var(--color-primary)', color: '#fff',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: 13, fontWeight: 700, flexShrink: 0, marginTop: 2,
-      }}>
-        {n}
-      </div>
+    <div className="self-checkin-page__step-card">
+      <div className="self-checkin-page__step-num">{n}</div>
       <div>
-        <p style={{ margin: '0 0 4px', fontSize: 15, fontWeight: 700, color: '#111' }}>{title}</p>
-        <p style={{ margin: 0, fontSize: 14, color: '#4b5563', lineHeight: 1.65 }}>{text}</p>
+        <p className="self-checkin-page__step-title">{title}</p>
+        <p className="self-checkin-page__step-text">{text}</p>
       </div>
     </div>
   );
@@ -232,12 +225,11 @@ function StepCard({ n, title, text }: { n: string; title: string; text: string }
 
 function FaqItem({ q, a, link }: { q: string; a: string; link?: { label: string; href: string } }) {
   return (
-    <div style={{ padding: '14px 0', borderBottom: '0.5px solid #f3f4f6' }}>
-      <p style={{ margin: '0 0 6px', fontSize: 14, fontWeight: 700, color: '#111' }}>{q}</p>
-      <p style={{ margin: 0, fontSize: 14, color: '#4b5563', lineHeight: 1.65 }}>{a}</p>
+    <div className="self-checkin-page__faq-item">
+      <p className="self-checkin-page__faq-q">{q}</p>
+      <p className="self-checkin-page__faq-a">{a}</p>
       {link && (
-        <a href={link.href} target="_blank" rel="noopener noreferrer"
-          style={{ display: 'inline-block', marginTop: 6, fontSize: 12, color: 'var(--color-primary)', textDecoration: 'none', fontWeight: 600 }}>
+        <a href={link.href} target="_blank" rel="noopener noreferrer" className="self-checkin-page__faq-link">
           {link.label}
         </a>
       )}
@@ -253,31 +245,20 @@ export default function SelfCheckinPage({ locale, wizardHref, contactHref }: Pro
   const [sourcesOpen, setSourcesOpen] = useState(false);
 
   return (
-    <div className="page-container page-top" style={{ paddingLeft: 0, paddingRight: 0, paddingBottom: 60 }}>
+    <div className="page-container page-top self-checkin-page">
 
       {/* ── Hero ────────────────────────────────────────────────────────────── */}
-      <div style={{ background: '#fff', padding: '0 20px 24px', borderBottom: '0.5px solid #f3f4f6', marginBottom: 8 }}>
-        <div style={{
-          display: 'inline-block', marginBottom: 12,
-          background: '#EEF5FC', color: 'var(--color-primary)',
-          fontSize: 12, fontWeight: 700, padding: '4px 12px', borderRadius: 20,
-        }}>
+      <div className="self-checkin-page__hero">
+        <div className="self-checkin-page__badge">
           {t.whyBadge}
         </div>
-        <h1 style={{ fontSize: 28, fontWeight: 700, color: '#111', margin: '0 0 8px', lineHeight: 1.2 }}>
-          {t.title}
-        </h1>
-        <p style={{ margin: 0, fontSize: 15, color: '#6b7280', lineHeight: 1.55 }}>
-          {t.subtitle}
-        </p>
+        <h1 className="self-checkin-page__title">{t.title}</h1>
+        <p className="self-checkin-page__sub">{t.subtitle}</p>
       </div>
 
       {/* ── CTA sopra il fold — UX 3.5 (prima del contenuto informativo) ────── */}
-      <div className="bg-white px-3 pt-2 pb-3 mb-2 text-center">
-        <a
-          href={wizardHref}
-          className="btn btn-primary btn-lg fw-bold w-100 py-3"
-        >
+      <div className="self-checkin-page__cta-top">
+        <a href={wizardHref} className="btn btn-primary btn-lg fw-bold w-100 py-3">
           {t.ctaBtn} →
         </a>
         <p className="small text-muted mt-2 mb-0">
@@ -286,72 +267,42 @@ export default function SelfCheckinPage({ locale, wizardHref, contactHref }: Pro
       </div>
 
       {/* ── Perché è obbligatorio ────────────────────────────────────────────── */}
-      <div style={{ background: '#fff', padding: '20px 20px 22px', marginBottom: 8 }}>
-        <h2 style={{ fontSize: 17, fontWeight: 700, color: '#111', margin: '0 0 10px' }}>
-          {t.whyTitle}
-        </h2>
-        <p style={{ margin: '0 0 14px', fontSize: 14, color: '#4b5563', lineHeight: 1.7 }}>
-          {t.whyText}
-        </p>
+      <div className="self-checkin-page__section">
+        <h2 className="self-checkin-page__h2">{t.whyTitle}</h2>
+        <p className="self-checkin-page__p">{t.whyText}</p>
 
         {/* Accordion fonti — subito dopo whyText */}
-        <div style={{
-          border: '0.5px solid #e5e7eb',
-          borderRadius: 10,
-          overflow: 'hidden',
-          marginBottom: 14,
-        }}>
-          <button
-            onClick={() => setSourcesOpen(o => !o)}
-            style={{
-              width: '100%', background: '#f9fafb', border: 'none',
-              padding: '12px 16px', display: 'flex',
-              alignItems: 'center', justifyContent: 'space-between',
-              cursor: 'pointer', textAlign: 'left', gap: 12,
-            }}
-          >
-            <span style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>
+        <div className={`self-checkin-page__sources ${sourcesOpen ? 'is-open' : ''}`}>
+          <button onClick={() => setSourcesOpen(o => !o)} className="self-checkin-page__sources-toggle">
+            <span className="self-checkin-page__sources-toggle-text">
               <i className="bi bi-newspaper me-1" aria-hidden="true" />
               {t.sourcesTitle}
             </span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-              stroke="#9ca3af" strokeWidth="2.5"
-              style={{ flexShrink: 0, transition: 'transform 250ms ease', transform: sourcesOpen ? 'rotate(180deg)' : 'none' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+              className="self-checkin-page__sources-chevron">
               <path d="M6 9l6 6 6-6"/>
             </svg>
           </button>
-          <div style={{
-            overflow: 'hidden',
-            maxHeight: sourcesOpen ? 1200 : 0,
-            transition: 'max-height 300ms ease',
-          }}>
-            <div style={{ padding: '14px 16px', borderTop: '0.5px solid #e5e7eb' }}>
-              <p style={{ margin: '0 0 12px', fontSize: 12, color: '#6b7280', lineHeight: 1.6 }}>
-                {t.sourcesSubtitle}
-              </p>
-              <p style={{ margin: '0 0 6px', fontSize: 11, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                {t.sourcesIntl}
-              </p>
-              <ul style={{ margin: '0 0 12px', padding: 0, listStyle: 'none' }}>
+          <div className="self-checkin-page__sources-body">
+            <div className="self-checkin-page__sources-inner">
+              <p className="self-checkin-page__sources-sub">{t.sourcesSubtitle}</p>
+              <p className="self-checkin-page__sources-section">{t.sourcesIntl}</p>
+              <ul className="self-checkin-page__sources-list">
                 {SOURCES_INTL.map((s, i) => (
-                  <li key={i} style={{ padding: '6px 0', borderBottom: '0.5px solid #f3f4f6', display: 'flex', gap: 8, alignItems: 'baseline', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: 11, color: '#9ca3af', flexShrink: 0, minWidth: 130 }}>{s.outlet}</span>
-                    <a href={s.url} target="_blank" rel="noopener noreferrer"
-                      style={{ fontSize: 13, color: 'var(--color-primary)', textDecoration: 'none', lineHeight: 1.5 }}>
+                  <li key={i} className="self-checkin-page__sources-item">
+                    <span className="self-checkin-page__sources-outlet">{s.outlet}</span>
+                    <a href={s.url} target="_blank" rel="noopener noreferrer" className="self-checkin-page__sources-link">
                       {s.title} ↗
                     </a>
                   </li>
                 ))}
               </ul>
-              <p style={{ margin: '0 0 6px', fontSize: 11, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                {t.sourcesIt}
-              </p>
-              <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+              <p className="self-checkin-page__sources-section">{t.sourcesIt}</p>
+              <ul className="self-checkin-page__sources-list self-checkin-page__sources-list--last">
                 {SOURCES_IT.map((s, i) => (
-                  <li key={i} style={{ padding: '6px 0', borderBottom: i < SOURCES_IT.length - 1 ? '0.5px solid #f3f4f6' : 'none', display: 'flex', gap: 8, alignItems: 'baseline', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: 11, color: '#9ca3af', flexShrink: 0, minWidth: 130 }}>{s.outlet}</span>
-                    <a href={s.url} target="_blank" rel="noopener noreferrer"
-                      style={{ fontSize: 13, color: 'var(--color-primary)', textDecoration: 'none', lineHeight: 1.5 }}>
+                  <li key={i} className="self-checkin-page__sources-item">
+                    <span className="self-checkin-page__sources-outlet">{s.outlet}</span>
+                    <a href={s.url} target="_blank" rel="noopener noreferrer" className="self-checkin-page__sources-link">
                       {s.title} ↗
                     </a>
                   </li>
@@ -361,11 +312,8 @@ export default function SelfCheckinPage({ locale, wizardHref, contactHref }: Pro
           </div>
         </div>
 
-        <div style={{
-          background: '#FFF9E6', border: '0.5px solid #FDE68A',
-          borderRadius: 10, padding: '12px 16px',
-        }}>
-          <p style={{ margin: 0, fontSize: 13, color: '#713f12', lineHeight: 1.65 }}>
+        <div className="self-checkin-page__legal">
+          <p className="self-checkin-page__legal-text">
             <i className="bi bi-bank2 me-1" aria-hidden="true" />
             {t.legalNote}
           </p>
@@ -373,75 +321,52 @@ export default function SelfCheckinPage({ locale, wizardHref, contactHref }: Pro
       </div>
 
       {/* ── 5 passi ─────────────────────────────────────────────────────────── */}
-      <div style={{ background: '#fff', padding: '20px 20px 6px', marginBottom: 8 }}>
-        <h2 style={{ fontSize: 17, fontWeight: 700, color: '#111', margin: '0 0 4px' }}>
-          {t.stepsTitle}
-        </h2>
+      <div className="self-checkin-page__section self-checkin-page__section--steps">
+        <h2 className="self-checkin-page__h2 self-checkin-page__h2--mb-tight">{t.stepsTitle}</h2>
         {t.steps.map(s => (
           <StepCard key={s.n} {...s} />
         ))}
       </div>
 
       {/* ── Cosa ti serve ───────────────────────────────────────────────────── */}
-      <div style={{ background: '#fff', padding: '20px 20px 22px', marginBottom: 8 }}>
-        <h2 style={{ fontSize: 17, fontWeight: 700, color: '#111', margin: '0 0 12px' }}>
-          {t.needTitle}
-        </h2>
-        <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+      <div className="self-checkin-page__section">
+        <h2 className="self-checkin-page__h2">{t.needTitle}</h2>
+        <ul className="self-checkin-page__needs-list">
           {t.needs.map((need, i) => (
-            <li key={i} style={{
-              display: 'flex', gap: 10, padding: '8px 0',
-              borderBottom: i < t.needs.length - 1 ? '0.5px solid #f3f4f6' : 'none',
-              fontSize: 14, color: '#4b5563', lineHeight: 1.55,
-            }}>
-              <i className="bi bi-check-lg" style={{ color: 'var(--color-primary)', flexShrink: 0, fontWeight: 700 }} aria-hidden="true" />
+            <li key={i} className="self-checkin-page__needs-item">
+              <i className="bi bi-check-lg self-checkin-page__needs-icon" aria-hidden="true" />
               {need}
             </li>
           ))}
         </ul>
-        <p style={{ margin: '14px 0 0', fontSize: 13, color: '#9ca3af', lineHeight: 1.5 }}>
-          ⏱ {t.timeNote}
+        <p className="self-checkin-page__time-note">
+          <i className="bi bi-clock-fill me-1" aria-hidden="true" /> {t.timeNote}
         </p>
       </div>
 
       {/* ── FAQ ─────────────────────────────────────────────────────────────── */}
-      <div style={{ background: '#fff', padding: '20px 20px 14px', marginBottom: 8 }}>
-        <h2 style={{ fontSize: 17, fontWeight: 700, color: '#111', margin: '0 0 4px' }}>
-          {t.faqTitle}
-        </h2>
+      <div className="self-checkin-page__section self-checkin-page__section--faq">
+        <h2 className="self-checkin-page__h2 self-checkin-page__h2--mb-tight">{t.faqTitle}</h2>
         {t.faqs.map((f, i) => (
           <FaqItem key={i} {...f} />
         ))}
       </div>
 
       {/* ── CTA ─────────────────────────────────────────────────────────────── */}
-      <div style={{ background: '#EEF5FC', margin: '0 0 8px', padding: '24px 20px', borderTop: '2px solid #006CB7' }}>
-        <h2 style={{ fontSize: 18, fontWeight: 700, color: '#0C447C', margin: '0 0 8px' }}>
-          {t.ctaTitle}
-        </h2>
-        <p style={{ margin: '0 0 16px', fontSize: 14, color: '#185FA5', lineHeight: 1.6 }}>
-          {t.ctaText}
-        </p>
-        <a
-          href={wizardHref}
-          style={{
-            display: 'inline-block',
-            background: 'var(--color-primary)', color: '#fff',
-            borderRadius: 12, padding: '13px 24px',
-            fontSize: 15, fontWeight: 700, textDecoration: 'none',
-            marginBottom: 10,
-          }}
-        >
+      <div className="self-checkin-page__cta">
+        <h2 className="self-checkin-page__cta-title">{t.ctaTitle}</h2>
+        <p className="self-checkin-page__cta-text">{t.ctaText}</p>
+        <a href={wizardHref} className="self-checkin-page__cta-btn">
           {t.ctaBtn} →
         </a>
-        <p style={{ margin: '8px 0 0', fontSize: 12, color: '#185FA5' }}>
-          ℹ️ {t.ctaNote}
+        <p className="self-checkin-page__cta-note">
+          <i className="bi bi-info-circle me-1" aria-hidden="true" /> {t.ctaNote}
         </p>
       </div>
 
       {/* ── Link contatti secondario ─────────────────────────────────────────── */}
-      <div style={{ padding: '16px 20px', textAlign: 'center' }}>
-        <a href={contactHref} style={{ fontSize: 14, color: 'var(--color-primary)', textDecoration: 'none' }}>
+      <div className="self-checkin-page__contact-link">
+        <a href={contactHref}>
           Hai domande? Contattaci →
         </a>
       </div>
