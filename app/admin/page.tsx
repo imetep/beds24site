@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { Icon, type IconName } from '@/components/ui/Icon';
 
 function LoginForm({ onLogin }: { onLogin: () => void }) {
   const [pwd, setPwd]   = useState('');
@@ -22,7 +23,7 @@ function LoginForm({ onLogin }: { onLogin: () => void }) {
     <div className="container" style={{ maxWidth: 360 }}>
       <div className="card shadow-sm mt-5 mx-auto">
         <div className="card-body p-4">
-          <p className="fs-4 fw-bold mb-1"><i className="bi bi-lock-fill me-1"></i> Admin</p>
+          <p className="fs-4 fw-bold mb-1"><Icon name="lock-fill" className="me-1" /> Admin</p>
           <p className="text-muted small mb-3">Pannello di gestione LivingApple</p>
           <input
             type="password"
@@ -47,7 +48,7 @@ function LoginForm({ onLogin }: { onLogin: () => void }) {
 }
 
 type Sezione = {
-  icon:    string;
+  icon:    IconName;
   title:   string;
   desc:    string;
   color:   string;
@@ -96,35 +97,35 @@ export default function AdminPage() {
 
   const sezioni: Sezione[] = [
     {
-      icon: 'bi-check-circle-fill',
+      icon: 'check-circle-fill',
       title: 'Check-in online',
       desc: 'Gestisci le richieste di self check-in degli ospiti. Approva, rifiuta, invia link deposito Stripe, messaggia con l\'ospite.',
       href: '/admin/checkin',
       color: 'var(--color-primary)',
     },
     {
-      icon: 'bi-moon-stars-fill',
+      icon: 'moon-stars-fill',
       title: 'Biancheria',
       desc: 'Calcolo automatico della biancheria per ogni check-in nel periodo. Configurabile da admin o ospite; totali aggregati per periodo.',
       href: '/admin/biancheria',
       color: '#0284c7',
     },
     {
-      icon: 'bi-brush-fill',
+      icon: 'brush-fill',
       title: 'Pulizie',
       desc: 'Alert giornalieri per livello di rischio (CRITICO / ALTO / NORMALE) e tabella movimenti ordinabile per partenze, arrivi e ore di lavoro.',
       href: '/admin/pulizie',
       color: '#16a34a',
     },
     {
-      icon: 'bi-calendar-x-fill',
+      icon: 'calendar-x-fill',
       title: 'Buchi',
       desc: 'Finestre libere inferiori a 7 notti nei prossimi 12 mesi. Filtra per mese e ordina per numero di notti.',
       href: '/admin/buchi',
       color: '#9333ea',
     },
     {
-      icon: 'bi-arrow-clockwise',
+      icon: 'arrow-clockwise',
       title: cacheBusy ? 'Aggiornamento in corso…' : 'Aggiorna foto sito',
       desc: 'Dopo aver caricato nuove foto su Cloudinary, clicca qui per farle apparire sul sito. Svuota le cache (Redis + Next.js).',
       action: invalidateCloudinary,
@@ -138,7 +139,7 @@ export default function AdminPage() {
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h1 className="h4 fw-bold mb-0"><i className="bi bi-house-fill me-1"></i> Admin</h1>
+          <h1 className="h4 fw-bold mb-0"><Icon name="house-fill" className="me-1" /> Admin</h1>
           <p className="small text-muted mb-0">LivingApple — Pannello di gestione</p>
         </div>
         <button className="btn btn-outline-secondary btn-sm" onClick={logout}>Esci</button>
@@ -154,8 +155,8 @@ export default function AdminPage() {
             className="card text-start border-0 shadow-sm p-3"
           >
             <div className="d-flex align-items-start gap-3">
-              <span className="fs-1" style={{ color: s.color }}>
-                <i className={`bi ${s.icon}`}></i>
+              <span style={{ color: s.color }}>
+                <Icon name={s.icon} size={40} />
               </span>
               <div>
                 <p className="fw-bold fs-5 mb-1" style={{ color: s.color }}>{s.title}</p>
@@ -171,7 +172,7 @@ export default function AdminPage() {
           className={`alert ${cacheMsg.kind === 'ok' ? 'alert-success' : 'alert-danger'} mt-3 mb-0`}
           role="alert"
         >
-          <i className={`bi ${cacheMsg.kind === 'ok' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'} me-2`}></i>
+          <Icon name={cacheMsg.kind === 'ok' ? 'check-circle-fill' : 'exclamation-triangle-fill'} className="me-2" />
           {cacheMsg.text}
         </div>
       )}
