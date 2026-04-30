@@ -639,8 +639,6 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                 <BookingSidebar
                   locale={locale}
                   step={2}
-                  onEditDates={() => setCurrentStep(2)}
-                  onEditGuests={() => setCurrentStep(1)}
                   step2VoucherSlot={voucherSlot}
                 />
               </div>
@@ -807,8 +805,6 @@ export default function WizardStep2({ locale = 'it' }: Props) {
           <BookingSidebar
             locale={locale}
             step={2}
-            onEditDates={() => setCurrentStep(2)}
-            onEditGuests={() => setCurrentStep(1)}
             step2VoucherSlot={voucherSlot}
           />
         </div>
