@@ -2,23 +2,6 @@
 
 import { useState } from 'react';
 
-const C = {
-  blue:        'var(--color-primary)',
-  blueLight:   '#EEF5FC',
-  orange:      '#FCAF1A',
-  text:        '#111111',
-  textMid:     '#555555',
-  textMuted:   '#888888',
-  border:      '#e5e7eb',
-  bg:          '#f9fafb',
-  success:     '#16a34a',
-  successBg:   '#f0fdf4',
-  orangePale:  '#FFF8EC',
-  orangeDark:  '#B07820',
-  error:       '#c0392b',
-  errorBg:     '#fef2f2',
-};
-
 interface DepositInfo {
   url?:      string;
   amount:    number;
@@ -43,31 +26,31 @@ export default function DepositSection({ locale, t, bookId, amount, deposit, onD
 
   // ── Deposito già presente ─────────────────────────────────────────────────
   if (deposit) {
-    const statusMap: Record<string, { label: string; color: string; bg: string }> = {
-      pending:    { label: tD.statusPending,    color: C.orangeDark, bg: C.orangePale },
-      authorized: { label: tD.statusAuthorized, color: C.success,    bg: C.successBg },
-      captured:   { label: tD.statusCaptured,   color: C.blue,       bg: C.blueLight },
-      cancelled:  { label: tD.statusCancelled,  color: C.textMid,    bg: C.bg },
+    const statusMap: Record<string, { label: string; modifier: string }> = {
+      pending:    { label: tD.statusPending,    modifier: 'pending' },
+      authorized: { label: tD.statusAuthorized, modifier: 'authorized' },
+      captured:   { label: tD.statusCaptured,   modifier: 'captured' },
+      cancelled:  { label: tD.statusCancelled,  modifier: 'cancelled' },
     };
     const st = statusMap[deposit.status] ?? statusMap.pending;
 
     return (
-      <div className="bg-white border shadow-sm" style={sectionCard}>
+      <div className="guest-section">
         <SectionHeader icon="bi-credit-card-fill" title={tD.title} />
-        <div className="d-flex align-items-center mb-3" style={{ gap: '0.75rem' }}>
-          <span className="fw-bolder" style={{ fontSize: '1.5rem', color: C.text }}>€ {deposit.amount.toFixed(2)}</span>
-          <span className="fw-bold rounded-pill" style={{ ...badge, color: st.color, background: st.bg }}>{st.label}</span>
+        <div className="deposit-section__amount-row">
+          <span className="deposit-section__amount">€ {deposit.amount.toFixed(2)}</span>
+          <span className={`status-badge status-badge--${st.modifier}`}>{st.label}</span>
         </div>
         {deposit.status === 'pending' && deposit.url && (
-          <a href={deposit.url} target="_blank" rel="noopener noreferrer" className="d-block w-100 fw-bold text-center text-decoration-none border-0" style={btnOrange}>
+          <a href={deposit.url} target="_blank" rel="noopener noreferrer" className="btn-cta-orange">
             <i className="bi bi-link-45deg me-1" aria-hidden="true" />
             {tD.completePayment}
           </a>
         )}
         {deposit.status === 'authorized' && (
-          <div className="border" style={infoBox}>{tD.authorizedMsg}</div>
+          <div className="info-box">{tD.authorizedMsg}</div>
         )}
-        <p className="mt-3 mb-0" style={{ fontSize: '0.79rem', color: C.textMuted }}>
+        <p className="deposit-section__createdat">
           {tD.createdAt}: {new Date(deposit.createdAt).toLocaleDateString(locale, { day: '2-digit', month: 'long', year: 'numeric' })}
         </p>
       </div>
@@ -77,12 +60,10 @@ export default function DepositSection({ locale, t, bookId, amount, deposit, onD
   // ── Scelta modalità ───────────────────────────────────────────────────────
   if (mode === 'choose') {
     return (
-      <div className="bg-white border shadow-sm" style={sectionCard}>
+      <div className="guest-section">
         <SectionHeader icon="bi-credit-card-fill" title={tD.title} badge={amount ? `€ ${amount}` : undefined} />
-        <p className="mb-3" style={{ color: C.textMid, fontSize: '0.88rem', lineHeight: 1.65 }}>
-          {tD.description}
-        </p>
-        <div className="d-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.85rem' }}>
+        <p className="deposit-section__description">{tD.description}</p>
+        <div className="deposit-section__choices">
           <ChoiceCard icon="bi-tag-fill" title={tD.offlineTitle} sub={tD.offlineSub} onClick={() => setMode('offline')} />
           {amount && <ChoiceCard icon="bi-credit-card-fill" title={tD.onlineTitle} sub={tD.onlineSub} onClick={() => setMode('online')} highlight />}
         </div>
@@ -93,57 +74,50 @@ export default function DepositSection({ locale, t, bookId, amount, deposit, onD
   // ── Offline ───────────────────────────────────────────────────────────────
   if (mode === 'offline') {
     return (
-      <div className="bg-white border shadow-sm" style={sectionCard}>
+      <div className="guest-section">
         <BackBtn label={tD.back} onClick={() => setMode('choose')} />
         <SectionHeader icon="bi-tag-fill" title={tD.offlineTitle} />
-        <div className="border" style={infoBox}>
-          <p className="fw-bold mb-2" style={{ color: C.text, fontSize: '0.9rem' }}>{tD.offlineHowTitle}</p>
-          <ol className="mb-0" style={{ paddingLeft: '1.3rem', lineHeight: 1.9, color: C.textMid, fontSize: '0.88rem' }}>
+        <div className="info-box">
+          <p className="info-box__title">{tD.offlineHowTitle}</p>
+          <ol className="info-box__list">
             <li>{tD.offlineStep1}</li>
             <li>{tD.offlineStep2}</li>
             <li>{tD.offlineStep3}</li>
             <li>{tD.offlineStep4}</li>
           </ol>
         </div>
-        <p className="mt-3 mb-0" style={{ fontSize: '0.82rem', color: C.textMuted }}>{tD.offlineNote}</p>
+        <p className="deposit-section__offline-note">{tD.offlineNote}</p>
       </div>
     );
   }
 
   // ── Online Stripe ─────────────────────────────────────────────────────────
   return (
-    <div className="bg-white border shadow-sm" style={sectionCard}>
+    <div className="guest-section">
       <BackBtn label={tD.back} onClick={() => setMode('choose')} />
       <SectionHeader icon="bi-credit-card-fill" title={tD.onlineTitle} />
-      <div
-        className="border mb-3"
-        style={{ background: C.blueLight, borderColor: '#bfdbfe', borderRadius: 12, padding: '1.1rem 1.2rem' }}
-      >
-        <p className="fw-bold mb-2" style={{ color: C.blue, fontSize: '0.88rem' }}>
+      <div className="info-box info-box--accent">
+        <p className="info-box__title info-box__title--brand">
           <i className="bi bi-lock-fill me-1" aria-hidden="true" />
           {tD.stripeTitle}
         </p>
-        <ul className="mb-0" style={{ paddingLeft: '1.2rem', color: C.text, fontSize: '0.84rem', lineHeight: 1.8 }}>
+        <ul className="info-box__list info-box__list--brand">
           <li>{tD.stripeBullet1}</li>
           <li>{tD.stripeBullet2}</li>
           <li>{tD.stripeBullet3}</li>
           <li>{tD.stripeBullet4}</li>
         </ul>
       </div>
-      <div className="mb-3 d-flex align-items-center" style={{ gap: '0.6rem' }}>
-        <span style={{ fontSize: '0.88rem', color: C.textMid }}>{tD.amountLabel}</span>
-        <span className="fw-bolder" style={{ fontSize: '1.25rem', color: C.text }}>€ {amount}</span>
+      <div className="deposit-section__amount-line">
+        <span className="deposit-section__amount-line-label">{tD.amountLabel}</span>
+        <span className="deposit-section__amount-line-value">€ {amount}</span>
       </div>
       {error && (
-        <div
-          className="mb-3"
-          style={{ background: C.errorBg, border: '1px solid #fecaca', borderRadius: 8, padding: '0.75rem', color: C.error, fontSize: '0.875rem' }}
-        >{error}</div>
+        <div className="deposit-section__error">{error}</div>
       )}
       <button
         disabled={loading}
-        className="d-block w-100 fw-bold text-center border-0"
-        style={{ ...btnOrange, background: loading ? '#e0e0e0' : C.orange, color: loading ? C.textMid : C.text, cursor: loading ? 'not-allowed' : 'pointer' }}
+        className="btn-cta-orange"
         onClick={async () => {
           setLoading(true); setError('');
           try {
@@ -162,7 +136,7 @@ export default function DepositSection({ locale, t, bookId, amount, deposit, onD
           </>
         )}
       </button>
-      <p className="text-center mt-2 mb-0" style={{ fontSize: '0.79rem', color: C.textMuted }}>{tD.stripeNote}</p>
+      <p className="deposit-section__note">{tD.stripeNote}</p>
     </div>
   );
 }
@@ -171,10 +145,10 @@ export default function DepositSection({ locale, t, bookId, amount, deposit, onD
 
 function SectionHeader({ icon, title, badge: b }: { icon: string; title: string; badge?: string }) {
   return (
-    <div className="d-flex align-items-center gap-2 mb-3">
-      <i className={`bi ${icon}`} style={{ fontSize: '1.1rem', color: 'var(--color-primary)' }} aria-hidden="true" />
-      <h3 className="m-0 fw-bold" style={{ fontSize: '1rem', color: '#111111' }}>{title}</h3>
-      {b && <span className="ms-auto fw-bolder" style={{ fontSize: '1.1rem', color: 'var(--color-primary)' }}>{b}</span>}
+    <div className="section-header">
+      <i className={`bi ${icon} section-header__icon`} aria-hidden="true" />
+      <h3 className="section-header__title">{title}</h3>
+      {b && <span className="section-header__badge">{b}</span>}
     </div>
   );
 }
@@ -183,31 +157,22 @@ function ChoiceCard({ icon, title, sub, onClick, highlight }: { icon: string; ti
   return (
     <button
       onClick={onClick}
-      className="text-start"
-      style={{ background: highlight ? '#EEF5FC' : '#f9fafb', border: `2px solid ${highlight ? 'var(--color-primary)' : '#e5e7eb'}`, borderRadius: 14, padding: '1.25rem', cursor: 'pointer' }}
+      className={`choice-card ${highlight ? 'choice-card--highlight' : ''}`}
     >
-      <div className="mb-2" style={{ fontSize: '1.75rem', color: 'var(--color-primary)' }}>
+      <div className="choice-card__icon">
         <i className={`bi ${icon}`} aria-hidden="true" />
       </div>
-      <div className="fw-bold mb-1" style={{ color: '#111111', fontSize: '0.92rem' }}>{title}</div>
-      <div style={{ fontSize: '0.8rem', color: '#555555', lineHeight: 1.5 }}>{sub}</div>
+      <div className="choice-card__title">{title}</div>
+      <div className="choice-card__sub">{sub}</div>
     </button>
   );
 }
 
 function BackBtn({ label, onClick }: { label: string; onClick: () => void }) {
   return (
-    <button
-      onClick={onClick}
-      className="btn fw-semibold mb-3 p-0"
-      style={{ color: 'var(--color-primary)', fontSize: '0.85rem' }}
-    >
-      ← {label}
+    <button onClick={onClick} className="back-btn">
+      <i className="bi bi-arrow-left me-1" aria-hidden="true" />
+      {label}
     </button>
   );
 }
-
-const sectionCard: React.CSSProperties = { borderRadius: 16, padding: '1.5rem' };
-const badge: React.CSSProperties       = { padding: '0.22rem 0.65rem', fontSize: '0.78rem' };
-const infoBox: React.CSSProperties     = { background: '#f9fafb', borderRadius: 12, padding: '1rem 1.1rem', fontSize: '0.88rem', lineHeight: 1.6 };
-const btnOrange: React.CSSProperties   = { padding: '0.85rem', background: '#FCAF1A', color: '#111111', borderRadius: 10, fontSize: '0.95rem', cursor: 'pointer' };
