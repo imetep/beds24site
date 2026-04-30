@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
+import { Icon } from '@/components/ui/Icon';
 
 interface RoomCard {
   slug:     string;
@@ -278,7 +279,7 @@ export default function FotoGalleryClient({
         <div className="fotogallery-ios-banner">
           <div className="fotogallery-ios-banner__content">
             <span className="fotogallery-ios-banner__emoji" aria-hidden="true">
-              <i className="bi bi-camera-fill" />
+              <Icon name="camera-fill" />
             </span>
             <span className="fotogallery-ios-banner__text">
               {ui.iosBannerText}
@@ -295,7 +296,7 @@ export default function FotoGalleryClient({
               onClick={() => setBannerDismissed(true)}
               className="fotogallery-ios-banner__close"
               aria-label={ui.close}
-            ><i className="bi bi-x-lg" aria-hidden="true" /></button>
+            ><Icon name="x-lg" /></button>
           </div>
         </div>
       )}
