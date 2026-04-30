@@ -1,199 +1,28 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
+import { getTranslations } from '@/lib/i18n';
+import type { Locale } from '@/config/i18n';
 
-type Locale = 'it' | 'en' | 'de' | 'pl';
 type Tab = 'plane' | 'train' | 'car';
 
-const T: Record<Locale, {
-  hero_title: string;
-  hero_sub: string;
-  why_title: string;
-  pills: { icon: string; title: string; text: string }[];
-  map_title: string;
-  map_sub: string;
-  how_title: string;
-  tab_plane: string;
-  tab_train: string;
-  tab_car: string;
-  plane_intro: string;
-  plane_airports: { code: string; name: string; km: string; time: string }[];
-  train_intro: string;
-  train_routes: { label: string; time: string }[];
-  train_note: string;
-  car_intro: string;
-  car_from: { city: string; time: string; detail: string }[];
-  car_note_title: string;
-  car_note: string;
-  cta: string;
-  by_car: string;
-  by_plane: string;
-}> = {
-  it: {
-    hero_title: 'Scauri, a metà strada tra Roma e Napoli',
-    hero_sub: 'Dove il Lazio incontra il mare, tra natura, storia e sapori autentici del Sud.',
-    why_title: 'Perché Scauri',
-    pills: [
-      { icon: 'bi-water', title: 'Mare a pochi passi', text: 'LivingApple campagna è a 1,5 km dalla spiaggia. LivingApple beach è a soli 250 m.' },
-      { icon: 'bi-geo-alt-fill', title: 'Posizione strategica', text: 'A 2h da Roma e 1h15 da Napoli in auto, raggiungibile anche in treno.' },
-      { icon: 'bi-sun-fill', title: 'Clima mediterraneo', text: 'Estate lunga e soleggiata da maggio a ottobre, con temperature miti e poca pioggia.' },
-      { icon: 'bi-tree-fill', title: 'Silenzio e natura', text: 'Nessuna folla, nessun caos. Solo mare, campagna e autentica ospitalità laziale.' },
-    ],
-    map_title: 'Quanto siamo lontani?',
-    map_sub: 'Scauri è raggiungibile in giornata da tutte le grandi città italiane.',
-    how_title: 'Come raggiungerci',
-    tab_plane: 'Aereo',
-    tab_train: 'Treno',
-    tab_car: 'Auto',
-    plane_intro: "L'aeroporto più comodo è Napoli Capodichino, a soli 80 km. Roma Fiumicino offre più voli internazionali. Roma Ciampino è ideale per compagnie low cost.",
-    plane_airports: [
-      { code: 'NAP', name: 'Napoli Capodichino', km: '~80 km', time: '~1h in auto' },
-      { code: 'FCO', name: 'Roma Fiumicino', km: '~165 km', time: '~2h in auto' },
-      { code: 'CIA', name: 'Roma Ciampino', km: '~145 km', time: '~1h30 in auto' },
-    ],
-    train_intro: 'La stazione di Minturno-Scauri è servita da treni Intercity e Regionali. Collegamento diretto da Roma Termini e da Napoli Centrale.',
-    train_routes: [
-      { label: 'Da Roma Termini', time: '~1h45' },
-      { label: 'Da Napoli Centrale', time: '~1h' },
-    ],
-    train_note: 'Dalla stazione alla struttura: ~10 min in taxi o auto a noleggio (non ci sono autobus).',
-    car_intro: "In auto è il modo migliore per vivere Scauri in piena libertà. Percorri l'A1 (Autostrada del Sole) e prendi il casello di Cassino.",
-    car_from: [
-      { city: 'Roma', time: '~2h', detail: '155 km · A1' },
-      { city: 'Napoli', time: '~1h 15min', detail: '80 km · A1 o SS7' },
-      { city: 'Firenze', time: '~4h', detail: '413 km · A1' },
-      { city: 'Milano', time: '~6h 30min', detail: '730 km · A1' },
-    ],
-    car_note_title: "L'auto è indispensabile",
-    car_note: "Una volta arrivati, l'auto non è un optional — è necessaria. Supermercati, spiagge e ristoranti non sono raggiungibili a piedi dalla struttura: le strade rurali non hanno marciapiedi ed è pericoloso camminare. L'auto ti darà libertà totale per esplorare la costa, l'entroterra e i borghi dei Monti Aurunci.",
-    cta: 'Prenota ora',
-    by_car: 'in auto',
-    by_plane: 'in aereo',
-  },
-  en: {
-    hero_title: 'Scauri, halfway between Rome and Naples',
-    hero_sub: 'Where Lazio meets the sea — nature, history and authentic southern Italian flavours.',
-    why_title: 'Why Scauri',
-    pills: [
-      { icon: 'bi-water', title: 'Sea a short walk away', text: 'LivingApple countryside is 1.5 km from the beach. LivingApple beach is just 250 m away.' },
-      { icon: 'bi-geo-alt-fill', title: 'Strategic location', text: '2h from Rome and 1h15 from Naples by car, also reachable by train.' },
-      { icon: 'bi-sun-fill', title: 'Mediterranean climate', text: 'Long sunny summers from May to October, with mild temperatures and little rain.' },
-      { icon: 'bi-tree-fill', title: 'Peace and nature', text: 'No crowds, no chaos. Just sea, countryside and genuine hospitality.' },
-    ],
-    map_title: 'How far are we?',
-    map_sub: 'Scauri is reachable in a day from all major Italian cities.',
-    how_title: 'How to reach us',
-    tab_plane: 'By plane',
-    tab_train: 'By train',
-    tab_car: 'By car',
-    plane_intro: 'The most convenient airport is Naples Capodichino, just 80 km away. Rome Fiumicino offers more international flights. Rome Ciampino is ideal for low-cost airlines.',
-    plane_airports: [
-      { code: 'NAP', name: 'Naples Capodichino', km: '~80 km', time: '~1h by car' },
-      { code: 'FCO', name: 'Rome Fiumicino', km: '~165 km', time: '~2h by car' },
-      { code: 'CIA', name: 'Rome Ciampino', km: '~145 km', time: '~1h30 by car' },
-    ],
-    train_intro: 'Minturno-Scauri station is served by Intercity and Regional trains, with direct connections from Roma Termini and Napoli Centrale.',
-    train_routes: [
-      { label: 'From Roma Termini', time: '~1h45' },
-      { label: 'From Napoli Centrale', time: '~1h' },
-    ],
-    train_note: 'From the station to the property: ~10 min by taxi or rental car (no bus service).',
-    car_intro: 'Driving is the best way to enjoy full freedom in Scauri. Take the A1 motorway (Autostrada del Sole) and exit at Cassino.',
-    car_from: [
-      { city: 'Rome', time: '~2h', detail: '155 km · A1' },
-      { city: 'Naples', time: '~1h 15min', detail: '80 km · A1 or SS7' },
-      { city: 'Florence', time: '~4h', detail: '413 km · A1' },
-      { city: 'Milan', time: '~6h 30min', detail: '730 km · A1' },
-    ],
-    car_note_title: 'A car is essential',
-    car_note: 'Once you arrive, a car is not optional — it is necessary. Supermarkets, beaches and restaurants are not walkable from the property: the rural roads have no pavements and it is not safe to walk. A car will give you total freedom to explore the coastline, countryside and the villages of the Aurunci Mountains.',
-    cta: 'Book now',
-    by_car: 'by car',
-    by_plane: 'by plane',
-  },
-  de: {
-    hero_title: 'Scauri, auf halbem Weg zwischen Rom und Neapel',
-    hero_sub: 'Wo Latium das Meer trifft — Natur, Geschichte und authentische süditalienische Küche.',
-    why_title: 'Warum Scauri',
-    pills: [
-      { icon: 'bi-water', title: 'Meer in der Nähe', text: 'LivingApple Landhaus ist 1,5 km vom Strand entfernt. LivingApple Meer nur 250 m.' },
-      { icon: 'bi-geo-alt-fill', title: 'Strategische Lage', text: '2h von Rom und 1h15 von Neapel mit dem Auto, auch mit dem Zug erreichbar.' },
-      { icon: 'bi-sun-fill', title: 'Mediterranes Klima', text: 'Langer sonniger Sommer von Mai bis Oktober mit milden Temperaturen und wenig Regen.' },
-      { icon: 'bi-tree-fill', title: 'Ruhe und Natur', text: 'Keine Massen, kein Trubel. Nur Meer, Landschaft und echte Gastfreundschaft.' },
-    ],
-    map_title: 'Wie weit sind wir entfernt?',
-    map_sub: 'Scauri ist von allen großen italienischen Städten an einem Tag erreichbar.',
-    how_title: 'So erreichen Sie uns',
-    tab_plane: 'Flugzeug',
-    tab_train: 'Zug',
-    tab_car: 'Auto',
-    plane_intro: 'Der nächstgelegene Flughafen ist Neapel Capodichino, nur 80 km entfernt. Rom Fiumicino bietet mehr internationale Flüge. Rom Ciampino ist ideal für Billigfluggesellschaften.',
-    plane_airports: [
-      { code: 'NAP', name: 'Neapel Capodichino', km: '~80 km', time: '~1h mit dem Auto' },
-      { code: 'FCO', name: 'Rom Fiumicino', km: '~165 km', time: '~2h mit dem Auto' },
-      { code: 'CIA', name: 'Rom Ciampino', km: '~145 km', time: '~1h30 mit dem Auto' },
-    ],
-    train_intro: 'Der Bahnhof Minturno-Scauri wird von Intercity- und Regionalzügen bedient, mit Direktverbindungen von Roma Termini und Napoli Centrale.',
-    train_routes: [
-      { label: 'Ab Roma Termini', time: '~1h45' },
-      { label: 'Ab Napoli Centrale', time: '~1h' },
-    ],
-    train_note: 'Vom Bahnhof zur Unterkunft: ~10 Min. mit dem Taxi oder Mietwagen (kein Busservice).',
-    car_intro: 'Mit dem Auto können Sie Scauri in voller Freiheit erkunden. Nehmen Sie die A1 (Autostrada del Sole) und verlassen Sie die Autobahn bei Cassino.',
-    car_from: [
-      { city: 'Rom', time: '~2h', detail: '155 km · A1' },
-      { city: 'Neapel', time: '~1h 15min', detail: '80 km · A1 oder SS7' },
-      { city: 'Florenz', time: '~4h', detail: '413 km · A1' },
-      { city: 'Mailand', time: '~6h 30min', detail: '730 km · A1' },
-    ],
-    car_note_title: 'Ein Auto ist unverzichtbar',
-    car_note: 'Vor Ort ist ein Auto kein Luxus — es ist notwendig. Supermärkte, Strände und Restaurants sind von der Unterkunft aus nicht zu Fuß erreichbar: Die ländlichen Straßen haben keine Bürgersteige und das Gehen ist gefährlich. Ein Auto gibt Ihnen völlige Freiheit, die Küste, das Hinterland und die Dörfer der Aurunci-Berge zu erkunden.',
-    cta: 'Jetzt buchen',
-    by_car: 'mit dem Auto',
-    by_plane: 'per Flugzeug',
-  },
-  pl: {
-    hero_title: 'Scauri, w połowie drogi między Rzymem a Neapolem',
-    hero_sub: 'Tam, gdzie Lacjum spotyka morze — natura, historia i autentyczne smaki południa Włoch.',
-    why_title: 'Dlaczego Scauri',
-    pills: [
-      { icon: 'bi-water', title: 'Morze w pobliżu', text: 'LivingApple campagna jest 1,5 km od plaży. LivingApple beach zaledwie 250 m.' },
-      { icon: 'bi-geo-alt-fill', title: 'Strategiczna lokalizacja', text: '2h od Rzymu i 1h15 od Neapolu samochodem, dostępne też pociągiem.' },
-      { icon: 'bi-sun-fill', title: 'Klimat śródziemnomorski', text: 'Długie słoneczne lato od maja do października, łagodne temperatury i mało deszczu.' },
-      { icon: 'bi-tree-fill', title: 'Cisza i natura', text: 'Bez tłumów, bez chaosu. Tylko morze, wieś i autentyczna gościnność.' },
-    ],
-    map_title: 'Jak daleko jesteśmy?',
-    map_sub: 'Do Scauri można dotrzeć w ciągu jednego dnia z każdego większego włoskiego miasta.',
-    how_title: 'Jak do nas dotrzeć',
-    tab_plane: 'Samolotem',
-    tab_train: 'Pociągiem',
-    tab_car: 'Samochodem',
-    plane_intro: 'Najbliższe lotnisko to Neapol Capodichino, zaledwie 80 km. Rzym Fiumicino oferuje więcej połączeń międzynarodowych. Rzym Ciampino jest idealny dla tanich linii lotniczych.',
-    plane_airports: [
-      { code: 'NAP', name: 'Neapol Capodichino', km: '~80 km', time: '~1h samochodem' },
-      { code: 'FCO', name: 'Rzym Fiumicino', km: '~165 km', time: '~2h samochodem' },
-      { code: 'CIA', name: 'Rzym Ciampino', km: '~145 km', time: '~1h30 samochodem' },
-    ],
-    train_intro: 'Stacja Minturno-Scauri obsługiwana jest przez pociągi Intercity i regionalne, z bezpośrednimi połączeniami z Roma Termini i Napoli Centrale.',
-    train_routes: [
-      { label: 'Z Roma Termini', time: '~1h45' },
-      { label: 'Z Napoli Centrale', time: '~1h' },
-    ],
-    train_note: 'Ze stacji do obiektu: ~10 min taksówką lub wynajętym samochodem (brak autobusów).',
-    car_intro: 'Samochodem możesz cieszyć się pełną swobodą w Scauri. Jedź autostradą A1 (Autostrada del Sole) i zjedź na węźle Cassino.',
-    car_from: [
-      { city: 'Rzym', time: '~2h', detail: '155 km · A1' },
-      { city: 'Neapol', time: '~1h 15min', detail: '80 km · A1 lub SS7' },
-      { city: 'Florencja', time: '~4h', detail: '413 km · A1' },
-      { city: 'Mediolan', time: '~6h 30min', detail: '730 km · A1' },
-    ],
-    car_note_title: 'Samochód jest niezbędny',
-    car_note: 'Na miejscu samochód nie jest luksusem — jest koniecznością. Supermarkety, plaże i restauracje nie są osiągalne pieszo od obiektu: wiejskie drogi nie mają chodników i chodzenie jest niebezpieczne. Samochód da Ci pełną swobodę odkrywania wybrzeża, okolic i miejscowości gór Aurunci.',
-    cta: 'Zarezerwuj teraz',
-    by_car: 'samochodem',
-    by_plane: 'samolotem',
-  },
+// ─── Icone SVG inline (stile Lucide outline, 24×24, stroke 2) ────────────────
+const SVG_PROPS = {
+  width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none',
+  stroke: 'currentColor', strokeWidth: 2,
+  strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const,
+  'aria-hidden': true,
 };
+const IconSea       = () => <svg {...SVG_PROPS}><path d="M2 6c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.5 0 2.5 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.5 0 2.5 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.5 0 2.5 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>;
+const IconLocation  = () => <svg {...SVG_PROPS}><path d="M20 10c0 7-8 13-8 13s-8-6-8-13a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>;
+const IconClimate   = () => <svg {...SVG_PROPS}><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>;
+const IconNature    = () => <svg {...SVG_PROPS}><path d="m17 14 3 3.3a1 1 0 0 1-.7 1.7H4.7a1 1 0 0 1-.7-1.7L7 14h-.3a1 1 0 0 1-.7-1.7L9 9h-.2A1 1 0 0 1 8 7.3L12 3l4 4.3a1 1 0 0 1-.8 1.7H15l3 3.3a1 1 0 0 1-.7 1.7H17Z"/><path d="M12 22v-3"/></svg>;
+const IconPlane     = () => <svg {...SVG_PROPS}><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>;
+const IconTrain     = () => <svg {...SVG_PROPS}><rect width="16" height="16" x="4" y="3" rx="2"/><path d="M4 11h16"/><path d="M12 3v8"/><path d="m8 19-2 3"/><path d="m18 22-2-3"/><path d="M8 15h.01"/><path d="M16 15h.01"/></svg>;
+const IconCar       = () => <svg {...SVG_PROPS}><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>;
+const IconWarning   = () => <svg {...SVG_PROPS}><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>;
+const IconInfo      = () => <svg {...SVG_PROPS}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>;
 
+// ─── Mappa Italia ────────────────────────────────────────────────────────────
 const CITIES = [
   { id: 'roma',    x: 392, y: 506, label: 'Roma',    time: '~2h',      byPlane: false },
   { id: 'napoli',  x: 512, y: 633, label: 'Napoli',  time: '~1h 15min',byPlane: false },
@@ -319,8 +148,7 @@ M4414 3964 c-45 -10 -59 -40 -59 -125 0 -99 11 -113 91 -113 47 0 60 4 75 23
 -63 -149 -13 -215 l26 -34 92 0 c106 0 114 6 123 88 7 58 -13 119 -46 143 -30
 22 -143 33 -182 18z`;
 
-function ItalyMap({ locale }: { locale: Locale }) {
-  const t = T[locale];
+function ItalyMap({ byCarLabel, byPlaneLabel }: { byCarLabel: string; byPlaneLabel: string }) {
   const animRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [visibleCount, setVisibleCount] = useState<number>(0);
   const [drawingIndex, setDrawingIndex] = useState<number>(-1);
@@ -373,7 +201,7 @@ function ItalyMap({ locale }: { locale: Locale }) {
       xmlns="http://www.w3.org/2000/svg"
     >
       <g transform="translate(0,989) scale(0.1,-0.1)">
-        <path d={ITALY_PATH} fill="var(--color-bg, #f0f0ec)" stroke="#ccc" strokeWidth="12" strokeLinejoin="round"/>
+        <path d={ITALY_PATH} className="dove-siamo__map-italy" />
       </g>
 
       {CITIES.map((city, i) => {
@@ -384,9 +212,7 @@ function ItalyMap({ locale }: { locale: Locale }) {
           <line
             key={city.id}
             x1={480} y1={577} x2={city.x} y2={city.y}
-            stroke="#006CB7"
-            strokeWidth={2}
-            fill="none"
+            className="dove-siamo__map-line"
             strokeDasharray={city.byPlane ? `6 4 ${ll}` : `${ll}`}
             strokeDashoffset={isDrawing || isVisible ? 0 : ll}
             opacity={isDrawing || isVisible ? 1 : 0}
@@ -398,25 +224,21 @@ function ItalyMap({ locale }: { locale: Locale }) {
       {CITIES.map((city, i) => {
         const lbl = LABEL_OFFSET[city.id];
         const isVisible = i < visibleCount;
-        const modeLabel = city.byPlane ? t.by_plane : t.by_car;
+        const modeLabel = city.byPlane ? byPlaneLabel : byCarLabel;
         return (
           <g key={city.id} opacity={isVisible ? 1 : 0} className="dove-siamo__city-anim">
-            <circle cx={city.x} cy={city.y} r={6} fill="#006CB7" />
+            <circle cx={city.x} cy={city.y} r={6} className="dove-siamo__map-dot" />
             <text
               x={city.x + lbl.ax} y={city.y + lbl.ay - 9}
               textAnchor={lbl.anchor as 'start' | 'end' | 'middle'}
-              fontSize={18} fontWeight={500}
-              fill="var(--color-text, #111)"
-              fontFamily="system-ui, sans-serif"
+              className="dove-siamo__map-label"
             >
               {city.label}
             </text>
             <text
               x={city.x + lbl.ax} y={city.y + lbl.ay + 8}
               textAnchor={lbl.anchor as 'start' | 'end' | 'middle'}
-              fontSize={14}
-              fill="#006CB7"
-              fontFamily="system-ui, sans-serif"
+              className="dove-siamo__map-time"
             >
               {city.time} {modeLabel}
             </text>
@@ -424,154 +246,142 @@ function ItalyMap({ locale }: { locale: Locale }) {
         );
       })}
 
-      <circle cx={480} cy={577} r={16} fill="none" stroke="#FCAF1A" strokeWidth={1.5} opacity={0.4} />
-      <circle cx={480} cy={577} r={9} fill="#FCAF1A" stroke="white" strokeWidth={2.5} />
-      <circle cx={480} cy={577} r={4} fill="white" />
-      <text x={496} y={570} fontSize={18} fontWeight={600} fill="var(--color-text, #111)" fontFamily="system-ui, sans-serif">
-        Scauri
-      </text>
+      <circle cx={480} cy={577} r={16} className="dove-siamo__map-pin-halo" />
+      <circle cx={480} cy={577} r={9}  className="dove-siamo__map-pin" />
+      <circle cx={480} cy={577} r={4}  className="dove-siamo__map-pin-core" />
+      <text x={496} y={570} className="dove-siamo__map-pin-label">Scauri</text>
     </svg>
   );
 }
 
-export default function DoveSiamoClient({
-  locale,
-  bookHref,
-}: {
-  locale: Locale;
-  bookHref: string;
-}) {
-  const t = T[locale];
+// ─── Componente principale ──────────────────────────────────────────────────
+export default function DoveSiamoClient({ locale }: { locale: Locale }) {
+  const t = getTranslations(locale).components.doveSiamo;
   const [activeTab, setActiveTab] = useState<Tab>('car');
 
+  const pills = [
+    { Icon: IconSea,      title: t.pillSeaTitle,      text: t.pillSeaText      },
+    { Icon: IconLocation, title: t.pillLocationTitle, text: t.pillLocationText },
+    { Icon: IconClimate,  title: t.pillClimateTitle,  text: t.pillClimateText  },
+    { Icon: IconNature,   title: t.pillNatureTitle,   text: t.pillNatureText   },
+  ];
+
+  const tabs: { id: Tab; label: string; Icon: () => React.ReactElement }[] = [
+    { id: 'plane', label: t.tabPlane, Icon: IconPlane },
+    { id: 'train', label: t.tabTrain, Icon: IconTrain },
+    { id: 'car',   label: t.tabCar,   Icon: IconCar   },
+  ];
+
   return (
-    <div className="page-container page-top pb-5">
+    <main className="dove-siamo">
 
       {/* Hero */}
-      <section className="text-center pb-5">
-        <h1 className="fw-bold text-primary mb-2 dove-siamo__hero-title">{t.hero_title}</h1>
-        <p className="fs-5 text-secondary mx-auto mb-0 dove-siamo__hero-sub">{t.hero_sub}</p>
+      <section className="dove-siamo__hero">
+        <h1 className="section-title-main">{t.heroTitle}</h1>
+        <p className="dove-siamo__hero-sub">{t.heroSub}</p>
       </section>
 
       {/* Perché Scauri */}
-      <section className="mb-5">
-        <h2 className="fw-bold text-primary fs-3 mb-3">{t.why_title}</h2>
-        <div className="dove-siamo__pills-grid">
-          {t.pills.map((pill, i) => (
-            <div key={i} className="bg-light border rounded-3 p-3">
-              <i className={`bi ${pill.icon} dove-siamo__pill-icon`} aria-hidden="true" />
-              <strong className="d-block text-primary mb-1">{pill.title}</strong>
-              <p className="small text-secondary mb-0">{pill.text}</p>
+      <section className="dove-siamo__section">
+        <h2 className="dove-siamo__section-title">{t.whyTitle}</h2>
+        <div className="dove-siamo__pills">
+          {pills.map((p, i) => (
+            <div key={i} className="dove-siamo__pill">
+              <span className="dove-siamo__pill-icon"><p.Icon /></span>
+              <strong className="dove-siamo__pill-title">{p.title}</strong>
+              <p className="dove-siamo__pill-text">{p.text}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* Mappa */}
-      <section className="mb-5">
-        <h2 className="fw-bold text-primary fs-3 mb-2">{t.map_title}</h2>
-        <p className="text-secondary mb-3">{t.map_sub}</p>
-        <ItalyMap locale={locale} />
+      <section className="dove-siamo__section">
+        <h2 className="dove-siamo__section-title">{t.mapTitle}</h2>
+        <p className="dove-siamo__section-sub">{t.mapSub}</p>
+        <ItalyMap byCarLabel={t.byCar} byPlaneLabel={t.byPlane} />
       </section>
 
       {/* Come raggiungerci */}
-      <section className="mb-5">
-        <h2 className="fw-bold text-primary fs-3 mb-3">{t.how_title}</h2>
+      <section className="dove-siamo__section">
+        <h2 className="dove-siamo__section-title">{t.howTitle}</h2>
 
-        <ul className="nav nav-tabs mb-3">
-          {(['plane', 'train', 'car'] as Tab[]).map((tab) => {
-            const labels = { plane: t.tab_plane, train: t.tab_train, car: t.tab_car };
-            const icons  = { plane: 'bi-airplane-fill', train: 'bi-train-front-fill', car: 'bi-car-front-fill' };
-            return (
-              <li key={tab} className="nav-item">
-                <button
-                  className={`nav-link ${activeTab === tab ? 'active' : ''}`}
-                  onClick={() => setActiveTab(tab)}
-                >
-                  <i className={`bi ${icons[tab]} me-1`} aria-hidden="true" />
-                  {labels[tab]}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
+        <div className="dove-siamo__tabs" role="tablist">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              className={`dove-siamo__tab${activeTab === tab.id ? ' is-active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              <span className="dove-siamo__tab-icon"><tab.Icon /></span>
+              <span>{tab.label}</span>
+            </button>
+          ))}
+        </div>
 
         {activeTab === 'plane' && (
-          <div>
-            <p className="text-secondary lh-base mb-3">{t.plane_intro}</p>
-            <div className="d-flex flex-column gap-2">
-              {t.plane_airports.map((ap) => (
-                <div
-                  key={ap.code}
-                  className="d-flex align-items-center gap-3 bg-light border rounded p-2 flex-wrap"
-                >
-                  <span className="fw-bold text-primary small dove-siamo__plane-airport-code">{ap.code}</span>
-                  <span className="flex-fill text-secondary">{ap.name}</span>
-                  <span className="small text-muted">{ap.km}</span>
-                  <span className="badge bg-primary-subtle text-primary-emphasis text-nowrap">{ap.time}</span>
-                </div>
+          <div className="dove-siamo__tab-panel">
+            <p className="dove-siamo__tab-intro">{t.planeIntro}</p>
+            <ul className="dove-siamo__list">
+              {t.planeAirports.map((ap) => (
+                <li key={ap.code} className="dove-siamo__list-item">
+                  <span className="dove-siamo__airport-code">{ap.code}</span>
+                  <span className="dove-siamo__list-main">{ap.name}</span>
+                  <span className="dove-siamo__list-meta">{ap.km}</span>
+                  <span className="dove-siamo__list-badge">{ap.time}</span>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         )}
 
         {activeTab === 'train' && (
-          <div>
-            <p className="text-secondary lh-base mb-3">{t.train_intro}</p>
-            <div className="d-flex flex-column gap-2 mb-2">
-              {t.train_routes.map((route, i) => (
-                <div
-                  key={i}
-                  className="d-flex justify-content-between align-items-center bg-light border rounded p-2"
-                >
-                  <span className="text-secondary">
-                    <i className="bi bi-train-front-fill me-1" aria-hidden="true" />
-                    {route.label}
-                  </span>
-                  <span className="fw-semibold text-primary">{route.time}</span>
-                </div>
+          <div className="dove-siamo__tab-panel">
+            <p className="dove-siamo__tab-intro">{t.trainIntro}</p>
+            <ul className="dove-siamo__list">
+              {t.trainRoutes.map((route, i) => (
+                <li key={i} className="dove-siamo__list-item">
+                  <span className="dove-siamo__list-icon"><IconTrain /></span>
+                  <span className="dove-siamo__list-main">{route.label}</span>
+                  <span className="dove-siamo__list-badge">{route.time}</span>
+                </li>
               ))}
-            </div>
-            <p className="small text-muted lh-base mb-0">
-              <i className="bi bi-info-circle-fill me-1" aria-hidden="true" />
-              {t.train_note}
+            </ul>
+            <p className="dove-siamo__note">
+              <span className="dove-siamo__note-icon"><IconInfo /></span>
+              {t.trainNote}
             </p>
           </div>
         )}
 
         {activeTab === 'car' && (
-          <div>
-            <p className="text-secondary lh-base mb-3">{t.car_intro}</p>
-            <div className="dove-siamo__cars-grid">
-              {t.car_from.map((item, i) => (
-                <div key={i} className="bg-light border rounded p-3 text-center">
-                  <p className="fw-bold mb-1">
-                    <i className="bi bi-car-front-fill me-1" aria-hidden="true" />
-                    {item.city}
-                  </p>
-                  <p className="fs-5 fw-semibold text-primary mb-1">{item.time}</p>
-                  <p className="small text-muted mb-0">{item.detail}</p>
+          <div className="dove-siamo__tab-panel">
+            <p className="dove-siamo__tab-intro">{t.carIntro}</p>
+            <div className="dove-siamo__cars">
+              {t.carFrom.map((item, i) => (
+                <div key={i} className="dove-siamo__car-card">
+                  <div className="dove-siamo__car-icon"><IconCar /></div>
+                  <p className="dove-siamo__car-city">{item.city}</p>
+                  <p className="dove-siamo__car-time">{item.time}</p>
+                  <p className="dove-siamo__car-detail">{item.detail}</p>
                 </div>
               ))}
             </div>
-            <div className="alert alert-warning border dove-siamo__car-note">
-              <strong className="d-block mb-1 dove-siamo__car-note-title">
-                <i className="bi bi-exclamation-triangle-fill me-1" aria-hidden="true" />
-                {t.car_note_title}
-              </strong>
-              <p className="small mb-0 dove-siamo__car-note-text">{t.car_note}</p>
+
+            <div className="banner banner--warning banner--with-icon dove-siamo__callout">
+              <span className="dove-siamo__callout-icon"><IconWarning /></span>
+              <div>
+                <p className="banner__title">{t.carNoteTitle}</p>
+                <p className="banner__text">{t.carNote}</p>
+              </div>
             </div>
           </div>
         )}
       </section>
 
-      {/* CTA */}
-      <section className="text-center pt-3">
-        <a href={bookHref} className="btn btn-warning btn-lg fw-bold dove-siamo__cta-btn">
-          {t.cta}
-        </a>
-      </section>
-
-    </div>
+    </main>
   );
 }
