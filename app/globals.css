@@ -7106,7 +7106,7 @@ body {
 
 /* ── ContattiClient ── */
 .contatti-page {
-  background: #f8fafc;
+  background: var(--color-bg-muted);
 }
 .contatti-page__hero {
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
@@ -7128,7 +7128,7 @@ body {
 
 /* FAQ accordion */
 .faq-accordion {
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: var(--color-bg);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
@@ -7153,7 +7153,10 @@ body {
   letter-spacing: 0.01em;
 }
 .faq-toggle {
-  border-bottom: 1px solid #f0f4f8;
+  border-bottom: 1px solid var(--color-border);
+}
+.faq-toggle:last-child {
+  border-bottom: none;
 }
 .faq-toggle__btn {
   width: 100%;
@@ -7172,14 +7175,14 @@ body {
   cursor: pointer;
 }
 .faq-toggle.is-open .faq-toggle__btn {
-  background: #fffbf2;
-  border-left-color: var(--color-cta);
+  background: var(--color-primary-soft);
+  border-left-color: var(--color-primary);
 }
 .faq-toggle__q {
   flex: 1;
   font-weight: 600;
   font-size: var(--text-md);
-  color: #1a1a2e;
+  color: var(--color-text);
   line-height: 1.4;
 }
 .faq-toggle.is-open .faq-toggle__q {
@@ -7189,7 +7192,7 @@ body {
   border-radius: var(--radius-pill);
   width: 28px;
   height: 28px;
-  background: #f0f4f8;
+  background: var(--color-bg-muted);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -7197,11 +7200,11 @@ body {
   transition: background 180ms;
 }
 .faq-toggle.is-open .faq-toggle__chevron-wrap {
-  background: var(--color-cta);
+  background: var(--color-primary);
 }
 .faq-toggle__chevron {
   transition: transform 220ms ease;
-  stroke: #6b7280;
+  stroke: var(--color-text-muted);
 }
 .faq-toggle.is-open .faq-toggle__chevron {
   transform: rotate(180deg);
@@ -7210,10 +7213,10 @@ body {
 .faq-toggle__answer {
   padding: 0 20px var(--space-md) 24px;
   font-size: var(--text-base);
-  color: #374151;
-  line-height: 1.7;
-  background: #fffbf2;
-  border-left: 4px solid var(--color-cta);
+  color: var(--color-text-subtle);
+  line-height: var(--line-height-relaxed);
+  background: var(--color-primary-soft);
+  border-left: 4px solid var(--color-primary);
 }
 .faq-toggle__link {
   display: inline-flex;
@@ -7232,7 +7235,7 @@ body {
 /* Contact channels card */
 .contact-channels {
   background: var(--color-bg);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--color-border);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
@@ -7245,7 +7248,7 @@ body {
   background: var(--color-primary);
 }
 .contact-channels__header-icon {
-  font-size: 18px;
+  font-size: var(--text-lg);
   color: var(--color-on-dark);
 }
 .contact-channels__header-title {
@@ -7278,19 +7281,19 @@ body {
   flex-shrink: 0;
   width: 46px;
   height: 46px;
-  border-radius: 13px;
+  border-radius: var(--radius-md);
 }
 .contact-channels__icon-wrap--whatsapp {
   background: #25D366;
-  box-shadow: 0 4px 12px #25D36640;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
 }
 .contact-channels__icon-wrap--phone {
   background: var(--color-primary);
-  box-shadow: 0 4px 12px rgba(0,108,183,0.25);
+  box-shadow: 0 4px 12px rgba(var(--bs-primary-rgb), 0.25);
 }
 .contact-channels__icon-wrap--email {
   background: var(--color-text-muted);
-  box-shadow: 0 4px 12px rgba(107,114,128,0.25);
+  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.25);
 }
 .contact-channels__row-label {
   margin: 0;
@@ -7315,7 +7318,7 @@ body {
   text-decoration: none;
   box-shadow: var(--shadow-sm);
   padding: var(--space-md);
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
 }
 .banner-safe__icon-wrap {
   display: flex;
@@ -7324,7 +7327,7 @@ body {
   flex-shrink: 0;
   width: 40px;
   height: 40px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--color-primary-soft);
 }
 .banner-safe__icon {
@@ -7334,7 +7337,7 @@ body {
 .banner-safe__text {
   font-weight: 500;
   font-size: var(--text-base);
-  color: #374151;
+  color: var(--color-text-subtle);
   line-height: 1.4;
 }
 .banner-safe__btn {
@@ -7345,16 +7348,16 @@ body {
   color: var(--color-primary);
 }
 
-/* Banner prenota (gradient orange) */
+/* Banner prenota (gradient brand cta → warning) */
 .banner-book {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-md);
   padding: var(--space-md);
-  background: linear-gradient(135deg, var(--color-cta) 0%, #f59e0b 100%);
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(252,175,26,0.3);
+  background: linear-gradient(135deg, var(--color-cta) 0%, var(--color-warning) 100%);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 16px rgba(var(--bs-warning-rgb), 0.3);
 }
 .banner-book__text {
   margin: 0;
@@ -7368,9 +7371,9 @@ body {
   text-decoration: none;
   white-space: nowrap;
   flex-shrink: 0;
-  background: #111;
+  background: var(--color-bg-dark);
   color: var(--color-cta);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   padding: 10px 18px;
   font-size: var(--text-base);
 }
