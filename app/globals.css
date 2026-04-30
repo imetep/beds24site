@@ -2823,13 +2823,14 @@ body {
   .wizard-step2__sidebar { display: none; }
 }
 
-/* Accordion mobile (cappuccio attorno al SidebarContent legacy) */
+/* Accordion mobile (riepilogo prenotazione collassabile in cima alla form col).
+   Design sobrio: niente bordi né border-radius — solo un divider in basso che
+   lo separa visivamente dalle Card. Bottone full-bleed, padding minimo
+   laterale così BookingSidebar interna usa l'intera larghezza disponibile. */
 .wizard-step2__summary-accordion {
   display: none;
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
-  overflow: hidden;
-  margin-bottom: var(--space-base);
+  margin-bottom: var(--space-md);
+  border-bottom: 1px solid var(--color-border);
 }
 @media (max-width: 767px) {
   .wizard-step2__summary-accordion { display: block; }
@@ -2839,23 +2840,27 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-md) var(--space-base);
+  gap: var(--space-sm);
+  padding: 10px 0;
+  min-height: var(--touch-target);
   font-weight: 600;
   color: var(--color-text);
-  background: var(--color-bg-muted);
+  background: transparent;
   font-size: var(--text-base);
   cursor: pointer;
   border: none;
 }
 .wizard-step2__summary-accordion-chevron {
   font-size: var(--text-lg);
+  color: var(--color-text-muted);
   transition: transform 0.2s;
+  flex-shrink: 0;
 }
 .wizard-step2__summary-accordion-chevron.is-open {
-  transform: rotate(180deg);
+  transform: rotate(90deg);
 }
 .wizard-step2__summary-accordion-body {
-  padding: 0 var(--space-base) var(--space-base);
+  padding: var(--space-sm) 0 var(--space-md);
 }
 
 /* Section card (1. Pagamento / 2. Dati ospite) — audit §2.3 shadow-sm */
