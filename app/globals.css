@@ -5327,6 +5327,11 @@ body {
   line-height: 1.6;
 }
 
+/* ── Utility: testo/icona color primary brand ── */
+.text-primary-brand {
+  color: var(--color-primary);
+}
+
 /* ── Field label/input modifier per pattern login uppercase ── */
 .ui-field-label--uppercase {
   text-transform: uppercase;
