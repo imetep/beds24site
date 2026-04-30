@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { locales, isValidLocale, type Locale } from '@/config/i18n';
+import { Icon } from '@/components/ui/Icon';
 import SuccessContent from './SuccessContent';
 
 interface Props {
@@ -19,7 +20,7 @@ export default async function SuccessPage({ params }: Props) {
     <main className="prenota-success-main">
       <Suspense fallback={
         <div className="prenota-page-loading">
-          <i className="bi bi-hourglass-split" aria-hidden="true" /> Verifica pagamento...
+          <Icon name="hourglass-split" /> Verifica pagamento...
         </div>
       }>
         <SuccessContent locale={locale} />
