@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { setOptions, importLibrary } from '@googlemaps/js-api-loader';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
+import { Icon } from '@/components/ui/Icon';
 
 interface Props {
   latitude: number;
@@ -58,7 +59,7 @@ export default function PropertyMap({ latitude, longitude, name, locale = 'it', 
   return (
     <div className="mb-5">
       <h2 className="room-map__title">
-        <i className="bi bi-geo-alt-fill me-1" aria-hidden="true" />
+        <Icon name="geo-alt-fill" className="me-1" />
         {label}
       </h2>
       <div
@@ -76,9 +77,9 @@ export default function PropertyMap({ latitude, longitude, name, locale = 'it', 
         rel="noopener noreferrer"
         className="room-map__cta"
       >
-        <i className="bi bi-geo-alt-fill" aria-hidden="true" />
+        <Icon name="geo-alt-fill" />
         <span>{openInMapsLabel}</span>
-        <i className="bi bi-arrow-up-right room-map__cta-arrow" aria-hidden="true" />
+        <Icon name="arrow-up-right" className="room-map__cta-arrow" />
       </a>
     </div>
   );
