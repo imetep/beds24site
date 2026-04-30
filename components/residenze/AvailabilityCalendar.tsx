@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useWizardStore } from '@/store/wizard-store';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
+import { Icon } from '@/components/ui/Icon';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -279,7 +280,7 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
           {/* Bottone cancella date */}
           {(checkIn || checkOut) && (
             <button onClick={clearDates} className="avail-date-clear-btn" aria-label={ui.clear}>
-              <i className="bi bi-x-lg" aria-hidden="true" />
+              <Icon name="x-lg" />
             </button>
           )}
         </div>
@@ -295,7 +296,7 @@ export default function AvailabilityCalendar({ roomId, locale = 'it', interactiv
       {/* Box soggiorno minimo */}
       {interactive && (
         <div className="banner banner--accent banner--with-icon mb-3">
-          <i className="bi bi-moon-stars-fill" aria-hidden="true" />
+          <Icon name="moon-stars-fill" />
           <div>
             <p className="banner__title">{ui.minStay}</p>
             <p className="banner__text">{ui.minSub}</p>
