@@ -14,6 +14,7 @@ import AvailabilityCalendar from '@/components/residenze/AvailabilityCalendar';
 import BookingPanel from '@/components/residenze/BookingPanel';
 import BedConfigDisplay from '@/components/residenze/BedConfigDisplay';
 import StickyBookingBar from '@/components/residenze/StickyBookingBar';
+import { Icon, type IconName } from '@/components/ui/Icon';
 
 
 cloudinary.config({
@@ -40,40 +41,40 @@ export async function generateStaticParams() {
   return params;
 }
 
-// Feature codes → Bootstrap icon + label (UX 3.4)
-const FEATURE_LABELS: Record<string, { icon: string; it: string; en: string; de: string; pl: string }> = {
-  WIFI:                { icon: 'bi-wifi',                 it: 'WiFi gratuito',        en: 'Free WiFi',          de: 'Kostenloses WLAN',     pl: 'Bezpłatne WiFi' },
-  AIR_CONDITIONING:    { icon: 'bi-thermometer-snow',     it: 'Aria condizionata',    en: 'Air conditioning',   de: 'Klimaanlage',          pl: 'Klimatyzacja' },
-  HEATING:             { icon: 'bi-fire',                 it: 'Riscaldamento',        en: 'Heating',            de: 'Heizung',              pl: 'Ogrzewanie' },
-  PARKING_INCLUDED:    { icon: 'bi-p-square-fill',        it: 'Parcheggio incluso',   en: 'Free parking',       de: 'Kostenloser Parkplatz',pl: 'Bezpłatny parking' },
-  WASHER:              { icon: 'bi-droplet-fill',         it: 'Lavatrice',            en: 'Washer',             de: 'Waschmaschine',        pl: 'Pralka' },
-  DISHWASHER:          { icon: 'bi-basket2-fill',         it: 'Lavastoviglie',        en: 'Dishwasher',         de: 'Geschirrspüler',       pl: 'Zmywarka' },
-  TV:                  { icon: 'bi-tv-fill',              it: 'TV',                   en: 'TV',                 de: 'Fernseher',            pl: 'Telewizor' },
-  HAIR_DRYER:          { icon: 'bi-wind',                 it: 'Asciugacapelli',       en: 'Hair dryer',         de: 'Haartrockner',         pl: 'Suszarka' },
-  KITCHEN:             { icon: 'bi-egg-fried',            it: 'Cucina attrezzata',    en: 'Full kitchen',       de: 'Küche',                pl: 'Kuchnia' },
-  KITCHEN_DINING_ROOM: { icon: 'bi-cup-hot-fill',         it: 'Cucina con sala da pranzo', en: 'Kitchen & dining', de: 'Küche & Esszimmer', pl: 'Kuchnia i jadalnia' },
-  MICROWAVE:           { icon: 'bi-broadcast',            it: 'Microonde',            en: 'Microwave',          de: 'Mikrowelle',           pl: 'Mikrofalówka' },
-  OVEN:                { icon: 'bi-oven',                 it: 'Forno',                en: 'Oven',               de: 'Backofen',             pl: 'Piekarnik' },
-  COFFEE_MAKER:        { icon: 'bi-cup-fill',             it: 'Macchina del caffè',   en: 'Coffee maker',       de: 'Kaffeemaschine',       pl: 'Ekspres do kawy' },
-  FREEZER:             { icon: 'bi-snow',                 it: 'Congelatore',          en: 'Freezer',            de: 'Gefrierschrank',       pl: 'Zamrażarka' },
-  REFRIGERATOR:        { icon: 'bi-box-fill',             it: 'Frigorifero',          en: 'Refrigerator',       de: 'Kühlschrank',          pl: 'Lodówka' },
-  STOVE:               { icon: 'bi-fire',                 it: 'Fornelli',             en: 'Stove',              de: 'Herd',                 pl: 'Kuchenka' },
-  TOASTER:             { icon: 'bi-bread-slice',          it: 'Tostapane',            en: 'Toaster',            de: 'Toaster',              pl: 'Toster' },
-  KETTLE:              { icon: 'bi-cup-straw',            it: 'Bollitore',            en: 'Kettle',             de: 'Wasserkocher',         pl: 'Czajnik' },
-  DISHES_UTENSILS:     { icon: 'bi-cup',                  it: 'Stoviglie e utensili', en: 'Dishes & utensils',  de: 'Geschirr & Utensilien',pl: 'Naczynia i przybory' },
-  HIGHCHAIR:           { icon: 'bi-person-arms-up',       it: 'Seggiolone',           en: 'High chair',         de: 'Hochstuhl',            pl: 'Krzesełko' },
-  SWIMMING:            { icon: 'bi-water',                it: 'Piscina',              en: 'Pool',               de: 'Schwimmbad',           pl: 'Basen' },
-  GARDEN:              { icon: 'bi-tree-fill',            it: 'Giardino',             en: 'Garden',             de: 'Garten',               pl: 'Ogród' },
-  BEACH:               { icon: 'bi-umbrella-fill',        it: 'Vicino alla spiaggia', en: 'Near the beach',     de: 'Strandnähe',           pl: 'Blisko plaży' },
-  RURAL:               { icon: 'bi-flower1',              it: 'Zona rurale',          en: 'Rural area',         de: 'Ländliche Lage',       pl: 'Obszar wiejski' },
-  MOUNTAIN_VIEW:       { icon: 'bi-triangle-fill',        it: 'Vista montagna',       en: 'Mountain view',      de: 'Bergblick',            pl: 'Widok na góry' },
-  SITTING_AREA:        { icon: 'bi-house-door-fill',      it: 'Area salotto',         en: 'Sitting area',       de: 'Sitzbereich',          pl: 'Strefa wypoczynku' },
-  LANAI_GAZEBO_COVERED:{ icon: 'bi-house-fill',           it: 'Gazebo coperto',       en: 'Covered gazebo',     de: 'Überdachte Terrasse',  pl: 'Altana' },
-  WHEELCHAIR_YES:      { icon: 'bi-universal-access',     it: 'Accessibile',          en: 'Wheelchair accessible',de: 'Rollstuhlgerecht',   pl: 'Dostępny' },
-  CHILDREN_WELCOME:    { icon: 'bi-emoji-smile',          it: 'Bambini benvenuti',    en: 'Children welcome',   de: 'Kinder willkommen',    pl: 'Dzieci mile widziane' },
-  PETS_NOT_ALLOWED:    { icon: 'bi-dash-circle',          it: 'Animali non ammessi',  en: 'No pets',            de: 'Keine Haustiere',      pl: 'Zakaz zwierząt' },
-  SMOKING_NOT_ALLOWED: { icon: 'bi-slash-circle',         it: 'Non fumatori',         en: 'No smoking',         de: 'Nichtraucher',         pl: 'Zakaz palenia' },
-  LONG_TERM_RENTERS:   { icon: 'bi-calendar-range',       it: 'Soggiorni lunghi ok',  en: 'Long stays welcome', de: 'Langzeitmiete möglich',pl: 'Długie pobyty ok' },
+// Feature codes → icon name (Icon design system) + label (UX 3.4)
+const FEATURE_LABELS: Record<string, { icon: IconName; it: string; en: string; de: string; pl: string }> = {
+  WIFI:                { icon: 'wifi',                    it: 'WiFi gratuito',        en: 'Free WiFi',          de: 'Kostenloses WLAN',     pl: 'Bezpłatne WiFi' },
+  AIR_CONDITIONING:    { icon: 'thermometer-snow',        it: 'Aria condizionata',    en: 'Air conditioning',   de: 'Klimaanlage',          pl: 'Klimatyzacja' },
+  HEATING:             { icon: 'fire',                    it: 'Riscaldamento',        en: 'Heating',            de: 'Heizung',              pl: 'Ogrzewanie' },
+  PARKING_INCLUDED:    { icon: 'p-square-fill',           it: 'Parcheggio incluso',   en: 'Free parking',       de: 'Kostenloser Parkplatz',pl: 'Bezpłatny parking' },
+  WASHER:              { icon: 'droplet-fill',            it: 'Lavatrice',            en: 'Washer',             de: 'Waschmaschine',        pl: 'Pralka' },
+  DISHWASHER:          { icon: 'basket2-fill',            it: 'Lavastoviglie',        en: 'Dishwasher',         de: 'Geschirrspüler',       pl: 'Zmywarka' },
+  TV:                  { icon: 'tv-fill',                 it: 'TV',                   en: 'TV',                 de: 'Fernseher',            pl: 'Telewizor' },
+  HAIR_DRYER:          { icon: 'wind',                    it: 'Asciugacapelli',       en: 'Hair dryer',         de: 'Haartrockner',         pl: 'Suszarka' },
+  KITCHEN:             { icon: 'egg-fried',               it: 'Cucina attrezzata',    en: 'Full kitchen',       de: 'Küche',                pl: 'Kuchnia' },
+  KITCHEN_DINING_ROOM: { icon: 'cup-hot-fill',            it: 'Cucina con sala da pranzo', en: 'Kitchen & dining', de: 'Küche & Esszimmer', pl: 'Kuchnia i jadalnia' },
+  MICROWAVE:           { icon: 'broadcast',               it: 'Microonde',            en: 'Microwave',          de: 'Mikrowelle',           pl: 'Mikrofalówka' },
+  OVEN:                { icon: 'oven',                    it: 'Forno',                en: 'Oven',               de: 'Backofen',             pl: 'Piekarnik' },
+  COFFEE_MAKER:        { icon: 'cup-fill',                it: 'Macchina del caffè',   en: 'Coffee maker',       de: 'Kaffeemaschine',       pl: 'Ekspres do kawy' },
+  FREEZER:             { icon: 'snow',                    it: 'Congelatore',          en: 'Freezer',            de: 'Gefrierschrank',       pl: 'Zamrażarka' },
+  REFRIGERATOR:        { icon: 'box-fill',                it: 'Frigorifero',          en: 'Refrigerator',       de: 'Kühlschrank',          pl: 'Lodówka' },
+  STOVE:               { icon: 'fire',                    it: 'Fornelli',             en: 'Stove',              de: 'Herd',                 pl: 'Kuchenka' },
+  TOASTER:             { icon: 'bread-slice',             it: 'Tostapane',            en: 'Toaster',            de: 'Toaster',              pl: 'Toster' },
+  KETTLE:              { icon: 'cup-straw',               it: 'Bollitore',            en: 'Kettle',             de: 'Wasserkocher',         pl: 'Czajnik' },
+  DISHES_UTENSILS:     { icon: 'cup',                     it: 'Stoviglie e utensili', en: 'Dishes & utensils',  de: 'Geschirr & Utensilien',pl: 'Naczynia i przybory' },
+  HIGHCHAIR:           { icon: 'person-arms-up',          it: 'Seggiolone',           en: 'High chair',         de: 'Hochstuhl',            pl: 'Krzesełko' },
+  SWIMMING:            { icon: 'water',                   it: 'Piscina',              en: 'Pool',               de: 'Schwimmbad',           pl: 'Basen' },
+  GARDEN:              { icon: 'tree-fill',               it: 'Giardino',             en: 'Garden',             de: 'Garten',               pl: 'Ogród' },
+  BEACH:               { icon: 'umbrella-fill',           it: 'Vicino alla spiaggia', en: 'Near the beach',     de: 'Strandnähe',           pl: 'Blisko plaży' },
+  RURAL:               { icon: 'flower1',                 it: 'Zona rurale',          en: 'Rural area',         de: 'Ländliche Lage',       pl: 'Obszar wiejski' },
+  MOUNTAIN_VIEW:       { icon: 'triangle-fill',           it: 'Vista montagna',       en: 'Mountain view',      de: 'Bergblick',            pl: 'Widok na góry' },
+  SITTING_AREA:        { icon: 'house-door-fill',         it: 'Area salotto',         en: 'Sitting area',       de: 'Sitzbereich',          pl: 'Strefa wypoczynku' },
+  LANAI_GAZEBO_COVERED:{ icon: 'house-fill',              it: 'Gazebo coperto',       en: 'Covered gazebo',     de: 'Überdachte Terrasse',  pl: 'Altana' },
+  WHEELCHAIR_YES:      { icon: 'universal-access',        it: 'Accessibile',          en: 'Wheelchair accessible',de: 'Rollstuhlgerecht',   pl: 'Dostępny' },
+  CHILDREN_WELCOME:    { icon: 'emoji-smile',             it: 'Bambini benvenuti',    en: 'Children welcome',   de: 'Kinder willkommen',    pl: 'Dzieci mile widziane' },
+  PETS_NOT_ALLOWED:    { icon: 'dash-circle',             it: 'Animali non ammessi',  en: 'No pets',            de: 'Keine Haustiere',      pl: 'Zakaz zwierząt' },
+  SMOKING_NOT_ALLOWED: { icon: 'slash-circle',            it: 'Non fumatori',         en: 'No smoking',         de: 'Nichtraucher',         pl: 'Zakaz palenia' },
+  LONG_TERM_RENTERS:   { icon: 'calendar-range',          it: 'Soggiorni lunghi ok',  en: 'Long stays welcome', de: 'Langzeitmiete möglich',pl: 'Długie pobyty ok' },
 };
 
 const PROPERTY_FEATURES: Record<number, string[]> = {
@@ -182,7 +183,7 @@ export default async function RoomPage({ params }: Props) {
 
   const floorLabel = room.floor === 0 ? t.floorGround : `${t.floor} ${room.floor}`;
   const poolLabel = room.privatePool ? t.privatePool : room.sharedPool ? t.sharedPool : t.noPool;
-  const poolIcon = room.privatePool || room.sharedPool ? 'bi-water' : 'bi-umbrella-fill';
+  const poolIcon: IconName = room.privatePool || room.sharedPool ? 'water' : 'umbrella-fill';
 
   const featureCodes = PROPERTY_FEATURES[property.propertyId] ?? [];
 
@@ -217,17 +218,17 @@ export default async function RoomPage({ params }: Props) {
 
       {/* Caratteristiche principali — card row UX 3.7 */}
       <div className="row g-2 mb-4">
-        {[
-          { icon: 'bi-door-closed-fill', num: room.bedrooms,  label: plLabel(t, 'bedroom',  'bedrooms',  room.bedrooms) },
-          { icon: 'bi-droplet-fill',     num: room.bathrooms, label: plLabel(t, 'bathroom', 'bathrooms', room.bathrooms) },
-          { icon: 'bi-people-fill',      num: room.maxPeople, label: plLabel(t, 'guest',    'maxPeople', room.maxPeople) },
-          { icon: 'bi-aspect-ratio',     num: room.sqm,       label: t.sqm },
-          { icon: poolIcon,              num: null,           label: poolLabel },
-        ].map((stat, i) => (
+        {([
+          { icon: 'door-closed-fill', num: room.bedrooms,  label: plLabel(t, 'bedroom',  'bedrooms',  room.bedrooms) },
+          { icon: 'droplet-fill',     num: room.bathrooms, label: plLabel(t, 'bathroom', 'bathrooms', room.bathrooms) },
+          { icon: 'people-fill',      num: room.maxPeople, label: plLabel(t, 'guest',    'maxPeople', room.maxPeople) },
+          { icon: 'aspect-ratio',     num: room.sqm,       label: t.sqm },
+          { icon: poolIcon,           num: null,           label: poolLabel },
+        ] as { icon: IconName; num: number | null; label: string }[]).map((stat, i) => (
           <div key={i} className="col-6 col-md">
             <div className="card h-100 border-0 bg-light">
               <div className="card-body text-center p-2">
-                <i className={`bi ${stat.icon} fs-3 text-primary d-block mb-1`}></i>
+                <Icon name={stat.icon} size={28} className="text-primary d-block mb-1" />
                 {stat.num !== null && (
                   <div className="room-feature-card__num">{stat.num}</div>
                 )}
@@ -251,7 +252,7 @@ export default async function RoomPage({ params }: Props) {
       {/* Dove dormirete */}
       <BedConfigDisplay roomId={room.roomId} locale={locale} />
 
-      {/* Servizi — Bootstrap grid with bi-* icons UX 3.4 */}
+      {/* Servizi — design system Icon UX 3.4 */}
       <div className="mb-4">
         <h2 className="fs-4 fw-bold mb-3">{t.services}</h2>
         <div className="services-grid">
@@ -260,7 +261,7 @@ export default async function RoomPage({ params }: Props) {
             if (!feature) return null;
             return (
               <div key={code} className="room-services__item">
-                <i className={`bi ${feature.icon} room-services__icon`}></i>
+                <Icon name={feature.icon} className="room-services__icon" />
                 <span className="lh-sm">{feature[locale as keyof typeof feature] ?? feature.it}</span>
               </div>
             );
