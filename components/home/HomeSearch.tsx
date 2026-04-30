@@ -125,9 +125,6 @@ export default function HomeSearch({ locale }: { locale: string }) {
 
   function handleDay(ymd: string) {
     if (ymd < todayYMD) return;
-    // Se il giorno cliccato è negli ultimi 6 giorni del mese destro, sposta
-    // il calendario in avanti così il mese destro diventa quello di sinistra
-    // e il check-out auto-calcolato (+3 giorni) resta visibile.
     const clicked = parseYMD(ymd);
     if (clicked.getFullYear() === sec.y && clicked.getMonth() === sec.m) {
       const lastDay = new Date(sec.y, sec.m + 1, 0).getDate();
@@ -151,13 +148,13 @@ export default function HomeSearch({ locale }: { locale: string }) {
   function renderMonth(year: number, month: number) {
     const rangeEnd = checkOut || hover;
     return (
-      <div style={{ flex: 1 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', marginBottom: 4 }}>
+      <div className="home-search__cal-month">
+        <div className="home-search__cal-weekdays">
           {dys.map(d => (
-            <div key={d} style={{ textAlign: 'center', fontSize: 10, fontWeight: 600, color: 'var(--color-text-disabled)', paddingBottom: 4 }}>{d}</div>
+            <div key={d} className="home-search__cal-weekday">{d}</div>
           ))}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)' }}>
+        <div className="home-search__cal-grid">
           {cells(year, month).map((day, i) => {
             if (!day) return <div key={i} />;
             const ymd = toYMD(year, month, day);
@@ -165,20 +162,14 @@ export default function HomeSearch({ locale }: { locale: string }) {
             const isStart = ymd === checkIn;
             const isEnd   = ymd === checkOut;
             const inRange = !!(checkIn && rangeEnd && ymd > checkIn && ymd < rangeEnd);
+            const isEdge = isStart || isEnd;
+            const cls = `home-search__cal-day ${isPast ? 'is-past' : ''} ${isEdge ? 'is-edge' : (inRange ? 'is-range' : '')}`;
             return (
               <button key={i} onClick={() => handleDay(ymd)}
                 onMouseEnter={() => { if (!isPast) setHover(ymd); }}
                 onMouseLeave={() => setHover(null)}
                 disabled={isPast}
-                style={{
-                  height: 36, width: '100%', border: 'none', outline: 'none',
-                  borderRadius: (isStart || isEnd) ? '50%' : 0,
-                  background: (isStart || isEnd) ? 'var(--color-primary)' : inRange ? 'var(--color-primary-soft)' : 'transparent',
-                  color: (isStart || isEnd) ? 'var(--color-on-dark)' : isPast ? 'var(--color-text-disabled)' : 'var(--color-text)',
-                  fontSize: 13, fontWeight: (isStart || isEnd) ? 700 : 400,
-                  cursor: isPast ? 'default' : 'pointer',
-                  textDecoration: isPast ? 'line-through' : 'none',
-                }}
+                className={cls}
               >{day}</button>
             );
           })}
@@ -224,42 +215,31 @@ export default function HomeSearch({ locale }: { locale: string }) {
 
     return (
       <div>
-        <div style={{ padding: isDesk ? '24px 24px 0' : '0 20px', position: 'sticky', top: 0, background: 'var(--color-bg)', zIndex: 10, paddingTop: isDesk ? 24 : 0 }}>
-          {!isDesk && (
-            <div style={{ width: 40, height: 4, borderRadius: 2, background: '#ddd', margin: '8px auto 16px' }} />
-          )}
+        <div className={`home-search__cal-header-wrap ${isDesk ? 'home-search__cal-header-wrap--desktop' : ''}`}>
+          {!isDesk && <div className="home-search__cal-grabber" />}
           {/* Pills check-in / check-out */}
-          <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
+          <div className="home-search__cal-pills">
             {[{l: ui.checkin, v: checkIn}, {l: ui.checkout, v: checkOut}].map(({l, v}, i) => (
-              <div key={i} style={{
-                flex: 1, padding: '8px 10px', borderRadius: 10,
-                border: `2px solid ${v ? 'var(--color-primary)' : 'var(--color-border)'}`,
-                background: v ? 'var(--color-primary-soft)' : 'var(--color-bg-muted)',
-              }}>
-                <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>{l}</div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: v ? 'var(--color-primary)' : 'var(--color-text-disabled)' }}>{v ? fmtDate(v, locale, monthsShort) : '—'}</div>
+              <div key={i} className={`home-search__cal-pill ${v ? 'is-active' : ''}`}>
+                <div className="home-search__cal-pill-label">{l}</div>
+                <div className="home-search__cal-pill-value">{v ? fmtDate(v, locale, monthsShort) : '—'}</div>
               </div>
             ))}
           </div>
-          <p style={{ fontSize: 12, color: 'var(--color-primary)', fontWeight: 500, margin: '0 0 8px' }}>
+          <p className="home-search__cal-hint">
             {phase === 'ci' ? ui.hintCI : ui.hintCO}
           </p>
           {phase === 'co' && (
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: 10,
-              background: 'linear-gradient(135deg, #FFF8EC 0%, #FFF3DC 100%)',
-              border: '1px solid var(--color-cta)', borderLeft: '4px solid var(--color-cta)',
-              borderRadius: 10, padding: '10px 14px', marginBottom: 12,
-            }}>
-              <i className="bi bi-moon-stars-fill" style={{ fontSize: 18, flexShrink: 0, color: '#92610A' }} aria-hidden="true" />
+            <div className="home-search__cal-min-stay">
+              <i className="bi bi-moon-stars-fill home-search__cal-min-stay-icon" aria-hidden="true" />
               <div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#92610A', letterSpacing: '0.02em' }}>
+                <div className="home-search__cal-min-stay-title">
                   {locale === 'it' ? 'Soggiorno minimo consigliato: 3 notti'
                    : locale === 'de' ? 'Empfohlener Mindestaufenthalt: 3 Nächte'
                    : locale === 'pl' ? 'Zalecany minimalny pobyt: 3 noce'
                    : 'Recommended minimum stay: 3 nights'}
                 </div>
-                <div style={{ fontSize: 11, color: '#B07820', marginTop: 2 }}>
+                <div className="home-search__cal-min-stay-sub">
                   {locale === 'it' ? 'Puoi selezionare qualsiasi durata, ma potremmo avere poca disponibilità'
                    : locale === 'de' ? 'Kürzere Aufenthalte sind möglich, aber selten verfügbar'
                    : locale === 'pl' ? 'Krótsze pobyty są możliwe, ale rzadko dostępne'
@@ -271,43 +251,36 @@ export default function HomeSearch({ locale }: { locale: string }) {
         </div>
 
         {isDesk ? (
-          // DESKTOP: 2 mesi affiancati — frecce agli estremi, titoli centrati sopra i mesi
-          <div style={{ padding: '0 24px 20px' }}>
-            {/* Navigazione desktop: freccia sx | titolo mese1 | titolo mese2 | freccia dx */}
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+          // DESKTOP: 2 mesi affiancati
+          <div className="home-search__cal-desktop-body">
+            <div className="home-search__cal-nav">
               <button
                 onClick={() => { if (!isPrevDis) { const p = addM(vy, vm, -1); setVY(p.y); setVM(p.m); }}}
                 disabled={isPrevDis}
-                style={{ background: 'none', border: 'none', fontSize: 24, cursor: isPrevDis ? 'default' : 'pointer', color: isPrevDis ? 'var(--color-text-disabled)' : 'var(--color-text)', padding: '0 12px 0 0', flexShrink: 0 }}>
+                className="home-search__cal-nav-btn">
                 ‹
               </button>
-              <div style={{ flex: 1, display: 'flex' }}>
-                <span style={{ flex: 1, textAlign: 'center', fontWeight: 700, fontSize: 14, color: 'var(--color-text)' }}>
-                  {mons[vm]} {vy}
-                </span>
-                <span style={{ flex: 1, textAlign: 'center', fontWeight: 700, fontSize: 14, color: 'var(--color-text)' }}>
-                  {mons[sec.m]} {sec.y}
-                </span>
+              <div className="home-search__cal-nav-titles">
+                <span className="home-search__cal-nav-title">{mons[vm]} {vy}</span>
+                <span className="home-search__cal-nav-title">{mons[sec.m]} {sec.y}</span>
               </div>
               <button
                 onClick={() => { const n = addM(vy, vm, 1); setVY(n.y); setVM(n.m); }}
-                style={{ background: 'none', border: 'none', fontSize: 24, cursor: 'pointer', color: 'var(--color-text)', padding: '0 0 0 12px', flexShrink: 0 }}>
+                className="home-search__cal-nav-btn home-search__cal-nav-btn--right">
                 ›
               </button>
             </div>
-            {/* 2 mesi affiancati */}
-            <div style={{ display: 'flex', gap: 24 }}>
+            <div className="home-search__cal-months">
               {renderMonth(vy, vm)}
-              <div style={{ width: 1, background: '#f0f0f0', flexShrink: 0 }} />
+              <div className="home-search__cal-divider" />
               {renderMonth(sec.y, sec.m)}
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 14 }}>
+            <div className="home-search__cal-footer">
               <button onClick={() => { setCheckIn(''); setCheckOut(''); setSelectingCheckout(false); }}
-                style={{ background: 'none', border: 'none', color: 'var(--color-text-muted)', fontSize: 12, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>
+                className="home-search__cal-cancel">
                 {ui.cancel}
               </button>
-              <button onClick={() => setPanel('none')}
-                style={{ padding: '10px 24px', background: 'var(--color-cta)', color: 'var(--color-on-dark)', border: 'none', borderRadius: 50, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
+              <button onClick={() => setPanel('none')} className="home-search__cal-done">
                 {ui.done}
               </button>
             </div>
@@ -315,29 +288,20 @@ export default function HomeSearch({ locale }: { locale: string }) {
         ) : (
           // MOBILE: scroll verticale
           <>
-            <div style={{ padding: '0 20px', overflowY: 'auto', paddingBottom: 80 }}>
+            <div className="home-search__cal-mobile-body">
               {mobileMonths.map(({ y, m }, idx) => (
-                <div key={idx} style={{ marginBottom: 28 }}>
-                  <div style={{ fontWeight: 700, fontSize: 15, textAlign: 'center', marginBottom: 10, color: 'var(--color-text)' }}>
-                    {mons[m]} {y}
-                  </div>
+                <div key={idx} className="home-search__cal-month-block">
+                  <div className="home-search__cal-month-title">{mons[m]} {y}</div>
                   {renderMonth(y, m)}
                 </div>
               ))}
             </div>
-            <div style={{
-              position: 'sticky', bottom: 0,
-              background: 'var(--color-bg)', padding: '10px 20px 24px',
-              borderTop: '1px solid #f0f0f0',
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              zIndex: 10,
-            }}>
+            <div className="home-search__cal-footer home-search__cal-footer--mobile">
               <button onClick={() => { setCheckIn(''); setCheckOut(''); setSelectingCheckout(false); }}
-                style={{ background: 'none', border: 'none', color: 'var(--color-text-muted)', fontSize: 12, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>
+                className="home-search__cal-cancel">
                 {ui.cancel}
               </button>
-              <button onClick={() => setPanel('none')}
-                style={{ padding: '10px 28px', background: 'var(--color-cta)', color: 'var(--color-on-dark)', border: 'none', borderRadius: 50, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
+              <button onClick={() => setPanel('none')} className="home-search__cal-done">
                 {ui.done}
               </button>
             </div>
@@ -354,53 +318,35 @@ export default function HomeSearch({ locale }: { locale: string }) {
     const yearStr = locale === 'it' ? 'anni' : locale === 'de' ? 'Jahre' : locale === 'pl' ? 'lat' : 'years';
 
     return (
-      <div style={{ padding: 20 }}>
-        {!isDesk && (
-          <div style={{ width: 40, height: 4, borderRadius: 2, background: '#ddd', margin: '0 auto 16px' }} />
-        )}
+      <div className="home-search__guests">
+        {!isDesk && <div className="home-search__cal-grabber" />}
         {[
           { label: ui.adults, sub: ui.adultsAge, val: numAdult, set: setNumAdult, min: 1 },
           { label: ui.children, sub: ui.childrenAge, val: numChild, set: setNumChild, min: 0 },
         ].map(({ label, sub, val, set, min }) => (
-          <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0', borderBottom: '1px solid #f0f0f0' }}>
+          <div key={label} className="home-search__guests-row">
             <div>
-              <div style={{ fontSize: 15, fontWeight: 500 }}>{label}</div>
-              <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>{sub}</div>
+              <div className="home-search__guests-row-label">{label}</div>
+              <div className="home-search__guests-row-sub">{sub}</div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              <button onClick={() => set(val - 1)} disabled={val <= min}
-                style={{ width: 34, height: 34, borderRadius: '50%', border: `1.5px solid ${val <= min ? 'var(--color-border)' : 'var(--color-primary)'}`,
-                  background: 'var(--color-bg)', color: val <= min ? 'var(--color-text-disabled)' : 'var(--color-primary)', fontSize: 18, cursor: val <= min ? 'not-allowed' : 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                −
-              </button>
-              <span style={{ fontSize: 16, fontWeight: 700, minWidth: 24, textAlign: 'center' }}>{val}</span>
-              <button onClick={() => set(val + 1)}
-                style={{ width: 34, height: 34, borderRadius: '50%', border: '1.5px solid var(--color-primary)',
-                  background: 'var(--color-bg)', color: 'var(--color-primary)', fontSize: 18, cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                +
-              </button>
+            <div className="home-search__guests-counter">
+              <button onClick={() => set(val - 1)} disabled={val <= min} className="home-search__guests-btn">−</button>
+              <span className="home-search__guests-value">{val}</span>
+              <button onClick={() => set(val + 1)} className="home-search__guests-btn">+</button>
             </div>
           </div>
         ))}
 
         {numChild > 0 && (
-          <div style={{ marginTop: 14, padding: 14, background: 'var(--color-bg-muted)', borderRadius: 12, border: '1px solid var(--color-border)' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: numChild === 1 ? '1fr' : '1fr 1fr', gap: 10 }}>
+          <div className="home-search__ages">
+            <div className={`home-search__ages-grid home-search__ages-grid--${numChild === 1 ? '1' : '2'}`}>
               {Array.from({ length: numChild }, (_, i) => (
                 <div key={i}>
-                  <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--color-text-label)', marginBottom: 4, textTransform: 'uppercase' }}>
-                    {ageLabel} {i + 1}
-                  </label>
+                  <label className="home-search__ages-label">{ageLabel} {i + 1}</label>
                   <select
                     value={childrenAges[i] ?? -1}
                     onChange={e => setChildAge(i, Number(e.target.value))}
-                    style={{
-                      width: '100%', padding: '8px 10px', fontSize: 14, borderRadius: 8,
-                      border: `1.5px solid ${(childrenAges[i] ?? -1) < 0 ? '#f97316' : 'var(--color-border)'}`,
-                      background: 'var(--color-bg)', appearance: 'auto',
-                    }}
+                    className={`home-search__ages-select ${(childrenAges[i] ?? -1) < 0 ? 'is-empty' : ''}`}
                   >
                     <option value={-1}>{agePlaceholder}</option>
                     {Array.from({ length: 18 }, (_, age) => (
@@ -413,8 +359,7 @@ export default function HomeSearch({ locale }: { locale: string }) {
           </div>
         )}
 
-        <button onClick={() => setPanel('none')}
-          style={{ width: '100%', marginTop: 20, padding: '12px', background: 'var(--color-cta)', color: 'var(--color-on-dark)', border: 'none', borderRadius: 50, fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>
+        <button onClick={() => setPanel('none')} className="home-search__guests-done">
           {ui.done}
         </button>
       </div>
@@ -426,207 +371,130 @@ export default function HomeSearch({ locale }: { locale: string }) {
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div style={{ background: 'var(--color-bg)', minHeight: '100vh', boxSizing: 'border-box', width: '100%', overflowX: 'hidden' }}>
+    <div className="home-search">
 
       {/* ── Hero UX 3.2 ────────────────────────────────────────────────────── */}
       <section
-        className="d-flex align-items-center justify-content-center text-white position-relative"
-        style={{
-          height: isDesk ? 320 : 220,
-          background: heroBg
-            ? `linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url(${heroBg}) center/cover no-repeat`
-            : 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%)',
-        }}
+        className="home-search__hero"
+        style={heroBg ? { background: `linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url(${heroBg}) center/cover no-repeat` } : undefined}
       >
-        <div className="container text-center px-3" style={{ maxWidth: 900 }}>
-          <h1 className="fw-bold mb-2" style={{ fontSize: isDesk ? '2.6rem' : '1.6rem', lineHeight: 1.2, textShadow: '0 2px 10px rgba(0,0,0,0.3)' }}>
-            {ui.hero_title}
-          </h1>
-          <p className="fs-5 mb-0" style={{ opacity: 0.95, textShadow: '0 1px 6px rgba(0,0,0,0.35)' }}>
-            {ui.hero_sub}
-          </p>
+        <div className="home-search__hero-content">
+          <h1 className="home-search__hero-title">{ui.hero_title}</h1>
+          <p className="home-search__hero-sub">{ui.hero_sub}</p>
         </div>
       </section>
 
       <div className="page-container">
 
       {/* ── Barra ricerca ─────────────────────────────────────────────────── */}
-      <div style={{ maxWidth: isDesk ? 900 : 600, margin: '0 auto', padding: '1.5rem 16px 0', boxSizing: 'border-box', position: 'relative' }}>
+      <div className="home-search__bar-wrap">
 
-        {isDesk ? (
-          // ── DESKTOP: una riga orizzontale ─────────────────────────────────
-          <div style={{
-            display: 'flex', alignItems: 'stretch',
-            border: '1.5px solid var(--color-border)', borderRadius: 50,
-            background: 'var(--color-bg)', boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
-            overflow: 'hidden',
-          }}>
-            {/* Date */}
-            <button
-              onClick={() => setPanel(p => p === 'dates' ? 'none' : 'dates')}
-              style={{
-                flex: 1, display: 'flex', alignItems: 'center', gap: 12, padding: '14px 28px',
-                background: panel === 'dates' ? 'var(--color-primary-soft)' : 'transparent',
-                border: 'none', borderRight: '1px solid var(--color-border)', cursor: 'pointer', textAlign: 'left',
-              }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" style={{ flexShrink: 0 }}>
-                <rect x="3" y="4" width="18" height="18" rx="3"/>
-                <path d="M16 2v4M8 2v4M3 10h18"/>
-              </svg>
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{ui.dates}</div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: datesLabel ? 'var(--color-text)' : 'var(--color-text-disabled)', marginTop: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {datesLabel ?? `${ui.checkin} – ${ui.checkout}`}
-                </div>
-                {nightsLabel && (
-                  <div style={{ fontSize: 11, color: 'var(--color-text-muted)', marginTop: 1 }}>{nightsLabel}</div>
-                )}
+        {/* DESKTOP: una riga orizzontale */}
+        <div className="home-search__bar-desktop">
+          {/* Date */}
+          <button
+            onClick={() => setPanel(p => p === 'dates' ? 'none' : 'dates')}
+            className={`home-search__pill home-search__pill--dates ${panel === 'dates' ? 'is-active' : ''}`}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" className="home-search__pill-icon">
+              <rect x="3" y="4" width="18" height="18" rx="3"/>
+              <path d="M16 2v4M8 2v4M3 10h18"/>
+            </svg>
+            <div className="home-search__pill-content">
+              <div className="home-search__pill-label">{ui.dates}</div>
+              <div className={`home-search__pill-value ${datesLabel ? '' : 'is-empty'}`}>
+                {datesLabel ?? `${ui.checkin} – ${ui.checkout}`}
               </div>
-            </button>
+              {nightsLabel && <div className="home-search__pill-meta">{nightsLabel}</div>}
+            </div>
+          </button>
 
-            {/* Ospiti */}
-            <button
-              ref={personeBtnRef}
-              onClick={() => setPanel(p => p === 'guests' ? 'none' : 'guests')}
-              style={{
-                flex: '0 0 260px', display: 'flex', alignItems: 'center', gap: 12, padding: '14px 24px',
-                background: panel === 'guests' ? 'var(--color-primary-soft)' : 'transparent',
-                border: 'none', borderRight: '1px solid var(--color-border)', cursor: 'pointer', textAlign: 'left',
-              }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" style={{ flexShrink: 0 }}>
-                <circle cx="12" cy="7" r="4"/>
-                <path d="M5.5 21c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" strokeLinecap="round"/>
-              </svg>
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{ui.guests}</div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text)', marginTop: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {guestsLabel ?? `${numAdult} ${locale === 'it' ? 'adulti' : 'adults'}`}
-                </div>
-                {agesLabel ? <div style={{ fontSize: 11, color: 'var(--color-text-muted)', marginTop: 1 }}>età: {agesLabel}</div> : null}
+          {/* Ospiti */}
+          <button
+            ref={personeBtnRef}
+            onClick={() => setPanel(p => p === 'guests' ? 'none' : 'guests')}
+            className={`home-search__pill home-search__pill--guests ${panel === 'guests' ? 'is-active' : ''}`}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" className="home-search__pill-icon">
+              <circle cx="12" cy="7" r="4"/>
+              <path d="M5.5 21c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" strokeLinecap="round"/>
+            </svg>
+            <div className="home-search__pill-content">
+              <div className="home-search__pill-label">{ui.guests}</div>
+              <div className="home-search__pill-value">
+                {guestsLabel ?? `${numAdult} ${locale === 'it' ? 'adulti' : 'adults'}`}
               </div>
-            </button>
+              {agesLabel ? <div className="home-search__pill-meta">età: {agesLabel}</div> : null}
+            </div>
+          </button>
 
-            {/* Cerca */}
-            <button
-              onClick={handleCerca}
-              style={{
-                padding: '0 32px', background: 'var(--color-cta)', color: 'var(--color-on-dark)', border: 'none',
-                cursor: 'pointer', fontWeight: 700, fontSize: 15,
-                display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap',
-              }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-              </svg>
-              {ui.search}
-            </button>
-          </div>
+          {/* Cerca */}
+          <button onClick={handleCerca} className="home-search__cerca-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+            {ui.search}
+          </button>
+        </div>
 
-        ) : (
-          // ── MOBILE: 2 card staccate stile Expedia + bottone Cerca ─────────
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {/* MOBILE: 2 card staccate stile Expedia + bottone Cerca */}
+        <div className="home-search__bar-mobile">
 
-            {/* Card Date */}
-            <button
-              onClick={() => setPanel(p => p === 'dates' ? 'none' : 'dates')}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 14,
-                padding: '16px 18px',
-                border: `1.5px solid ${panel === 'dates' ? 'var(--color-primary)' : 'var(--color-border)'}`,
-                borderRadius: 16,
-                background: panel === 'dates' ? 'var(--color-primary-soft)' : 'var(--color-bg)',
-                cursor: 'pointer', textAlign: 'left', width: '100%',
-                boxSizing: 'border-box',
-                boxShadow: '0 1px 6px rgba(0,0,0,0.06)',
-              }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="1.8" style={{ flexShrink: 0 }}>
-                <rect x="3" y="4" width="18" height="18" rx="3"/>
-                <path d="M16 2v4M8 2v4M3 10h18"/>
-              </svg>
-              <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>
-                  {ui.dates}
-                </div>
-                <div style={{ fontSize: 15, fontWeight: 600, color: datesLabel ? 'var(--color-text)' : 'var(--color-text-disabled)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {datesLabel ?? `${ui.checkin} – ${ui.checkout}`}
-                </div>
-                {nightsLabel && (
-                  <div style={{ fontSize: 12, color: 'var(--color-text-muted)', marginTop: 2 }}>{nightsLabel}</div>
-                )}
+          {/* Card Date */}
+          <button
+            onClick={() => setPanel(p => p === 'dates' ? 'none' : 'dates')}
+            className={`home-search__card ${panel === 'dates' ? 'is-active' : ''}`}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="1.8" className="home-search__card-icon">
+              <rect x="3" y="4" width="18" height="18" rx="3"/>
+              <path d="M16 2v4M8 2v4M3 10h18"/>
+            </svg>
+            <div className="home-search__card-content">
+              <div className="home-search__card-label">{ui.dates}</div>
+              <div className={`home-search__card-value ${datesLabel ? '' : 'is-empty'}`}>
+                {datesLabel ?? `${ui.checkin} – ${ui.checkout}`}
               </div>
-              {/* Chevron */}
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bbb" strokeWidth="2" style={{ flexShrink: 0 }}>
-                <path d="M9 18l6-6-6-6"/>
-              </svg>
-            </button>
+              {nightsLabel && <div className="home-search__card-meta">{nightsLabel}</div>}
+            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bbb" strokeWidth="2" className="home-search__card-chevron">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
 
-            {/* Card Ospiti */}
-            <button
-              onClick={() => setPanel(p => p === 'guests' ? 'none' : 'guests')}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 14,
-                padding: '16px 18px',
-                border: `1.5px solid ${panel === 'guests' ? 'var(--color-primary)' : 'var(--color-border)'}`,
-                borderRadius: 16,
-                background: panel === 'guests' ? 'var(--color-primary-soft)' : 'var(--color-bg)',
-                cursor: 'pointer', textAlign: 'left', width: '100%',
-                boxSizing: 'border-box',
-                boxShadow: '0 1px 6px rgba(0,0,0,0.06)',
-              }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="1.8" style={{ flexShrink: 0 }}>
-                <circle cx="12" cy="7" r="4"/>
-                <path d="M5.5 21c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" strokeLinecap="round"/>
-              </svg>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>
-                  {ui.guests}
-                </div>
-                <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {guestsLabel ?? `${numAdult} ${locale === 'it' ? 'adulti' : 'adults'}`}
-                </div>
-                {agesLabel ? <div style={{ fontSize: 12, color: 'var(--color-text-muted)', marginTop: 2 }}>età: {agesLabel}</div> : null}
+          {/* Card Ospiti */}
+          <button
+            onClick={() => setPanel(p => p === 'guests' ? 'none' : 'guests')}
+            className={`home-search__card ${panel === 'guests' ? 'is-active' : ''}`}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="1.8" className="home-search__card-icon">
+              <circle cx="12" cy="7" r="4"/>
+              <path d="M5.5 21c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" strokeLinecap="round"/>
+            </svg>
+            <div className="home-search__card-content">
+              <div className="home-search__card-label">{ui.guests}</div>
+              <div className="home-search__card-value">
+                {guestsLabel ?? `${numAdult} ${locale === 'it' ? 'adulti' : 'adults'}`}
               </div>
-              {/* Chevron */}
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bbb" strokeWidth="2" style={{ flexShrink: 0 }}>
-                <path d="M9 18l6-6-6-6"/>
-              </svg>
-            </button>
+              {agesLabel ? <div className="home-search__card-meta">età: {agesLabel}</div> : null}
+            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bbb" strokeWidth="2" className="home-search__card-chevron">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
 
-            {/* Bottone Cerca */}
-            <button
-              onClick={handleCerca}
-              style={{
-                width: '100%', boxSizing: 'border-box',
-                padding: '16px',
-                borderRadius: 50,
-                background: 'var(--color-cta)', color: 'var(--color-on-dark)', border: 'none',
-                fontWeight: 700, fontSize: 16, cursor: 'pointer',
-                boxShadow: '0 4px 14px rgba(252,175,26,0.35)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-              }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-              </svg>
-              {ui.search}
-            </button>
-          </div>
-        )}
+          {/* Bottone Cerca */}
+          <button onClick={handleCerca} className="home-search__cerca-mobile">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+            {ui.search}
+          </button>
+        </div>
 
         {/* Dropdown desktop */}
         {isDesk && panel === 'dates' && (
-          <div style={{
-            position: 'absolute', top: 'calc(100% + 8px)', left: 0, width: 580,
-            background: 'var(--color-bg)', borderRadius: 16,
-            boxShadow: '0 8px 32px rgba(0,0,0,0.15)', zIndex: 200, overflow: 'hidden',
-          }}>
+          <div className="home-search__dropdown home-search__dropdown--dates">
             <CalContent />
           </div>
         )}
         {isDesk && panel === 'guests' && (
-          <div ref={guestsPopoverRef} style={{
-            position: 'absolute', top: 'calc(100% + 8px)', right: 0, width: 300,
-            background: 'var(--color-bg)', borderRadius: 16,
-            boxShadow: '0 8px 32px rgba(0,0,0,0.15)', zIndex: 200, overflow: 'hidden',
-          }}>
+          <div ref={guestsPopoverRef} className="home-search__dropdown home-search__dropdown--guests">
             <GuestsContent />
           </div>
         )}
@@ -635,16 +503,8 @@ export default function HomeSearch({ locale }: { locale: string }) {
       {/* Bottom sheets mobile */}
       {!isDesk && panel !== 'none' && (
         <>
-          <div
-            onClick={() => setPanel('none')}
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 200 }}
-          />
-          <div style={{
-            position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 201,
-            background: 'var(--color-bg)', borderRadius: '20px 20px 0 0',
-            boxShadow: '0 -4px 24px rgba(0,0,0,0.15)',
-            maxHeight: '88vh', overflowY: 'auto',
-          }}>
+          <div onClick={() => setPanel('none')} className="home-search__sheet-overlay" />
+          <div className="home-search__sheet">
             {panel === 'dates'  && <CalContent />}
             {panel === 'guests' && <GuestsContent />}
           </div>
@@ -652,51 +512,33 @@ export default function HomeSearch({ locale }: { locale: string }) {
       )}
 
       {/* ── Slider residenze ───────────────────────────────────────────────── */}
-      <div style={{ marginTop: '2rem' }}>
-        <h2 style={{ fontSize: isDesk ? '1.4rem' : '1.15rem', fontWeight: 700, margin: '0 0 0.75rem 16px', color: 'var(--color-text)' }}>
-          {ui.inspire}
-        </h2>
-        <div style={{ position: 'relative' }}
+      <div className="home-search__slider-section">
+        <h2 className="home-search__slider-title">{ui.inspire}</h2>
+        <div className="home-search__slider-wrap"
           onMouseEnter={() => isDesk && setShowResArr(true)}
           onMouseLeave={() => isDesk && setShowResArr(false)}>
           {isDesk && showResArr && (
             <button onClick={() => { residenzeRef.current?.scrollBy({ left: -220, behavior: 'smooth' }); }}
-              style={{ position: 'absolute', left: 2, top: '40%', transform: 'translateY(-50%)', zIndex: 10, width: 36, height: 36, borderRadius: '50%', border: '1px solid #ddd', background: 'var(--color-bg)', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
+              className="home-search__slider-arrow home-search__slider-arrow--left">‹</button>
           )}
-          <div ref={residenzeRef} style={{
-            display: 'flex', gap: 10, overflowX: 'auto',
-            padding: '4px 16px 20px',
-            scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch',
-            msOverflowStyle: 'none', scrollbarWidth: 'none',
-          }}>
+          <div ref={residenzeRef} className="home-search__slider-track">
             {PROPERTIES.flatMap(p => p.rooms).map(room => {
               const src = covers[room.cloudinaryFolder];
-              const cardW = isDesk ? 240 : 120;
               return (
                 <button
                   key={room.roomId}
                   onClick={() => router.push(`/${locale}/residenze/${room.slug}`)}
-                  style={{
-                    flexShrink: 0, width: cardW, scrollSnapAlign: 'start',
-                    border: 'none', padding: 0, background: 'var(--color-border)',
-                    cursor: 'pointer', borderRadius: 12, overflow: 'hidden',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
-                    position: 'relative', aspectRatio: '2/3', display: 'block',
-                  }}
+                  className="home-search__res-card"
                 >
                   {src ? (
-                    <img src={src} alt={room.name} loading="lazy"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    <img src={src} alt={room.name} loading="lazy" className="home-search__res-card-img" />
                   ) : (
-                    <div style={{ width: '100%', height: '100%', background: 'var(--color-border)' }} />
+                    <div className="home-search__res-card-img" />
                   )}
-                  <div style={{
-                    position: 'absolute', bottom: 0, left: 0, right: 0, height: '50%',
-                    background: 'linear-gradient(to top, rgba(0,0,0,0.70) 0%, transparent 100%)',
-                  }} />
-                  <div style={{ position: 'absolute', bottom: 8, left: 8, right: 8, textAlign: 'left' }}>
-                    <div style={{ color: 'var(--color-on-dark)', fontSize: isDesk ? 14 : 12, fontWeight: 700, lineHeight: 1.2 }}>{room.name}</div>
-                    <div style={{ color: 'rgba(255,255,255,0.82)', fontSize: 10, marginTop: 2 }}>
+                  <div className="home-search__res-card-overlay" />
+                  <div className="home-search__res-card-info">
+                    <div className="home-search__res-card-name">{room.name}</div>
+                    <div className="home-search__res-card-meta">
                       max {room.maxPeople} · {room.sqm} m²
                     </div>
                   </div>
@@ -706,46 +548,38 @@ export default function HomeSearch({ locale }: { locale: string }) {
           </div>
           {isDesk && showResArr && (
             <button onClick={() => { residenzeRef.current?.scrollBy({ left: 220, behavior: 'smooth' }); }}
-              style={{ position: 'absolute', right: 2, top: '40%', transform: 'translateY(-50%)', zIndex: 10, width: 36, height: 36, borderRadius: '50%', border: '1px solid #ddd', background: 'var(--color-bg)', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
+              className="home-search__slider-arrow home-search__slider-arrow--right">›</button>
           )}
         </div>
       </div>
 
       {/* ── Slider dintorni — solo desktop ─────────────────────────────────── */}
       {isDesk && dintorniPhotos.length > 0 && (
-        <div style={{ marginTop: '1.5rem', paddingBottom: 32 }}>
-          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, margin: '0 0 0.75rem 16px', color: 'var(--color-text)' }}>
-            {ui.dintorni}
-          </h2>
-          <div style={{ position: 'relative' }}
+        <div className="home-search__slider-section home-search__slider-section--dintorni">
+          <h2 className="home-search__slider-title">{ui.dintorni}</h2>
+          <div className="home-search__slider-wrap"
             onMouseEnter={() => setShowDintArr(true)}
             onMouseLeave={() => setShowDintArr(false)}>
             {showDintArr && (
               <button onClick={() => { dintorniRef.current?.scrollBy({ left: -200, behavior: 'smooth' }); }}
-                style={{ position: 'absolute', left: 2, top: '40%', transform: 'translateY(-50%)', zIndex: 10, width: 36, height: 36, borderRadius: '50%', border: '1px solid #ddd', background: 'var(--color-bg)', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
+                className="home-search__slider-arrow home-search__slider-arrow--left">‹</button>
             )}
-            <div ref={dintorniRef} style={{
-              display: 'flex', gap: 10, overflowX: 'auto', padding: '4px 16px 20px',
-              scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch',
-              msOverflowStyle: 'none', scrollbarWidth: 'none',
-            }}>
+            <div ref={dintorniRef} className="home-search__slider-track">
               {dintorniPhotos.map((src, idx) => (
-                <button key={idx} onClick={() => setLightbox(src)}
-                  style={{ flexShrink: 0, width: 240, aspectRatio: '2/3', scrollSnapAlign: 'start', border: 'none', padding: 0, background: 'var(--color-border)', cursor: 'pointer', borderRadius: 14, overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
-                  <img src={src} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                <button key={idx} onClick={() => setLightbox(src)} className="home-search__dintorni-card">
+                  <img src={src} alt="" loading="lazy" className="home-search__dintorni-img" />
                 </button>
               ))}
             </div>
             {showDintArr && (
               <button onClick={() => { dintorniRef.current?.scrollBy({ left: 200, behavior: 'smooth' }); }}
-                style={{ position: 'absolute', right: 2, top: '40%', transform: 'translateY(-50%)', zIndex: 10, width: 36, height: 36, borderRadius: '50%', border: '1px solid #ddd', background: 'var(--color-bg)', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
+                className="home-search__slider-arrow home-search__slider-arrow--right">›</button>
             )}
           </div>
           {lightbox && (
             <>
-              <div onClick={() => setLightbox(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 300, cursor: 'pointer' }} />
-              <img src={lightbox} alt="" onClick={() => setLightbox(null)}
-                style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain', zIndex: 301, borderRadius: 8, cursor: 'pointer' }} />
+              <div onClick={() => setLightbox(null)} className="home-search__lightbox-overlay" />
+              <img src={lightbox} alt="" onClick={() => setLightbox(null)} className="home-search__lightbox-img" />
             </>
           )}
         </div>
