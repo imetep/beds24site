@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Icon } from '@/components/ui/Icon';
 
 interface Props {
   locale:         string;
@@ -56,13 +57,13 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
       <div className="guest-login">
         <div className="guest-login__card">
           <div className="guest-login__rate-limited-icon">
-            <i className="bi bi-clock-fill" aria-hidden="true" />
+            <Icon name="clock-fill" />
           </div>
           <h2 className="guest-login__rate-limited-title">{tL.rateLimited}</h2>
           <p className="guest-login__rate-limited-msg">{tL.rateLimitedMsg}</p>
           <div className="text-center">
             <a href="https://wa.me/393283131500" className="support-footer__link">
-              <i className="bi bi-whatsapp me-1" aria-hidden="true" />
+              <Icon name="whatsapp" className="me-1" />
               WhatsApp
             </a>
           </div>
@@ -77,7 +78,7 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
         {/* Header */}
         <div className="text-center">
           <div className="guest-login__avatar">
-            <i className="bi bi-shield-lock-fill" aria-hidden="true" />
+            <Icon name="shield-lock-fill" />
           </div>
           <h1 className="guest-login__title">{tL.title}</h1>
           <p className="guest-login__subtitle">{tL.subtitle}</p>
@@ -148,11 +149,11 @@ export default function GuestLogin({ locale, t, onLoginSuccess }: Props) {
           <p className="support-footer__hint">{tL.noBooking}</p>
           <div className="support-footer__links">
             <a href="https://wa.me/393283131500" className="support-footer__link">
-              <i className="bi bi-whatsapp me-1" aria-hidden="true" />
+              <Icon name="whatsapp" className="me-1" />
               WhatsApp
             </a>
             <a href="mailto:contattolivingapple@gmail.com" className="support-footer__link">
-              <i className="bi bi-envelope-fill me-1" aria-hidden="true" />
+              <Icon name="envelope-fill" className="me-1" />
               Email
             </a>
           </div>
