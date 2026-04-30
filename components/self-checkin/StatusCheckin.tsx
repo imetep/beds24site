@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
+import { Icon, type IconName } from '@/components/ui/Icon';
 
 interface Message {
   from: 'host' | 'guest';
@@ -82,10 +83,10 @@ export default function StatusCheckin({ locale }: { locale: Locale }) {
     setSending(false);
   }
 
-  const statusLabels: Record<string, { label: string; note: string; modifier: string; icon: string }> = {
-    PENDING:  { label: t.statusPending,  note: t.pendingNote,  modifier: 'pending',  icon: 'bi-hourglass-split' },
-    APPROVED: { label: t.statusApproved, note: t.approvedNote, modifier: 'approved', icon: 'bi-check-circle-fill' },
-    REJECTED: { label: t.statusRejected, note: '',             modifier: 'rejected', icon: 'bi-x-circle-fill' },
+  const statusLabels: Record<string, { label: string; note: string; modifier: string; icon: IconName }> = {
+    PENDING:  { label: t.statusPending,  note: t.pendingNote,  modifier: 'pending',  icon: 'hourglass-split' },
+    APPROVED: { label: t.statusApproved, note: t.approvedNote, modifier: 'approved', icon: 'check-circle-fill' },
+    REJECTED: { label: t.statusRejected, note: '',             modifier: 'rejected', icon: 'x-circle-fill' },
   };
 
   // ── Form ricerca ─────────────────────────────────────────────────────────
@@ -93,7 +94,7 @@ export default function StatusCheckin({ locale }: { locale: Locale }) {
     <div className="page-container page-top pb-5">
       <div className="status-checkin__hero">
         <div className="status-checkin__hero-icon">
-          <i className="bi bi-search" aria-hidden="true" />
+          <Icon name="search" />
         </div>
         <h1 className="status-checkin__hero-title">{t.pageTitle}</h1>
         <p className="status-checkin__hero-sub">{t.pageSubtitle}</p>
@@ -142,7 +143,7 @@ export default function StatusCheckin({ locale }: { locale: Locale }) {
       </div>
 
       <div className={`status-banner status-banner--${sc.modifier}`}>
-        <i className={`bi ${sc.icon} status-banner__icon`} aria-hidden="true" />
+        <Icon name={sc.icon} className="status-banner__icon" />
         <div>
           <p className="status-banner__title">{sc.label}</p>
           {data.status === 'REJECTED' && data.rejectReason
