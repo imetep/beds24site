@@ -18,21 +18,7 @@ export default function ResidenzaSlider({ locale }: Props) {
   const rooms = PROPERTIES.flatMap(p => p.rooms);
 
   return (
-    <div
-      className="residenza-slider"
-      style={{
-        display: 'flex',
-        gap: 14,
-        overflowX: 'auto',
-        padding: '4px 1.25rem 16px',
-        scrollSnapType: 'x mandatory',
-        WebkitOverflowScrolling: 'touch',
-        msOverflowStyle: 'none',
-        scrollbarWidth: 'none',
-      }}
-    >
-      <style>{`.residenza-slider::-webkit-scrollbar { display: none; }`}</style>
-
+    <div className="residenza-slider">
       {rooms.map(room => {
         const photoUrl = getCloudinaryUrl(room, 1, 600);
 
@@ -40,58 +26,22 @@ export default function ResidenzaSlider({ locale }: Props) {
           <button
             key={room.roomId}
             onClick={() => router.push(`/${locale}/residenze/${room.slug}`)}
-            style={{
-              flexShrink: 0,
-              width: 160,
-              scrollSnapAlign: 'start',
-              border: 'none',
-              padding: 0,
-              background: '#e8e8e8',
-              cursor: 'pointer',
-              borderRadius: 16,
-              overflow: 'hidden',
-              boxShadow: '0 2px 12px rgba(0,0,0,0.10)',
-              position: 'relative',
-              aspectRatio: '2/3',
-              display: 'block',
-            }}
+            className="residenza-slider__card"
           >
             <img
               src={photoUrl}
               alt={room.name}
               loading="lazy"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              className="residenza-slider__img"
             />
 
             {/* Overlay gradiente */}
-            <div style={{
-              position: 'absolute',
-              bottom: 0, left: 0, right: 0,
-              height: '55%',
-              background: 'linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%)',
-            }} />
+            <div className="residenza-slider__overlay" />
 
             {/* Testo */}
-            <div style={{
-              position: 'absolute',
-              bottom: 12, left: 12, right: 12,
-              textAlign: 'left',
-            }}>
-              <div style={{
-                color: '#fff',
-                fontSize: 15,
-                fontWeight: 700,
-                lineHeight: 1.2,
-                textShadow: '0 1px 3px rgba(0,0,0,0.4)',
-              }}>
-                {room.name}
-              </div>
-              <div style={{
-                color: 'rgba(255,255,255,0.82)',
-                fontSize: 12,
-                marginTop: 3,
-                fontWeight: 500,
-              }}>
+            <div className="residenza-slider__info">
+              <div className="residenza-slider__name">{room.name}</div>
+              <div className="residenza-slider__meta">
                 max {room.maxPeople} · {room.sqm} m²
               </div>
             </div>

@@ -6373,6 +6373,127 @@ body {
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
+   ResidenzaSlider + HeaderClient (Sessione 22 Fase 2)
+   ────────────────────────────────────────────────────────────────────────── */
+
+.residenza-slider {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding: var(--space-xs) 1.25rem var(--space-base);
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.residenza-slider::-webkit-scrollbar {
+  display: none;
+}
+.residenza-slider__card {
+  flex-shrink: 0;
+  width: 160px;
+  scroll-snap-align: start;
+  border: none;
+  padding: 0;
+  background: #e8e8e8;
+  cursor: pointer;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+  position: relative;
+  aspect-ratio: 2/3;
+  display: block;
+}
+.residenza-slider__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.residenza-slider__overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 55%;
+  background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%);
+}
+.residenza-slider__info {
+  position: absolute;
+  bottom: var(--space-md);
+  left: var(--space-md);
+  right: var(--space-md);
+  text-align: left;
+}
+.residenza-slider__name {
+  color: var(--color-on-dark);
+  font-size: var(--text-md);
+  font-weight: 700;
+  line-height: 1.2;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+.residenza-slider__meta {
+  color: rgba(255,255,255,0.82);
+  font-size: var(--text-xs);
+  margin-top: 3px;
+  font-weight: 500;
+}
+
+/* ── Hamburger header (HeaderClient) ── */
+.hamburger-bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #374151;
+  border-radius: 2px;
+  transition: all 0.22s ease;
+  transform-origin: center;
+}
+.hamburger-btn.is-open .hamburger-bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.hamburger-btn.is-open .hamburger-bar:nth-child(2) {
+  opacity: 0;
+}
+.hamburger-btn.is-open .hamburger-bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ── Wrapper header sticky (riusabile) ── */
+.header-wrap {
+  max-width: 1200px;
+  height: 60px;
+}
+.header-logo-img {
+  object-fit: contain;
+}
+.header-lang-menu {
+  min-width: 140px;
+}
+.header-portal-icon {
+  font-size: 1.1rem;
+}
+.header-mobile-drawer {
+  top: 60px;
+  z-index: 99;
+}
+.header-mobile-link {
+  font-size: 1.1rem;
+}
+.header-mobile-lang-label {
+  letter-spacing: 0.05em;
+}
+
+/* Hamburger / desktop-nav responsive (HeaderClient @media) */
+@media (max-width: 680px) {
+  .desktop-nav { display: none !important; }
+  .hamburger-btn { display: inline-flex !important; flex-direction: column; gap: 5px; }
+}
+@media (min-width: 681px) {
+  .hamburger-btn { display: none !important; }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
    HomeSearch (Sessione 21 Fase 2)
    Hero + searchbar (date/ospiti/cerca) + calendar dropdown + guests popover
    + slider residenze + slider dintorni + lightbox.

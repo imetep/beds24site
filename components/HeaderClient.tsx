@@ -21,33 +21,26 @@ const SLUG_TO_IT: Record<Locale, Record<string, string>> = {
 
 // IT folder → localized slug for target locale
 function itToSlug(itFolder: string, target: Locale): string {
-  // Find the localeSlugs key whose IT value matches
   for (const key in localeSlugs) {
     if (localeSlugs[key].it === itFolder) {
       return localeSlugs[key][target];
     }
   }
-  // foto subsegment
   if (itFolder === 'foto') {
     return target === 'en' ? 'photos' : target === 'de' ? 'fotos' : 'foto';
   }
-  return itFolder; // fallback
+  return itFolder;
 }
 
 function buildLocalizedHref(currentPath: string, currentLocale: Locale, target: Locale): string {
   const segments = currentPath.split('/').filter(Boolean);
   if (segments.length === 0) return `/${target}`;
-  // segments[0] = current locale
   const rest = segments.slice(1);
-  // Translate each segment: reverse to IT, then forward to target
   const translated = rest.map((seg, i) => {
-    // Only translate known slug segments at specific positions
-    // Position 0 (root section) always translated
     if (i === 0) {
       const itFolder = currentLocale === 'it' ? seg : (SLUG_TO_IT[currentLocale][seg] ?? seg);
       return itToSlug(itFolder, target);
     }
-    // Position 2 under residenze: photos/fotos
     if (i === 2 && rest[0] && (rest[0] === 'residenze' || SLUG_TO_IT[currentLocale][rest[0]] === 'residenze')) {
       const itFolder = currentLocale === 'it' ? seg : (SLUG_TO_IT[currentLocale][seg] ?? seg);
       return itToSlug(itFolder, target);
@@ -67,9 +60,9 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
   if (isWizard) {
     return (
       <header className="sticky-top bg-white border-bottom">
-        <div className="container d-flex align-items-center" style={{ maxWidth: 1200, height: 60 }}>
+        <div className="container d-flex align-items-center header-wrap">
           <a href={`/${locale}`} className="d-flex align-items-center text-decoration-none flex-shrink-0">
-            <Image src="/logo.svg" alt="LivingApple" height={34} width={130} style={{ objectFit: 'contain' }} priority unoptimized />
+            <Image src="/logo.svg" alt="LivingApple" height={34} width={130} className="header-logo-img" priority unoptimized />
           </a>
           <a href={`/${locale}/${localeSlugs.residences[locale]}`} className="ms-auto small text-muted text-decoration-none text-nowrap">
             ← {nav.residences}
@@ -82,9 +75,9 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
   return (
     <>
       <header className="sticky-top bg-white border-bottom">
-        <div className="container d-flex align-items-center gap-3" style={{ maxWidth: 1200, height: 60 }}>
+        <div className="container d-flex align-items-center gap-3 header-wrap">
           <a href={`/${locale}`} className="d-flex align-items-center text-decoration-none flex-shrink-0">
-            <Image src="/logo.svg" alt="LivingApple" height={34} width={130} style={{ objectFit: 'contain' }} priority unoptimized />
+            <Image src="/logo.svg" alt="LivingApple" height={34} width={130} className="header-logo-img" priority unoptimized />
           </a>
 
           {/* Nav desktop */}
@@ -105,7 +98,7 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
                 {locale.toUpperCase()}
               </button>
               {langOpen && (
-                <ul className="dropdown-menu dropdown-menu-end show mt-1" style={{ minWidth: 140 }}>
+                <ul className="dropdown-menu dropdown-menu-end show mt-1 header-lang-menu">
                   {locales.map(l => (
                     <li key={l}>
                       <a
@@ -127,7 +120,7 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
               title="Area Ospiti"
               className="text-muted text-decoration-none"
             >
-              <i className="bi bi-lock" style={{ fontSize: '1.1rem' }}></i>
+              <i className="bi bi-lock header-portal-icon"></i>
             </a>
           </nav>
 
@@ -136,11 +129,11 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
             type="button"
             onClick={() => setMenuOpen(o => !o)}
             aria-label="Menu"
-            className="hamburger-btn btn btn-link p-2 ms-auto"
+            className={`hamburger-btn btn btn-link p-2 ms-auto ${menuOpen ? 'is-open' : ''}`}
           >
-            <span style={barStyle(menuOpen, 0)} />
-            <span style={barStyle(menuOpen, 1)} />
-            <span style={barStyle(menuOpen, 2)} />
+            <span className="hamburger-bar" />
+            <span className="hamburger-bar" />
+            <span className="hamburger-bar" />
           </button>
         </div>
       </header>
@@ -148,8 +141,7 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
       {/* Drawer mobile */}
       {menuOpen && (
         <div
-          className="position-fixed start-0 end-0 bottom-0 bg-white d-flex flex-column overflow-auto"
-          style={{ top: 60, zIndex: 99 }}
+          className="position-fixed start-0 end-0 bottom-0 bg-white d-flex flex-column overflow-auto header-mobile-drawer"
           onClick={() => setMenuOpen(false)}
         >
           <div className="px-3 py-2">
@@ -160,7 +152,7 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
               { href: `/${locale}/${localeSlugs.contact[locale]}`, label: nav.contact },
               { href: `/${locale}/guest/portal`, label: 'Area Ospiti', iconClass: 'bi-shield-lock-fill' },
             ].map(({ href, label, iconClass }: { href: string; label: string; iconClass?: string }) => (
-              <a key={href} href={href} className="d-block fw-semibold text-dark text-decoration-none py-3 border-bottom" style={{ fontSize: '1.1rem' }}>
+              <a key={href} href={href} className="d-block fw-semibold text-dark text-decoration-none py-3 border-bottom header-mobile-link">
                 {iconClass && <i className={`bi ${iconClass} me-2`} aria-hidden="true" />}
                 {label}
               </a>
@@ -176,7 +168,7 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
 
           {/* Language selector mobile */}
           <div className="px-3 pt-2">
-            <p className="small text-muted text-uppercase fw-semibold mb-2" style={{ letterSpacing: '0.05em' }}>
+            <p className="small text-muted text-uppercase fw-semibold mb-2 header-mobile-lang-label">
               <i className="bi bi-globe me-1"></i> Lingua
             </p>
             <div className="d-flex gap-2 flex-wrap">
@@ -209,25 +201,6 @@ export default function HeaderClient({ locale, nav, legal }: Props) {
           </div>
         </div>
       )}
-
-      <style>{`
-        @media (max-width: 680px) {
-          .desktop-nav { display: none !important; }
-          .hamburger-btn { display: inline-flex !important; flex-direction: column; gap: 5px; }
-        }
-        @media (min-width: 681px) {
-          .hamburger-btn { display: none !important; }
-        }
-      `}</style>
     </>
   );
-}
-
-function barStyle(open: boolean, index: number): React.CSSProperties {
-  const base: React.CSSProperties = { display: 'block', width: 22, height: 2, background: '#374151', borderRadius: 2, transition: 'all 0.22s ease', transformOrigin: 'center' };
-  if (!open) return base;
-  if (index === 0) return { ...base, transform: 'translateY(7px) rotate(45deg)' };
-  if (index === 1) return { ...base, opacity: 0 };
-  if (index === 2) return { ...base, transform: 'translateY(-7px) rotate(-45deg)' };
-  return base;
 }
