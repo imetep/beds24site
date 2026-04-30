@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
+import { Icon } from '@/components/ui/Icon';
 
 interface Props {
   photos: string[];
@@ -163,7 +164,7 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
 
           {/* Badge foto in basso a destra */}
           <div className="photo-count-badge">
-            <i className="bi bi-camera-fill" aria-hidden="true" />
+            <Icon name="camera-fill" />
             {ui.photoCount.replace('{count}', String(photos.length))}
           </div>
         </div>
@@ -203,7 +204,7 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
           </div>
         ))}
         <div className="photo-count-badge photo-count-badge--prominent">
-          <i className="bi bi-camera-fill" aria-hidden="true" />
+          <Icon name="camera-fill" />
           {photos.length} foto
         </div>
       </div>
@@ -230,7 +231,7 @@ export default function PhotoCarousel({ photos, roomName, slug, locale }: Props)
                 onClick={closeLightbox}
                 className="lightbox-close-btn"
                 aria-label={ui.close}
-              ><i className="bi bi-x-lg" aria-hidden="true" /></button>
+              ><Icon name="x-lg" /></button>
             </div>
           </div>
 
