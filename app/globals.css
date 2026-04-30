@@ -5347,6 +5347,652 @@ body {
   background: var(--color-bg);
 }
 
+/* ──────────────────────────────────────────────────────────────────────────
+   GUEST SECTION SHARED LIBRARY (Sessione 17 Fase 2)
+   Pattern condivisi tra BedSection / DepositSection / CheckinSection /
+   ChangeRequestWizard / WizardCheckin / SelfCheckinPage / StatusCheckin.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* ── Guest section card (riusabile) ── */
+.guest-section {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  border-radius: 16px;
+  padding: var(--space-lg);
+}
+
+/* ── Section header (icon + title + opt. badge a destra) ── */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+.section-header__icon {
+  font-size: var(--text-lg);
+  color: var(--color-primary);
+}
+.section-header__title {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: 700;
+  color: var(--color-text);
+}
+.section-header__badge {
+  margin-left: auto;
+  font-size: var(--text-md);
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+/* ── Status badge (rounded pill colorato per stato deposit/checkin) ── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+.status-badge--pending {
+  background: var(--color-warning-bg);
+  color: var(--color-text-accent);
+}
+.status-badge--approved,
+.status-badge--authorized {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+.status-badge--rejected,
+.status-badge--error {
+  background: var(--color-error-bg);
+  color: var(--color-danger);
+}
+.status-badge--captured,
+.status-badge--info {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+.status-badge--cancelled,
+.status-badge--neutral {
+  background: var(--color-bg-muted);
+  color: var(--color-text-subtle);
+}
+
+/* ── Info box (bg neutro, contenuto descrittivo dentro card) ── */
+.info-box {
+  background: var(--color-bg-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: var(--space-base);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+.info-box--accent {
+  background: var(--color-primary-soft);
+  border-color: var(--color-info-border);
+}
+.info-box__title {
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 var(--space-sm);
+  font-size: var(--text-md);
+}
+.info-box__title--brand {
+  color: var(--color-primary);
+}
+.info-box__list {
+  margin: 0;
+  padding-left: var(--space-base);
+  color: var(--color-text-subtle);
+  line-height: 1.8;
+}
+.info-box__list--brand {
+  color: var(--color-text);
+}
+
+/* ── Bottone CTA arancione (riuso DepositSection / CheckinSection / BedSection) ── */
+.btn-cta-orange {
+  display: block;
+  width: 100%;
+  padding: var(--space-md);
+  background: var(--color-cta);
+  color: var(--color-text);
+  border: none;
+  border-radius: 10px;
+  font-size: var(--text-md);
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  min-height: var(--touch-target);
+}
+.btn-cta-orange:disabled,
+.btn-cta-orange.is-disabled {
+  background: var(--color-bg-muted);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+.btn-cta-orange--inline {
+  display: inline-block;
+  width: auto;
+  padding: var(--space-sm) var(--space-base);
+  font-size: var(--text-base);
+}
+
+/* ── Choice card (cards selezionabili in DepositSection mode='choose') ── */
+.choice-card {
+  text-align: left;
+  background: var(--color-bg-muted);
+  border: 2px solid var(--color-border);
+  border-radius: 14px;
+  padding: var(--space-base);
+  cursor: pointer;
+  font: inherit;
+}
+.choice-card--highlight {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary);
+}
+.choice-card__icon {
+  margin-bottom: var(--space-sm);
+  font-size: 1.75rem;
+  color: var(--color-primary);
+}
+.choice-card__title {
+  font-weight: 700;
+  margin-bottom: var(--space-xs);
+  color: var(--color-text);
+  font-size: var(--text-base);
+}
+.choice-card__sub {
+  font-size: var(--text-sm);
+  color: var(--color-text-subtle);
+  line-height: 1.5;
+}
+
+/* ── Back button (← link "torna indietro") ── */
+.back-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-primary);
+  font-size: var(--text-base);
+  font-weight: 600;
+  margin-bottom: var(--space-md);
+  padding: 0;
+  cursor: pointer;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   BedSection (guest portal — configurazione letti interattiva)
+   ────────────────────────────────────────────────────────────────────────── */
+
+.bed-config-portal__subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-subtle);
+  line-height: 1.6;
+  margin-bottom: var(--space-md);
+}
+.bed-config-portal__rooms {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+@media (max-width: 639px) {
+  .bed-config-portal__rooms {
+    grid-template-columns: 1fr;
+  }
+}
+.bed-config-portal__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+.bed-config-portal__error {
+  font-size: var(--text-sm);
+  color: var(--color-danger);
+}
+.bed-config-portal__hint {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* ── Save button ── */
+.bed-section__save {
+  background: var(--color-primary);
+  color: var(--color-on-dark);
+  border: none;
+  border-radius: 10px;
+  padding: var(--space-sm) var(--space-lg);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  min-height: var(--touch-target);
+}
+.bed-section__save.is-saved {
+  background: var(--color-success);
+}
+.bed-section__save:disabled {
+  background: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+
+/* ── Progress bar ── */
+.bed-progress {
+  margin-bottom: var(--space-base);
+}
+.bed-progress__row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-xs);
+}
+.bed-progress__label {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-subtle);
+}
+.bed-progress__label.is-done {
+  color: var(--color-success);
+  font-weight: 700;
+}
+.bed-progress__pct {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.bed-progress__bar {
+  height: 6px;
+  background: var(--color-border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.bed-progress__fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--color-primary);
+  transition: width 0.3s;
+}
+.bed-progress__fill.is-done {
+  background: var(--color-success);
+}
+
+/* ── Person counter ── */
+.person-counter {
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-bg-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  margin-bottom: var(--space-base);
+}
+.person-counter--low {
+  background: var(--color-warning-bg);
+  border-color: var(--color-cta);
+}
+.person-counter--exact {
+  background: var(--color-success-bg);
+  border-color: var(--color-success-border);
+}
+.person-counter__text {
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--color-text-subtle);
+}
+.person-counter--low .person-counter__text {
+  color: var(--color-text-accent);
+  font-weight: 700;
+}
+.person-counter--exact .person-counter__text {
+  color: var(--color-success);
+  font-weight: 700;
+}
+
+/* ── Crib section ── */
+.crib-section {
+  margin-bottom: var(--space-base);
+  padding: var(--space-base);
+  background: var(--color-bg-muted);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+}
+.crib-section__title {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--text-md);
+  font-weight: 700;
+  color: var(--color-text);
+}
+.crib-section__desc {
+  margin: 0 0 var(--space-sm);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+.crib-section__choices {
+  display: flex;
+  gap: var(--space-xs);
+}
+.crib-section__btn {
+  flex: 1;
+  padding: var(--space-xs) var(--space-xs);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  cursor: pointer;
+  background: var(--color-bg);
+  color: var(--color-text-subtle);
+  transition: all 0.15s;
+  min-height: var(--touch-target);
+}
+.crib-section__btn.is-active {
+  border: 2px solid var(--color-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* ── Room card (camera con chip letti) ── */
+.bed-room-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: var(--space-base);
+  transition: all 0.2s;
+  position: relative;
+}
+.bed-room-card.is-confirmed {
+  background: var(--color-primary-soft);
+  border: 2px solid var(--color-primary);
+}
+.bed-room-card__check {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-pill);
+  background: var(--color-success);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bed-room-card__label {
+  margin: 0 0 var(--space-sm);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+.bed-room-card.is-confirmed .bed-room-card__label {
+  color: var(--color-primary);
+}
+.bed-room-card__beds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+.bed-room-card__chip-pair {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+}
+.bed-room-card__note {
+  margin: var(--space-sm) 0 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+.bed-room-card__hint {
+  margin: 10px 0 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* ── Bed chip (pulsante letto cliccabile) ── */
+.bed-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px var(--space-sm);
+  min-width: 88px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-bg);
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+  font: inherit;
+}
+.bed-chip.is-active {
+  border: 2px solid var(--color-primary);
+  background: var(--color-primary-soft);
+}
+.bed-chip--wide {
+  flex: 1;
+}
+.bed-chip__star {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  background: var(--color-warning-bg);
+  color: var(--color-text-accent);
+  border: 1px solid var(--color-cta);
+  border-radius: 3px;
+  padding: 1px 4px;
+}
+.bed-chip__label {
+  font-size: var(--text-xs);
+  font-weight: 400;
+  color: var(--color-text-muted);
+  text-align: center;
+  line-height: 1.3;
+  max-width: 100px;
+}
+.bed-chip.is-active .bed-chip__label {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+.bed-chip__slots {
+  font-size: 0.65rem;
+  color: var(--color-primary);
+  background: var(--color-bg);
+  border: 1px solid #93C5FD;
+  border-radius: 10px;
+  padding: 1px 6px;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   DepositSection (guest portal — pagamento deposito)
+   ────────────────────────────────────────────────────────────────────────── */
+
+.deposit-section__amount-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+.deposit-section__amount {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-text);
+}
+.deposit-section__description {
+  margin-bottom: var(--space-md);
+  color: var(--color-text-subtle);
+  font-size: var(--text-sm);
+  line-height: 1.65;
+}
+.deposit-section__choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-sm);
+}
+.deposit-section__amount-line {
+  margin-bottom: var(--space-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+.deposit-section__amount-line-label {
+  font-size: var(--text-sm);
+  color: var(--color-text-subtle);
+}
+.deposit-section__amount-line-value {
+  font-size: var(--text-md);
+  font-weight: 800;
+  color: var(--color-text);
+}
+.deposit-section__error {
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  border-radius: 8px;
+  padding: var(--space-sm);
+  color: var(--color-danger);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-md);
+}
+.deposit-section__note {
+  text-align: center;
+  margin: var(--space-sm) 0 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+.deposit-section__createdat {
+  margin: var(--space-md) 0 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+.deposit-section__offline-note {
+  margin: var(--space-md) 0 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   CheckinSection (guest portal — chat host/ospite + status)
+   ────────────────────────────────────────────────────────────────────────── */
+
+.checkin-section__reject {
+  margin-bottom: var(--space-md);
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  border-radius: 10px;
+  padding: 0.9rem var(--space-base);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--color-danger);
+}
+.checkin-section__reject-note {
+  margin: var(--space-sm) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+.checkin-section__messages-title {
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0 0 var(--space-sm);
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
+  letter-spacing: 0.05em;
+}
+.checkin-section__no-messages {
+  font-style: italic;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+.checkin-section__messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  max-height: 280px;
+  overflow-y: auto;
+}
+.checkin-section__msg {
+  max-width: 82%;
+}
+.checkin-section__msg--guest {
+  align-self: flex-end;
+}
+.checkin-section__msg--host {
+  align-self: flex-start;
+}
+.checkin-section__msg-bubble {
+  padding: var(--space-sm) 0.9rem;
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  line-height: 1.5;
+}
+.checkin-section__msg--guest .checkin-section__msg-bubble {
+  background: var(--color-primary-soft);
+  border: 1px solid var(--color-info-border);
+  border-radius: 14px 14px 3px 14px;
+}
+.checkin-section__msg--host .checkin-section__msg-bubble {
+  background: var(--color-bg-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 14px 14px 14px 3px;
+}
+.checkin-section__msg-time {
+  margin: var(--space-xs) 0 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+.checkin-section__msg--guest .checkin-section__msg-time {
+  text-align: right;
+}
+.checkin-section__msg--host .checkin-section__msg-time {
+  text-align: left;
+}
+.checkin-section__send-row {
+  display: flex;
+  gap: var(--space-sm);
+}
+.checkin-section__input {
+  flex: 1;
+  padding: 0.65rem 0.9rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: 9px;
+  font-size: var(--text-base);
+  outline: none;
+  color: var(--color-text);
+  background: var(--color-bg);
+  min-height: var(--touch-target);
+}
+.checkin-section__input:focus-visible {
+  border-color: var(--color-primary);
+}
+.checkin-section__send-btn {
+  padding: 0.65rem 1.1rem;
+  background: var(--color-cta);
+  color: var(--color-text);
+  border: none;
+  border-radius: 9px;
+  font-size: var(--text-base);
+  font-weight: 700;
+  cursor: pointer;
+  min-height: var(--touch-target);
+}
+.checkin-section__send-btn:disabled {
+  background: var(--color-bg-muted);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+.checkin-section__send-error {
+  margin-top: var(--space-xs);
+  margin-bottom: 0;
+  color: var(--color-danger);
+  font-size: var(--text-xs);
+}
+
 /* Layout 2-col Airbnb-style (mobile single col, desktop ≥1024px due colonne):
    - main 680px (riepilogo soggiorno + prezzo + dati ospite)
    - side 480px sticky (consumi/deposito + metodo + CTA) */
