@@ -2,6 +2,7 @@
 import { useState, useRef } from 'react';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
+import { Icon, type IconName } from '@/components/ui/Icon';
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
 interface BookingInfo {
@@ -56,10 +57,10 @@ function Row({ children }: { children: React.ReactNode }) {
 }
 
 // Helper: separatore sezione
-function SectionHeader({ label, icon }: { label: string; icon: string }) {
+function SectionHeader({ label, icon }: { label: string; icon: IconName }) {
   return (
     <div className="section-header section-header--with-border">
-      <i className={`bi ${icon} section-header__icon`} aria-hidden="true" />
+      <Icon name={icon} className="section-header__icon" />
       <span className="section-header__label-up">{label}</span>
     </div>
   );
@@ -230,20 +231,20 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
   if (done) {
     const isEn = locale === 'en';
     const statusUrl = `/it/self-checkin/wizard/status?bookId=${booking!.bookId}`;
-    const steps = isEn ? [
-      { icon: 'bi-envelope-fill',       title: 'Deposit link incoming', text: "You will shortly receive an email with the link to authorize the security deposit. Check your inbox (and spam)." },
-      { icon: 'bi-search',              title: 'Document review',       text: 'We will verify your documents within 24 hours.' },
-      { icon: 'bi-check-circle-fill',   title: 'Approval email',        text: 'You will receive a confirmation email with the outcome of your request.' },
+    const steps: { icon: IconName; title: string; text: string }[] = isEn ? [
+      { icon: 'envelope-fill',       title: 'Deposit link incoming', text: "You will shortly receive an email with the link to authorize the security deposit. Check your inbox (and spam)." },
+      { icon: 'search',              title: 'Document review',       text: 'We will verify your documents within 24 hours.' },
+      { icon: 'check-circle-fill',   title: 'Approval email',        text: 'You will receive a confirmation email with the outcome of your request.' },
     ] : [
-      { icon: 'bi-envelope-fill',       title: 'Link deposito in arrivo', text: "A breve riceverai un'email con il link per autorizzare il deposito cauzionale. Controlla la casella (e lo spam)." },
-      { icon: 'bi-search',              title: 'Verifica documenti',      text: 'Verificheremo i tuoi documenti entro 24 ore.' },
-      { icon: 'bi-check-circle-fill',   title: 'Email di approvazione',   text: "Riceverai una email con l'esito della tua richiesta." },
+      { icon: 'envelope-fill',       title: 'Link deposito in arrivo', text: "A breve riceverai un'email con il link per autorizzare il deposito cauzionale. Controlla la casella (e lo spam)." },
+      { icon: 'search',              title: 'Verifica documenti',      text: 'Verificheremo i tuoi documenti entro 24 ore.' },
+      { icon: 'check-circle-fill',   title: 'Email di approvazione',   text: "Riceverai una email con l'esito della tua richiesta." },
     ];
     return (
       <div className="page-container page-top pb-5">
         <div className="text-center mb-4">
           <div className="checkin-wizard__done-icon">
-            <i className="bi bi-check-circle-fill" aria-hidden="true" />
+            <Icon name="check-circle-fill" />
           </div>
           <h1 className="checkin-wizard__done-title">
             {isEn ? 'Request submitted' : 'Richiesta inviata'}
@@ -261,7 +262,7 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
           {steps.map((s, i) => (
             <div key={i} className="checkin-wizard__steps-row">
               <div className="checkin-wizard__steps-icon">
-                <i className={`bi ${s.icon}`} aria-hidden="true" />
+                <Icon name={s.icon} />
               </div>
               <div>
                 <p className="checkin-wizard__steps-text-title">{s.title}</p>
@@ -306,7 +307,7 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
           {booking ? (<>
             <div className="checkin-wizard__found">
               <p className="checkin-wizard__found-title">
-                <i className="bi bi-check-lg me-1" aria-hidden="true" />
+                <Icon name="check-lg" className="me-1" />
                 {t.foundTitle}
               </p>
               <p className="checkin-wizard__found-line">{t.propLabel}: <strong>{booking.roomName}</strong></p>
@@ -332,7 +333,7 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
           <p className="checkin-wizard__sub">{t.step2Sub}</p>
 
           {/* ── Capogruppo ── */}
-          <SectionHeader label={t.mainGuest} icon="bi-person-fill" />
+          <SectionHeader label={t.mainGuest} icon="person-fill" />
 
           <Row>
             <div className="form-row__half">
@@ -354,7 +355,7 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
               onChange={e => setCapo(c => ({ ...c, email: e.target.value }))} />
             <div className="checkin-wizard__email-note">
               <p className="checkin-wizard__email-note-text">
-                <i className="bi bi-exclamation-triangle-fill me-1" aria-hidden="true" />
+                <Icon name="exclamation-triangle-fill" className="me-1" />
                 {t.emailNote}
               </p>
             </div>
@@ -413,7 +414,7 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
 
           {/* ── Altri ospiti ── */}
           {altri.length > 0 && (
-            <SectionHeader label={t.otherGuests} icon="bi-people-fill" />
+            <SectionHeader label={t.otherGuests} icon="people-fill" />
           )}
 
           {altri.map((a, idx) => (
@@ -493,14 +494,14 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
 
           <div className="checkin-wizard__gdpr-warn">
             <p className="checkin-wizard__gdpr-warn-title">
-              <i className="bi bi-exclamation-triangle-fill me-1" aria-hidden="true" />
+              <Icon name="exclamation-triangle-fill" className="me-1" />
               {t.docWarning}
             </p>
             <p className="checkin-wizard__gdpr-warn-text">{t.gdprNote}</p>
           </div>
 
           {/* Capogruppo docs */}
-          <SectionHeader label={`${capo.lastName} ${capo.firstName}`} icon="bi-person-fill" />
+          <SectionHeader label={`${capo.lastName} ${capo.firstName}`} icon="person-fill" />
           <div className="checkin-wizard__doc-grid">
             {docs.map((doc, idx) => (
               <div key={doc.label} className="checkin-wizard__doc-cell">
@@ -515,7 +516,7 @@ export default function WizardCheckin({ locale }: { locale: Locale }) {
           {/* Altri ospiti docs */}
           {altri.map((a, idx) => (
             <div key={idx}>
-              <SectionHeader label={`${a.lastName} ${a.firstName}`} icon="bi-person-fill" />
+              <SectionHeader label={`${a.lastName} ${a.firstName}`} icon="person-fill" />
               <div className="checkin-wizard__doc-grid">
                 {altriDocs[idx] && (
                   <div className="checkin-wizard__doc-cell">
@@ -611,7 +612,7 @@ function DocSlot({ doc, side, onFile, uploadTxt, uploadingTxt, uploadedTxt }: {
         </div>
       ) : (
         <div className="doc-slot__placeholder">
-          <i className="bi bi-file-earmark-image" aria-hidden="true" />
+          <Icon name="file-earmark-image" />
         </div>
       )}
 
