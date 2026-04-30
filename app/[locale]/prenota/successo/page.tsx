@@ -19,7 +19,7 @@ export default async function SuccessPage({ params }: Props) {
     <main className="prenota-success-main">
       <Suspense fallback={
         <div className="prenota-page-loading">
-          ⏳ Verifica pagamento...
+          <i className="bi bi-hourglass-split" aria-hidden="true" /> Verifica pagamento...
         </div>
       }>
         <SuccessContent locale={locale} />
