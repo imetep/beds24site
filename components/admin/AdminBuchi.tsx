@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { Icon } from '@/components/ui/Icon';
 
 interface Buco {
   roomId:    number;
@@ -48,7 +49,7 @@ function LoginForm({ onLogin }: { onLogin: () => void }) {
     <div className="container" style={{ maxWidth: 360 }}>
       <div className="card shadow-sm mt-5">
         <div className="card-body p-4">
-          <p className="fs-4 fw-bold mb-1"><i className="bi bi-lock-fill me-1"></i> Admin</p>
+          <p className="fs-4 fw-bold mb-1"><Icon name="lock-fill" className="me-1" /> Admin</p>
           <p className="text-muted small mb-3">Pannello buchi</p>
           <input
             type="password"
@@ -141,7 +142,7 @@ export default function AdminBuchi() {
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-2">
         <div>
-          <h1 className="h4 fw-bold mb-0"><i className="bi bi-calendar-x-fill me-1"></i> Buchi</h1>
+          <h1 className="h4 fw-bold mb-0"><Icon name="calendar-x-fill" className="me-1" /> Buchi</h1>
           {data && (
             <p className="small text-muted mb-0">
               {data.totalePrenotazioni} prenotazioni · aggiornato {new Date(data.lastUpdated).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
@@ -157,7 +158,7 @@ export default function AdminBuchi() {
 
       {error && (
         <div className="alert alert-danger py-2 my-3 small">
-          <i className="bi bi-exclamation-circle-fill me-1"></i> {error}
+          <Icon name="exclamation-circle-fill" className="me-1" /> {error}
         </div>
       )}
 
@@ -172,7 +173,7 @@ export default function AdminBuchi() {
           {buchi.length === 0 ? (
             <div className="card mt-3">
               <div className="card-body text-center py-5">
-                <p className="fs-1 mb-2"><i className="bi bi-check-circle-fill text-success"></i></p>
+                <p className="mb-2"><Icon name="check-circle-fill" size={40} className="text-success" /></p>
                 <p className="fs-6 text-success fw-semibold mb-1">Nessun buco trovato</p>
                 <p className="small text-muted mb-0">
                   Non ci sono finestre libere inferiori a 7 notti nei prossimi 12 mesi.
