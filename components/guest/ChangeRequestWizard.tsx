@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { Icon } from '@/components/ui/Icon';
 
 type ChangeType = 'dates' | 'guests' | 'apartment';
 
@@ -68,7 +69,7 @@ export default function ChangeRequestWizard({ locale, t, booking }: Props) {
   if (!open) {
     return (
       <button onClick={() => { reset(); setOpen(true); }} className="change-req__toggle">
-        <i className="bi bi-pencil-fill me-1" aria-hidden="true" />
+        <Icon name="pencil-fill" className="me-1" />
         {tC.btnOpen}
       </button>
     );
@@ -78,11 +79,11 @@ export default function ChangeRequestWizard({ locale, t, booking }: Props) {
     <div className="guest-section">
       <div className="change-req__header">
         <h3 className="section-header__title">
-          <i className="bi bi-pencil-fill me-1" aria-hidden="true" />
+          <Icon name="pencil-fill" className="me-1" />
           {tC.title}
         </h3>
         <button onClick={() => { setOpen(false); reset(); }} className="change-req__close-btn" aria-label="Chiudi">
-          <i className="bi bi-x-lg" aria-hidden="true" />
+          <Icon name="x-lg" />
         </button>
       </div>
 
@@ -92,16 +93,16 @@ export default function ChangeRequestWizard({ locale, t, booking }: Props) {
           <p className="change-req__hint">{tC.step1Hint}</p>
           <div className="change-req__options">
             {([
-              { key: 'dates',     icon: 'bi-calendar-fill', label: tC.optDates     },
-              { key: 'guests',    icon: 'bi-people-fill',   label: tC.optGuests    },
-              { key: 'apartment', icon: 'bi-house-fill',    label: tC.optApartment },
-            ] as { key: ChangeType; icon: string; label: string }[]).map(({ key, icon, label }) => {
+              { key: 'dates',     icon: 'calendar-fill', label: tC.optDates     },
+              { key: 'guests',    icon: 'people-fill',   label: tC.optGuests    },
+              { key: 'apartment', icon: 'house-fill',    label: tC.optApartment },
+            ] as { key: ChangeType; icon: 'calendar-fill' | 'people-fill' | 'house-fill'; label: string }[]).map(({ key, icon, label }) => {
               const active = types.has(key);
               return (
                 <button key={key} onClick={() => toggleType(key)} className={`change-req__option-btn ${active ? 'is-active' : ''}`}>
-                  <i className={`bi ${icon} change-req__option-icon`} aria-hidden="true" />
+                  <Icon name={icon} className="change-req__option-icon" />
                   {label}
-                  {active && <i className="bi bi-check-lg change-req__option-check" aria-hidden="true" />}
+                  {active && <Icon name="check-lg" className="change-req__option-check" />}
                 </button>
               );
             })}
@@ -124,7 +125,7 @@ export default function ChangeRequestWizard({ locale, t, booking }: Props) {
           {types.has('dates') && (
             <div className="change-req__panel">
               <p className="change-req__panel-label">
-                <i className="bi bi-calendar-fill me-1" aria-hidden="true" />
+                <Icon name="calendar-fill" className="me-1" />
                 {tC.optDates}
               </p>
               <div className="change-req__date-grid">
@@ -147,7 +148,7 @@ export default function ChangeRequestWizard({ locale, t, booking }: Props) {
           {types.has('guests') && (
             <div className="change-req__panel">
               <p className="change-req__panel-label">
-                <i className="bi bi-people-fill me-1" aria-hidden="true" />
+                <Icon name="people-fill" className="me-1" />
                 {tC.optGuests}
               </p>
               <div className="change-req__date-grid">
@@ -171,7 +172,7 @@ export default function ChangeRequestWizard({ locale, t, booking }: Props) {
           {types.has('apartment') && (
             <div className="change-req__panel">
               <p className="change-req__panel-label">
-                <i className="bi bi-house-fill me-1" aria-hidden="true" />
+                <Icon name="house-fill" className="me-1" />
                 {tC.optApartment}
               </p>
               <textarea
@@ -213,15 +214,15 @@ export default function ChangeRequestWizard({ locale, t, booking }: Props) {
           <div className="change-req__recap">
             <div><b>#{booking.bookId}</b> — {booking.roomName}</div>
             {types.has('dates') && (
-              <div><i className="bi bi-calendar-fill me-1" aria-hidden="true" />{tC.optDates}: {dates.checkIn} → {dates.checkOut}</div>
+              <div><Icon name="calendar-fill" className="me-1" />{tC.optDates}: {dates.checkIn} → {dates.checkOut}</div>
             )}
             {types.has('guests') && (
-              <div><i className="bi bi-people-fill me-1" aria-hidden="true" />{tC.optGuests}: {guests.numAdult} {tC.labelAdults} · {guests.numChild} {tC.labelChildren}</div>
+              <div><Icon name="people-fill" className="me-1" />{tC.optGuests}: {guests.numAdult} {tC.labelAdults} · {guests.numChild} {tC.labelChildren}</div>
             )}
             {types.has('apartment') && apt && (
-              <div><i className="bi bi-house-fill me-1" aria-hidden="true" />{tC.optApartment}: {apt}</div>
+              <div><Icon name="house-fill" className="me-1" />{tC.optApartment}: {apt}</div>
             )}
-            {notes && <div><i className="bi bi-sticky-fill me-1" aria-hidden="true" />{notes}</div>}
+            {notes && <div><Icon name="sticky-fill" className="me-1" />{notes}</div>}
           </div>
 
           {status === 'error' && (
@@ -246,7 +247,7 @@ export default function ChangeRequestWizard({ locale, t, booking }: Props) {
       {status === 'sent' && (
         <div className="change-req__sent">
           <div className="page-state__icon page-state__icon--xl page-state__icon--success">
-            <i className="bi bi-check-circle-fill" aria-hidden="true" />
+            <Icon name="check-circle-fill" />
           </div>
           <p className="change-req__sent-title">{tC.sentTitle}</p>
           <p className="change-req__sent-sub">{tC.sentSub}</p>
