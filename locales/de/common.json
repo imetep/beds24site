@@ -976,6 +976,40 @@
               }
             }
           ]
+        },
+        {
+          "icon": "bi-car-front-fill",
+          "label": "Auto & Fortbewegung",
+          "items": [
+            {
+              "q": "Ist ein Auto unbedingt erforderlich?",
+              "a": "Ja, ein Auto wird dringend empfohlen — fast unverzichtbar. Die Unterkünfte befinden sich in ländlichen oder Wohngebieten mit Straßen ohne Gehwege. Ohne Auto ist es schwierig, Supermärkte, Strände und die Ortszentren von Minturno und Scauri zu erreichen."
+            },
+            {
+              "q": "Gibt es öffentliche Verkehrsmittel in der Nähe der Unterkunft?",
+              "a": "Nein. Es gibt keine Bushaltestellen im Umkreis von 200-300 Metern um die Unterkünfte. Die umliegenden Straßen sind ländlich oder Wohnstraßen ohne Gehwege: Das Gehen ist nicht sicher, besonders abends oder mit Kindern. Das einzige nützliche öffentliche Verkehrsmittel ist der Zug vom Bahnhof Minturno-Scauri (ca. 2 km entfernt, nicht sicher zu Fuß erreichbar)."
+            },
+            {
+              "q": "Kann ich zu Fuß zum Supermarkt oder zum Strand gehen?",
+              "a": "Nein, das ist nicht sicher möglich. Landstraßen haben keine Gehwege und der Verkehr fließt ohne Fußgängerschutz. Der nächste Supermarkt ist ca. 3-5 Minuten mit dem Auto entfernt; Strände 5-10 Minuten. Das Gehen entlang von Landstraßen wird mit Kleinkindern oder älteren Gästen nicht empfohlen."
+            },
+            {
+              "q": "Wo kann ich ein Auto in der Nähe der Unterkunft mieten?",
+              "a": "Die nächsten Autovermietungen befinden sich in Formia (ca. 15 Minuten entfernt). Wir empfehlen, online vor der Abreise zu buchen und das Auto am Flughafen abzuholen. Einige Agenturen bieten Abholung/Lieferung am Objekt auf Anfrage an."
+            },
+            {
+              "q": "Wie besuche ich Rom und Neapel ohne Auto?",
+              "a": "Rom und Neapel sind mit dem Zug vom Bahnhof Minturno-Scauri erreichbar (ca. 1h40 nach Roma Termini, ca. 60 Minuten nach Napoli Centrale). Um den Bahnhof vom Objekt aus zu erreichen, benötigen Sie ein Auto oder Taxi. Auf Anfrage helfen wir Ihnen, den Transfer zu organisieren."
+            },
+            {
+              "q": "Wie komme ich ohne Auto lokal zurecht?",
+              "a": "Die Optionen ohne Auto sind begrenzt:\n• Taxi: auf Anfrage verfügbar (wir können lokale Nummern bereitstellen)\n• Fahrrad: auf einigen Nebenstraßen möglich, aber ländliche Straßen ohne Gehwege sind nicht immer sicher\nUnsere ruhige Lage bietet ein hervorragendes Preis-Leistungs-Verhältnis, erfordert aber ein Auto für tägliche Fahrten."
+            },
+            {
+              "q": "Bieten Sie einen Transferservice vom Bahnhof an? Was kostet er?",
+              "a": "Ja, auf Anfrage organisieren wir den Transfer vom Bahnhof Minturno-Scauri zur LivingApple-Unterkunft.\nKosten: 40 € hin und zurück.\nZum Buchen schreiben Sie uns mindestens 2 Tage vor der Ankunft über WhatsApp und geben Sie die Zugzeit an."
+            }
+          ]
         }
       ]
     },
