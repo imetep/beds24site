@@ -3,9 +3,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
+import { getTranslations } from '@/lib/i18n';
+import type { Locale } from '@/config/i18n';
 import BookingSidebar from './BookingSidebar';
 import WizardStep1 from './WizardStep1';
 import WizardStep2 from './WizardStep2';
+import Stepper from '@/components/ui/Stepper';
 
 interface Props {
   translations: any;
@@ -157,8 +160,28 @@ export default function Wizard({ translations: t, locale }: Props) {
     );
   }
 
+  // Stepper labels (3 fasi: Scegli · Ospite · Paga). Lo step 3 "Paga" è
+  // sempre future: l'azione di pagamento avviene fuori sito (Stripe Checkout /
+  // PayPal popup) e l'utente atterra su /prenota/successo, non più sul wizard.
+  const tr = getTranslations(locale as Locale);
+  const stepperT = tr.components.wizardStepper;
+  const stepperSteps = [
+    { label: stepperT.stepScegli },
+    { label: stepperT.stepOspite },
+    { label: stepperT.stepPaga },
+  ];
+  // Indietro consentito solo se l'utente è arrivato dalla home (non dai link
+  // ospite, che saltano lo step 1 e non hanno modo di tornarci).
+  const allowGoBack = !isGuestLink && !fromRoom;
+
   return (
     <div className="wizard-container">
+      <Stepper
+        steps={stepperSteps}
+        current={logicalStep}
+        onGoBack={allowGoBack ? setCurrentStep : undefined}
+        ariaLabel={stepperT.ariaLabel}
+      />
       <div className="wizard-container__layout">
 
         <div className={`wizard-container__main${fullWidth ? ' wizard-container__main--full' : ''}`}>
