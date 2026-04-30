@@ -2820,7 +2820,10 @@ body {
   flex-shrink: 0;
 }
 @media (max-width: 767px) {
+  /* Sidebar nascosta + main full-width: il vincolo 540 ha senso solo quando
+     la sidebar è visibile a destra. Senza, sprecava ~1/5 del viewport. */
   .wizard-step2__sidebar { display: none; }
+  .wizard-step2__main    { max-width: none; }
 }
 
 /* Accordion mobile (riepilogo prenotazione collassabile in cima alla form col).
