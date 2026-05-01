@@ -4151,6 +4151,13 @@ body {
 .cta-book--spaced {
   margin-top: var(--space-md);
 }
+/* Modifier per contesti inline (StickyBookingBar): no full-width, padding ridotto */
+.cta-book--inline {
+  display: inline-block;
+  width: auto;
+  padding: 10px 22px;
+  font-size: var(--text-base);
+}
 
 /* ── GuestRow (sub-component stepper adulti/bambini) ── */
 .guest-row {
