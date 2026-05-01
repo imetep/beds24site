@@ -1316,6 +1316,72 @@
       "signSignature": "Podpis",
       "maxLabel": "maks. 15 kg"
     },
+    "condizioni": {
+      "metaTitle": "Ogólne warunki rezerwacji — LivingApple",
+      "metaDescription": "Wszystkie warunki rezerwacji, płatności, anulowania, check-in/out i regulaminu pobytu w domach wakacyjnych LivingApple w Scauri (LT), Włochy.",
+      "h1": "Ogólne warunki rezerwacji",
+      "subtitle": "Wszystkie warunki dotyczące Pani/Pana pobytu w LivingApple",
+      "sections": [
+        { "title": "1. Definicje", "paragraphs": [
+          "W niniejszych „Ogólnych warunkach najmu\" stosuje się następujące definicje:",
+          "**„Klient\"** — osoba dokonująca rezerwacji i korzystająca z usług oraz nieruchomości oferowanych przez LivingApple;",
+          "**„Rezerwacja\"** — wniosek Klienta o wynajem apartamentu na określony okres;",
+          "**„Propozycja umowy\"** — komunikat LivingApple potwierdzający dostępność, zawierający szczegóły oferty i prośbę o wpłatę zaliczki;",
+          "**„List potwierdzający\"** — potwierdzenie otrzymania zaliczki z kodem potwierdzającym rezerwację;",
+          "**„Umowa najmu\"** — warunki usługi zawarte między LivingApple a klientem."
+        ] },
+        { "title": "2. Rezerwacja i zawarcie umowy", "paragraphs": [
+          "Rezerwacja jest uważana za sfinalizowaną w momencie, gdy Klient otrzyma List potwierdzający wysłany przez LivingApple natychmiast po otrzymaniu zaliczki. Do Umowy najmu dołączony jest formularz listy gości, który należy wypełnić, podpisać i jak najszybciej odesłać do LivingApple."
+        ] },
+        { "title": "3. Zaliczka, płatność i kaucja", "paragraphs": [
+          "Zaliczka wynosi 30% czynszu (minimum €150,00) i może być opłacona przelewem bankowym, kartą kredytową (+2,5%) lub PayPal (+3,4%). Musi wpłynąć w ciągu 7 dni od powiadomienia o dostępności (3 dni w przypadku płatności online).",
+          "Pozostała kwota i kaucja muszą być opłacone gotówką lub autoryzacją wstępną karty kredytowej przy odbiorze kluczy."
+        ] },
+        { "title": "4. Anulowanie rezerwacji", "paragraphs": [
+          "Potwierdzona rezerwacja nie może być anulowana ani zmieniona. Każda prośba o anulowanie musi zostać przekazana e-mailem. W przypadku cen promocyjnych lub okresów świątecznych każde anulowanie wiąże się z koniecznością uiszczenia 100% wartości rezerwacji."
+        ], "bullets": [
+          "**60+ dni przed:** 50% zaliczki (min. €150,00)",
+          "**59–15 dni przed:** pełna zaliczka + 25% pozostałej należności",
+          "**14–01 dni przed:** pełna pozostała należność"
+        ] },
+        { "title": "5. Przyjazd i wyjazd", "paragraphs": [
+          "Szczegóły przyjazdu należy przesłać e-mailem co najmniej 3 dni przed datą przyjazdu. Check-in odbywa się między godz. 17:00 a 20:00. Spóźniony przyjazd:"
+        ], "bullets": [
+          "€30,00 między 20:00 a 22:00",
+          "€50,00 między 22:00 a 24:00"
+        ], "paragraphsAfter": [
+          "Check-in po północy i check-out przed godz. 08:00 nie są możliwe. Wszyscy goście muszą okazać dokumenty tożsamości po przyjeździe."
+        ] },
+        { "title": "6. Wyposażenie apartamentu", "paragraphs": [
+          "Wszystkie apartamenty są w pełni umeblowane i wyposażone w kuchenkę gazową, lodówkę, naczynia kuchenne, ciepłą i zimną wodę oraz prąd 220V. Na każde łóżko przypadają koc i poduszka. Pościel i ręczniki można wypożyczyć na życzenie."
+        ] },
+        { "title": "7. Wyjazd", "paragraphs": [
+          "Apartament należy opuścić między godz. 07:00 a 10:00. Powinien być wolny od śmieci, z czystymi półkami, umytymi naczyniami, pustą lodówką z otwartymi drzwiami. Meble nie mogą być przestawiane ani wynoszone na zewnątrz."
+        ] },
+        { "title": "8. Regulamin pobytu", "paragraphs": [
+          "Zabrania się przyjmowania większej liczby gości niż liczba dostępnych łóżek. Dzieci powyżej 24 miesięcy są traktowane jak dorośli. Zabrania się wystawiania mebli na zewnątrz, zostawiania otwartych markiz podczas nieobecności oraz używania grilla na drewno.",
+          "Goście zobowiązani są do przestrzegania ciszy, szczególnie w godzinach popołudniowych i nocnych."
+        ] },
+        { "title": "9. Strefy zewnętrzne i piknikowe", "paragraphs": [
+          "Strefa piknikowa jest dostępna w godzinach 11:00–24:00. Dzieci muszą być pod opieką. Szkło, zwierzęta, rowery i deskorolki są niedozwolone. Liczba gości jest ograniczona do liczby osób wskazanej w umowie."
+        ] },
+        { "title": "10. Basen", "paragraphs": [
+          "Basen jest przeznaczony wyłącznie dla gości LivingApple przy Via Tore. Goście LivingApple Beach **nie mają dostępu do basenu**. Czynny od 09:00 do 19:00. Dzieci poniżej 12 lat muszą być pod opieką. Skakanie i szklane pojemniki są zabronione."
+        ] },
+        { "title": "11. Kary", "paragraphs": [
+          "Niestosowanie się do zasad opisanych w punktach 7 i 8 może skutkować karami od €10,00 do €500,00 oraz dopłatami do kosztów końcowego sprzątania."
+        ] },
+        { "title": "12. Kaucja", "paragraphs": [
+          "Jako gwarancja przestrzegania wszystkich zasad, przy wydaniu kluczy pobierana jest kaucja, której wysokość zależy od zarezerwowanego apartamentu. Kaucja jest zwracana po sprawdzeniu stanu apartamentu."
+        ] },
+        { "title": "13. Odpowiedzialność", "paragraphs": [
+          "LivingApple nie ponosi odpowiedzialności za uszkodzenia, obrażenia, zagubienia, kradzieże, opóźnienia ani żadne inne niedogodności. Wszelkie spory prawne podlegają wyłącznej jurysdykcji Sądu w Cassino (FR), Włochy."
+        ] },
+        { "title": "14. Akceptacja", "paragraphs": [
+          "Dokonując rezerwacji, najemca wyraźnie akceptuje wszystkie warunki określone w niniejszym dokumencie."
+        ] }
+      ]
+    },
     "trattamentoDati": {
       "metaTitle": "Informacja o przetwarzaniu danych — LivingApple",
       "metaDescription": "Informacja zgodnie z art. 13 rozporządzenia UE 679/2016 (RODO) — cele przetwarzania, przechowywanie, prawa osoby, której dane dotyczą.",
