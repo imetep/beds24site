@@ -156,7 +156,7 @@ export default function StickyBookingBar({ roomId, locale, roomName }: Props) {
         <button
           type="button"
           onClick={handleCta}
-          className="btn btn-warning fw-bold text-white flex-shrink-0 px-4 text-nowrap"
+          className="cta-book cta-book--inline flex-shrink-0 text-nowrap"
         >
           {ctaLabel}
         </button>
