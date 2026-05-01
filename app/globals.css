@@ -6808,7 +6808,7 @@ body {
 .utenze__pill {
   background: var(--color-bg);
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: var(--space-md);
   text-align: center;
 }
@@ -6826,13 +6826,13 @@ body {
 .utenze__pill-text {
   margin: 0;
   font-size: var(--text-sm);
-  color: #4b5563;
+  color: var(--color-text-subtle);
   line-height: 1.55;
 }
 .utenze__chapter {
   background: var(--color-bg);
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: var(--space-md);
   margin-bottom: var(--space-base);
 }
@@ -6845,7 +6845,7 @@ body {
 .utenze__list {
   margin: 0;
   padding-left: var(--space-base);
-  color: #4b5563;
+  color: var(--color-text-subtle);
   line-height: 1.7;
 }
 .utenze__rates-grid {
@@ -6861,39 +6861,39 @@ body {
   flex: 1;
 }
 .utenze__season-btn--winter {
-  background: #E6F1FB;
-  color: #0C447C;
+  background: var(--color-info-bg);
+  color: var(--color-primary-dark);
 }
 .utenze__season-btn--summer {
-  background: #FAEEDA;
-  color: #633806;
+  background: var(--color-accent-soft);
+  color: var(--color-accent-text);
 }
 .utenze__season-btn--inactive {
   background: var(--color-bg);
   color: var(--color-text-muted);
 }
 .utenze__cost-box {
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: var(--space-md);
   margin-bottom: var(--space-md);
   border: 1px solid;
 }
 .utenze__cost-box--winter {
-  background: #FAEEDA;
-  border-color: #FDE68A;
+  background: var(--color-accent-soft);
+  border-color: var(--color-warning-border);
 }
 .utenze__cost-box--summer {
-  background: #FEF9C3;
-  border-color: #FDE047;
+  background: var(--color-warning-bg);
+  border-color: var(--color-warning);
 }
 .utenze__cost-label--winter {
-  color: #633806;
+  color: var(--color-accent-text);
 }
 .utenze__cost-label--summer {
   color: var(--color-warning-text);
 }
 .utenze__cost-text--winter {
-  color: #854F0B;
+  color: var(--color-accent-text);
 }
 .utenze__cost-text--summer {
   color: var(--color-warning-text);
@@ -6920,7 +6920,7 @@ body {
 .utenze__acc-chevron {
   flex-shrink: 0;
   transition: transform 260ms ease;
-  stroke: #9ca3af;
+  stroke: var(--color-text-disabled);
 }
 .utenze__acc-item.is-open .utenze__acc-chevron {
   transform: rotate(180deg);
@@ -6928,7 +6928,7 @@ body {
 .utenze__acc-body {
   padding: 0 var(--space-md);
   font-size: var(--text-sm);
-  color: #4b5563;
+  color: var(--color-text-subtle);
   overflow: hidden;
   max-height: 0;
   transition: max-height 280ms ease;
