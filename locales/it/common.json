@@ -1288,6 +1288,47 @@
       "honestTitle": "Il consiglio onesto",
       "honestText": "Se preferisci non pensare ai consumi durante le vacanze — e lo capiamo perfettamente — ti consigliamo onestamente di cercare strutture con energia inclusa nel prezzo. È una scelta assolutamente valida. Non è una rinuncia: è semplicemente lo strumento giusto per le tue esigenze.",
       "honestCaution": "Attenzione: alcune strutture con \"consumi inclusi\" a prezzi molto bassi presentano sistemi di riscaldamento e raffreddamento non adeguati agli standard nord-europei, massimali di consumo oltre i quali scatta un supplemento, oppure forniture elettriche insufficienti — contatori che scattano e ti lasciano senza corrente.\n\nPrima di prenotare, chiedi sempre:\n• \"La struttura raggiunge 22°C in gennaio?\"\n• \"C'è un tetto ai consumi inclusi?\"\n• \"La potenza del contatore è sufficiente per tutti i condizionatori accesi contemporaneamente, più forno, asciugacapelli, lavatrice, lavastoviglie e microonde?\""
+    },
+    "animali": {
+      "metaTitle": "Animali domestici — Regolamento | LivingApple",
+      "metaDescription": "Regolamento completo per l'accettazione degli animali domestici nelle strutture LivingApple. Cani ammessi sotto i 15 kg con deposito cauzionale obbligatorio.",
+      "heroTitle": "I vostri amici a 4 zampe sono benvenuti",
+      "heroSub": "Abbiamo pensato a tutto per rendere il soggiorno piacevole per voi e per loro. Leggi le regole qui sotto — ci eviteremo incomprensioni.",
+      "legalNote": "In ottemperanza alla Legge 281/1991, all'art. 83 del D.P.R. 320/1954 e alla L.R. Lazio n. 34/1997.",
+      "s1Title": "Quali animali sono ammessi",
+      "s1Items": [
+        "Massimo 1 animale domestico per appartamento.",
+        "Cani di piccola e media taglia — peso massimo 15 kg (eccezione per cani guida).",
+        "L'animale deve essere identificato con microchip e iscritto all'anagrafe canina.",
+        "Il libretto sanitario deve essere portato in vacanza con indicazione del microchip e delle vaccinazioni aggiornate.",
+        "La struttura si riserva di verificare la documentazione."
+      ],
+      "s2Title": "Comportamento e responsabilità",
+      "s2Items": [
+        "L'animale deve essere al guinzaglio o in trasportino nelle aree comuni della struttura.",
+        "È vietato lasciare l'animale incustodito in casa.",
+        "È severamente vietato far salire l'animale sul letto o sul divano.",
+        "L'animale deve essere abituato alla vita in casa e a un regime di pulizia.",
+        "La struttura può richiedere il rimborso delle spese di pulizia straordinaria se necessarie.",
+        "Il proprietario è responsabile per qualsiasi danno materiale o fisico causato dall'animale.",
+        "In caso di comportamento rumoroso persistente, la direzione può richiedere di lasciare la struttura. Il proprietario accetta questa condizione firmando il regolamento."
+      ],
+      "s3Title": "Deposito cauzionale",
+      "s3Text": "Il deposito cauzionale è obbligatorio per gli ospiti con animali. Viene versato esclusivamente con Carta di Credito (no Debit Card, no PostePay) e restituito integralmente entro 48 ore dalla partenza in assenza di danni.",
+      "s3Link": "Come funziona il deposito →",
+      "ratesTitle": "Supplemento animali",
+      "ratesNote": "Il supplemento viene calcolato sulla durata del soggiorno e pagato al check-in.",
+      "rate1to3": "€ 30,00 / notte",
+      "rate4to7": "€ 20,00 / notte",
+      "rate8plus": "€ 10,00 / notte",
+      "nightsLabel": "Durata soggiorno",
+      "priceLabel": "Supplemento giornaliero",
+      "nightsUnit": "notti",
+      "signTitle": "Accettazione del regolamento",
+      "signText": "Al momento del check-in sarà richiesta la firma del presente regolamento. La firma costituisce accettazione di tutte le condizioni indicate.",
+      "signDate": "Data",
+      "signSignature": "Firma",
+      "maxLabel": "max 15 kg"
     }
   }
 }
