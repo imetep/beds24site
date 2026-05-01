@@ -21,71 +21,6 @@
     "book": "Buchen",
     "contact": "Kontakt"
   },
-  "wizard": {
-    "step1": {
-      "title": "Wie viele Personen?",
-      "adults": "Erwachsene",
-      "adultsAge": "18 Jahre oder älter",
-      "children": "Kinder",
-      "childrenAge": "0–17 Jahre",
-      "next": "Weiter"
-    },
-    "step2": {
-      "title": "Wann möchten Sie kommen?",
-      "checkin": "Anreise",
-      "checkout": "Abreise",
-      "next": "Weiter",
-      "back": "Zurück"
-    },
-    "step3": {
-      "title": "Welche Unterkunft bevorzugen Sie?",
-      "apartment": "Apartment",
-      "house": "Haus",
-      "villa": "Villa",
-      "next": "Weiter",
-      "back": "Zurück"
-    },
-    "step4": {
-      "title": "Wo möchten Sie übernachten?",
-      "campagna": "LivingApple — Landlage",
-      "mare": "LivingApple Beach — Meeresnähe",
-      "next": "Weiter",
-      "back": "Zurück"
-    },
-    "step5": {
-      "title": "Welche Extras benötigen Sie?",
-      "subtitle": "Wählen Sie optionale Zusatzleistungen.",
-      "next": "Weiter",
-      "back": "Zurück"
-    },
-    "step6": {
-      "title": "Zusammenfassung und Endpreis",
-      "checkin": "Anreise",
-      "checkout": "Abreise",
-      "guests": "Gäste",
-      "adults": "Erwachsene",
-      "children": "Kinder",
-      "total": "Gesamt",
-      "voucher_placeholder": "Aktionscode (optional)",
-      "apply_voucher": "Anwenden",
-      "guest_firstname": "Vorname",
-      "guest_lastname": "Nachname",
-      "guest_email": "E-Mail",
-      "guest_phone": "Telefon",
-      "guest_country": "Land",
-      "guest_arrival": "Voraussichtliche Ankunftszeit",
-      "guest_notes": "Sonderwünsche",
-      "confirm": "Jetzt buchen",
-      "back": "Zurück",
-      "terms": "Mit der Buchung stimmen Sie unseren",
-      "terms_link": "Allgemeinen Geschäftsbedingungen zu"
-    },
-    "progress": "Schritt {current} von {total}",
-    "loading": "Verfügbarkeit wird geladen...",
-    "no_availability": "Keine Verfügbarkeit für die gewählten Daten.",
-    "booking_success": "Buchung bestätigt! Sie erhalten in Kürze eine Bestätigungs-E-Mail.",
-    "booking_error": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie uns per WhatsApp."
-  },
   "footer": {
     "company": "LivingApple",
     "address": "Traversa Carmen Rosati, 04028 Scauri (LT), Italien",
@@ -1217,7 +1152,10 @@
       "carNoteTitle": "Ein Auto ist unverzichtbar",
       "carNote": "Vor Ort ist ein Auto kein Luxus — es ist notwendig. Supermärkte, Strände und Restaurants sind von der Unterkunft aus nicht zu Fuß erreichbar: Die ländlichen Straßen haben keine Bürgersteige und das Gehen ist gefährlich. Ein Auto gibt Ihnen völlige Freiheit, die Küste, das Hinterland und die Dörfer der Aurunci-Berge zu erkunden.",
       "byCar": "mit dem Auto",
-      "byPlane": "per Flugzeug"
+      "byPlane": "per Flugzeug",
+      "ctaTitle": "Bereit für Scauri?",
+      "ctaSub": "Wählen Sie Ihre Daten und Wohnung, buchen Sie direkt bei uns.",
+      "ctaBtn": "Jetzt buchen"
     },
     "homeSearch": {
       "ui": {
