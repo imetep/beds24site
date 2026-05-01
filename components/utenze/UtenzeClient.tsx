@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
+import { Icon } from '@/components/ui/Icon';
 
 type Season = 'winter' | 'summer';
 
@@ -80,14 +81,14 @@ export default function UtenzeClient({ locale }: Props) {
             onClick={() => setSeason('winter')}
             className={`btn utenze__season-btn ${isWinter ? 'fw-semibold utenze__season-btn--winter' : 'border utenze__season-btn--inactive'}`}
           >
-            <i className="bi bi-snow me-1" aria-hidden="true" />
+            <Icon name="snow" className="me-1" />
             {t.seasonWinter}
           </button>
           <button
             onClick={() => setSeason('summer')}
             className={`btn utenze__season-btn ${!isWinter ? 'fw-semibold utenze__season-btn--summer' : 'border utenze__season-btn--inactive'}`}
           >
-            <i className="bi bi-sun-fill me-1" aria-hidden="true" />
+            <Icon name="sun-fill" className="me-1" />
             {t.seasonSummer}
           </button>
         </div>
@@ -151,7 +152,7 @@ export default function UtenzeClient({ locale }: Props) {
         <p className="text-secondary mb-3 utenze__honest-text">{t.honestText}</p>
         <div className="bg-light border rounded p-3">
           <p className="small text-secondary mb-0 utenze__honest-caution">
-            <i className="bi bi-exclamation-triangle-fill me-1" aria-hidden="true" />
+            <Icon name="exclamation-triangle-fill" className="me-1" />
             {t.honestCaution.split('\n').map((line, i) => (
               <span key={i}>{line}{i < t.honestCaution.split('\n').length - 1 && <br />}</span>
             ))}
