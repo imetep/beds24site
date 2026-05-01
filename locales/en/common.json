@@ -1316,6 +1316,28 @@
       "signSignature": "Signature",
       "maxLabel": "max 15 kg"
     },
+    "trattamentoDati": {
+      "metaTitle": "Data Processing Notice — LivingApple",
+      "metaDescription": "Notice pursuant to Art. 13 EU Regulation 679/2016 (GDPR) — purposes of processing, retention, data subject rights.",
+      "h1": "Data Processing Notice",
+      "infoBox": "Notice pursuant to Art. 13 EU Regulation 679/2016 (GDPR)",
+      "intro": "Pursuant to Art. 13 of EU Regulation 679/2016 (GDPR), Livingapple srl, registered at Traversa Carmen Rosati 2, Scauri di Minturno (LT), Italy, informs you that your personal data will be collected for the following purposes:",
+      "purposeA": "A — to respond to your enquiries",
+      "purposeB": "B — to send informational and/or promotional communications",
+      "conferimento": "Providing data for purpose A is required; without it we cannot send you the requested information. Providing data for purpose B is optional.",
+      "baseGiuridica": "The legal basis for processing is your request and your freely given consent. You may withdraw consent at any time without affecting the lawfulness of prior processing.",
+      "h2Storage": "Data retention",
+      "storage": "Your data will be retained for as long as needed to respond to your requests (purpose A). For purpose B, data will be retained for 24 months.",
+      "h2Communication": "Disclosure and dissemination",
+      "communication": "Data will not be disclosed or shared with third parties except as required by law.",
+      "h2Rights": "Your rights",
+      "rightsIntro": "You may exercise your rights under EU Regulation 679/2016 by writing to livingapple@gmail.com. You may specifically request:",
+      "right1": "information on the origin and purposes of processing",
+      "right2": "erasure, anonymisation or blocking of unlawfully processed data",
+      "right3": "updating, rectification or integration of data",
+      "right4": "to object to processing on legitimate grounds",
+      "rightsFooter": "You have the right to data portability and to lodge a complaint with a supervisory authority."
+    },
     "privacy": {
       "metaTitle": "Privacy Policy — LivingApple",
       "metaDescription": "Privacy notice on the processing of personal data pursuant to the Italian Privacy Code and the GDPR. How Livingapple S.r.l. processes data collected via the website.",
