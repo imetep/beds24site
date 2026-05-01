@@ -6966,12 +6966,12 @@ body {
 .animali__rule-card {
   background: var(--color-bg);
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: var(--space-base);
   text-align: center;
 }
 .animali__rule-icon {
-  font-size: 32px;
+  font-size: var(--space-xl);
   color: var(--color-primary);
   display: block;
   margin-bottom: var(--space-sm);
@@ -6983,7 +6983,7 @@ body {
 .animali__rule-text {
   margin: 0;
   font-size: var(--text-sm);
-  color: #4b5563;
+  color: var(--color-text-subtle);
 }
 .animali__hero-title {
   font-size: clamp(1.5rem, 4vw, 2.2rem);
