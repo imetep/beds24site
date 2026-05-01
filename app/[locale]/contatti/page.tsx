@@ -26,14 +26,10 @@ export default async function ContattiPage({ params }: Props) {
   const { locale } = await params;
   if (!isValidLocale(locale)) notFound();
 
-  const bookSlugs: Record<Locale, string> = {
-    it: 'prenota', en: 'book', de: 'buchen', pl: 'rezerwuj',
-  };
-
   return (
     <ContattiClient
       locale={locale}
-      bookHref={`/${locale}/${bookSlugs[locale]}`}
+      bookHref={`/${locale}`}
     />
   );
 }
