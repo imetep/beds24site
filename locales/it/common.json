@@ -1334,6 +1334,48 @@
       "signSignature": "Firma",
       "maxLabel": "max 15 kg"
     },
+    "selfCheckin": {
+      "metaTitle": "Check-in online — LivingApple",
+      "metaDescription": "Come funziona il check-in online nelle strutture LivingApple. Procedura obbligatoria ai sensi dell'art. 109 TULPS. 5 passi, 10 minuti.",
+      "title": "Check-in online",
+      "subtitle": "Come funziona la procedura di pre-check-in obbligatoria per il self check-in.",
+      "whyTitle": "Perché è obbligatorio?",
+      "whyText": "In Italia, l'art. 109 del Testo Unico delle Leggi di Pubblica Sicurezza (R.D. 773/1931) impone alle strutture ricettive di identificare visivamente ogni ospite e comunicare i dati alle autorità di pubblica sicurezza. Non è una scelta del gestore: è un obbligo di legge che si applica a tutte le strutture ricettive italiane, incluse quelle extralberghiere.",
+      "whyBadge": "Art. 109 TULPS — R.D. 773/1931",
+      "legalNote": "La sentenza del Consiglio di Stato n. 05732/2025 del 21 novembre 2025 ha confermato che l'identificazione in presenza (de visu) rimane obbligatoria. Il self check-in è consentito solo come procedura ibrida: raccolta documenti online + videochiamata di verifica al momento dell'accesso fisico.",
+      "stepsTitle": "Come funziona — 5 passi",
+      "steps": [
+        { "n": "1", "title": "Inserisci il numero di prenotazione", "text": "Il tuo numero di prenotazione Beds24 è indicato nell'email di conferma che hai ricevuto al momento della prenotazione." },
+        { "n": "2", "title": "Compila i dati personali", "text": "Nome, cognome, data di nascita, nazionalità e numero di documento per ogni ospite adulto. Per i minori è sufficiente indicare il numero e l'età." },
+        { "n": "3", "title": "Carica i documenti di identità", "text": "Fotografia chiara di fronte e retro del documento (passaporto, carta d'identità o patente). Il documento deve essere leggibile, non modificato e senza parti oscurate." },
+        { "n": "4", "title": "Firma e invia", "text": "Dichiari di aver letto le condizioni, acconsenti al trattamento dati (art. 109 TULPS e GDPR) e invii la richiesta. Riceverai un riferimento univoco della tua richiesta." },
+        { "n": "5", "title": "Ricevi il guidebook", "text": "Dopo la nostra verifica e approvazione, riceverai via email il link al guidebook della struttura con tutti i dettagli per il tuo arrivo. Al momento dell'accesso fisico effettueremo una breve videochiamata di verifica come previsto dalla legge." }
+      ],
+      "needTitle": "Cosa ti serve",
+      "needs": [
+        "Documento di identità valido (passaporto, carta d'identità o patente) per ogni adulto",
+        "Smartphone o computer con fotocamera per fotografare il documento",
+        "Carta di credito (non debit card, non PostePay) per il deposito cauzionale",
+        "Circa 5–10 minuti di tempo"
+      ],
+      "timeNote": "La procedura va completata almeno 72 ore prima dell'arrivo.",
+      "faqTitle": "Domande frequenti",
+      "faqs": [
+        { "q": "I miei dati sono al sicuro?", "a": "Sì. I documenti vengono caricati su Cloudinary in una cartella privata non indicizzabile. I dati personali sono trattati ai sensi del Regolamento UE 2016/679 (GDPR) e trasmessi alle autorità italiane come previsto dall'art. 109 TULPS. Non vengono condivisi con terze parti per finalità commerciali." },
+        { "q": "Cosa succede se il documento non viene accettato?", "a": "Riceverai una email con la motivazione del rifiuto e l'invito a ripetere la procedura. Documenti con volti oscurati, dati coperti o immagini modificate vengono rifiutati automaticamente." },
+        { "q": "Posso completare la procedura per conto di altri ospiti?", "a": "Sì, il titolare della prenotazione può compilare i dati di tutti gli ospiti adulti del gruppo. Ogni adulto però deve essere titolare di un documento valido." },
+        { "q": "Il deposito cauzionale viene addebitato subito?", "a": "No. Viene effettuata una pre-autorizzazione (blocco temporaneo) sulla carta di credito, non un addebito reale. Se non ci sono danni, il blocco viene rilasciato automaticamente entro 7–30 giorni dalla partenza a seconda del circuito (Visa/Mastercard/Amex).", "linkLabel": "Come funziona il deposito →" }
+      ],
+      "ctaTitle": "Pronto per il check-in?",
+      "ctaText": "Hai ricevuto il link di check-in nella email di conferma della prenotazione. Se non lo trovi, contattaci via WhatsApp.",
+      "ctaBtn": "Avvia il check-in online",
+      "ctaNote": "Ti serve il numero di prenotazione — lo trovi nell'email di conferma.",
+      "sourcesTitle": "Fonti e approfondimenti",
+      "sourcesSubtitle": "La normativa è documentata da testate giornalistiche internazionali e italiane. Non si tratta di una scelta del gestore.",
+      "sourcesIntl": "Stampa internazionale",
+      "sourcesIt": "Stampa italiana",
+      "contactQuestion": "Hai domande? Contattaci →"
+    },
     "condizioni": {
       "metaTitle": "Condizioni generali di vendita — LivingApple",
       "metaDescription": "Tutte le condizioni di prenotazione, pagamento, cancellazione, check-in/out, regole di soggiorno per le case vacanze LivingApple a Scauri (LT).",
