@@ -212,7 +212,7 @@ export default function BookingPanel({ roomId, locale = 'it', maxPeople }: Props
           <button
             onClick={handlePrenota}
             disabled={!pickedOffer}
-            className="booking-panel__cta"
+            className="cta-book"
           >
             {t.prenota}
           </button>
