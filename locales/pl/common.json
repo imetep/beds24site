@@ -1316,6 +1316,48 @@
       "signSignature": "Podpis",
       "maxLabel": "maks. 15 kg"
     },
+    "selfCheckin": {
+      "metaTitle": "Check-in online — LivingApple",
+      "metaDescription": "Jak działa check-in online w obiektach LivingApple. Obowiązkowa procedura zgodnie z art. 109 TULPS. 5 kroków, 10 minut.",
+      "title": "Check-in online",
+      "subtitle": "Jak przebiega obowiązkowa procedura pre-check-in dla samodzielnego zameldowania.",
+      "whyTitle": "Dlaczego jest obowiązkowy?",
+      "whyText": "We Włoszech art. 109 Ujednoliconego tekstu ustaw o bezpieczeństwie publicznym (R.D. 773/1931) zobowiązuje wszystkie obiekty noclegowe do osobistej identyfikacji każdego gościa i przekazania danych organom bezpieczeństwa publicznego. To nie jest decyzja zarządcy — to obowiązek prawny obowiązujący wszystkie włoskie obiekty noclegowe, w tym pozahotelowe.",
+      "whyBadge": "Art. 109 TULPS — R.D. 773/1931",
+      "legalNote": "Wyrok Rady Stanu nr 05732/2025 z 21 listopada 2025 r. potwierdził, że osobista identyfikacja (de visu) pozostaje obowiązkowa. Self check-in jest dozwolony wyłącznie jako procedura hybrydowa: zbieranie dokumentów online + rozmowa wideo w celu weryfikacji przy fizycznym dostępie.",
+      "stepsTitle": "Jak to działa — 5 kroków",
+      "steps": [
+        { "n": "1", "title": "Wpisz numer rezerwacji", "text": "Twój numer rezerwacji Beds24 jest podany w e-mailu potwierdzającym rezerwację." },
+        { "n": "2", "title": "Wypełnij dane osobowe", "text": "Imię, nazwisko, data urodzenia, obywatelstwo i numer dokumentu dla każdego dorosłego gościa. Dla nieletnich wystarczy podać liczbę i wiek." },
+        { "n": "3", "title": "Prześlij dokumenty tożsamości", "text": "Wyraźne zdjęcie przedniej i tylnej strony dokumentu (paszport, dowód osobisty lub prawo jazdy). Dokument musi być czytelny, niezmieniony i bez zakrytych elementów." },
+        { "n": "4", "title": "Podpisz i wyślij", "text": "Oświadczasz, że zapoznałeś się z warunkami, wyrażasz zgodę na przetwarzanie danych (art. 109 TULPS i RODO) i wysyłasz wniosek. Otrzymasz unikalny numer referencyjny." },
+        { "n": "5", "title": "Otrzymaj przewodnik", "text": "Po naszej weryfikacji i zatwierdzeniu otrzymasz e-mailem link do przewodnika po obiekcie z wszystkimi szczegółami przyjazdu. Przy fizycznym wejściu przeprowadzimy krótką rozmowę wideo w celu weryfikacji zgodnie z wymogami prawa." }
+      ],
+      "needTitle": "Czego potrzebujesz",
+      "needs": [
+        "Ważny dokument tożsamości (paszport, dowód osobisty lub prawo jazdy) dla każdego dorosłego",
+        "Smartfon lub komputer z aparatem do sfotografowania dokumentu",
+        "Karta kredytowa (nie debetowa, nie przedpłacona) na kaucję",
+        "Około 5–10 minut czasu"
+      ],
+      "timeNote": "Procedurę należy ukończyć co najmniej 72 godziny przed przyjazdem.",
+      "faqTitle": "Często zadawane pytania",
+      "faqs": [
+        { "q": "Czy moje dane są bezpieczne?", "a": "Tak. Dokumenty są przesyłane do Cloudinary w prywatnym, nieindeksowanym folderze. Dane osobowe są przetwarzane zgodnie z Rozporządzeniem UE 2016/679 (RODO) i przekazywane władzom włoskim zgodnie z art. 109 TULPS. Nie są udostępniane stronom trzecim w celach komercyjnych." },
+        { "q": "Co się stanie, jeśli dokument nie zostanie zaakceptowany?", "a": "Otrzymasz e-mail wyjaśniający przyczyny odrzucenia i prośbę o powtórzenie procedury. Dokumenty z zakrytymi twarzami, ukrytymi danymi lub zmienionymi obrazami są automatycznie odrzucane." },
+        { "q": "Czy mogę wypełnić procedurę w imieniu innych gości?", "a": "Tak, główny rezerwujący może wypełnić dane wszystkich dorosłych członków grupy. Jednak każdy dorosły musi posiadać ważny dokument." },
+        { "q": "Czy kaucja jest pobierana od razu?", "a": "Nie. Na karcie kredytowej dokonywana jest pre-autoryzacja (tymczasowe zablokowanie) — bez rzeczywistego obciążenia. Jeśli nie ma szkód, blokada jest automatycznie zwalniana w ciągu 7–30 dni od wyjazdu, w zależności od sieci kartowej (Visa/Mastercard/Amex).", "linkLabel": "Jak działa kaucja →" }
+      ],
+      "ctaTitle": "Gotowy do zameldowania?",
+      "ctaText": "Link do check-in otrzymałeś w e-mailu potwierdzającym rezerwację. Jeśli go nie możesz znaleźć, skontaktuj się z nami przez WhatsApp.",
+      "ctaBtn": "Rozpocznij check-in online",
+      "ctaNote": "Będziesz potrzebować numeru rezerwacji — znajdziesz go w e-mailu potwierdzającym.",
+      "sourcesTitle": "Źródła i dodatkowe informacje",
+      "sourcesSubtitle": "Przepis jest udokumentowany przez międzynarodowe i włoskie media. To wymóg prawny, a nie decyzja zarządcy.",
+      "sourcesIntl": "Prasa międzynarodowa",
+      "sourcesIt": "Prasa włoska",
+      "contactQuestion": "Masz pytania? Skontaktuj się z nami →"
+    },
     "condizioni": {
       "metaTitle": "Ogólne warunki rezerwacji — LivingApple",
       "metaDescription": "Wszystkie warunki rezerwacji, płatności, anulowania, check-in/out i regulaminu pobytu w domach wakacyjnych LivingApple w Scauri (LT), Włochy.",
