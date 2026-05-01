@@ -1042,6 +1042,12 @@ body {
   color: var(--color-text);
   line-height: 1.5;
 }
+.feature-list__item svg {
+  color: var(--color-primary);
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
 
 .booking-sidebar__total {
   display: flex;

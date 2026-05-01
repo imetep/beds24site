@@ -56,12 +56,12 @@ export default function RoomCard({ room, locale, coverUrl }: Props) {
             {room.bathrooms} {pl(ui, 'bathroom', room.bathrooms)}
           </li>
           <li className="feature-list__item">
-            <Icon name="people-fill" />
-            {ui.maxPeople} {room.maxPeople} {pl(ui, 'person', room.maxPeople)}
-          </li>
-          <li className="feature-list__item">
             <Icon name="aspect-ratio" />
             {room.sqm} {ui.sqm}
+          </li>
+          <li className="feature-list__item">
+            <Icon name="people-fill" />
+            {ui.maxPeople} {room.maxPeople} {pl(ui, 'person', room.maxPeople)}
           </li>
           <li className="feature-list__item">
             <Icon name={poolIcon} />
