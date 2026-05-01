@@ -1315,6 +1315,50 @@
       "signDate": "Datum",
       "signSignature": "Unterschrift",
       "maxLabel": "max. 15 kg"
+    },
+    "prenotazioneSicura": {
+      "metaTitle": "Sicheres Buchen — Wie Sie uns prüfen können | LivingApple",
+      "metaDescription": "LivingApple ist ein professioneller Betreiber mit CIN, verifizierbarer USt-IdNr. und Stripe-Zahlungen. Erfahren Sie, wie Sie uns in 2 Minuten prüfen können.",
+      "heroTitle": "Möchten Sie wissen, wer wir sind, bevor Sie uns Ihr Geld geben?",
+      "heroSub": "Gute Idee. Diese Seite existiert genau dafür. Es dauert 2 Minuten, und Sie finden alles, was Sie brauchen, um uns zu überprüfen — ohne uns beim Wort nehmen zu müssen.",
+      "trustTitle": "Überprüfen Sie uns vor der Buchung",
+      "trustPills": [
+        { "icon": "building", "title": "Überprüfbarer CIN-Code", "text": "Der nationale Identifikationscode IT059014B47RVOMN2D ist seit September 2024 gesetzlich vorgeschrieben und in allen unseren Inseraten sichtbar. Sie können ihn auf dem Portal des italienischen Tourismusministeriums verifizieren.", "link": { "label": "CIN verifizieren →", "href": "https://bdsr.ministeroturismo.gov.it/" } },
+        { "icon": "building-fill", "title": "Aktive USt-IdNr. im Handelsregister", "text": "USt-IdNr. 02710130598 — ATECO-Code 55.20.51 (Ferienunterkünfte). Kostenlose Überprüfung durch Eingabe der Nummer auf registroimprese.it oder ufficiocamerale.it: Name, aktiver Status und Firmendetails in 30 Sekunden.", "link": { "label": "Auf ufficiocamerale.it suchen →", "href": "https://www.ufficiocamerale.it/trova-azienda" } },
+        { "icon": "credit-card-fill", "title": "Stripe-Zahlungen — Bankenidentifikation", "text": "Stripe gewährt Privatpersonen ohne USt-IdNr. keinen Zugang. Die Aktivierung erfordert ein obligatorisches KYC-Verfahren mit Dokument- und Kontoauszugsverifizierung. Mit der Annahme von Stripe-Zahlungen wurden wir bereits von einem unabhängigen Bankinstitut identifiziert." },
+        { "icon": "star-fill", "title": "Auf Airbnb und Booking.com mit verifiziertem Verlauf", "text": "Wir sind auf Airbnb (LivingApple) und Booking.com (LivingApple und LivingApple Beach) mit Bewertungen, die ausschließlich von Gästen mit abgeschlossenem Aufenthalt geschrieben wurden — nicht zu fälschen. Suchen Sie \"LivingApple Scauri\" auf beiden Plattformen.", "link": { "label": "Unser Airbnb-Profil ansehen →", "href": "https://www.airbnb.it/p/livingapple-italy-vacation-rentals" } },
+        { "icon": "shield-fill", "title": "PayPal \"Waren und Services\" — 180-Tage-Käuferschutz", "text": "Wir akzeptieren PayPal nur als \"Waren und Services\", das den Käuferschutz aktiviert: Sie können innerhalb von 180 Tagen einen Streitfall eröffnen, wenn der Service nicht übereinstimmt. Betrüger verlangen immer \"Freunde und Familie\" — wir nie." }
+      ],
+      "guideTitle": "Der vollständige Leitfaden — Was Sie vor der Buchung eines Ferienhauses wissen sollten",
+      "guideSub": "Quellen: Polizia Postale · Airbnb · Altroconsumo · Commissariato di P.S. Online",
+      "chapters": [
+        { "title": "Kap. 0 — Wer veröffentlicht und wo: drei Kategorien", "body": "Auf dem Kurzzeitvermietungsmarkt gibt es drei verschiedene Kategorien. Nicht registrierte Privatpersonen arbeiten ohne CIN, ohne USt-IdNr., oft schwarz. Sie verstoßen gegen italienisches Recht, was es unmöglich macht, sich im Schadensfall zu schützen.\n\nEs gibt auch eine chaotische Grauzone, in der raffinierte Betrüger operieren: Sie kopieren echte Inserate von Airbnb und Booking, veröffentlichen sie auf Subito.it oder Facebook-Gruppen zu niedrigeren Preisen und verlangen eine Zahlung außerhalb der Plattform.\n\nProfessionelle Vermieter — jene mit CIN, USt-IdNr. und steuerlichen Pflichten — wählen zertifizierte OTAs, weil diese Glaubwürdigkeitswerkzeuge bieten, die nicht gefälscht werden können.", "tip": "Stripe, Square und jede professionelle Zahlungsplattform gewähren Privatpersonen ohne USt-IdNr. KEINEN Zugang. Ein Vermieter, der Zahlungen über diese Instrumente akzeptiert, wurde bereits durch Drittbankinstanzen identifiziert." },
+        { "title": "Kap. 1 — Eine Besichtigung beweist nichts", "body": "Viele Gäste glauben, dass die persönliche Besichtigung einer Unterkunft die größte Sicherheit bietet. Das ist falsch.\n\nDer betrügerische Untermietermietbetrug — dokumentiert von der Polizia Postale — funktioniert so: Der Betrüger mietet eine Immobilie legal an, bietet sie Dutzenden von Touristen auf unkontrollierten Kanälen an, führt sie zur Besichtigung (das Haus existiert, die Schlüssel funktionieren), kassiert von jedem eine Kaution und ist am Anreisetag nirgends zu finden.", "warn": "Der Gast, der die Besichtigung gemacht hat, wurde genauso betrogen wie derjenige, der sie nicht gemacht hat. Die Besichtigung hat nichts Rechtliches verifiziert — sie hat nur bestätigt, dass eine Immobilie existiert." },
+        { "title": "Kap. 2 — Was wirklich Sicherheit garantiert", "body": "Zertifizierte Plattformen (Airbnb, Booking, Expedia) verifizieren die Identität des Hosts mit einem offiziellen Dokument vor der Veröffentlichung. Bewertungen werden ausschließlich von Gästen mit bestätigter Buchung und abgeschlossenem Aufenthalt geschrieben — Fake-Bewertungen sind unmöglich.\n\nEine im Handelsregister überprüfbare USt-IdNr. ist rückverfolgbar, identifizierbar und gerichtlich angreifbar. Eine IBAN auf den Namen einer Gesellschaft mit USt-IdNr. ist ein unanfechtbarer Rechtsbeweis.\n\nPayPal \"Waren und Services\" deckt Zahlungen für nicht erhaltene oder nicht beschriebene Leistungen. Streitfälle müssen innerhalb von 180 Tagen eröffnet werden." },
+        { "title": "Kap. 3 — Die Zahlungsfallen, die immer zu meiden sind", "body": "Betrüger wählen spezifische Zahlungsmethoden, weil sie dem Opfer keinen Schutz bieten.\n\n✗ Vermeiden: PostePay-Aufladung, Überweisung auf Prepaid-Karten-IBAN, Western Union / MoneyGram, PayPal \"Freunde und Familie\", Bargeld ohne Steuerquittung, Kryptowährungen ohne Vertrag.\n\n✓ Sicher und rückverfolgbar: Überweisung auf Geschäftskonto mit verifizierter USt-IdNr., Zahlung innerhalb der Plattform, Kreditkarte mit Käuferschutz, PayPal \"Waren und Services\", professioneller POS-Zahlungslink (Stripe).", "warn": "Eine IBAN, die nicht mit \"IT\" beginnt — Präfixe LT (Litauen), RO (Rumänien), BG (Bulgarien) — ist oft mit ausländischen Fintech-Karten verknüpft, die nicht der italienischen Bankenaufsicht unterliegen." },
+        { "title": "Kap. 4 — Das Profil des Betrügers", "body": "Ein Inserat auf Subito.it oder einer Facebook-Gruppe zu einem weit unter dem Marktpreis liegenden Preis. Ein erst wenige Tage altes Profil. Antwortet nicht auf Videoanrufe. Zitiert Airbnb oder Booking für Glaubwürdigkeit, verlangt aber außerhalb zu zahlen. Setzt unter Druck: \"Wenn Sie nicht heute buchen, geht es an ein anderes Paar\". Das Konto ist auf einen ausländischen Namen lautend, der nicht zu Ihrem Gesprächspartner passt.\n\nZuverlässigkeitszeichen: OTA-Profil mit mindestens 12 Monaten Geschichte und verifizierten Bewertungen, angezeigte und überprüfbare USt-IdNr., CIN im Inserat sichtbar, Bereitschaft zu Videoanrufen, vollständiger Vertrag, Zahlung über die Plattform oder mit professionellem POS." },
+        { "title": "Kap. 5 — Die Checkliste des guten Mieters", "body": "Bevor Sie eine Buchung bestätigen, prüfen Sie: Das Inserat befindet sich auf einer zertifizierten OTA-Plattform. Der Vermieter hat ein Profil mit mindestens 6-12 Monaten Geschichte. Die Zahlung erfolgt INNERHALB der Plattform. Eine überprüfbare USt-IdNr. existiert. Der CIN der Immobilie ist im Inserat angegeben. Die IBAN beginnt mit \"IT\". Eine Steuerquittung wird ausgestellt. Der Vermieter ist für Videoanrufe verfügbar und setzt Sie nicht unter Zeitdruck." },
+        { "title": "Kap. 6 — Im Betrugsfall: wie vorgehen", "body": "Wenn Sie Opfer eines Betrugs werden, handeln Sie schnell. Erstatten Sie Anzeige bei der Polizia Postale auf commissariatodips.it innerhalb von 48 Stunden — notieren Sie die Protokollnummer. Bewahren Sie GESAMTE Korrespondenz auf: E-Mails, Nachrichten, Screenshots, Inserat-Links, Quittungen. Wenn mit Kreditkarte bezahlt, kontaktieren Sie sofort die Bank für ein Chargeback. Bei PayPal \"Waren und Services\" eröffnen Sie innerhalb von 180 Tagen einen Streitfall. Keine Nachrichten löschen." }
+      ],
+      "checklistTitle": "Schnell-Checkliste — überprüfen Sie uns in 2 Minuten",
+      "checklist": [
+        "USt-IdNr. 02710130598 auf ufficiocamerale.it suchen — Name, aktiver Status, ATECO 55.20.51",
+        "CIN IT059014B47RVOMN2D auf bdsr.ministeroturismo.gov.it verifizieren",
+        "\"LivingApple Scauri\" auf Airbnb und Booking.com suchen — verifizierte Bewertungen lesen",
+        "Prüfen, ob die Zahlung über Stripe erfolgt — offizieller LivingApple-Link",
+        "Bei PayPal: bestätigen, dass es \"Waren und Services\" ist — nie \"Freunde und Familie\""
+      ],
+      "ctaVerifyRi": "USt-IdNr. auf ufficiocamerale.it suchen",
+      "ctaVerifyAirbnb": "Airbnb-Profil ansehen",
+      "ctaBook": "Jetzt buchen",
+      "ctaBookSub": "Sichere Zahlung über Stripe",
+      "scamTitle": "Wurden Sie betrogen?",
+      "scamSteps": [
+        "Anzeige auf commissariatodips.it innerhalb von 48h erstatten",
+        "Alle Nachrichten, Screenshots und Quittungen aufbewahren",
+        "Bank für Chargeback kontaktieren (bei Kartenzahlung)",
+        "PayPal-Streitfall innerhalb von 180 Tagen eröffnen (bei PayPal W&S)"
+      ]
     }
   }
 }
