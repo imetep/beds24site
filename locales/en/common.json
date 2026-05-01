@@ -1316,6 +1316,48 @@
       "signSignature": "Signature",
       "maxLabel": "max 15 kg"
     },
+    "selfCheckin": {
+      "metaTitle": "Online check-in — LivingApple",
+      "metaDescription": "How online check-in works at LivingApple properties. Mandatory procedure under Art. 109 TULPS. 5 steps, 10 minutes.",
+      "title": "Online check-in",
+      "subtitle": "How the mandatory pre-check-in procedure works for self check-in.",
+      "whyTitle": "Why is it required?",
+      "whyText": "In Italy, Article 109 of the Consolidated Law on Public Security (R.D. 773/1931) requires accommodation providers to visually identify every guest and report their details to the public security authorities. This is not a choice made by the property manager — it is a legal obligation that applies to all Italian accommodation facilities, including non-hotel properties.",
+      "whyBadge": "Art. 109 TULPS — R.D. 773/1931",
+      "legalNote": "The Council of State ruling no. 05732/2025 of 21 November 2025 confirmed that in-person (de visu) identification remains mandatory. Self check-in is permitted only as a hybrid procedure: online document collection + a verification video call at the time of physical access.",
+      "stepsTitle": "How it works — 5 steps",
+      "steps": [
+        { "n": "1", "title": "Enter your booking number", "text": "Your Beds24 booking number is shown in the confirmation email you received when you booked." },
+        { "n": "2", "title": "Fill in your personal details", "text": "First name, last name, date of birth, nationality and document number for every adult guest. For minors, just the number and age are sufficient." },
+        { "n": "3", "title": "Upload identity documents", "text": "A clear photo of the front and back of the document (passport, ID card or driving licence). The document must be legible, unaltered and with no parts obscured." },
+        { "n": "4", "title": "Sign and submit", "text": "You declare that you have read the conditions, consent to data processing (Art. 109 TULPS and GDPR) and submit the request. You will receive a unique reference for your request." },
+        { "n": "5", "title": "Receive the guidebook", "text": "After our review and approval, you will receive the property guidebook by email, with all the details for your arrival. At the time of physical access, we will carry out a brief verification video call as required by law." }
+      ],
+      "needTitle": "What you need",
+      "needs": [
+        "A valid identity document (passport, ID card or driving licence) for every adult",
+        "A smartphone or computer with a camera to photograph the document",
+        "A credit card (not debit card, not prepaid card) for the security deposit",
+        "About 5–10 minutes of your time"
+      ],
+      "timeNote": "The procedure must be completed at least 72 hours before arrival.",
+      "faqTitle": "Frequently asked questions",
+      "faqs": [
+        { "q": "Is my data secure?", "a": "Yes. Documents are uploaded to Cloudinary in a private, non-indexed folder. Personal data is processed in accordance with EU Regulation 2016/679 (GDPR) and transmitted to Italian authorities as required by Art. 109 TULPS. It is not shared with third parties for commercial purposes." },
+        { "q": "What happens if my document is not accepted?", "a": "You will receive an email explaining why it was rejected and asking you to repeat the procedure. Documents with obscured faces, covered data or altered images are automatically rejected." },
+        { "q": "Can I complete the procedure on behalf of other guests?", "a": "Yes, the lead guest can fill in the details for all adult members of the group. However, each adult must hold a valid document." },
+        { "q": "Is the security deposit charged immediately?", "a": "No. A pre-authorisation (temporary hold) is placed on the credit card — no actual charge is made. If there is no damage, the hold is released automatically within 7–30 days of departure depending on the card network (Visa/Mastercard/Amex).", "linkLabel": "How the deposit works →" }
+      ],
+      "ctaTitle": "Ready to check in?",
+      "ctaText": "You received the check-in link in your booking confirmation email. If you cannot find it, contact us via WhatsApp.",
+      "ctaBtn": "Start online check-in",
+      "ctaNote": "You will need your booking number — it is in your confirmation email.",
+      "sourcesTitle": "Sources & further reading",
+      "sourcesSubtitle": "The regulation is documented by international and Italian news outlets. This is a legal requirement, not a choice made by the property manager.",
+      "sourcesIntl": "International press",
+      "sourcesIt": "Italian press",
+      "contactQuestion": "Have questions? Contact us →"
+    },
     "condizioni": {
       "metaTitle": "General Terms & Conditions — LivingApple",
       "metaDescription": "All booking, payment, cancellation, check-in/out and house rules conditions for LivingApple holiday rentals in Scauri (LT), Italy.",
