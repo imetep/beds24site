@@ -198,7 +198,7 @@ export default function ContattiClient({ locale, bookHref }: Props) {
         {/* ── Banner prenota ────────────────────────────────────────────────── */}
         <div className="banner-book">
           <p className="banner-book__text">{t.bookBanner}</p>
-          <a href={bookHref} className="banner-book__btn">{t.bookBtn}</a>
+          <a href={bookHref} className="cta-book">{t.bookBtn}</a>
         </div>
 
       </div>
