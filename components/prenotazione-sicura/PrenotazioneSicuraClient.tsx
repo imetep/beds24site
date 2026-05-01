@@ -321,7 +321,7 @@ export default function PrenotazioneSicuraClient({
 
       {/* CTA finale */}
       <section className="text-center">
-        <a href={bookHref} className="btn btn-warning btn-lg fw-bold dove-siamo__cta-btn">{t.cta_book}</a>
+        <a href={bookHref} className="cta-book">{t.cta_book}</a>
         <p className="small text-muted mt-2 mb-0">{t.cta_book_sub}</p>
       </section>
 
