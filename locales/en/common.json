@@ -491,6 +491,8 @@
       "scroll": "scroll →"
     },
     "depositoClient": {
+      "metaTitle": "Security deposit — LivingApple",
+      "metaDescription": "How the security deposit works at LivingApple properties. Pay online via Stripe or in person on arrival with a credit card.",
       "title": "Security deposit",
       "subtitle": "How it works, how much it is, and when it is refunded.",
       "badge": "Required for all bookings",
