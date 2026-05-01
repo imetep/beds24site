@@ -1334,6 +1334,72 @@
       "signSignature": "Firma",
       "maxLabel": "max 15 kg"
     },
+    "condizioni": {
+      "metaTitle": "Condizioni generali di vendita — LivingApple",
+      "metaDescription": "Tutte le condizioni di prenotazione, pagamento, cancellazione, check-in/out, regole di soggiorno per le case vacanze LivingApple a Scauri (LT).",
+      "h1": "Condizioni generali di vendita",
+      "subtitle": "Tutte le condizioni per la tua vacanza a LivingApple",
+      "sections": [
+        { "title": "1. Premessa", "paragraphs": [
+          "Nelle presenti \"Condizioni generali di locazione\" si intende:",
+          "per **\"Cliente\"** colui che effettua la Prenotazione ed usufruisce dei servizi e degli immobili offerti in locazione da LivingApple;",
+          "per **\"Prenotazione\"** la richiesta del Cliente di prendere in locazione un appartamento per un certo periodo;",
+          "per **\"Proposta di Contratto\"** la comunicazione di disponibilità contenente il dettaglio dell'offerta e l'invito ad inviare l'acconto;",
+          "per **\"Lettera di Conferma\"** la comunicazione di conferma del ricevimento dell'acconto con il codice di conferma;",
+          "per **\"Contratto di Locazione\"** le condizioni di servizio concluse tra LivingApple e il cliente."
+        ] },
+        { "title": "2. Prenotazione e perfezionamento", "paragraphs": [
+          "La Prenotazione si intende perfezionata nel momento in cui il Cliente riceve la Lettera di Conferma spedita da LivingApple immediatamente dopo aver ricevuto la caparra. Al Contratto di Locazione è allegato un modulo Elenco Inquilini, che dovrà essere compilato, sottoscritto e rispedito a LivingApple."
+        ] },
+        { "title": "3. Acconto, pagamento e deposito cauzionale", "paragraphs": [
+          "L'acconto corrisponde al 30% (minimo € 150,00) del canone e può essere versato tramite bonifico, carta di credito (+2,5%) o PayPal (+3,4%). Deve pervenire entro 7 giorni dalla comunicazione della disponibilità (3 giorni per pagamento online).",
+          "Il saldo del canone e il deposito cauzionale devono essere versati in contanti o con pre-autorizzazione di carta di credito all'arrivo, contestualmente al ritiro delle chiavi."
+        ] },
+        { "title": "4. Disdetta e recesso", "paragraphs": [
+          "Una prenotazione confermata non può essere annullata o modificata. Ogni richiesta di cancellazione dovrà essere comunicata via email a LivingApple. Per prenotazioni a tariffa scontata o nei periodi festivi, ogni cancellazione prevede il pagamento del 100% del valore."
+        ], "bullets": [
+          "**60+ giorni prima:** 50% dell'acconto (min. € 150,00)",
+          "**59–15 giorni prima:** acconto + 25% del saldo dovuto",
+          "**14–01 giorni prima:** pagamento dell'intero saldo"
+        ] },
+        { "title": "5. Arrivo e partenza", "paragraphs": [
+          "Almeno 3 giorni prima dell'arrivo devono essere inviati via email i dettagli di arrivo. Il check-in è previsto dalle 17:00 alle 20:00. Arrivi tardivi:"
+        ], "bullets": [
+          "€ 30,00 dalle 20:00 alle 22:00",
+          "€ 50,00 dalle 22:00 alle 24:00"
+        ], "paragraphsAfter": [
+          "Non è possibile effettuare il check-in dopo le 24:00 né il check-out prima delle 8:00. All'arrivo devono essere esibiti i documenti d'identità di tutti gli occupanti."
+        ] },
+        { "title": "6. Dotazione delle abitazioni", "paragraphs": [
+          "Tutti gli appartamenti sono consegnati arredati con cucina a gas, frigorifero, batteria da cucina, acqua calda e fredda, energia elettrica 220V. Per ogni posto letto sono disponibili coperta e guanciale. Su richiesta è possibile noleggiare lenzuola e asciugamani."
+        ] },
+        { "title": "7. Partenza", "paragraphs": [
+          "L'appartamento deve essere lasciato libero tra le 7:00 e le 10:00. Deve essere lasciato privo di immondizie, con ripiani puliti, stoviglie lavate, frigorifero vuoto con porta aperta. I mobili non devono essere spostati né lasciati all'esterno."
+        ] },
+        { "title": "8. Norme di soggiorno", "paragraphs": [
+          "È vietato ospitare più persone di quanto consentito dal numero di posti letto. I bambini oltre i 24 mesi sono considerati adulti. È vietato lasciare arredi all'esterno, lasciare aperte tende da sole, usare il bbq con legna.",
+          "Gli ospiti sono tenuti a rispettare le norme sulla quiete, specialmente nelle ore pomeridiane e notturne."
+        ] },
+        { "title": "9. Aree esterne e pic nic", "paragraphs": [
+          "L'accesso all'area Pic Nic è consentito dalle 11:00 alle 24:00. I bambini devono essere sorvegliati. Non sono ammessi vetro, animali, biciclette o skateboard. Il numero di ospiti è limitato a quanto indicato nel contratto."
+        ] },
+        { "title": "10. Piscina", "paragraphs": [
+          "La piscina è riservata agli ospiti LivingApple della sede di Via Tore. Gli ospiti di LivingApple Beach **non hanno accesso alla piscina**. Aperta dalle 9:00 alle 19:00. I bambini sotto i 12 anni devono essere accompagnati. Vietati salti e contenitori di vetro."
+        ] },
+        { "title": "11. Sanzioni", "paragraphs": [
+          "Per l'inosservanza delle regole di cui ai punti 7 e 8 sono previste sanzioni da € 10,00 a € 500,00 e maggiorazioni sul costo delle pulizie finali."
+        ] },
+        { "title": "12. Deposito cauzionale", "paragraphs": [
+          "A garanzia del rispetto delle norme, è richiesta una cauzione il cui importo varia in base all'appartamento prenotato, al momento della consegna delle chiavi. La cauzione viene restituita dopo la verifica dello stato dell'appartamento."
+        ] },
+        { "title": "13. Responsabilità", "paragraphs": [
+          "Nessuna responsabilità può essere attribuita a LivingApple per rotture, infortuni, smarrimenti, furti, ritardi o inconvenienti. Per eventuali controversie legali, il Foro esclusivo competente è quello di Cassino (FR)."
+        ] },
+        { "title": "14. Accettazione", "paragraphs": [
+          "All'atto della prenotazione il locatario accetta espressamente tutte le condizioni qui esposte."
+        ] }
+      ]
+    },
     "trattamentoDati": {
       "metaTitle": "Trattamento dei dati — LivingApple",
       "metaDescription": "Informativa ex art. 13 Regolamento UE 679/2016 (GDPR) — finalità del trattamento, conservazione, diritti dell'interessato.",
