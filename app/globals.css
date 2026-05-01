@@ -7071,6 +7071,11 @@ body {
 .legal-prose--narrow {
   line-height: 1.7;
 }
+/* Lista bullet usata in /condizioni (sostituisce inline padding/margin) */
+.condizioni__list {
+  padding-left: 1.5rem;
+  margin: var(--space-sm) 0;
+}
 
 /* ── Footer site-wide (layout.tsx) ── */
 .site-main {
