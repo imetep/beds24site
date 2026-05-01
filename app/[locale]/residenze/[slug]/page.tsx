@@ -228,7 +228,7 @@ export default async function RoomPage({ params }: Props) {
           <div key={i} className="col-6 col-md">
             <div className="card h-100 border-0 bg-light">
               <div className="card-body text-center p-2">
-                <Icon name={stat.icon} size={28} className="text-primary d-block mb-1" />
+                <Icon name={stat.icon} size={28} className="text-primary d-block mx-auto mb-1" />
                 {stat.num !== null && (
                   <div className="room-feature-card__num">{stat.num}</div>
                 )}
