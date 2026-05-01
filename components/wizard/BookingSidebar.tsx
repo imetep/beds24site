@@ -18,6 +18,7 @@ import { PROPERTIES, OFFER_INFO, calculateTouristTax, formatTouristTaxNote, type
 import { getTranslations } from '@/lib/i18n';
 import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import type { Locale } from '@/config/i18n';
+import { Icon } from '@/components/ui/Icon';
 import EditDatesModal from './EditDatesModal';
 import EditGuestsModal from './EditGuestsModal';
 
@@ -178,32 +179,32 @@ export default function BookingSidebar({
             <p className="section-title-secondary">{room.name}</p>
             <ul className="feature-list">
               <li className="feature-list__item">
-                <i className="bi bi-door-closed-fill" aria-hidden="true" />
+                <Icon name="door-closed-fill" />
                 {room.bedrooms} {t.bedrooms}
               </li>
               <li className="feature-list__item">
-                <i className="bi bi-droplet-fill" aria-hidden="true" />
+                <Icon name="droplet-fill" />
                 {room.bathrooms} {t.bathrooms}
               </li>
               <li className="feature-list__item">
-                <i className="bi bi-people-fill" aria-hidden="true" />
+                <Icon name="people-fill" />
                 {room.maxPeople} {t.people}
               </li>
               {poolLabel(t, room) && (
                 <li className="feature-list__item">
-                  <i className="bi bi-water" aria-hidden="true" />
+                  <Icon name="water" />
                   {poolLabel(t, room)}
                 </li>
               )}
               {room.features.patio && (
                 <li className="feature-list__item">
-                  <i className="bi bi-house-door-fill" aria-hidden="true" />
+                  <Icon name="house-door-fill" />
                   {t.featurePatio}
                 </li>
               )}
               {room.features.garden && (
                 <li className="feature-list__item">
-                  <i className="bi bi-tree-fill" aria-hidden="true" />
+                  <Icon name="tree-fill" />
                   {t.featureGarden}
                 </li>
               )}
@@ -235,7 +236,7 @@ export default function BookingSidebar({
 
       {/* 3. BANNER DEPOSITO (compatto, fisso) */}
       <div className="banner banner--warning banner--compact banner--with-icon">
-        <i className="bi bi-shield-lock-fill" aria-hidden="true"></i>
+        <Icon name="shield-lock-fill" />
         <div>
           <p className="banner__title">
             {t.depositTitle}{room?.securityDeposit ? ` — €${room.securityDeposit}` : ''}
@@ -251,9 +252,9 @@ export default function BookingSidebar({
         aria-expanded={energyExpanded}
         className={`banner banner--info banner--compact banner--with-icon banner--clickable${energyExpanded ? ' is-expanded' : ''}`}
       >
-        <i className="bi bi-lightning-fill" aria-hidden="true"></i>
+        <Icon name="lightning-fill" />
         <span className="banner__title">{t.energyTitle}</span>
-        <i className="bi bi-chevron-down banner__chevron" aria-hidden="true"></i>
+        <Icon name="chevron-down" className="banner__chevron" />
       </button>
       {energyExpanded && (
         <p className="banner__text-expanded">{t.energyText}</p>
