@@ -1270,6 +1270,47 @@
       "honestTitle": "Nasza szczera rekomendacja",
       "honestText": "Jeśli wolisz nie myśleć o zużyciu energii podczas wakacji — i w pełni to rozumiemy — szczerze sugerujemy szukanie obiektów z ceną all-inclusive. To absolutnie słuszny wybór. Nie kompromis: po prostu właściwe narzędzie dla Twoich potrzeb.",
       "honestCaution": "Uwaga: niektóre obiekty all-inclusive w bardzo niskich cenach mają systemy grzewcze i chłodzące nieodpowiednie dla standardów Europy Północnej, limity zużycia po przekroczeniu których naliczana jest dopłata lub niewystarczające zasilanie elektryczne — bezpieczniki, które się wyłączają i pozostawiają Cię bez prądu.\n\nPrzed rezerwacją zawsze pytaj:\n• „Czy obiekt osiąga 22°C wewnątrz w styczniu?\"\n• „Czy istnieje limit wliczonego zużycia?\"\n• „Czy zasilanie elektryczne jest wystarczające dla wszystkich klimatyzatorów pracujących jednocześnie plus piekarnik, suszarka do włosów, pralka, zmywarka i kuchenka mikrofalowa?\""
+    },
+    "animali": {
+      "metaTitle": "Zwierzęta domowe — Regulamin | LivingApple",
+      "metaDescription": "Pełny regulamin dotyczący zwierząt w obiektach LivingApple. Psy do 15 kg z obowiązkową kaucją.",
+      "heroTitle": "Wasze czworonożne przyjaciela są mile widziane",
+      "heroSub": "Zadbaliśmy o wszystko, aby pobyt był przyjemny zarówno dla Was, jak i dla zwierząt. Proszę zapoznać się z poniższym regulaminem, aby uniknąć nieporozumień.",
+      "legalNote": "Zgodnie z włoską Ustawą 281/1991, Art. 83 D.P.R. 320/1954 i Regionalnym Prawem Lacjum Nr 34/1997.",
+      "s1Title": "Jakie zwierzęta są dopuszczone",
+      "s1Items": [
+        "Maksymalnie 1 zwierzę domowe na apartament.",
+        "Psy małej i średniej wielkości — maksymalna waga 15 kg (wyjątek dla psów przewodników).",
+        "Zwierzę musi być oznakowane chipem i zarejestrowane w rejestrze psów.",
+        "Książeczka zdrowia z numerem chipa i aktualnymi szczepieniami musi być dostępna podczas pobytu.",
+        "Obiekt zastrzega sobie prawo do sprawdzenia dokumentów."
+      ],
+      "s2Title": "Zachowanie i odpowiedzialność",
+      "s2Items": [
+        "Zwierzę musi być prowadzone na smyczy lub w transporterze w częściach wspólnych obiektu.",
+        "Zwierząt nie wolno pozostawiać bez opieki w apartamencie.",
+        "Surowo zabrania się wpuszczania zwierzęcia na łóżko lub sofę.",
+        "Zwierzę musi być przyzwyczajone do życia w pomieszczeniu i do standardów czystości.",
+        "Obiekt może obciążyć kosztami nadzwyczajnego sprzątania, jeśli będzie to konieczne.",
+        "Właściciel odpowiada za wszelkie szkody materialne lub fizyczne spowodowane przez zwierzę.",
+        "W przypadku utrzymującego się hałaśliwego zachowania kierownictwo może poprosić o opuszczenie obiektu. Właściciel akceptuje ten warunek, podpisując regulamin."
+      ],
+      "s3Title": "Kaucja",
+      "s3Text": "Kaucja jest obowiązkowa dla gości podróżujących ze zwierzętami. Płatna wyłącznie kartą kredytową (nie kartą debetową, nie kartą prepaid) i zwracana w całości w ciągu 48 godzin od wyjazdu, pod warunkiem braku szkód.",
+      "s3Link": "Jak działa kaucja →",
+      "ratesTitle": "Dopłata za zwierzęta",
+      "ratesNote": "Dopłata jest obliczana na podstawie długości pobytu i płatna przy zameldowaniu.",
+      "rate1to3": "€ 30,00 / noc",
+      "rate4to7": "€ 20,00 / noc",
+      "rate8plus": "€ 10,00 / noc",
+      "nightsLabel": "Długość pobytu",
+      "priceLabel": "Dopłata dzienna",
+      "nightsUnit": "nocy",
+      "signTitle": "Akceptacja regulaminu",
+      "signText": "Przy zameldowaniu goście zostaną poproszeni o podpisanie niniejszego regulaminu. Podpis oznacza akceptację wszystkich wskazanych warunków.",
+      "signDate": "Data",
+      "signSignature": "Podpis",
+      "maxLabel": "maks. 15 kg"
     }
   }
 }
