@@ -13,10 +13,10 @@
  */
 import {
   Accessibility, Apple, ArrowLeft, ArrowUpRight, Baby, Ban, Banknote, Box, Brush,
-  Building, Calendar, CalendarDays, CalendarRange, CalendarX, Camera, ChefHat,
+  Building, Calendar, CalendarDays, CalendarRange, CalendarX, Camera, Car, CarFront, ChefHat,
   Check, ChevronDown, ChevronUp, CircleAlert, CircleCheck, CircleHelp, CircleMinus,
   CircleSlash, CircleX, Clipboard, ClipboardList, Clock, Coffee, Coins, CookingPot,
-  CreditCard, CupSoda, DoorClosed, Droplet, Egg, EggFried, FileImage, Flame,
+  CreditCard, CupSoda, DoorClosed, Droplet, Egg, EggFried, Euro, FileImage, Flame,
   Flower, Globe, Heart, Home, Hourglass, Info, Landmark, Lightbulb, Link2, Lock,
   Mail, MapPin, Maximize2, MessageCircle, Microwave, Moon, MoonStar, Mountain,
   Newspaper, OctagonAlert, Pencil, RotateCw, Search, Shield, ShieldCheck,
@@ -142,6 +142,11 @@ const LUCIDE_MAP = {
   'trash':             Trash2,
   'universal-access':  Accessibility,
   'apple':             Apple,
+  // Mezzi
+  'car-front-fill':    CarFront,
+  'car-fill':          Car,
+  // Valuta
+  'currency-euro':     Euro,
   // Catch-all per icone usate non comuni
   'ban':               Ban,
   'moon':              Moon,
