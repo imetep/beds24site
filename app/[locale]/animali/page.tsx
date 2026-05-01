@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { locales, isValidLocale, type Locale } from '@/config/i18n';
+import { getTranslations } from '@/lib/i18n';
 import AnimaliClient from '@/components/animali/AnimaliClient';
 
 interface Props {
@@ -13,22 +14,11 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const titles: Record<Locale, string> = {
-    it: 'Animali domestici — Regolamento | LivingApple',
-    en: 'Pets Policy — LivingApple',
-    de: 'Haustiere — Hausordnung | LivingApple',
-    pl: 'Zwierzęta domowe — Regulamin | LivingApple',
-  };
-  const descriptions: Record<Locale, string> = {
-    it: 'Regolamento completo per l\'accettazione degli animali domestici nelle strutture LivingApple. Cani ammessi sotto i 15 kg con deposito cauzionale obbligatorio.',
-    en: 'Full pet policy for LivingApple properties. Dogs accepted up to 15 kg with mandatory security deposit.',
-    de: 'Vollständige Haustierpolitik für LivingApple-Unterkünfte. Hunde bis 15 kg mit obligatorischer Kaution.',
-    pl: 'Pełny regulamin dotyczący zwierząt w obiektach LivingApple. Psy do 15 kg z obowiązkową kaucją.',
-  };
   if (!isValidLocale(locale)) return {};
+  const t = getTranslations(locale).components.animali;
   return {
-    title: titles[locale],
-    description: descriptions[locale],
+    title: t.metaTitle,
+    description: t.metaDescription,
   };
 }
 
