@@ -1315,6 +1315,50 @@
       "signDate": "Data",
       "signSignature": "Podpis",
       "maxLabel": "maks. 15 kg"
+    },
+    "prenotazioneSicura": {
+      "metaTitle": "Bezpieczna rezerwacja — Jak nas zweryfikować | LivingApple",
+      "metaDescription": "LivingApple to profesjonalny zarządca z CIN, weryfikowalnym NIP i płatnościami Stripe. Dowiedz się, jak nas zweryfikować w 2 minuty przed rezerwacją.",
+      "heroTitle": "Chcesz wiedzieć, kim jesteśmy, zanim nam zapłacisz?",
+      "heroSub": "Dobry pomysł. Ta strona istnieje właśnie po to. Zajmie to 2 minuty i znajdziesz tu wszystko, czego potrzebujesz, aby nas zweryfikować — bez konieczności brania nas za słowo.",
+      "trustTitle": "Zweryfikuj nas przed rezerwacją",
+      "trustPills": [
+        { "icon": "building", "title": "Weryfikowalny kod CIN", "text": "Narodowy Kod Identyfikacyjny IT059014B47RVOMN2D jest obowiązkowy prawnie od września 2024 i widoczny we wszystkich naszych ogłoszeniach. Możesz go zweryfikować w portalu włoskiego Ministerstwa Turystyki.", "link": { "label": "Zweryfikuj CIN →", "href": "https://bdsr.ministeroturismo.gov.it/" } },
+        { "icon": "building-fill", "title": "Aktywny NIP w Rejestrze Firm", "text": "NIP 02710130598 — kod ATECO 55.20.51 (domy i apartamenty wakacyjne). Możesz zweryfikować bezpłatnie, wpisując numer na registroimprese.it lub ufficiocamerale.it: nazwa, aktywny status i dane firmy w 30 sekund.", "link": { "label": "Szukaj na ufficiocamerale.it →", "href": "https://www.ufficiocamerale.it/trova-azienda" } },
+        { "icon": "credit-card-fill", "title": "Płatności Stripe — identyfikacja bankowa", "text": "Stripe nie udziela dostępu osobom prywatnym bez NIP. Aktywacja wymaga obowiązkowej procedury KYC z weryfikacją dokumentów i wyciągów bankowych. Przyjmując płatności Stripe, zostaliśmy już zidentyfikowani przez niezależny podmiot bankowy." },
+        { "icon": "star-fill", "title": "Obecni na Airbnb i Booking.com z zweryfikowaną historią", "text": "Jesteśmy na Airbnb (LivingApple) i Booking.com (LivingApple i LivingApple Beach) z recenzjami napisanymi wyłącznie przez gości z ukończonym pobytem — niemożliwe do sfałszowania. Szukaj \"LivingApple Scauri\" na obu platformach.", "link": { "label": "Zobacz nasz profil Airbnb →", "href": "https://www.airbnb.it/p/livingapple-italy-vacation-rentals" } },
+        { "icon": "shield-fill", "title": "PayPal \"Towary i Usługi\" — ochrona przez 180 dni", "text": "Akceptujemy PayPal tylko jako \"Towary i Usługi\", co aktywuje Ochronę Kupującego: możesz otworzyć spór w ciągu 180 dni, jeśli usługa nie jest zgodna z opisem. Oszuści zawsze proszą o \"Znajomi i rodzina\" — my nigdy." }
+      ],
+      "guideTitle": "Kompletny przewodnik — co wiedzieć przed rezerwacją domu wakacyjnego",
+      "guideSub": "Źródła: Polizia Postale · Airbnb · Altroconsumo · Commissariato di P.S. Online",
+      "chapters": [
+        { "title": "Rozdz. 0 — Kto publikuje i gdzie: trzy kategorie", "body": "Na rynku krótkoterminowych wynajmów istnieją trzy odrębne kategorie. Niezarejestrowani prywatni właściciele działają bez CIN, bez NIP, często w szarej strefie. Naruszają włoskie prawo, co uniemożliwia ochronę w przypadku problemów.\n\nIstnieje też chaotyczna szara strefa, gdzie działają bardziej wyrafinowani oszuści: kopiują prawdziwe ogłoszenia z Airbnb i Booking, publikują je na Subito.it lub grupach Facebook w niższych cenach i proszą o płatność poza platformą.\n\nProfesjonalni zarządcy — z CIN, NIP i obowiązkami podatkowymi — wybierają certyfikowane OTA właśnie dlatego, że oferują narzędzia wiarygodności niemożliwe do sfałszowania.", "tip": "Stripe, Square i każda profesjonalna platforma płatnicza NIE udzielają dostępu osobom prywatnym bez NIP. Zarządca akceptujący płatności przez te narzędzia został już zidentyfikowany przez niezależny podmiot bankowy." },
+        { "title": "Rozdz. 1 — Oględziny nic nie udowadniają", "body": "Wielu gości uważa, że fizyczne oglądanie nieruchomości przed wynajmem jest najlepszą gwarancją. To błąd.\n\nOszustwo z nielegalnym podnajmem — udokumentowane przez Polizia Postale — działa tak: oszust legalnie wynajmuje nieruchomość, proponuje ją dziesiątkom turystów na niekontrolowanych kanałach, prowadzi ich na oględziny (dom istnieje, klucze działają), pobiera kaucję od każdego i w dniu przyjazdu znika.", "warn": "Gość, który był na oględzinach, został oszukany tak samo jak ten, który ich nie przeprowadził. Oględziny nic nie weryfikują prawnie — potwierdziły tylko, że nieruchomość istnieje." },
+        { "title": "Rozdz. 2 — Co naprawdę gwarantuje bezpieczeństwo", "body": "Certyfikowane platformy (Airbnb, Booking, Expedia) weryfikują tożsamość hosta oficjalnym dokumentem przed publikacją. Recenzje są pisane wyłącznie przez gości z potwierdzoną rezerwacją i ukończonym pobytem — fałszywe recenzje są niemożliwe.\n\nWeryfikowalny NIP w Rejestrze Firm jest identyfikowalny i podlega dochodzeniu prawnemu. IBAN na nazwę firmy z NIP jest niepodważalnym dowodem prawnym.\n\nPayPal \"Towary i Usługi\" chroni płatności za usługi nieotrzymane lub niezgodne z opisem. Spory należy otwierać w ciągu 180 dni." },
+        { "title": "Rozdz. 3 — Pułapki płatnicze, których zawsze należy unikać", "body": "Oszuści wybierają konkretne metody płatności właśnie dlatego, że nie oferują ofierze żadnej ochrony.\n\n✗ Unikaj: doładowania PostePay, przelewu na IBAN karty prepaid, Western Union / MoneyGram, PayPal \"Znajomi i rodzina\", gotówki bez paragonu fiskalnego, kryptowalut bez umowy.\n\n✓ Bezpieczne i identyfikowalne: przelew na konto firmowe z weryfikowalnym NIP, płatność wewnątrz platformy, karta kredytowa z ochroną zakupów, PayPal \"Towary i Usługi\", profesjonalny link płatności POS (Stripe).", "warn": "IBAN, który nie zaczyna się od \"IT\" — prefiksy LT (Litwa), RO (Rumunia), BG (Bułgaria) — jest często powiązany z zagranicznymi kartami fintech, które nie podlegają włoskiemu nadzorowi bankowemu." },
+        { "title": "Rozdz. 4 — Profil oszusta", "body": "Ogłoszenie na Subito.it lub grupie Facebook z ceną znacznie poniżej rynkowej. Profil założony kilka dni temu. Nie odpowiada na połączenia wideo. Powołuje się na Airbnb lub Booking dla wiarygodności, ale prosi o płatność poza platformą. Wywiera presję czasową: \"Jeśli nie zarezerwujesz dzisiaj, weźmie inna para\". Konto jest na zagraniczne nazwisko niezgodne z rozmówcą.\n\nOznaki wiarygodności: profil OTA z historią co najmniej 12 miesięcy i zweryfikowanymi recenzjami, wyświetlany i weryfikowalny NIP, CIN widoczny w ogłoszeniu, gotowość do rozmów wideo, kompletna umowa, płatność zarządzana przez platformę lub profesjonalny POS." },
+        { "title": "Rozdz. 5 — Lista kontrolna dobrego najemcy", "body": "Przed potwierdzeniem jakiejkolwiek rezerwacji sprawdź: ogłoszenie jest na certyfikowanej platformie OTA. Zarządca ma profil z historią co najmniej 6-12 miesięcy. Płatność odbywa się WEWNĄTRZ platformy. Istnieje weryfikowalny NIP. CIN nieruchomości jest podany w ogłoszeniu. IBAN zaczyna się od \"IT\". Wydawany jest paragon fiskalny. Zarządca jest dostępny na rozmowę wideo i nie wywiera presji czasowej." },
+        { "title": "Rozdz. 6 — W przypadku oszustwa: jak postępować", "body": "Jeśli jesteś ofiarą oszustwa, działaj szybko. Złóż zawiadomienie w Polizia Postale na commissariatodips.it w ciągu 48 godzin — zanotuj numer protokołu. Zachowaj CAŁĄ korespondencję: e-maile, wiadomości, zrzuty ekranu, linki ogłoszeń, rachunki. Jeśli płaciłeś kartą kredytową, natychmiast skontaktuj się z bankiem w sprawie chargeback. Przy PayPal \"Towary i Usługi\" otwórz spór w Centrum Rozwiązywania Sporów w ciągu 180 dni. Nie usuwaj żadnych wiadomości." }
+      ],
+      "checklistTitle": "Szybka lista kontrolna — zweryfikuj nas w 2 minuty",
+      "checklist": [
+        "Szukaj NIP 02710130598 na ufficiocamerale.it — nazwa, aktywny status, ATECO 55.20.51",
+        "Zweryfikuj CIN IT059014B47RVOMN2D na bdsr.ministeroturismo.gov.it",
+        "Szukaj \"LivingApple Scauri\" na Airbnb i Booking.com — przeczytaj zweryfikowane recenzje",
+        "Sprawdź, czy płatność przechodzi przez Stripe — oficjalny link LivingApple",
+        "Przy PayPal: potwierdź, że to \"Towary i Usługi\" — nigdy \"Znajomi i rodzina\""
+      ],
+      "ctaVerifyRi": "Szukaj NIP na ufficiocamerale.it",
+      "ctaVerifyAirbnb": "Zobacz profil Airbnb",
+      "ctaBook": "Zarezerwuj teraz",
+      "ctaBookSub": "Bezpieczna płatność przez Stripe",
+      "scamTitle": "Czy byłeś ofiarą oszustwa?",
+      "scamSteps": [
+        "Zgłoś na commissariatodips.it w ciągu 48h",
+        "Zachowaj wszystkie wiadomości, zrzuty ekranu i rachunki",
+        "Skontaktuj się z bankiem w sprawie chargeback (przy płatności kartą)",
+        "Otwórz spór PayPal w ciągu 180 dni (przy PayPal T&U)"
+      ]
     }
   }
 }
