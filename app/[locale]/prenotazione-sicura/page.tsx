@@ -36,14 +36,10 @@ export default async function PrenotazioneSicuraPage({ params }: Props) {
   const { locale } = await params;
   if (!isValidLocale(locale)) notFound();
 
-  const bookSlugs: Record<Locale, string> = {
-    it: 'prenota', en: 'book', de: 'buchen', pl: 'rezerwuj',
-  };
-
   return (
     <PrenotazioneSicuraClient
       locale={locale}
-      bookHref={`/${locale}/${bookSlugs[locale]}`}
+      bookHref={`/${locale}`}
     />
   );
 }
