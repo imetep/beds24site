@@ -1334,6 +1334,28 @@
       "signSignature": "Firma",
       "maxLabel": "max 15 kg"
     },
+    "trattamentoDati": {
+      "metaTitle": "Trattamento dei dati — LivingApple",
+      "metaDescription": "Informativa ex art. 13 Regolamento UE 679/2016 (GDPR) — finalità del trattamento, conservazione, diritti dell'interessato.",
+      "h1": "Trattamento dei dati",
+      "infoBox": "Informativa ex art. 13 Regolamento EU 679/2016",
+      "intro": "Ai sensi dell'art. 13 del Regolamento EU 679/2016, la Livingapple srl, con sede in Traversa Carmen Rosati 2, Scauri di Minturno (LT), La informa che i suoi dati personali saranno raccolti per:",
+      "purposeA": "A — dare risposta alle sue richieste",
+      "purposeB": "B — l'invio di comunicazioni a carattere informativo/promozionale",
+      "conferimento": "Il conferimento dei dati di cui al punto A è necessario; in sua mancanza non potremmo inviarLe le informazioni richieste. Il conferimento dei dati di cui al punto B non è obbligatorio.",
+      "baseGiuridica": "La base giuridica del trattamento è la richiesta dell'interessato e il consenso liberamente prestato. Ha il diritto di revocare il consenso in qualsiasi momento senza pregiudicare la liceità del trattamento precedente.",
+      "h2Storage": "Conservazione dei dati",
+      "storage": "I dati saranno conservati per il tempo necessario a rispondere alle sue richieste (finalità A). Per la finalità B, i dati saranno conservati per 24 mesi.",
+      "h2Communication": "Comunicazione e diffusione",
+      "communication": "I dati non saranno comunicati né diffusi a terzi, salvo quanto necessario per adempiere agli obblighi di legge.",
+      "h2Rights": "I tuoi diritti",
+      "rightsIntro": "Potrà esercitare i diritti previsti dal Regolamento EU 679/2016 scrivendo a livingapple@gmail.com. Potrà chiedere:",
+      "right1": "conoscenza dell'origine dei dati e delle finalità del trattamento",
+      "right2": "cancellazione, anonimizzazione o blocco dei dati trattati in violazione di legge",
+      "right3": "aggiornamento, rettifica o integrazione dei dati",
+      "right4": "di opporsi, per motivi legittimi, al trattamento",
+      "rightsFooter": "È garantito il diritto alla portabilità dei dati e a proporre reclamo a un'autorità di controllo."
+    },
     "privacy": {
       "metaTitle": "Privacy Policy — LivingApple",
       "metaDescription": "Informativa sul trattamento dei dati personali ai sensi del Codice Privacy e del GDPR. Come Livingapple S.r.l. tratta i dati raccolti via sito web.",
