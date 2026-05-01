@@ -6429,7 +6429,7 @@ body {
 .step-circle__text {
   margin: 0;
   font-size: var(--text-sm);
-  color: #4b5563;
+  color: var(--color-text-subtle);
   line-height: 1.65;
 }
 
@@ -6459,14 +6459,14 @@ body {
 .faq-simple__chevron {
   transition: transform 200ms;
   flex-shrink: 0;
-  stroke: #9ca3af;
+  stroke: var(--color-text-disabled);
 }
 .faq-simple.is-open .faq-simple__chevron {
   transform: rotate(180deg);
 }
 .faq-simple__a {
   font-size: var(--text-sm);
-  color: #4b5563;
+  color: var(--color-text-subtle);
   margin-bottom: var(--space-md);
   line-height: 1.65;
 }
@@ -6481,7 +6481,7 @@ body {
   padding: 4px var(--space-md);
 }
 .page-hero-badge--warning {
-  background: #FFF8E7;
+  background: var(--color-warning-bg);
   color: var(--color-warning-text);
 }
 
@@ -6500,7 +6500,7 @@ body {
 .page-section-white__text {
   margin: 0;
   font-size: var(--text-sm);
-  color: #4b5563;
+  color: var(--color-text-subtle);
   line-height: 1.7;
 }
 
@@ -6514,7 +6514,7 @@ body {
   font-size: var(--text-base);
   font-weight: 700;
   margin: 0;
-  color: #0C447C;
+  color: var(--color-primary-dark);
 }
 .deposito__box-online-badge {
   display: inline-block;
@@ -6529,7 +6529,7 @@ body {
 .deposito__box-online-note {
   margin: var(--space-md) 0 0;
   font-size: var(--text-xs);
-  color: #185FA5;
+  color: var(--color-primary);
   line-height: 1.5;
 }
 
@@ -6546,7 +6546,7 @@ body {
 }
 .deposito__amounts-label {
   font-size: var(--text-sm);
-  color: #374151;
+  color: var(--color-text-subtle);
 }
 .deposito__amounts-value {
   font-weight: 700;
@@ -6556,10 +6556,10 @@ body {
 
 /* Box danni (warning) */
 .deposito__damages {
-  border: 1px solid #FDE68A;
+  border: 1px solid var(--color-warning-border);
   padding: var(--space-md);
   margin-bottom: var(--space-sm);
-  background: #FFF8E7;
+  background: var(--color-warning-bg);
 }
 .deposito__damages-title {
   font-size: var(--text-base);
@@ -6570,7 +6570,7 @@ body {
 .deposito__damages-text {
   margin: 0;
   font-size: var(--text-sm);
-  color: #78350f;
+  color: var(--color-warning-text);
   line-height: 1.7;
 }
 
@@ -6585,12 +6585,12 @@ body {
   font-size: var(--text-md);
   font-weight: 700;
   margin-bottom: var(--space-sm);
-  color: #0C447C;
+  color: var(--color-primary-dark);
 }
 .deposito__cta-text {
   font-size: var(--text-sm);
   margin-bottom: var(--space-md);
-  color: #185FA5;
+  color: var(--color-primary);
   line-height: 1.6;
 }
 .deposito__cta-btn {
@@ -6598,7 +6598,7 @@ body {
   color: var(--color-on-dark);
   font-weight: 700;
   text-decoration: none;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   margin-bottom: var(--space-sm);
   background: var(--color-primary);
   padding: 13px var(--space-lg);
@@ -6608,7 +6608,7 @@ body {
 .deposito__cta-note {
   margin: 0;
   font-size: var(--text-xs);
-  color: #185FA5;
+  color: var(--color-primary);
 }
 .deposito__contact-link {
   font-size: var(--text-sm);
