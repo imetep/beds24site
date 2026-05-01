@@ -13,6 +13,8 @@
  *   />
  */
 
+import { Icon } from '@/components/ui/Icon';
+
 interface Step {
   label: string;
 }
@@ -40,7 +42,7 @@ export default function Stepper({ steps, current, onGoBack, ariaLabel = 'Progres
           const content = (
             <>
               <span className="ui-stepper-dot" aria-hidden="true">
-                {status === 'done' ? <i className="bi bi-check" /> : stepNum}
+                {status === 'done' ? <Icon name="check" /> : stepNum}
               </span>
               <span className="ui-stepper-label">{step.label}</span>
             </>
