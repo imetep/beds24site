@@ -1316,6 +1316,72 @@
       "signSignature": "Signature",
       "maxLabel": "max 15 kg"
     },
+    "condizioni": {
+      "metaTitle": "General Terms & Conditions — LivingApple",
+      "metaDescription": "All booking, payment, cancellation, check-in/out and house rules conditions for LivingApple holiday rentals in Scauri (LT), Italy.",
+      "h1": "General Terms & Conditions",
+      "subtitle": "All conditions for your holiday at LivingApple",
+      "sections": [
+        { "title": "1. Definitions", "paragraphs": [
+          "In these \"General Rental Terms\" the following definitions apply:",
+          "**\"Customer\"** — the person making the Booking and using the services and properties offered by LivingApple;",
+          "**\"Booking\"** — the Customer's request to rent an apartment for a specific period;",
+          "**\"Contract Proposal\"** — LivingApple's communication confirming availability, detailing the offer and requesting the deposit;",
+          "**\"Confirmation Letter\"** — LivingApple's confirmation of receipt of the deposit with the booking confirmation code;",
+          "**\"Rental Agreement\"** — the service terms concluded between LivingApple and the customer."
+        ] },
+        { "title": "2. Booking and conclusion", "paragraphs": [
+          "The Booking is considered finalised when the Customer receives the Confirmation Letter, sent by LivingApple immediately upon receipt of the deposit. The Rental Agreement includes a Guest List form which must be completed, signed and returned to LivingApple as soon as possible."
+        ] },
+        { "title": "3. Deposit, payment and security deposit", "paragraphs": [
+          "The advance deposit equals 30% of the rental fee (minimum €150.00) and may be paid by bank transfer, credit card (+2.5%) or PayPal (+3.4%). It must be received within 7 days of the availability notification (3 days for online payment).",
+          "The balance and security deposit must be paid in cash or by credit card pre-authorisation upon arrival when collecting the keys."
+        ] },
+        { "title": "4. Cancellation", "paragraphs": [
+          "A confirmed booking cannot be cancelled or modified. Any cancellation request must be communicated by email. For discounted rates or holiday periods, any cancellation requires payment of 100% of the booking value."
+        ], "bullets": [
+          "**60+ days before:** 50% of the advance deposit (min. €150.00)",
+          "**59–15 days before:** full advance deposit + 25% of the remaining balance",
+          "**14–01 days before:** full balance payment"
+        ] },
+        { "title": "5. Arrival and departure", "paragraphs": [
+          "Arrival details must be sent by email at least 3 days before the arrival date. Check-in is scheduled between 17:00 and 20:00. Late arrivals:"
+        ], "bullets": [
+          "€30.00 from 20:00 to 22:00",
+          "€50.00 from 22:00 to 24:00"
+        ], "paragraphsAfter": [
+          "Check-in after midnight and check-out before 08:00 are not possible. All occupants must present identity documents upon arrival."
+        ] },
+        { "title": "6. Property equipment", "paragraphs": [
+          "All apartments are fully furnished and include a gas cooker, refrigerator, kitchen equipment, hot and cold running water, and 220V electricity. One blanket and pillow are provided per bed. Bed linen and towels can be hired on request."
+        ] },
+        { "title": "7. Departure", "paragraphs": [
+          "The apartment must be vacated between 07:00 and 10:00. It must be left free of rubbish, with clean shelves, washed crockery, an empty fridge with the door open. Furniture must not be moved or left outside."
+        ] },
+        { "title": "8. House rules", "paragraphs": [
+          "Accommodating more guests than the number of beds permits is strictly prohibited. Children over 24 months are counted as adults. Leaving furniture outside, leaving retractable awnings open when vacating, and using the barbecue with wood are not permitted.",
+          "Guests must observe quiet hours, especially in the afternoon and at night."
+        ] },
+        { "title": "9. Outdoor areas and picnic area", "paragraphs": [
+          "The picnic area is accessible from 11:00 to 24:00. Children must be supervised. Glass, animals, bicycles and skateboards are not permitted. The number of guests is limited to those specified in the contract."
+        ] },
+        { "title": "10. Swimming pool", "paragraphs": [
+          "The pool is reserved exclusively for guests at the Via Tore property. LivingApple Beach guests **do not have pool access**. Open 09:00–19:00. Children under 12 must be accompanied. Diving, jumping and glass containers are prohibited."
+        ] },
+        { "title": "11. Penalties", "paragraphs": [
+          "Failure to comply with the rules in sections 7 and 8 may result in penalties ranging from €10.00 to €500.00 and surcharges on final cleaning costs."
+        ] },
+        { "title": "12. Security deposit", "paragraphs": [
+          "A security deposit is required upon key collection, as a guarantee of compliance with these rules. The amount varies depending on the apartment booked. The deposit is returned after the apartment has been inspected."
+        ] },
+        { "title": "13. Liability", "paragraphs": [
+          "LivingApple accepts no liability for breakages, injuries, losses, thefts, delays or inconveniences of any kind. Any legal disputes shall be subject to the exclusive jurisdiction of the Court of Cassino (FR), Italy."
+        ] },
+        { "title": "14. Acceptance", "paragraphs": [
+          "By making a booking, the customer expressly accepts all the terms and conditions set out herein."
+        ] }
+      ]
+    },
     "trattamentoDati": {
       "metaTitle": "Data Processing Notice — LivingApple",
       "metaDescription": "Notice pursuant to Art. 13 EU Regulation 679/2016 (GDPR) — purposes of processing, retention, data subject rights.",
