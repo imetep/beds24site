@@ -1270,6 +1270,47 @@
       "honestTitle": "Unsere ehrliche Empfehlung",
       "honestText": "Wenn Sie es vorziehen, sich während Ihres Urlaubs keine Gedanken über den Energieverbrauch zu machen — wir verstehen das vollkommen —, empfehlen wir Ihnen ehrlich, eine Unterkunft mit Inklusivpreis zu suchen. Das ist eine absolut gültige Wahl. Kein Kompromiss: einfach das richtige Werkzeug für Ihre Bedürfnisse.",
       "honestCaution": "Achtung: Einige Inklusiv-Unterkünfte zu sehr niedrigen Preisen haben Heizungs- und Kühlsysteme, die nicht den nordeuropäischen Standards entsprechen, Verbrauchsobergrenzen über die ein Aufpreis anfällt, oder eine unzureichende Stromversorgung — Sicherungen, die auslösen und Sie ohne Strom lassen.\n\nFragen Sie vor der Buchung immer:\n• „Erreicht die Unterkunft im Januar 22°C innen?\"\n• „Gibt es eine Verbrauchsobergrenze für die inbegriffenen Nebenkosten?\"\n• „Ist die Stromversorgung ausreichend für alle gleichzeitig laufenden Klimaanlagen plus Backofen, Haartrockner, Waschmaschine, Geschirrspüler und Mikrowelle?\""
+    },
+    "animali": {
+      "metaTitle": "Haustiere — Hausordnung | LivingApple",
+      "metaDescription": "Vollständige Haustierpolitik für LivingApple-Unterkünfte. Hunde bis 15 kg mit obligatorischer Kaution.",
+      "heroTitle": "Ihre Vierbeiner sind herzlich willkommen",
+      "heroSub": "Wir haben an alles gedacht, um den Aufenthalt für Sie und Ihr Tier angenehm zu gestalten. Bitte lesen Sie die folgenden Regeln, um Missverständnisse zu vermeiden.",
+      "legalNote": "Gemäß dem italienischen Gesetz 281/1991, Art. 83 des D.P.R. 320/1954 und dem Regionalgesetz Latium Nr. 34/1997.",
+      "s1Title": "Welche Tiere sind erlaubt",
+      "s1Items": [
+        "Maximal 1 Haustier pro Wohnung.",
+        "Hunde kleiner und mittlerer Größe — maximales Gewicht 15 kg (Ausnahme für Blindenhunde).",
+        "Das Tier muss gechipt und im Hunderegister eingetragen sein.",
+        "Das Impfbuch muss mit Chip-Nummer und aktuellem Impfstatus mitgebracht werden.",
+        "Die Unterkunft behält sich das Recht vor, die Unterlagen zu überprüfen."
+      ],
+      "s2Title": "Verhalten und Verantwortung",
+      "s2Items": [
+        "Das Tier muss in den Gemeinschaftsbereichen der Unterkunft an der Leine oder im Transportbehälter geführt werden.",
+        "Haustiere dürfen nicht unbeaufsichtigt in der Wohnung gelassen werden.",
+        "Es ist strengstens verboten, dem Tier zu erlauben, auf das Bett oder das Sofa zu klettern.",
+        "Das Tier muss an das Leben in der Wohnung und an Hygienestandards gewöhnt sein.",
+        "Die Unterkunft kann die Kosten für außerordentliche Reinigungsarbeiten in Rechnung stellen, falls erforderlich.",
+        "Der Besitzer haftet für alle materiellen oder körperlichen Schäden, die durch das Tier verursacht werden.",
+        "Bei anhaltendem störendem Verhalten kann die Verwaltung das Verlassen der Unterkunft fordern. Der Besitzer akzeptiert diese Bedingung mit der Unterzeichnung der Hausordnung."
+      ],
+      "s3Title": "Kaution",
+      "s3Text": "Eine Kaution ist für Gäste mit Haustieren obligatorisch. Sie wird ausschließlich mit Kreditkarte bezahlt (keine Debitkarte, keine Prepaid-Karte) und bei Abreise vollständig zurückerstattet, sofern keine Schäden entstanden sind.",
+      "s3Link": "So funktioniert die Kaution →",
+      "ratesTitle": "Haustieraufpreis",
+      "ratesNote": "Der Aufpreis wird anhand der Aufenthaltsdauer berechnet und beim Check-in bezahlt.",
+      "rate1to3": "€ 30,00 / Nacht",
+      "rate4to7": "€ 20,00 / Nacht",
+      "rate8plus": "€ 10,00 / Nacht",
+      "nightsLabel": "Aufenthaltsdauer",
+      "priceLabel": "Täglicher Aufpreis",
+      "nightsUnit": "Nächte",
+      "signTitle": "Akzeptanz der Hausordnung",
+      "signText": "Beim Check-in werden die Gäste gebeten, diese Hausordnung zu unterzeichnen. Die Unterzeichnung bedeutet die Akzeptanz aller darin aufgeführten Bedingungen.",
+      "signDate": "Datum",
+      "signSignature": "Unterschrift",
+      "maxLabel": "max. 15 kg"
     }
   }
 }
