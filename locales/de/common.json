@@ -1316,6 +1316,28 @@
       "signSignature": "Unterschrift",
       "maxLabel": "max. 15 kg"
     },
+    "trattamentoDati": {
+      "metaTitle": "Datenschutzhinweis — LivingApple",
+      "metaDescription": "Hinweis gemäß Art. 13 EU-Verordnung 679/2016 (DSGVO) — Verarbeitungszwecke, Speicherung, Betroffenenrechte.",
+      "h1": "Datenschutzhinweis",
+      "infoBox": "Hinweis gemäß Art. 13 EU-Verordnung 679/2016 (DSGVO)",
+      "intro": "Gemäß Art. 13 der EU-Verordnung 679/2016 (DSGVO) teilt die Livingapple srl, Sitz: Traversa Carmen Rosati 2, Scauri di Minturno (LT), Italien, Ihnen mit, dass Ihre personenbezogenen Daten für folgende Zwecke erhoben werden:",
+      "purposeA": "A — Beantwortung Ihrer Anfragen",
+      "purposeB": "B — Versand von Informations- und/oder Werbemitteilungen",
+      "conferimento": "Die Angabe der Daten gemäß Zweck A ist erforderlich; ohne sie können wir Ihnen die gewünschten Informationen nicht zusenden. Die Angabe der Daten gemäß Zweck B ist freiwillig.",
+      "baseGiuridica": "Rechtsgrundlage der Verarbeitung sind Ihre Anfrage und Ihre freiwillig erteilte Einwilligung. Sie können Ihre Einwilligung jederzeit widerrufen, ohne dass die Rechtmäßigkeit der bisherigen Verarbeitung berührt wird.",
+      "h2Storage": "Datenspeicherung",
+      "storage": "Ihre Daten werden so lange gespeichert, wie es zur Beantwortung Ihrer Anfragen erforderlich ist (Zweck A). Für Zweck B werden die Daten 24 Monate lang aufbewahrt.",
+      "h2Communication": "Weitergabe und Verbreitung",
+      "communication": "Die Daten werden nicht an Dritte weitergegeben oder verbreitet, es sei denn, dies ist zur Erfüllung gesetzlicher Pflichten erforderlich.",
+      "h2Rights": "Ihre Rechte",
+      "rightsIntro": "Sie können Ihre Rechte aus der EU-Verordnung 679/2016 geltend machen, indem Sie uns unter livingapple@gmail.com kontaktieren. Sie können insbesondere beantragen:",
+      "right1": "Auskunft über Herkunft und Zwecke der Verarbeitung",
+      "right2": "Löschung, Anonymisierung oder Sperrung rechtswidrig verarbeiteter Daten",
+      "right3": "Aktualisierung, Berichtigung oder Ergänzung der Daten",
+      "right4": "Widerspruch gegen die Verarbeitung aus berechtigten Gründen",
+      "rightsFooter": "Sie haben das Recht auf Datenübertragbarkeit und das Recht, Beschwerde bei einer Datenschutzbehörde einzulegen."
+    },
     "privacy": {
       "metaTitle": "Datenschutzerklärung — LivingApple",
       "metaDescription": "Datenschutzhinweis zur Verarbeitung personenbezogener Daten gemäß DSGVO. Wie Livingapple S.r.l. die über die Website erhobenen Daten verarbeitet.",
