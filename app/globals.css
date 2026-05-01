@@ -1910,9 +1910,6 @@ body {
   justify-content: center;
   gap: 10px;
 }
-.wizard-step3__vault-redirecting .bi-hourglass-split {
-  animation: wizard-hourglass 1.5s linear infinite;
-}
 @keyframes wizard-hourglass {
   0%   { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
