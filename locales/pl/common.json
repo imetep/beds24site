@@ -1316,6 +1316,28 @@
       "signSignature": "Podpis",
       "maxLabel": "maks. 15 kg"
     },
+    "trattamentoDati": {
+      "metaTitle": "Informacja o przetwarzaniu danych — LivingApple",
+      "metaDescription": "Informacja zgodnie z art. 13 rozporządzenia UE 679/2016 (RODO) — cele przetwarzania, przechowywanie, prawa osoby, której dane dotyczą.",
+      "h1": "Informacja o przetwarzaniu danych",
+      "infoBox": "Informacja zgodnie z art. 13 rozporządzenia UE 679/2016 (RODO)",
+      "intro": "Zgodnie z art. 13 rozporządzenia UE 679/2016 (RODO), Livingapple srl z siedzibą przy Traversa Carmen Rosati 2, Scauri di Minturno (LT), Włochy, informuje, że Pani/Pana dane osobowe będą zbierane w następujących celach:",
+      "purposeA": "A — udzielanie odpowiedzi na zapytania",
+      "purposeB": "B — przesyłanie komunikatów informacyjnych i/lub promocyjnych",
+      "conferimento": "Podanie danych w celu A jest niezbędne; bez nich nie możemy udzielić żądanych informacji. Podanie danych w celu B jest dobrowolne.",
+      "baseGiuridica": "Podstawą prawną przetwarzania jest Pani/Pana zapytanie oraz dobrowolnie wyrażona zgoda. Zgodę można wycofać w dowolnym momencie bez wpływu na zgodność z prawem wcześniejszego przetwarzania.",
+      "h2Storage": "Przechowywanie danych",
+      "storage": "Dane będą przechowywane przez czas niezbędny do udzielenia odpowiedzi na zapytania (cel A). W przypadku celu B dane będą przechowywane przez 24 miesiące.",
+      "h2Communication": "Ujawnianie i przekazywanie",
+      "communication": "Dane nie będą ujawniane ani przekazywane osobom trzecim, chyba że jest to konieczne w celu wypełnienia obowiązków prawnych.",
+      "h2Rights": "Pani/Pana prawa",
+      "rightsIntro": "Prawa przysługujące na mocy rozporządzenia UE 679/2016 można wykonywać, pisząc na adres livingapple@gmail.com. W szczególności można zażądać:",
+      "right1": "informacji o pochodzeniu i celach przetwarzania danych",
+      "right2": "usunięcia, anonimizacji lub zablokowania danych przetwarzanych niezgodnie z prawem",
+      "right3": "aktualizacji, sprostowania lub uzupełnienia danych",
+      "right4": "wniesienia sprzeciwu wobec przetwarzania z uzasadnionych powodów",
+      "rightsFooter": "Przysługuje Pani/Panu prawo do przenoszenia danych oraz prawo do wniesienia skargi do organu nadzorczego."
+    },
     "privacy": {
       "metaTitle": "Polityka prywatności — LivingApple",
       "metaDescription": "Informacja o przetwarzaniu danych osobowych zgodnie z RODO. Jak Livingapple S.r.l. przetwarza dane zbierane przez stronę internetową.",
