@@ -2738,22 +2738,6 @@ body {
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
-/* Desktop ≥992px: card si stringono in proporzione per stare in 1 riga
-   (max 5 card × 200px non entrano in .page-container 985px).
-   Override !important per battere .flex-shrink-0 (Bootstrap utility) sul JSX. */
-@media (min-width: 992px) {
-  .bed-config__scroll {
-    overflow-x: visible;
-  }
-  .card-room-bed {
-    width: auto !important;
-    flex-grow: 0 !important;
-    flex-shrink: 1 !important;
-    flex-basis: 200px !important;
-    max-width: 200px;
-    min-width: 0;
-  }
-}
 .bed-config__scroll-hint-text {
   font-size: 11px;
   color: var(--color-primary);
@@ -4137,7 +4121,9 @@ body {
 }
 
 /* ── CTA "Prenota" ── */
-.booking-panel__cta {
+/* CTA "Prenota ora" condivisa: pattern delle pagine slug applicato ovunque */
+.cta-book {
+  display: block;
   width: 100%;
   margin-top: var(--space-md);
   font-weight: 700;
@@ -4147,9 +4133,17 @@ body {
   font-size: 16px;
   background: var(--color-cta);
   color: var(--color-on-dark);
+  text-decoration: none;
+  text-align: center;
   cursor: pointer;
+  transition: background-color 0.15s;
 }
-.booking-panel__cta:disabled {
+.cta-book:hover:not(:disabled),
+.cta-book:focus-visible:not(:disabled) {
+  background: var(--color-primary-dark);
+  color: var(--color-on-dark);
+}
+.cta-book:disabled {
   background: #e0e0e0;
   color: var(--color-text-muted);
   cursor: not-allowed;
@@ -7723,6 +7717,16 @@ body {
 .dove-siamo__callout-icon svg {
   width: 22px;
   height: 22px;
+}
+
+/* CTA finale: titolo + sub centrati, bottone .cta-book contenuto */
+.dove-siamo__cta {
+  text-align: center;
+}
+.dove-siamo__cta .cta-book {
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
