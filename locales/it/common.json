@@ -1333,6 +1333,50 @@
       "signDate": "Data",
       "signSignature": "Firma",
       "maxLabel": "max 15 kg"
+    },
+    "prenotazioneSicura": {
+      "metaTitle": "Prenotazione sicura — Come verificarci | LivingApple",
+      "metaDescription": "LivingApple è un gestore professionale con CIN, P.IVA verificabile e pagamenti tramite Stripe. Scopri come verificarci in 2 minuti prima di prenotare.",
+      "heroTitle": "Vuoi sapere chi siamo prima di darci i tuoi soldi?",
+      "heroSub": "Buona idea. Questa pagina esiste esattamente per questo. Ci vorranno 2 minuti, e troverai tutto quello che ti serve per verificarci — senza fidarti della nostra parola.",
+      "trustTitle": "Verificaci prima di prenotare",
+      "trustPills": [
+        { "icon": "building", "title": "CIN verificabile", "text": "Il Codice Identificativo Nazionale IT059014B47RVOMN2D è obbligatorio per legge da settembre 2024 ed è visibile su tutti i nostri annunci. Puoi verificarlo sul portale del Ministero del Turismo.", "link": { "label": "Verifica il CIN →", "href": "https://bdsr.ministeroturismo.gov.it/" } },
+        { "icon": "building-fill", "title": "P.IVA attiva su Registro Imprese", "text": "P.IVA 02710130598 — codice ATECO 55.20.51 (case e appartamenti vacanze). Puoi verificarla gratuitamente cercando il numero su registroimprese.it o su ufficiocamerale.it: nome, stato attivo e ragione sociale in 30 secondi.", "link": { "label": "Cerca su ufficiocamerale.it →", "href": "https://www.ufficiocamerale.it/trova-azienda" } },
+        { "icon": "credit-card-fill", "title": "Pagamenti tramite Stripe — identificazione bancaria", "text": "Stripe non concede l'accesso a privati senza P.IVA. Per attivarlo è obbligatoria una procedura KYC con verifica dei documenti e estratti conto. Accettando pagamenti via Stripe, siamo già stati identificati da un soggetto bancario terzo." },
+        { "icon": "star-fill", "title": "Presenti su Airbnb e Booking.com con storico verificato", "text": "Siamo su Airbnb (LivingApple) e Booking.com (LivingApple e LivingApple Beach) con recensioni scritte esclusivamente da ospiti con soggiorno completato — impossibile falsificare. Cerca \"LivingApple Scauri\" su entrambe le piattaforme.", "link": { "label": "Vedi il nostro profilo Airbnb →", "href": "https://www.airbnb.it/p/livingapple-italy-vacation-rentals" } },
+        { "icon": "shield-fill", "title": "PayPal \"Beni e Servizi\" — tutela 180 giorni", "text": "Accettiamo PayPal solo nella modalità \"Beni e Servizi\", che attiva la Tutela Acquisti: puoi aprire una contestazione entro 180 giorni se il servizio non corrisponde. I truffatori chiedono sempre \"Amici e Familiari\" — noi no." }
+      ],
+      "guideTitle": "La guida completa — cosa sapere prima di prenotare una casa vacanza",
+      "guideSub": "Fonti: Polizia Postale · Airbnb · Altroconsumo · Commissariato di P.S. Online",
+      "chapters": [
+        { "title": "Cap. 0 — Chi pubblica e dove: tre categorie", "body": "Nel mercato degli affitti brevi esistono tre categorie distinte. I privati non registrati operano senza CIN, senza P.IVA, spesso in nero. Sono soggetti che violano la legge italiana, il che li rende impossibili da tutelare in caso di problemi.\n\nEsiste poi una zona grigia caotica dove operano i truffatori più sofisticati: copiano annunci reali da Airbnb e Booking, li ripubblicano su Subito.it o gruppi Facebook con prezzi più bassi, e chiedono di pagare fuori piattaforma.\n\nI gestori professionali — quelli con CIN, P.IVA e obblighi fiscali — scelgono le OTA certificate proprio perché offrono strumenti di credibilità impossibili da falsificare.", "tip": "Stripe, Square e qualsiasi piattaforma di pagamento professionale NON vengono concessi a privati senza P.IVA. Un gestore che accetta pagamenti tramite questi strumenti ha già superato un controllo di identità imposto da soggetti terzi." },
+        { "title": "Cap. 1 — Il sopralluogo non prova nulla", "body": "Moltissimi ospiti credono che visitare fisicamente una casa prima di affittarla sia la massima garanzia. È sbagliato.\n\nLa truffa del subaffitto fraudolento — documentata dalla Polizia Postale — funziona così: il truffatore affitta regolarmente un immobile, lo propone a decine di turisti su canali non controllati, li accompagna a visitarlo (la casa esiste, le chiavi aprono), incassa la caparra da tutti e alla data del soggiorno non si trova più.", "warn": "Chi ha fatto il sopralluogo è stato truffato esattamente come chi non l'ha fatto. Il sopralluogo non verifica nulla di legale: ha solo confermato che un immobile esiste." },
+        { "title": "Cap. 2 — Cosa garantisce davvero la sicurezza", "body": "Le piattaforme certificate (Airbnb, Booking, Expedia) verificano l'identità dell'host con documento ufficiale prima della pubblicazione. Le recensioni sono scritte esclusivamente da ospiti con prenotazione confermata e soggiorno completato — impossibile scrivere recensioni false.\n\nUna P.IVA verificabile su Registro Imprese è tracciabile, identificabile e aggredibile in sede legale. Un IBAN intestato a una società con P.IVA è una prova legale inattaccabile.\n\nPayPal \"Beni e Servizi\" copre i pagamenti per servizi non ricevuti o non conformi. La contestazione va aperta entro 180 giorni." },
+        { "title": "Cap. 3 — I metodi-trappola da evitare sempre", "body": "I truffatori scelgono metodi di pagamento specifici perché non offrono alcuna tutela alla vittima.\n\n✗ Da evitare: ricarica PostePay, bonifico su IBAN di carta ricaricabile, Western Union / MoneyGram, PayPal \"Amici e Familiari\", contanti senza ricevuta fiscale, criptovalute senza contratto.\n\n✓ Sicuri e tracciabili: bonifico su conto aziendale con P.IVA verificata, pagamento dentro la piattaforma, carta di credito con protezione acquisti, PayPal \"Beni e Servizi\", link di pagamento POS professionale (Stripe).", "warn": "Un IBAN che non inizia con \"IT\" — prefissi LT (Lituania), RO (Romania), BG (Bulgaria) — è spesso abbinato a carte fintech estere non soggette alla vigilanza bancaria italiana." },
+        { "title": "Cap. 4 — L'identikit del truffatore", "body": "Annuncio su Subito.it o gruppo Facebook con prezzo molto inferiore al mercato. Profilo creato da pochi giorni. Non risponde a videochiamate. Cita Airbnb o Booking per darsi credibilità, ma chiede di pagare fuori. Mette fretta: \"la casa va a un'altra coppia se non blocchi oggi\". Il conto è intestato a un nome straniero non coerente con chi parli.\n\nSegnali di affidabilità: profilo OTA con storico di almeno 12 mesi e recensioni verificate, P.IVA esposta e verificabile, CIN visibile nell'annuncio, disponibilità a videochiamate, contratto completo, pagamento gestito dalla piattaforma o con POS professionale." },
+        { "title": "Cap. 5 — La checklist del buon affittuario", "body": "Prima di confermare qualsiasi prenotazione, verifica: l'annuncio è su una piattaforma OTA certificata. Il gestore ha un profilo con almeno 6-12 mesi di storia. Il pagamento avviene DENTRO la piattaforma. Esiste una P.IVA verificabile. Il CIN dell'immobile è indicato nell'annuncio. L'IBAN inizia con \"IT\". Viene rilasciata ricevuta fiscale. Il gestore è disponibile a videochiamata e non mette pressione sui tempi." },
+        { "title": "Cap. 6 — In caso di truffa: come agire", "body": "Se sei vittima di un raggiro, agisci tempestivamente. Presenta denuncia alla Polizia Postale su commissariatodips.it entro 48 ore — annota il numero di protocollo. Conserva TUTTA la corrispondenza: email, messaggi, screenshot, link dell'annuncio, ricevute. Se il pagamento è avvenuto con carta di credito, contatta immediatamente la banca per il chargeback. Se hai usato PayPal \"Beni e Servizi\", apri una contestazione nel Centro Risoluzioni entro 180 giorni. Non cancellare nessun messaggio." }
+      ],
+      "checklistTitle": "Checklist rapida — verificaci in 2 minuti",
+      "checklist": [
+        "Cerca P.IVA 02710130598 su ufficiocamerale.it — nome, stato attivo, ATECO 55.20.51",
+        "Verifica CIN IT059014B47RVOMN2D su bdsr.ministeroturismo.gov.it",
+        "Cerca \"LivingApple Scauri\" su Airbnb e Booking.com — leggi le recensioni verificate",
+        "Controlla che il pagamento avvenga su Stripe — link ufficiale LivingApple",
+        "Se usi PayPal, verifica che sia \"Beni e Servizi\" — mai \"Amici e Familiari\""
+      ],
+      "ctaVerifyRi": "Cerca P.IVA su ufficiocamerale.it",
+      "ctaVerifyAirbnb": "Vedi il profilo Airbnb",
+      "ctaBook": "Prenota ora",
+      "ctaBookSub": "Pagamento sicuro tramite Stripe",
+      "scamTitle": "Hai subito una truffa?",
+      "scamSteps": [
+        "Denuncia su commissariatodips.it entro 48h",
+        "Conserva ogni messaggio, screenshot e ricevuta",
+        "Chiama la banca per chargeback (se hai pagato con carta)",
+        "Apri contestazione PayPal entro 180 giorni (se hai usato PayPal B&S)"
+      ]
     }
   }
 }
