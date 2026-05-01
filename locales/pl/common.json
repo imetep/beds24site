@@ -491,6 +491,8 @@
       "scroll": "przewiń →"
     },
     "depositoClient": {
+      "metaTitle": "Kaucja — LivingApple",
+      "metaDescription": "Jak działa kaucja w obiektach LivingApple. Płatność online przez Stripe lub osobiście przy zameldowaniu kartą kredytową.",
       "title": "Kaucja",
       "subtitle": "Jak działa, ile wynosi i kiedy jest zwracana.",
       "badge": "Wymagana przy wszystkich rezerwacjach",
