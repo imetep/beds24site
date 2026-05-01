@@ -1316,6 +1316,48 @@
       "signSignature": "Unterschrift",
       "maxLabel": "max. 15 kg"
     },
+    "selfCheckin": {
+      "metaTitle": "Online-Check-in — LivingApple",
+      "metaDescription": "So funktioniert der Online-Check-in bei LivingApple. Pflichtverfahren gemäß Art. 109 TULPS. 5 Schritte, 10 Minuten.",
+      "title": "Online-Check-in",
+      "subtitle": "So funktioniert das obligatorische Pre-Check-in-Verfahren für den Self-Check-in.",
+      "whyTitle": "Warum ist es Pflicht?",
+      "whyText": "In Italien verpflichtet Artikel 109 des Einheitstexts der Gesetze über die öffentliche Sicherheit (R.D. 773/1931) alle Beherbergungsbetriebe, jeden Gast persönlich zu identifizieren und die Daten den Sicherheitsbehörden zu melden. Dies ist keine Entscheidung des Betreibers — es ist eine gesetzliche Pflicht, die für alle italienischen Beherbergungsbetriebe gilt, einschließlich außerhotellierer Betriebe.",
+      "whyBadge": "Art. 109 TULPS — R.D. 773/1931",
+      "legalNote": "Das Urteil des Staatsrats Nr. 05732/2025 vom 21. November 2025 bestätigt, dass die persönliche Identifizierung (de visu) weiterhin Pflicht ist. Self-Check-in ist nur als hybrides Verfahren zulässig: Online-Dokumentenerfassung + Videoanruf zur Überprüfung beim physischen Zugang.",
+      "stepsTitle": "So funktioniert es — 5 Schritte",
+      "steps": [
+        { "n": "1", "title": "Buchungsnummer eingeben", "text": "Ihre Beds24-Buchungsnummer finden Sie in der Bestätigungs-E-Mail, die Sie bei der Buchung erhalten haben." },
+        { "n": "2", "title": "Persönliche Daten ausfüllen", "text": "Vorname, Nachname, Geburtsdatum, Staatsangehörigkeit und Ausweisnummer für jeden erwachsenen Gast. Für Minderjährige reichen Anzahl und Alter." },
+        { "n": "3", "title": "Ausweisdokumente hochladen", "text": "Ein klares Foto von Vorder- und Rückseite des Dokuments (Reisepass, Personalausweis oder Führerschein). Das Dokument muss lesbar, unverändert und ohne verdeckte Teile sein." },
+        { "n": "4", "title": "Unterschreiben und absenden", "text": "Sie erklären, die Bedingungen gelesen zu haben, stimmen der Datenverarbeitung (Art. 109 TULPS und DSGVO) zu und senden die Anfrage ab. Sie erhalten eine eindeutige Referenznummer." },
+        { "n": "5", "title": "Guidebook erhalten", "text": "Nach unserer Prüfung und Genehmigung erhalten Sie per E-Mail den Link zum Guidebook mit allen Ankunftsdetails. Beim physischen Zugang führen wir wie gesetzlich vorgeschrieben einen kurzen Videoanruf zur Verifizierung durch." }
+      ],
+      "needTitle": "Was Sie brauchen",
+      "needs": [
+        "Ein gültiges Ausweisdokument (Reisepass, Personalausweis oder Führerschein) für jeden Erwachsenen",
+        "Ein Smartphone oder Computer mit Kamera zum Fotografieren des Dokuments",
+        "Eine Kreditkarte (keine Debitkarte, keine Prepaid-Karte) für die Kaution",
+        "Etwa 5–10 Minuten Zeit"
+      ],
+      "timeNote": "Das Verfahren muss mindestens 72 Stunden vor der Ankunft abgeschlossen werden.",
+      "faqTitle": "Häufig gestellte Fragen",
+      "faqs": [
+        { "q": "Sind meine Daten sicher?", "a": "Ja. Dokumente werden in einem privaten, nicht indizierten Ordner auf Cloudinary hochgeladen. Personenbezogene Daten werden gemäß EU-Verordnung 2016/679 (DSGVO) verarbeitet und den italienischen Behörden gemäß Art. 109 TULPS übermittelt. Sie werden nicht zu kommerziellen Zwecken an Dritte weitergegeben." },
+        { "q": "Was passiert, wenn mein Dokument nicht akzeptiert wird?", "a": "Sie erhalten eine E-Mail mit der Begründung der Ablehnung und der Bitte, das Verfahren zu wiederholen. Dokumente mit verdeckten Gesichtern, abgedeckten Daten oder veränderten Bildern werden automatisch abgelehnt." },
+        { "q": "Kann ich das Verfahren für andere Gäste ausfüllen?", "a": "Ja, der Hauptbuchende kann die Daten aller erwachsenen Mitglieder der Gruppe ausfüllen. Jeder Erwachsene muss jedoch ein gültiges Dokument besitzen." },
+        { "q": "Wird die Kaution sofort abgebucht?", "a": "Nein. Es wird eine Vorautorisierung (vorübergehende Blockierung) auf der Kreditkarte durchgeführt — keine tatsächliche Abbuchung. Wenn keine Schäden vorliegen, wird die Blockierung je nach Kartennetz (Visa/Mastercard/Amex) automatisch innerhalb von 7–30 Tagen nach der Abreise aufgehoben.", "linkLabel": "So funktioniert die Kaution →" }
+      ],
+      "ctaTitle": "Bereit zum Einchecken?",
+      "ctaText": "Sie haben den Check-in-Link in Ihrer Buchungsbestätigungs-E-Mail erhalten. Wenn Sie ihn nicht finden, kontaktieren Sie uns über WhatsApp.",
+      "ctaBtn": "Online-Check-in starten",
+      "ctaNote": "Sie benötigen Ihre Buchungsnummer — Sie finden sie in Ihrer Bestätigungs-E-Mail.",
+      "sourcesTitle": "Quellen & weiterführende Informationen",
+      "sourcesSubtitle": "Die Vorschrift ist durch internationale und italienische Medien dokumentiert. Es handelt sich um eine gesetzliche Pflicht, keine Entscheidung des Betreibers.",
+      "sourcesIntl": "Internationale Presse",
+      "sourcesIt": "Italienische Presse",
+      "contactQuestion": "Haben Sie Fragen? Kontaktieren Sie uns →"
+    },
     "condizioni": {
       "metaTitle": "Allgemeine Geschäftsbedingungen — LivingApple",
       "metaDescription": "Alle Bedingungen zu Buchung, Zahlung, Stornierung, Check-in/out und Hausordnung für die Ferienwohnungen LivingApple in Scauri (LT), Italien.",
