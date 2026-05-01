@@ -33,6 +33,7 @@ import {
   computeDepositAmount, computeVaultChargeAt,
 } from '@/lib/offer-deposit';
 import type { Locale } from '@/config/i18n';
+import { Icon, type IconName } from '@/components/ui/Icon';
 import BookingSidebar from './BookingSidebar';
 import PaymentMethodModal from './PaymentMethodModal';
 
@@ -606,14 +607,14 @@ export default function WizardStep2({ locale = 'it' }: Props) {
   }
 
   // ── Riepilogo metodo pagamento (Card 1) ──────────────────────────────────
-  function paymentSummary(): { icon: string; label: string; isEmpty: boolean } {
+  function paymentSummary(): { icon: IconName; label: string; isEmpty: boolean } {
     if (paymentMethod === 'stripe') {
-      return { icon: 'bi-credit-card-2-front-fill', label: tr.components.paymentModal.methods.stripe.label, isEmpty: false };
+      return { icon: 'credit-card-2-front-fill', label: tr.components.paymentModal.methods.stripe.label, isEmpty: false };
     }
     if (paymentMethod === 'paypal') {
-      return { icon: 'bi-paypal', label: tr.components.paymentModal.methods.paypal.label, isEmpty: false };
+      return { icon: 'paypal', label: tr.components.paymentModal.methods.paypal.label, isEmpty: false };
     }
-    return { icon: 'bi-credit-card', label: t.cardPagamentoEmpty, isEmpty: true };
+    return { icon: 'credit-card', label: t.cardPagamentoEmpty, isEmpty: true };
   }
   const ps = paymentSummary();
 
@@ -660,7 +661,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
         >
           {voucherApplied ? (
             <>
-              <i className="bi bi-check-lg me-1" aria-hidden="true" />
+              <Icon name="check-lg" className="me-1" />
               {(tSidebar as any).voucherApplied}
             </>
           ) : t.voucherApply}
@@ -710,9 +711,9 @@ export default function WizardStep2({ locale = 'it' }: Props) {
             </div>
 
             <div className="step2-pagamento-row">
-              <i
-                className={`bi ${ps.icon} step2-pagamento-icon${ps.isEmpty ? ' is-empty' : ''}`}
-                aria-hidden="true"
+              <Icon
+                name={ps.icon}
+                className={`step2-pagamento-icon${ps.isEmpty ? ' is-empty' : ''}`}
               />
               <div className="step2-pagamento-content">
                 <p className={`step2-pagamento-label${ps.isEmpty ? ' is-empty' : ''}`}>
@@ -730,11 +731,11 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
             {/* Logo strip metodi accettati */}
             <div className="step2-pagamento-logos" aria-hidden="true">
-              <i className="bi bi-credit-card-2-front-fill" title="Visa" />
-              <i className="bi bi-credit-card-2-back-fill" title="Mastercard" />
-              <i className="bi bi-credit-card" title="Amex" />
-              <i className="bi bi-paypal" title="PayPal" />
-              <i className="bi bi-shield-lock-fill" title="Stripe" />
+              <Icon name="credit-card-2-front-fill" />
+              <Icon name="credit-card-2-back-fill" />
+              <Icon name="credit-card" />
+              <Icon name="paypal" />
+              <Icon name="shield-lock-fill" />
             </div>
           </div>
 
@@ -782,7 +783,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
                   return (
                     <div key={item.id} className={`extras-catalog__item${qty > 0 ? ' is-selected' : ''}`}>
                       <span className="extras-catalog__item-icon" aria-hidden="true">
-                        <i className="bi bi-bag-plus-fill" />
+                        <Icon name="bag-plus-fill" />
                       </span>
                       <div className="extras-catalog__item-info">
                         <p className="extras-catalog__item-name">
@@ -823,7 +824,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
           {/* Errore inline */}
           {error && (
             <div className="banner banner--error banner--with-icon">
-              <i className="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+              <Icon name="exclamation-triangle-fill" />
               <div>
                 <p className="banner__title">{t.errTitle}</p>
                 <p className="banner__text">{error}</p>
