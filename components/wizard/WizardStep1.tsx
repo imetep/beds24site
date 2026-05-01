@@ -7,6 +7,7 @@ import { getTranslations } from '@/lib/i18n';
 import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import type { Room } from '@/config/properties';
 import type { Locale } from '@/config/i18n';
+import { Icon, type IconName } from '@/components/ui/Icon';
 
 const SUPPORTED_LOCALES = ['it', 'en', 'de', 'pl'] as const;
 
@@ -27,8 +28,8 @@ function fmt(price: number) {
 function getPoolLabel(room: Room, ui: { privPool: string; sharedPool: string; noPool: string }) {
   return room.privatePool ? ui.privPool : room.sharedPool ? ui.sharedPool : ui.noPool;
 }
-function getPoolIcon(room: Room): string {
-  return room.privatePool ? 'bi-water' : room.sharedPool ? 'bi-water' : 'bi-umbrella-fill';
+function getPoolIcon(room: Room): IconName {
+  return room.privatePool ? 'water' : room.sharedPool ? 'water' : 'umbrella-fill';
 }
 function getLocationLabel(room: Room, ui: { nearSea: string; nature: string }) {
   const prop = getPropertyForRoom(room.roomId);
@@ -274,7 +275,7 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
               onClick={() => setShowFilterPanel(true)}
               className={`step1-filter-btn${activeFiltersCount > 0 ? ' is-active' : ''}`}
             >
-              <i className="bi bi-sliders" aria-hidden="true" />
+              <Icon name="sliders" />
               {t.filtriBtn}
               {activeFiltersCount > 0 && (
                 <span className="step1-filter-btn__count">{activeFiltersCount}</span>
@@ -416,7 +417,7 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                 </div>
                 {poolPreference !== 'none' && (
                   <div className="banner banner--accent banner--with-icon">
-                    <i className="bi bi-water" aria-hidden="true" />
+                    <Icon name="water" />
                     <span>
                       {locale === 'it' ? 'La piscina è aperta indicativamente da fine maggio a metà ottobre.' :
                        locale === 'de' ? 'Der Pool ist voraussichtlich von Ende Mai bis Mitte Oktober geöffnet.' :
@@ -540,7 +541,7 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                           <img src={coverUrl} alt={room.name} className="step1-room-card__photo-img" loading="lazy" />
                         ) : (
                           <div className="step1-room-card__photo-placeholder">
-                            <i className="bi bi-house-fill" aria-hidden="true" />
+                            <Icon name="house-fill" />
                           </div>
                         )}
                       </div>
@@ -556,23 +557,23 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                     {isSingleRoom && <span className="feature-list__item">{room.type}</span>}
                     <ul className="feature-list step1-room-card__meta-chips">
                       <li className="feature-list__item">
-                        <i className="bi bi-door-closed-fill" aria-hidden="true" />
+                        <Icon name="door-closed-fill" />
                         {room.bedrooms} {t.camere}
                       </li>
                       <li className="feature-list__item">
-                        <i className="bi bi-people-fill" aria-hidden="true" />
+                        <Icon name="people-fill" />
                         {t.maxPers} {room.maxPeople} {t.persone}
                       </li>
                       <li className="feature-list__item">
-                        <i className="bi bi-aspect-ratio" aria-hidden="true" />
+                        <Icon name="aspect-ratio" />
                         {room.sqm} mq
                       </li>
                       <li className="feature-list__item">
-                        <i className={`bi ${getPoolIcon(room)}`} aria-hidden="true" />
+                        <Icon name={getPoolIcon(room)} />
                         {getPoolLabel(room, t)}
                       </li>
                       <li className="feature-list__item">
-                        <i className="bi bi-geo-alt-fill" aria-hidden="true" />
+                        <Icon name="geo-alt-fill" />
                         {getLocationLabel(room, t)}
                       </li>
                     </ul>
@@ -606,7 +607,7 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
                                 <div className="step1-offer-option__info">
                                   <div className="step1-offer-option__name-row">
                                     <span className="step1-offer-option__name">{name}</span>
-                                    {isPicked && <span className="step1-offer-option__selected-tag" aria-hidden="true"><i className="bi bi-check-lg" /></span>}
+                                    {isPicked && <span className="step1-offer-option__selected-tag" aria-hidden="true"><Icon name="check-lg" /></span>}
                                   </div>
                                   {desc && <p className="step1-offer-option__desc">{desc}</p>}
                                   {!avail && <span className="step1-offer-option__unavail">{t.nonDisp}</span>}
