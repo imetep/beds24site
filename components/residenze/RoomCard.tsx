@@ -27,7 +27,7 @@ export default function RoomCard({ room, locale, coverUrl }: Props) {
   const roomHref   = `/${locale}/residenze/${room.slug}`;
 
   return (
-    <div className="card shadow-sm overflow-hidden">
+    <div className="card shadow-sm overflow-hidden room-card">
 
       {/* Foto cliccabile → scheda appartamento */}
       <div className="position-relative">

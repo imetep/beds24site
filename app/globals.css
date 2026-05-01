@@ -1048,6 +1048,9 @@ body {
   height: 18px;
   flex-shrink: 0;
 }
+.room-card .card-body {
+  padding: var(--space-md);
+}
 
 .booking-sidebar__total {
   display: flex;
