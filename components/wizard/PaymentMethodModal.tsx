@@ -16,6 +16,7 @@ import { useState } from 'react';
 import { useWizardStore } from '@/store/wizard-store';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
+import { Icon, type IconName } from '@/components/ui/Icon';
 
 type Method = 'stripe' | 'paypal' | 'apple-pay' | 'google-pay' | 'klarna' | null;
 type MethodId = Exclude<Method, null>;
@@ -30,7 +31,7 @@ interface Props {
 }
 
 /**
- * Config NON-i18n dei metodi (id, mapping a chiavi i18n, icona Bootstrap, attivo/coming-soon).
+ * Config NON-i18n dei metodi (id, mapping a chiavi i18n, icon name design system, attivo/coming-soon).
  * Tutti i testi user-facing (label, sub) vivono in locales/{it,en,de,pl}/common.json
  * sotto components.paymentModal.methods.* + components.paymentModal.comingSoon*
  * (memoria progetto: i18n centralizzato).
@@ -38,18 +39,18 @@ interface Props {
 interface MethodConfig {
   id: MethodId;
   i18nKey: MethodKey;
-  icon: string;
+  icon: IconName;
   enabled: boolean;
   /** Se non-attivo, prefisso del sub-text i18n (comingSoon | comingSoonInterestFree) */
   comingSoonKey?: 'comingSoon' | 'comingSoonInterestFree';
 }
 
 const METHODS: MethodConfig[] = [
-  { id: 'stripe',     i18nKey: 'stripe',    icon: 'bi-credit-card-2-front-fill', enabled: true },
-  { id: 'paypal',     i18nKey: 'paypal',    icon: 'bi-paypal',                   enabled: true },
-  { id: 'apple-pay',  i18nKey: 'applePay',  icon: 'bi-apple',                    enabled: false, comingSoonKey: 'comingSoon' },
-  { id: 'google-pay', i18nKey: 'googlePay', icon: 'bi-google',                   enabled: false, comingSoonKey: 'comingSoon' },
-  { id: 'klarna',     i18nKey: 'klarna',    icon: 'bi-cash-stack',               enabled: false, comingSoonKey: 'comingSoonInterestFree' },
+  { id: 'stripe',     i18nKey: 'stripe',    icon: 'credit-card-2-front-fill', enabled: true },
+  { id: 'paypal',     i18nKey: 'paypal',    icon: 'paypal',                   enabled: true },
+  { id: 'apple-pay',  i18nKey: 'applePay',  icon: 'apple',                    enabled: false, comingSoonKey: 'comingSoon' },
+  { id: 'google-pay', i18nKey: 'googlePay', icon: 'google',                   enabled: false, comingSoonKey: 'comingSoon' },
+  { id: 'klarna',     i18nKey: 'klarna',    icon: 'cash-stack',               enabled: false, comingSoonKey: 'comingSoonInterestFree' },
 ];
 
 export default function PaymentMethodModal({ locale, onClose, onConfirm }: Props) {
@@ -108,7 +109,7 @@ export default function PaymentMethodModal({ locale, onClose, onConfirm }: Props
                     onClick={() => setSelected(m.id)}
                     className={`payment-modal__option${isSelected ? ' is-selected' : ''}`}
                   >
-                    <i className={`bi ${m.icon} payment-modal__option-icon`} aria-hidden="true" />
+                    <Icon name={m.icon} className="payment-modal__option-icon" />
                     <span className="payment-modal__option-label">
                       <span className="payment-modal__option-name">{label}</span>
                       {sub && <span className="payment-modal__option-sub">{sub}</span>}
@@ -135,7 +136,7 @@ export default function PaymentMethodModal({ locale, onClose, onConfirm }: Props
                         disabled
                         className="payment-modal__option is-disabled"
                       >
-                        <i className={`bi ${m.icon} payment-modal__option-icon`} aria-hidden="true" />
+                        <Icon name={m.icon} className="payment-modal__option-icon" />
                         <span className="payment-modal__option-label">
                           <span className="payment-modal__option-name">{label}</span>
                           {sub && <span className="payment-modal__option-sub">{sub}</span>}
