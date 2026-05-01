@@ -1270,6 +1270,47 @@
       "honestTitle": "Our honest recommendation",
       "honestText": "If you prefer not to think about energy use during your holiday — and we completely understand — we honestly suggest looking for a property with all-inclusive pricing. It is a perfectly valid choice. Not a compromise: simply the right tool for your needs.",
       "honestCaution": "Warning: some all-inclusive properties at very low prices have heating and cooling systems inadequate for Northern European standards, consumption caps above which a surcharge applies, or insufficient electrical supply — circuit breakers that trip and leave you without power.\n\nBefore booking, always ask:\n• \"Does the property reach 22°C indoors in January?\"\n• \"Is there a consumption cap on the included utilities?\"\n• \"Is the electrical supply sufficient for all air conditioners running simultaneously, plus oven, hairdryer, washing machine, dishwasher and microwave?\""
+    },
+    "animali": {
+      "metaTitle": "Pets Policy — LivingApple",
+      "metaDescription": "Full pet policy for LivingApple properties. Dogs accepted up to 15 kg with mandatory security deposit.",
+      "heroTitle": "Your four-legged friends are welcome",
+      "heroSub": "We have thought of everything to make the stay enjoyable for you and your pet. Please read the rules below to avoid any misunderstandings.",
+      "legalNote": "In compliance with Italian Law 281/1991, Art. 83 of D.P.R. 320/1954 and Lazio Regional Law No. 34/1997.",
+      "s1Title": "Which pets are accepted",
+      "s1Items": [
+        "Maximum 1 pet per apartment.",
+        "Small and medium-sized dogs — maximum weight 15 kg (exception for guide dogs).",
+        "The animal must be microchipped and registered in the canine register.",
+        "The health booklet must be brought on holiday, with microchip number and up-to-date vaccination records.",
+        "The property reserves the right to verify documentation."
+      ],
+      "s2Title": "Behaviour and responsibility",
+      "s2Items": [
+        "The animal must be on a lead or in a carrier in the common areas of the property.",
+        "Pets must not be left unattended in the apartment.",
+        "It is strictly forbidden to allow the animal onto the bed or sofa.",
+        "The animal must be accustomed to indoor living and to cleanliness standards.",
+        "The property may charge for any extraordinary cleaning costs if required.",
+        "The owner is responsible for any material or physical damage caused by the animal.",
+        "In the event of persistent noisy behaviour, management may ask that the animal leave the property. The owner accepts this condition by signing the policy."
+      ],
+      "s3Title": "Security deposit",
+      "s3Text": "A security deposit is mandatory for guests travelling with pets. It is paid exclusively by Credit Card (no Debit Card, no PostePay) and refunded in full within 48 hours of departure provided there is no damage.",
+      "s3Link": "How the deposit works →",
+      "ratesTitle": "Pet supplement",
+      "ratesNote": "The supplement is calculated based on the length of stay and paid at check-in.",
+      "rate1to3": "€ 30.00 / night",
+      "rate4to7": "€ 20.00 / night",
+      "rate8plus": "€ 10.00 / night",
+      "nightsLabel": "Length of stay",
+      "priceLabel": "Daily supplement",
+      "nightsUnit": "nights",
+      "signTitle": "Acceptance of the policy",
+      "signText": "At check-in, guests will be asked to sign this policy. Signing constitutes acceptance of all the conditions set out herein.",
+      "signDate": "Date",
+      "signSignature": "Signature",
+      "maxLabel": "max 15 kg"
     }
   }
 }
