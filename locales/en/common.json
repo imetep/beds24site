@@ -1315,6 +1315,50 @@
       "signDate": "Date",
       "signSignature": "Signature",
       "maxLabel": "max 15 kg"
+    },
+    "prenotazioneSicura": {
+      "metaTitle": "Safe booking — How to verify us | LivingApple",
+      "metaDescription": "LivingApple is a professional operator with a verified CIN, VAT number and Stripe payments. Find out how to verify us in 2 minutes before booking.",
+      "heroTitle": "Want to know who we are before handing over your money?",
+      "heroSub": "Good idea. This page exists for exactly that reason. It will take 2 minutes, and you'll find everything you need to verify us — without having to take our word for it.",
+      "trustTitle": "Verify us before you book",
+      "trustPills": [
+        { "icon": "building", "title": "Verifiable CIN code", "text": "The National Identification Code IT059014B47RVOMN2D has been mandatory by law since September 2024 and is visible on all our listings. You can verify it on the Italian Ministry of Tourism portal.", "link": { "label": "Verify the CIN →", "href": "https://bdsr.ministeroturismo.gov.it/" } },
+        { "icon": "building-fill", "title": "Active VAT on Companies Register", "text": "VAT 02710130598 — ATECO code 55.20.51 (holiday homes and apartments). You can verify it for free by searching the number on registroimprese.it or ufficiocamerale.it: name, active status and registered details in 30 seconds.", "link": { "label": "Search on ufficiocamerale.it →", "href": "https://www.ufficiocamerale.it/trova-azienda" } },
+        { "icon": "credit-card-fill", "title": "Stripe payments — banking identification", "text": "Stripe does not grant access to private individuals without a VAT number. Activation requires a mandatory KYC procedure with document and bank statement verification. By accepting Stripe payments, we have already been identified by an independent banking entity." },
+        { "icon": "star-fill", "title": "Present on Airbnb and Booking.com with verified history", "text": "We are on Airbnb (LivingApple) and Booking.com (LivingApple and LivingApple Beach) with reviews written exclusively by guests with a completed stay — impossible to fake. Search \"LivingApple Scauri\" on both platforms.", "link": { "label": "See our Airbnb profile →", "href": "https://www.airbnb.it/p/livingapple-italy-vacation-rentals" } },
+        { "icon": "shield-fill", "title": "PayPal \"Goods and Services\" — 180-day buyer protection", "text": "We only accept PayPal as \"Goods and Services\", which activates Buyer Protection: you can open a dispute within 180 days if the service does not match. Fraudsters always ask for \"Friends and Family\" — we never do." }
+      ],
+      "guideTitle": "The complete guide — what to know before booking a holiday home",
+      "guideSub": "Sources: Polizia Postale · Airbnb · Altroconsumo · Commissariato di P.S. Online",
+      "chapters": [
+        { "title": "Ch. 0 — Who publishes and where: three categories", "body": "In the short-term rental market there are three distinct categories. Unregistered private individuals operate without a CIN, without a VAT number, often off the books. They are breaking Italian law, which makes it impossible to protect yourself if something goes wrong.\n\nThere is also a chaotic grey area where more sophisticated fraudsters operate: they copy real listings from Airbnb and Booking, republish them on Subito.it or Facebook groups at lower prices, and ask you to pay outside the platform.\n\nProfessional operators — those with a CIN, VAT number and tax obligations — choose certified OTAs precisely because they offer credibility tools that are impossible to fake.", "tip": "Stripe, Square and any professional payment platform do NOT grant access to private individuals without a VAT number. A host accepting payments through these tools has already passed an identity check imposed by third-party banking entities." },
+        { "title": "Ch. 1 — A viewing proves nothing", "body": "Many guests believe that physically visiting a home before renting it is the ultimate guarantee. It is not.\n\nThe fraudulent sublet scam — documented by the Polizia Postale — works like this: the fraudster legitimately rents a property, advertises it to dozens of tourists on unmonitored channels, takes them on a viewing (the house exists, the keys work), collects a deposit from each one, and is nowhere to be found on the day of arrival.", "warn": "The guest who did the viewing was defrauded just as much as the one who did not. The viewing verified nothing legally — it only confirmed that a property exists." },
+        { "title": "Ch. 2 — What actually guarantees security", "body": "Certified platforms (Airbnb, Booking, Expedia) verify the host's identity with an official document before publication. Reviews are written exclusively by guests with a confirmed booking and completed stay — fake reviews are impossible.\n\nA verifiable VAT number on the Companies Register is traceable, identifiable and actionable in court. An IBAN in the name of a company with a VAT number is incontestable legal proof.\n\nPayPal \"Goods and Services\" covers payments for services not received or not as described. Disputes must be opened within 180 days." },
+        { "title": "Ch. 3 — The payment traps to always avoid", "body": "Fraudsters choose specific payment methods precisely because they offer victims no protection.\n\n✗ Avoid: PostePay top-up, bank transfer to a prepaid card IBAN, Western Union / MoneyGram, PayPal \"Friends and Family\", cash without a fiscal receipt, cryptocurrencies without a contract.\n\n✓ Safe and traceable: bank transfer to a business account with verified VAT, payment inside the platform, credit card with purchase protection, PayPal \"Goods and Services\", professional POS payment link (Stripe).", "warn": "An IBAN that does not begin with \"IT\" — prefixes LT (Lithuania), RO (Romania), BG (Bulgaria) — is often linked to foreign fintech cards not subject to Italian banking supervision." },
+        { "title": "Ch. 4 — The fraudster's profile", "body": "A listing on Subito.it or a Facebook group with a price well below market rate. A profile created a few days ago. Does not respond to video calls. Cites Airbnb or Booking for credibility but asks you to pay outside. Creates urgency: \"another couple will take it if you don't book today\". The account is in a foreign name inconsistent with the person you are speaking to.\n\nSigns of reliability: OTA profile with at least 12 months of history and verified reviews, displayed and verifiable VAT number, CIN visible in the listing, willingness to video call, complete contract, payment managed by the platform or with a professional POS." },
+        { "title": "Ch. 5 — The good tenant's checklist", "body": "Before confirming any booking, check: the listing is on a certified OTA platform. The host has a profile with at least 6-12 months of history. Payment is made INSIDE the platform. A verifiable VAT number exists. The property CIN is shown in the listing. The IBAN starts with \"IT\". A fiscal receipt is provided. The host is available for a video call and does not pressure you on timing." },
+        { "title": "Ch. 6 — In case of fraud: what to do", "body": "If you are the victim of a scam, act quickly. File a report with the Polizia Postale at commissariatodips.it within 48 hours — note the protocol number. Keep ALL correspondence: emails, messages, screenshots, listing links, receipts. If payment was by credit card, contact your bank immediately to start a chargeback. If you used PayPal \"Goods and Services\", open a dispute in the Resolution Centre within 180 days. Do not delete any messages." }
+      ],
+      "checklistTitle": "Quick checklist — verify us in 2 minutes",
+      "checklist": [
+        "Search VAT 02710130598 on ufficiocamerale.it — name, active status, ATECO 55.20.51",
+        "Verify CIN IT059014B47RVOMN2D on bdsr.ministeroturismo.gov.it",
+        "Search \"LivingApple Scauri\" on Airbnb and Booking.com — read the verified reviews",
+        "Check that payment goes through Stripe — official LivingApple link",
+        "If using PayPal, confirm it is \"Goods and Services\" — never \"Friends and Family\""
+      ],
+      "ctaVerifyRi": "Search VAT on ufficiocamerale.it",
+      "ctaVerifyAirbnb": "See the Airbnb profile",
+      "ctaBook": "Book now",
+      "ctaBookSub": "Secure payment via Stripe",
+      "scamTitle": "Have you been scammed?",
+      "scamSteps": [
+        "File a report at commissariatodips.it within 48h",
+        "Keep every message, screenshot and receipt",
+        "Call your bank for a chargeback (if paid by card)",
+        "Open a PayPal dispute within 180 days (if you used PayPal G&S)"
+      ]
     }
   }
 }
