@@ -491,6 +491,8 @@
       "scroll": "scrollen →"
     },
     "depositoClient": {
+      "metaTitle": "Kaution — LivingApple",
+      "metaDescription": "So funktioniert die Kaution bei LivingApple. Online per Stripe oder persönlich bei der Ankunft mit Kreditkarte.",
       "title": "Kaution",
       "subtitle": "Wie sie funktioniert, wie hoch sie ist und wann sie zurückerstattet wird.",
       "badge": "Für alle Buchungen erforderlich",
