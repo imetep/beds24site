@@ -491,6 +491,8 @@
       "scroll": "scorri →"
     },
     "depositoClient": {
+      "metaTitle": "Deposito cauzionale — LivingApple",
+      "metaDescription": "Come funziona il deposito cauzionale nelle strutture LivingApple. Versamento online con Stripe o in persona all'arrivo con carta di credito.",
       "title": "Deposito cauzionale",
       "subtitle": "Come funziona, quanto è, quando viene restituito.",
       "badge": "Obbligatorio per tutte le prenotazioni",
