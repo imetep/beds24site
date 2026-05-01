@@ -1316,6 +1316,72 @@
       "signSignature": "Unterschrift",
       "maxLabel": "max. 15 kg"
     },
+    "condizioni": {
+      "metaTitle": "Allgemeine Geschäftsbedingungen — LivingApple",
+      "metaDescription": "Alle Bedingungen zu Buchung, Zahlung, Stornierung, Check-in/out und Hausordnung für die Ferienwohnungen LivingApple in Scauri (LT), Italien.",
+      "h1": "Allgemeine Geschäftsbedingungen",
+      "subtitle": "Alle Bedingungen für Ihren Urlaub bei LivingApple",
+      "sections": [
+        { "title": "1. Begriffsbestimmungen", "paragraphs": [
+          "In diesen \"Allgemeinen Mietbedingungen\" gelten folgende Definitionen:",
+          "**\"Kunde\"** — die Person, die die Buchung vornimmt und die von LivingApple angebotenen Dienste und Unterkünfte nutzt;",
+          "**\"Buchung\"** — die Anfrage des Kunden, eine Unterkunft für einen bestimmten Zeitraum zu mieten;",
+          "**\"Vertragsangebot\"** — die Mitteilung von LivingApple über die Verfügbarkeit mit Angebotsdetails und Aufforderung zur Anzahlung;",
+          "**\"Bestätigungsschreiben\"** — die Bestätigung des Eingangs der Anzahlung mit dem Buchungsbestätigungscode;",
+          "**\"Mietvertrag\"** — die zwischen LivingApple und dem Kunden vereinbarten Servicebedingungen."
+        ] },
+        { "title": "2. Buchung und Vertragsabschluss", "paragraphs": [
+          "Die Buchung gilt als abgeschlossen, wenn der Kunde das Bestätigungsschreiben erhält, das LivingApple unmittelbar nach Eingang der Anzahlung verschickt. Dem Mietvertrag ist ein Gästelistenformular beigefügt, das ausgefüllt, unterzeichnet und so schnell wie möglich an LivingApple zurückgesendet werden muss."
+        ] },
+        { "title": "3. Anzahlung, Zahlung und Kaution", "paragraphs": [
+          "Die Anzahlung beträgt 30% des Mietpreises (mindestens €150,00) und kann per Banküberweisung, Kreditkarte (+2,5%) oder PayPal (+3,4%) geleistet werden. Sie muss innerhalb von 7 Tagen nach der Verfügbarkeitsbestätigung eingehen (3 Tage bei Online-Zahlung).",
+          "Der Restbetrag und die Kaution sind bei der Ankunft bei der Schlüsselübergabe in bar oder per Kreditkarten-Vorautorisierung zu zahlen."
+        ] },
+        { "title": "4. Stornierung", "paragraphs": [
+          "Eine bestätigte Buchung kann weder storniert noch geändert werden. Jede Stornierungsanfrage muss per E-Mail mitgeteilt werden. Bei Sondertarifen oder Ferienzeiträumen ist bei jeder Stornierung 100% des Buchungswerts zu zahlen."
+        ], "bullets": [
+          "**60+ Tage vorher:** 50% der Anzahlung (mind. €150,00)",
+          "**59–15 Tage vorher:** volle Anzahlung + 25% des verbleibenden Saldos",
+          "**14–01 Tage vorher:** vollständige Restzahlung"
+        ] },
+        { "title": "5. Ankunft und Abreise", "paragraphs": [
+          "Die Ankunftsdetails müssen mindestens 3 Tage vor der Ankunft per E-Mail mitgeteilt werden. Der Check-in ist zwischen 17:00 und 20:00 Uhr geplant. Späte Ankunft:"
+        ], "bullets": [
+          "€30,00 von 20:00 bis 22:00 Uhr",
+          "€50,00 von 22:00 bis 24:00 Uhr"
+        ], "paragraphsAfter": [
+          "Ein Check-in nach Mitternacht und ein Check-out vor 08:00 Uhr sind nicht möglich. Alle Gäste müssen bei der Ankunft ihre Ausweisdokumente vorzeigen."
+        ] },
+        { "title": "6. Ausstattung", "paragraphs": [
+          "Alle Apartments sind möbliert und verfügen über einen Gasherd, Kühlschrank, Küchenutensilien, Warm- und Kaltwasser sowie 220V-Strom. Pro Bett stehen eine Decke und ein Kissen zur Verfügung. Bettwäsche und Handtücher können auf Anfrage ausgeliehen werden."
+        ] },
+        { "title": "7. Abreise", "paragraphs": [
+          "Das Apartment muss zwischen 07:00 und 10:00 Uhr geräumt werden — frei von Müll, mit sauberen Regalen, gespültem Geschirr, leerem Kühlschrank mit geöffneter Tür. Möbel dürfen nicht verrückt oder nach draußen gestellt werden."
+        ] },
+        { "title": "8. Hausordnung", "paragraphs": [
+          "Es ist verboten, mehr Gäste als die Anzahl der Betten zu beherbergen. Kinder über 24 Monate gelten als Erwachsene. Möbel dürfen nicht nach draußen gestellt werden; Markisen dürfen bei Abwesenheit nicht geöffnet bleiben; der Grill darf nicht mit Holz betrieben werden.",
+          "Die Gäste sind verpflichtet, die Ruhezeiten einzuhalten, insbesondere nachmittags und nachts."
+        ] },
+        { "title": "9. Außenbereiche und Picknickplatz", "paragraphs": [
+          "Der Picknickplatz ist von 11:00 bis 24:00 Uhr zugänglich. Kinder müssen beaufsichtigt werden. Glaswaren, Tiere, Fahrräder und Skateboards sind nicht erlaubt. Die Gästezahl ist auf die im Vertrag angegebene Personenanzahl begrenzt."
+        ] },
+        { "title": "10. Schwimmbad", "paragraphs": [
+          "Das Schwimmbad steht ausschließlich LivingApple-Gästen am Standort Via Tore zur Verfügung. LivingApple Beach Gäste **haben keinen Zugang zum Schwimmbad**. Geöffnet von 09:00 bis 19:00 Uhr. Kinder unter 12 Jahren müssen begleitet werden. Springen und Glasflaschen sind verboten."
+        ] },
+        { "title": "11. Sanktionen", "paragraphs": [
+          "Bei Nichteinhaltung der Regeln gemäß den Punkten 7 und 8 können Strafen von €10,00 bis €500,00 sowie Aufschläge auf die Endreinigungskosten erhoben werden."
+        ] },
+        { "title": "12. Kaution", "paragraphs": [
+          "Als Sicherheit für die Einhaltung aller Regeln wird bei der Schlüsselübergabe eine Kaution erhoben, deren Höhe je nach gebuchter Unterkunft variiert. Die Kaution wird nach Überprüfung des Zustands der Unterkunft zurückgezahlt."
+        ] },
+        { "title": "13. Haftung", "paragraphs": [
+          "LivingApple übernimmt keine Haftung für Schäden, Verletzungen, Verluste, Diebstahl, Verzögerungen oder sonstige Unannehmlichkeiten. Für eventuelle Rechtsstreitigkeiten ist ausschließlich das Gericht Cassino (FR), Italien, zuständig."
+        ] },
+        { "title": "14. Annahme", "paragraphs": [
+          "Mit der Buchung akzeptiert der Mieter ausdrücklich alle hier dargelegten Bedingungen."
+        ] }
+      ]
+    },
     "trattamentoDati": {
       "metaTitle": "Datenschutzhinweis — LivingApple",
       "metaDescription": "Hinweis gemäß Art. 13 EU-Verordnung 679/2016 (DSGVO) — Verarbeitungszwecke, Speicherung, Betroffenenrechte.",
