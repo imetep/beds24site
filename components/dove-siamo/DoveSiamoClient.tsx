@@ -258,6 +258,7 @@ function ItalyMap({ byCarLabel, byPlaneLabel }: { byCarLabel: string; byPlaneLab
 export default function DoveSiamoClient({ locale }: { locale: Locale }) {
   const t = getTranslations(locale).components.doveSiamo;
   const [activeTab, setActiveTab] = useState<Tab>('car');
+  const homeHref = `/${locale}`;
 
   const pills = [
     { Icon: IconSea,      title: t.pillSeaTitle,      text: t.pillSeaText      },
@@ -380,6 +381,13 @@ export default function DoveSiamoClient({ locale }: { locale: Locale }) {
             </div>
           </div>
         )}
+      </section>
+
+      {/* CTA finale */}
+      <section className="dove-siamo__section dove-siamo__cta">
+        <h2 className="dove-siamo__section-title">{t.ctaTitle}</h2>
+        <p className="dove-siamo__section-sub">{t.ctaSub}</p>
+        <a href={homeHref} className="cta-book">{t.ctaBtn}</a>
       </section>
 
     </main>
