@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
+import { Icon, type IconName } from '@/components/ui/Icon';
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
 interface FaqItemData {
@@ -110,7 +111,7 @@ function ContactChannels({ t }: { t: ContactT }) {
     <div className="contact-channels">
       {/* Header sezione */}
       <div className="contact-channels__header">
-        <i className="bi bi-chat-fill contact-channels__header-icon" aria-hidden="true" />
+        <Icon name="chat-fill" className="contact-channels__header-icon" />
         <div>
           <p className="contact-channels__header-title">{t.contactTitle}</p>
           <p className="contact-channels__header-sub">{t.contactSubtitle}</p>
@@ -164,7 +165,7 @@ export default function ContattiClient({ locale, bookHref }: Props) {
             <div key={ci} className="faq-accordion">
               {/* Header categoria — blu pieno */}
               <div className="faq-accordion__header">
-                <i className={`bi ${cat.icon} faq-accordion__header-icon`} aria-hidden="true" />
+                <Icon name={cat.icon as IconName} className="faq-accordion__header-icon" />
                 <span className="faq-accordion__header-label">{cat.label}</span>
               </div>
 
@@ -186,7 +187,7 @@ export default function ContattiClient({ locale, bookHref }: Props) {
           <a href={`/${locale}/prenotazione-sicura`} className="banner-safe">
             <div className="d-flex align-items-center gap-2">
               <div className="banner-safe__icon-wrap">
-                <i className="bi bi-search banner-safe__icon" aria-hidden="true" />
+                <Icon name="search" className="banner-safe__icon" />
               </div>
               <span className="banner-safe__text">{t.safeBannerText}</span>
             </div>

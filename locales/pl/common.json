@@ -756,7 +756,7 @@
       "safeBannerBtn": "Bezpieczna rezerwacja →",
       "faq": [
         {
-          "icon": "bi-emoji-smile",
+          "icon": "emoji-smile",
           "label": "Dzieci",
           "items": [
             {
@@ -774,7 +774,7 @@
           ]
         },
         {
-          "icon": "bi-calendar-fill",
+          "icon": "calendar-fill",
           "label": "Przyjazd i wyjazd",
           "items": [
             {
@@ -828,7 +828,7 @@
           ]
         },
         {
-          "icon": "bi-water",
+          "icon": "water",
           "label": "Basen",
           "items": [
             {
@@ -854,7 +854,7 @@
           ]
         },
         {
-          "icon": "bi-house-fill",
+          "icon": "house-fill",
           "label": "Obiekt i usługi",
           "items": [
             {
@@ -908,7 +908,7 @@
           ]
         },
         {
-          "icon": "bi-geo-alt-fill",
+          "icon": "geo-alt-fill",
           "label": "Lokalizacja i okolice",
           "items": [
             {
@@ -938,7 +938,7 @@
           ]
         },
         {
-          "icon": "bi-currency-euro",
+          "icon": "currency-euro",
           "label": "Ceny i płatności",
           "items": [
             {
@@ -980,7 +980,7 @@
           ]
         },
         {
-          "icon": "bi-car-front-fill",
+          "icon": "car-front-fill",
           "label": "Samochód i transport",
           "items": [
             {

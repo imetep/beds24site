@@ -756,7 +756,7 @@
       "safeBannerBtn": "Sicheres Buchen →",
       "faq": [
         {
-          "icon": "bi-emoji-smile",
+          "icon": "emoji-smile",
           "label": "Kinder",
           "items": [
             {
@@ -774,7 +774,7 @@
           ]
         },
         {
-          "icon": "bi-calendar-fill",
+          "icon": "calendar-fill",
           "label": "Ankunft & Abreise",
           "items": [
             {
@@ -828,7 +828,7 @@
           ]
         },
         {
-          "icon": "bi-water",
+          "icon": "water",
           "label": "Pool",
           "items": [
             {
@@ -854,7 +854,7 @@
           ]
         },
         {
-          "icon": "bi-house-fill",
+          "icon": "house-fill",
           "label": "Unterkunft & Services",
           "items": [
             {
@@ -908,7 +908,7 @@
           ]
         },
         {
-          "icon": "bi-geo-alt-fill",
+          "icon": "geo-alt-fill",
           "label": "Lage & Umgebung",
           "items": [
             {
@@ -938,7 +938,7 @@
           ]
         },
         {
-          "icon": "bi-currency-euro",
+          "icon": "currency-euro",
           "label": "Preise & Zahlung",
           "items": [
             {
@@ -980,7 +980,7 @@
           ]
         },
         {
-          "icon": "bi-car-front-fill",
+          "icon": "car-front-fill",
           "label": "Auto & Fortbewegung",
           "items": [
             {

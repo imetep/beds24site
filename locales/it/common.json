@@ -756,7 +756,7 @@
       "safeBannerBtn": "Prenotazione sicura →",
       "faq": [
         {
-          "icon": "bi-shield-fill",
+          "icon": "shield-fill",
           "label": "Sicurezza e prenotazione",
           "items": [
             {
@@ -774,7 +774,7 @@
           ]
         },
         {
-          "icon": "bi-emoji-smile",
+          "icon": "emoji-smile",
           "label": "Bambini",
           "items": [
             {
@@ -792,7 +792,7 @@
           ]
         },
         {
-          "icon": "bi-calendar-fill",
+          "icon": "calendar-fill",
           "label": "Arrivo e partenza",
           "items": [
             {
@@ -846,7 +846,7 @@
           ]
         },
         {
-          "icon": "bi-water",
+          "icon": "water",
           "label": "Piscina",
           "items": [
             {
@@ -872,7 +872,7 @@
           ]
         },
         {
-          "icon": "bi-house-fill",
+          "icon": "house-fill",
           "label": "Struttura e servizi",
           "items": [
             {
@@ -926,7 +926,7 @@
           ]
         },
         {
-          "icon": "bi-geo-alt-fill",
+          "icon": "geo-alt-fill",
           "label": "Posizione e dintorni",
           "items": [
             {
@@ -956,7 +956,7 @@
           ]
         },
         {
-          "icon": "bi-currency-euro",
+          "icon": "currency-euro",
           "label": "Prezzi e pagamenti",
           "items": [
             {
@@ -998,7 +998,7 @@
           ]
         },
         {
-          "icon": "bi-car-front-fill",
+          "icon": "car-front-fill",
           "label": "Auto e spostamenti",
           "items": [
             {
