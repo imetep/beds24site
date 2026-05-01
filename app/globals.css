@@ -4546,14 +4546,17 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: var(--color-bg);
   color: var(--color-primary);
   flex-shrink: 0;
-  font-size: 22px;
   box-shadow: var(--shadow-sm);
+}
+.residenze-section__icon-wrap svg {
+  width: 20px;
+  height: 20px;
 }
 .residenze-section__text {
   flex: 1;
