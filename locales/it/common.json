@@ -21,71 +21,6 @@
     "book": "Prenota",
     "contact": "Contatti"
   },
-  "wizard": {
-    "step1": {
-      "title": "Quante persone siete?",
-      "adults": "Adulti",
-      "adultsAge": "18 anni o più",
-      "children": "Bambini",
-      "childrenAge": "0–17 anni",
-      "next": "Continua"
-    },
-    "step2": {
-      "title": "Quando volete venire?",
-      "checkin": "Check-in",
-      "checkout": "Check-out",
-      "next": "Continua",
-      "back": "Indietro"
-    },
-    "step3": {
-      "title": "Che tipo di alloggio preferite?",
-      "apartment": "Appartamento",
-      "house": "Casa",
-      "villa": "Villa",
-      "next": "Continua",
-      "back": "Indietro"
-    },
-    "step4": {
-      "title": "Dove volete soggiornare?",
-      "campagna": "LivingApple — Campagna",
-      "mare": "LivingApple Beach — Mare",
-      "next": "Continua",
-      "back": "Indietro"
-    },
-    "step5": {
-      "title": "Quali servizi vi servono?",
-      "subtitle": "Selezionate gli optional che desiderate aggiungere al soggiorno.",
-      "next": "Continua",
-      "back": "Indietro"
-    },
-    "step6": {
-      "title": "Riepilogo e prezzo finale",
-      "checkin": "Check-in",
-      "checkout": "Check-out",
-      "guests": "Ospiti",
-      "adults": "adulti",
-      "children": "bambini",
-      "total": "Totale",
-      "voucher_placeholder": "Codice promozionale (opzionale)",
-      "apply_voucher": "Applica",
-      "guest_firstname": "Nome",
-      "guest_lastname": "Cognome",
-      "guest_email": "Email",
-      "guest_phone": "Telefono",
-      "guest_country": "Paese",
-      "guest_arrival": "Ora di arrivo prevista",
-      "guest_notes": "Richieste speciali",
-      "confirm": "Prenota ora",
-      "back": "Indietro",
-      "terms": "Confermando la prenotazione accetti le",
-      "terms_link": "condizioni generali di vendita"
-    },
-    "progress": "Step {current} di {total}",
-    "loading": "Caricamento disponibilità...",
-    "no_availability": "Nessuna disponibilità per le date selezionate.",
-    "booking_success": "Prenotazione confermata! Riceverai una email di conferma a breve.",
-    "booking_error": "Si è verificato un errore. Riprova o contattaci via WhatsApp."
-  },
   "footer": {
     "company": "LivingApple",
     "address": "Traversa Carmen Rosati, 04028 Scauri (LT)",
@@ -1235,7 +1170,10 @@
       "carNoteTitle": "L'auto è indispensabile",
       "carNote": "Una volta arrivati, l'auto non è un optional — è necessaria. Supermercati, spiagge e ristoranti non sono raggiungibili a piedi dalla struttura: le strade rurali non hanno marciapiedi ed è pericoloso camminare. L'auto ti darà libertà totale per esplorare la costa, l'entroterra e i borghi dei Monti Aurunci.",
       "byCar": "in auto",
-      "byPlane": "in aereo"
+      "byPlane": "in aereo",
+      "ctaTitle": "Pronto a venire a Scauri?",
+      "ctaSub": "Scegli le date e la residenza, prenoti direttamente con noi.",
+      "ctaBtn": "Prenota ora"
     },
     "homeSearch": {
       "ui": {
