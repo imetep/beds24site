@@ -52,6 +52,7 @@
     "checkin_before_checkout": "Przyjazd musi być przed wyjazdem"
   },
   "portal": {
+    "metaTitle": "Portal Gościa — LivingApple",
     "login": {
       "title": "Portal Gościa",
       "subtitle": "Zaloguj się numerem rezerwacji i datą przyjazdu.",
