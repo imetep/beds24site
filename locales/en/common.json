@@ -573,6 +573,7 @@
       "questionsLink": "Have questions? Contact us →"
     },
     "statusCheckin": {
+      "metaTitle": "Check-in request status — LivingApple",
       "pageTitle": "Track your request",
       "pageSubtitle": "Enter your booking number to check the status and send messages.",
       "bookingLabel": "Booking number",
