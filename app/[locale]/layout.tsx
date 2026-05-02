@@ -4,7 +4,6 @@ import { locales, isValidLocale, type Locale } from '@/config/i18n';
 import { CIN, CIR } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
 import HeaderClient from '@/components/HeaderClient';
-import ScrollToTop from '@/components/ScrollToTop';
 
 interface Props {
   children: React.ReactNode;
@@ -33,7 +32,6 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     <>
-      <ScrollToTop />
       <HeaderClient
         locale={locale}
         nav={{
