@@ -23,9 +23,23 @@ import {
   ShoppingBag, ShoppingBasket, SlidersHorizontal, Smile, Snowflake, SquareParking,
   Star, StickyNote, Sun, Tag, ThermometerSnowflake, Trash2, TreePine, TriangleAlert,
   Tv, Umbrella, User, Users, UtensilsCrossed, Waves, Wifi, Wind, X,
-  type LucideProps,
 } from 'lucide-react';
-import { forwardRef } from 'react';
+import { forwardRef, type SVGProps, type Ref } from 'react';
+
+/**
+ * LucideProps locale — tipato esplicitamente come `SVGProps<SVGSVGElement>`
+ * + extra di lucide-react (size, strokeWidth, absoluteStrokeWidth, ref).
+ * Evita di dipendere dal type export di lucide-react, che in alcune
+ * installazioni (es. node_modules non aggiornato) non si risolve e causa
+ * cascade di errori TS2322 "Property 'className' does not exist" su tutte
+ * le call site di <Icon>.
+ */
+type LucideProps = SVGProps<SVGSVGElement> & {
+  size?: string | number;
+  strokeWidth?: string | number;
+  absoluteStrokeWidth?: boolean;
+  ref?: Ref<SVGSVGElement>;
+};
 
 // ─── Mapping nome bi-* → componente Lucide ──────────────────────────────────
 // Le versioni `*-fill` (Bootstrap Icons solid) e quelle outline puntano allo
