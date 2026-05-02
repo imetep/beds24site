@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import ScrollToTop from "@/components/ScrollToTop";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,9 +25,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Disabilita scroll restoration del browser PRIMA del paint per evitare
+            che Safari iOS / Chrome ripristinino una posizione precedente quando
+            si arriva su una pagina via hard-nav (es. middleware rewrite di
+            /en/residences → /en/residenze). Lo scroll viene gestito da
+            <ScrollToTop /> e dai save/restore manuali su popstate. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{history.scrollRestoration='manual'}catch(e){}`,
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <ScrollToTop />
         {children}
       </body>
     </html>
