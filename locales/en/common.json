@@ -52,6 +52,7 @@
     "checkin_before_checkout": "Check-in must be before check-out"
   },
   "portal": {
+    "metaTitle": "Guest Portal — LivingApple",
     "login": {
       "title": "Guest Portal",
       "subtitle": "Log in with your booking number and arrival date.",
