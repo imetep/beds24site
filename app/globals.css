@@ -4989,7 +4989,7 @@ body {
 /* ── Hero struttura (banner blu in cima dashboard) ── */
 .guest-portal__hero {
   background: var(--color-primary);
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   padding: var(--space-base);
   position: relative;
   overflow: hidden;
@@ -5028,7 +5028,7 @@ body {
 .guest-portal__date-card {
   background: var(--color-bg);
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: var(--space-sm);
 }
 .guest-portal__date-label {
@@ -5836,8 +5836,8 @@ body {
   font-size: 0.65rem;
   color: var(--color-primary);
   background: var(--color-bg);
-  border: 1px solid #93C5FD;
-  border-radius: 10px;
+  border: 1px solid var(--color-info-border);
+  border-radius: var(--radius-md);
   padding: 1px 6px;
 }
 
@@ -6004,22 +6004,22 @@ body {
 
 /* ── Found booking summary (verde, conferma trovata) ── */
 .checkin-wizard__found {
-  background: #EAF3DE;
-  border-radius: 10px;
+  background: var(--color-success-bg);
+  border-radius: var(--radius-md);
   padding: 14px var(--space-base);
   margin-bottom: var(--space-lg);
-  border: 1px solid #C0DD97;
+  border: 1px solid var(--color-success-border);
 }
 .checkin-wizard__found-title {
   margin: 0 0 4px;
   font-size: var(--text-sm);
   font-weight: 700;
-  color: #27500A;
+  color: var(--color-success);
 }
 .checkin-wizard__found-line {
   margin: 0 0 2px;
   font-size: var(--text-sm);
-  color: #3B6D11;
+  color: var(--color-success);
 }
 .checkin-wizard__found-line:last-child {
   margin-bottom: 0;
@@ -6030,13 +6030,13 @@ body {
   margin-top: 6px;
   background: var(--color-warning-bg);
   border: 1px solid var(--color-warning-border);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: var(--space-sm) var(--space-md);
 }
 .checkin-wizard__email-note-text {
   margin: 0;
   font-size: var(--text-xs);
-  color: #713f12;
+  color: var(--color-warning-text);
 }
 
 /* ── Altro ospite (subform card) ── */
@@ -6044,7 +6044,7 @@ body {
   margin-bottom: var(--space-base);
   padding: var(--space-base) 14px;
   background: var(--color-bg-muted);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
 }
 .checkin-wizard__altro-header {
@@ -6064,8 +6064,8 @@ body {
   min-height: var(--touch-target);
   min-width: var(--touch-target);
   color: var(--color-danger);
-  border: 1.5px solid #fca5a5;
-  border-radius: 10px;
+  border: 1.5px solid var(--color-error-border);
+  border-radius: var(--radius-md);
   background: var(--color-bg);
   cursor: pointer;
 }
@@ -6078,9 +6078,9 @@ body {
   padding: var(--space-md) var(--space-base);
   font-size: var(--text-base);
   background: var(--color-bg);
-  color: #374151;
+  color: var(--color-text-subtle);
   border: 1.5px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   min-height: var(--touch-target);
 }
@@ -6092,7 +6092,7 @@ body {
   background: var(--color-primary);
   color: var(--color-on-dark);
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   min-height: var(--touch-target);
 }
@@ -6108,9 +6108,9 @@ body {
   padding: var(--space-md) var(--space-base);
   font-size: var(--text-base);
   background: var(--color-bg);
-  color: #374151;
+  color: var(--color-text-subtle);
   border: 1.5px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   min-height: var(--touch-target);
 }
@@ -6130,7 +6130,7 @@ body {
 .checkin-wizard__errors {
   background: var(--color-error-bg);
   border: 1px solid var(--color-error-border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: var(--space-md) 14px;
   margin-bottom: 14px;
 }
@@ -6138,7 +6138,7 @@ body {
   margin: 0 0 4px;
   font-size: var(--text-sm);
   font-weight: 700;
-  color: #991B1B;
+  color: var(--color-danger);
 }
 .checkin-wizard__errors-list {
   margin: 0;
@@ -6158,7 +6158,7 @@ body {
 .checkin-wizard__gdpr-warn {
   background: var(--color-error-bg);
   border: 1px solid var(--color-error-border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: var(--space-md) 14px;
   margin-bottom: var(--space-lg);
 }
@@ -6166,12 +6166,12 @@ body {
   margin: 0 0 4px;
   font-size: var(--text-xs);
   font-weight: 700;
-  color: #991B1B;
+  color: var(--color-danger);
 }
 .checkin-wizard__gdpr-warn-text {
   margin: 0;
   font-size: var(--text-xs);
-  color: #7f1d1d;
+  color: var(--color-danger);
 }
 
 /* ── Doc slot grid (caricamento documenti front/back) ── */
@@ -6203,9 +6203,9 @@ body {
 }
 .doc-slot__preview {
   margin-bottom: var(--space-sm);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
-  background: #f3f4f6;
+  background: var(--color-bg-muted);
   line-height: 0;
 }
 .doc-slot__preview-img {
@@ -6227,7 +6227,7 @@ body {
   margin: 0 0 2px;
   font-size: var(--text-sm);
   font-weight: 700;
-  color: #374151;
+  color: var(--color-text-subtle);
   text-align: center;
 }
 .doc-slot__status {
@@ -6249,7 +6249,7 @@ body {
 /* ── Step 4 summary recap ── */
 .checkin-wizard__summary {
   background: var(--color-bg-muted);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: var(--space-base);
   margin-bottom: var(--space-lg);
   border: 1px solid var(--color-border);
@@ -6265,7 +6265,7 @@ body {
 .checkin-wizard__summary-line {
   margin: 0 0 2px;
   font-size: var(--text-base);
-  color: #374151;
+  color: var(--color-text-subtle);
 }
 .checkin-wizard__summary-line--mb {
   margin-bottom: 10px;
@@ -6300,7 +6300,7 @@ body {
 }
 .checkin-wizard__consent-text {
   font-size: var(--text-sm);
-  color: #374151;
+  color: var(--color-text-subtle);
   line-height: 1.6;
 }
 
@@ -6319,20 +6319,20 @@ body {
 .checkin-wizard__done-ref {
   display: inline-block;
   background: var(--color-primary-soft);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: var(--space-sm) 18px;
 }
 .checkin-wizard__done-ref-text {
   margin: 0;
   font-size: var(--text-sm);
-  color: #185FA5;
+  color: var(--color-primary);
 }
 .checkin-wizard__steps {
   background: var(--color-bg);
   border: 1px solid var(--color-border);
   margin-bottom: var(--space-md);
   padding: var(--space-md);
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
 }
 .checkin-wizard__steps-title {
   font-weight: 700;
