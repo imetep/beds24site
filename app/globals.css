@@ -2738,6 +2738,22 @@ body {
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
+/* Desktop ≥992px: card si stringono in proporzione per stare in 1 riga
+   (max 5 card × 200px non entrano in .page-container 985px).
+   Override !important per battere .flex-shrink-0 (Bootstrap utility) sul JSX. */
+@media (min-width: 992px) {
+  .bed-config__scroll {
+    overflow-x: visible;
+  }
+  .card-room-bed {
+    width: auto !important;
+    flex-grow: 0 !important;
+    flex-shrink: 1 !important;
+    flex-basis: 200px !important;
+    max-width: 200px;
+    min-width: 0;
+  }
+}
 .bed-config__scroll-hint-text {
   font-size: 11px;
   color: var(--color-primary);
