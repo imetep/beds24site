@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { locales, isValidLocale, type Locale } from '@/config/i18n';
 import type { Metadata } from 'next';
+import { getTranslations } from '@/lib/i18n';
 import StatusCheckin from '@/components/self-checkin/StatusCheckin';
 
 interface Props {
@@ -13,13 +14,8 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const titles: Record<Locale, string> = {
-    it: 'Stato richiesta check-in — LivingApple',
-    en: 'Check-in request status — LivingApple',
-    de: 'Check-in Status — LivingApple',
-    pl: 'Status check-in — LivingApple',
-  };
-  return { title: titles[locale] ?? titles.it, robots: 'noindex' };
+  if (!isValidLocale(locale)) return { robots: 'noindex' };
+  return { title: getTranslations(locale).components.statusCheckin.metaTitle, robots: 'noindex' };
 }
 
 export default async function StatusPage({ params }: Props) {
