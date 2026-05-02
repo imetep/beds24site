@@ -52,6 +52,7 @@
     "checkin_before_checkout": "Il check-in deve essere prima del check-out"
   },
   "portal": {
+    "metaTitle": "Area Ospiti — LivingApple",
     "login": {
       "title": "Area Ospiti",
       "subtitle": "Accedi con il numero di prenotazione e la data di arrivo.",
