@@ -16,16 +16,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   if (!isValidLocale(locale)) return {};
   const t = getTranslations(locale);
-
-  const titles: Record<Locale, string> = {
-    it: 'Area Ospiti — LivingApple',
-    en: 'Guest Portal — LivingApple',
-    de: 'Gastbereich — LivingApple',
-    pl: 'Portal Gościa — LivingApple',
-  };
-
   return {
-    title:       titles[locale],
+    title:       t.portal.metaTitle,
     description: t.portal.login.subtitle,
     robots:      'noindex, nofollow',
   };
