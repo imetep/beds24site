@@ -9672,6 +9672,22 @@ body {
   background-size: 200% 100%;
   animation: preventivo-shimmer 1.4s ease-in-out infinite;
 }
+.preventivo-view__preview-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #9a3412;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.preventivo-view__cta:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
 @keyframes preventivo-shimmer {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }

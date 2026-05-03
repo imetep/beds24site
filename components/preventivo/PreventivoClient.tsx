@@ -14,6 +14,8 @@ import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 interface Props {
   locale: Locale;
   preventivo: Omit<Preventivo, 'notes' | 'customerEmail' | 'customerName'>;
+  /** Modalità anteprima admin: disabilita CTA "Blocca offerta", mostra banner */
+  previewMode?: boolean;
 }
 
 function findRoom(roomId: number): Room | null {
@@ -63,7 +65,7 @@ function fmtSubject(template: string, params: Record<string, string | number>): 
   return template.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? ''));
 }
 
-export default function PreventivoClient({ locale, preventivo }: Props) {
+export default function PreventivoClient({ locale, preventivo, previewMode = false }: Props) {
   const router = useRouter();
   const t = getTranslations(locale).components.preventivoView;
   const room = findRoom(preventivo.roomId);
@@ -135,6 +137,13 @@ export default function PreventivoClient({ locale, preventivo }: Props) {
 
   return (
     <div className="page-container preventivo-view">
+
+      {previewMode && (
+        <div className="preventivo-view__preview-banner">
+          <Icon name="info-circle-fill" size={16} />
+          Anteprima admin — il cliente vedrà esattamente questo. Il bottone "Blocca offerta" è disattivato in anteprima.
+        </div>
+      )}
 
       {/* Hero foto + titolo */}
       <Link href={roomHref} className="preventivo-view__hero">
@@ -270,7 +279,12 @@ export default function PreventivoClient({ locale, preventivo }: Props) {
       </a>
 
       {/* CTA Blocca offerta */}
-      <button className="preventivo-view__cta" onClick={() => router.push(pagaHref)}>
+      <button
+        className="preventivo-view__cta"
+        onClick={() => { if (!previewMode) router.push(pagaHref); }}
+        disabled={previewMode}
+        aria-disabled={previewMode}
+      >
         <Icon name="lock-fill" size={20} />
         <span>
           <span className="preventivo-view__cta-main">{t.ctaBlock}</span>

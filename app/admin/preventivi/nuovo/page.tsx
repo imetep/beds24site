@@ -11,8 +11,10 @@ import { useWizardStore } from '@/store/wizard-store';
 import HomeSearch from '@/components/home/HomeSearch';
 import WizardStep1 from '@/components/wizard/WizardStep1';
 import BookingSidebar from '@/components/wizard/BookingSidebar';
+import PreventivoClient from '@/components/preventivo/PreventivoClient';
+import type { Preventivo } from '@/lib/preventivo-types';
 
-type Phase = 'search' | 'rooms' | 'preventivo';
+type Phase = 'search' | 'rooms' | 'preventivo' | 'preview';
 
 interface UpsellRow {
   index: number;
@@ -101,6 +103,14 @@ export default function NuovoPreventivoPage() {
 
   function updateUpsell(index: number, patch: Partial<UpsellRow>) {
     setUpsellRows(rows => rows.map(r => r.index === index ? { ...r, ...patch } : r));
+  }
+
+  function goToPreview() {
+    setError('');
+    if (!checkIn || !checkOut) { setError('Date mancanti'); return; }
+    if (!selectedRoomId || !selectedOfferId || !propertyId) { setError('Seleziona camera e tariffa'); return; }
+    if (typeof basePrice !== 'number' || basePrice <= 0) { setError('Prezzo base non valido'); return; }
+    setPhase('preview');
   }
 
   async function submit() {
@@ -244,6 +254,54 @@ export default function NuovoPreventivoPage() {
     );
   }
 
+  // ─── FASE 4: anteprima vista cliente prima di generare il link ─────────────
+  if (phase === 'preview' && selectedRoomId && selectedOfferId && propertyId && checkIn && checkOut && typeof basePrice === 'number') {
+    const mockPreventivo: Omit<Preventivo, 'notes' | 'customerEmail' | 'customerName' | 'customerPhone'> = {
+      id: 'preview',
+      propertyId,
+      roomId: selectedRoomId,
+      offerId: selectedOfferId,
+      arrival: checkIn,
+      departure: checkOut,
+      numAdults: numAdult,
+      numChildren: numChild,
+      childrenAges,
+      basePrice,
+      baseDiscountPct,
+      upsells: upsellRows.filter(r => r.enabled).map(r => ({
+        index: r.index,
+        qty: r.qty,
+        unitPrice: r.unitPrice,
+        discountPct: r.discountPct,
+      })),
+      locale,
+      createdAt: Date.now(),
+      expiresAt: Date.now() + 48 * 60 * 60 * 1000,
+      status: 'active',
+    };
+
+    return (
+      <div>
+        <PreventivoClient locale={locale} preventivo={mockPreventivo} previewMode />
+        <div className="container py-3" style={{ maxWidth: 985 }}>
+          {error && (
+            <div className="alert alert-danger py-2 mb-3">
+              <Icon name="exclamation-triangle-fill" className="me-2" />{error}
+            </div>
+          )}
+          <div className="d-flex gap-2 justify-content-end flex-wrap">
+            <button onClick={() => setPhase('preventivo')} className="btn btn-outline-secondary" disabled={busy}>
+              ← Modifica
+            </button>
+            <button className="btn btn-primary fw-bold" disabled={busy} onClick={submit}>
+              {busy ? 'Generazione…' : 'Conferma e genera link'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // ─── FASE 3: form preventivo (sconto + upsell + lingua + note) ─────────────
   return (
     <div className="container page-top pb-5" style={{ maxWidth: 720 }}>
@@ -381,8 +439,8 @@ export default function NuovoPreventivoPage() {
 
       <div className="d-flex gap-2 justify-content-end">
         <button onClick={() => setPhase('rooms')} className="btn btn-outline-secondary">Indietro</button>
-        <button className="btn btn-primary fw-bold" disabled={busy} onClick={submit}>
-          {busy ? 'Creazione…' : 'Genera link'}
+        <button className="btn btn-primary fw-bold" onClick={goToPreview}>
+          Anteprima →
         </button>
       </div>
     </div>
