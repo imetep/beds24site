@@ -1361,6 +1361,7 @@
       "andChild": ", 1 bambino",
       "andChildren": ", {count} bambini",
       "stayLabel": "Soggiorno",
+      "touristTaxLabel": "Tassa di soggiorno",
       "extrasTitle": "Servizi inclusi",
       "discountInline": "Sconto {pct}%",
       "totalLabel": "Totale",

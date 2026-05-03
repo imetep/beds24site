@@ -28,7 +28,7 @@ export default function NuovoPreventivoPage() {
 
   // Wizard store: condiviso con HomeSearch e WizardStep1
   const {
-    checkIn, checkOut, numAdult, numChild,
+    checkIn, checkOut, numAdult, numChild, childrenAges,
     selectedRoomId, selectedOfferId, cachedOffers,
     setCheckIn, setCheckOut, setSelectedRoomId, setSelectedOfferId,
   } = useWizardStore();
@@ -129,6 +129,7 @@ export default function NuovoPreventivoPage() {
           departure: checkOut,
           numAdults: numAdult,
           numChildren: numChild,
+          childrenAges,
           basePrice,
           baseDiscountPct,
           upsells,

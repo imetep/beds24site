@@ -1343,6 +1343,7 @@
       "andChild": ", 1 Kind",
       "andChildren": ", {count} Kinder",
       "stayLabel": "Aufenthalt",
+      "touristTaxLabel": "Kurtaxe",
       "extrasTitle": "Inklusive Leistungen",
       "discountInline": "{pct}% Rabatt",
       "totalLabel": "Gesamt",

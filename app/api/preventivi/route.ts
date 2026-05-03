@@ -50,6 +50,9 @@ export async function POST(req: NextRequest) {
     departure: body.departure,
     numAdults: body.numAdults,
     numChildren: body.numChildren ?? 0,
+    childrenAges: Array.isArray(body.childrenAges)
+      ? body.childrenAges.map((a: any) => Number(a)).filter((a: number) => Number.isFinite(a))
+      : undefined,
     basePrice: body.basePrice,
     baseDiscountPct: body.baseDiscountPct ?? 0,
     upsells: Array.isArray(body.upsells) ? body.upsells.map((u: any) => ({

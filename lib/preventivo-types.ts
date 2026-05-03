@@ -13,6 +13,7 @@
  */
 
 import type { Locale } from '@/config/i18n';
+import { calculateTouristTax } from '@/config/properties';
 
 export type PreventivoStatus = 'active' | 'expired' | 'converted' | 'cancelled';
 
@@ -39,6 +40,8 @@ export interface Preventivo {
   departure: string;
   numAdults: number;
   numChildren: number;
+  /** Età dei bambini (per calcolo tassa di soggiorno: esenzione minori). */
+  childrenAges?: number[];
   /** Prezzo base soggiorno in € (digitato da admin) */
   basePrice: number;
   /** Sconto sul base 0-100 */
@@ -84,7 +87,9 @@ export interface PreventivoTotals {
   upsellGross: number;
   upsellDiscount: number;
   upsellNet: number;
-  /** Totale finale (baseNet + upsellNet) */
+  /** Tassa di soggiorno (non scontabile) */
+  touristTax: number;
+  /** Totale finale (baseNet + upsellNet + touristTax) */
   total: number;
   /** Risparmio totale (baseDiscount + upsellDiscount) */
   totalDiscount: number;
@@ -111,6 +116,12 @@ export function computeTotals(p: Preventivo): PreventivoTotals {
   upsellDiscount = round2(upsellDiscount);
   const upsellNet = round2(upsellGross - upsellDiscount);
 
+  // Tassa di soggiorno (non scontabile, calcolata su numAdults + childrenAges >= soglia esenzione)
+  const nights = Math.max(0, Math.round(
+    (new Date(p.departure + 'T00:00:00').getTime() - new Date(p.arrival + 'T00:00:00').getTime()) / 86_400_000
+  ));
+  const touristTax = round2(calculateTouristTax(p.numAdults, p.childrenAges, nights));
+
   return {
     baseGross,
     baseDiscount,
@@ -118,7 +129,8 @@ export function computeTotals(p: Preventivo): PreventivoTotals {
     upsellGross,
     upsellDiscount,
     upsellNet,
-    total: round2(baseNet + upsellNet),
+    touristTax,
+    total: round2(baseNet + upsellNet + touristTax),
     totalDiscount: round2(baseDiscount + upsellDiscount),
   };
 }

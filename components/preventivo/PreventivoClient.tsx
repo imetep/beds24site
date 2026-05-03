@@ -219,6 +219,15 @@ export default function PreventivoClient({ locale, preventivo }: Props) {
           </>
         )}
 
+        {totals.touristTax > 0 && (
+          <div className="preventivo-view__price-row">
+            <span>{t.touristTaxLabel}</span>
+            <span className="preventivo-view__price-value">
+              <strong>{fmtEuro(totals.touristTax, locale)}</strong>
+            </span>
+          </div>
+        )}
+
         <hr className="preventivo-view__divider" />
 
         <div className="preventivo-view__total-row">

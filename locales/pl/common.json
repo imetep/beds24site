@@ -1343,6 +1343,7 @@
       "andChild": ", 1 dziecko",
       "andChildren": ", {count} dzieci",
       "stayLabel": "Pobyt",
+      "touristTaxLabel": "Opłata turystyczna",
       "extrasTitle": "Usługi w cenie",
       "discountInline": "Rabat {pct}%",
       "totalLabel": "Razem",

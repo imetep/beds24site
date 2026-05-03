@@ -341,6 +341,13 @@ export default function PreventivoDetailPage({ params }: Props) {
             );
           })}
 
+          {totals.touristTax > 0 && (
+            <div className="d-flex justify-content-between py-1">
+              <span>Tassa di soggiorno</span>
+              <span>{fmtEuro(totals.touristTax)}</span>
+            </div>
+          )}
+
           <hr className="my-2" />
           <div className="d-flex justify-content-between fw-bold">
             <span>Totale</span>
