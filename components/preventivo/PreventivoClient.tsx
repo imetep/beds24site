@@ -9,6 +9,7 @@ import { UPSELL_TEXTS } from '@/config/upsell-items';
 import { getTranslations } from '@/lib/i18n';
 import { localeSlugs, type Locale } from '@/config/i18n';
 import { computeTotals, type Preventivo, type PreventivoStatus } from '@/lib/preventivo-types';
+import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 
 interface Props {
   locale: Locale;
@@ -58,11 +59,6 @@ function calcNights(arrival: string, departure: string): number {
   );
 }
 
-function cloudUrl(folder: string, width = 800, height = 320): string {
-  const cloud = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? 'dsnlduczj';
-  return `https://res.cloudinary.com/${cloud}/image/upload/w_${width},h_${height},c_fill,q_auto,f_auto/${folder}`;
-}
-
 function fmtSubject(template: string, params: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? ''));
 }
@@ -83,6 +79,13 @@ export default function PreventivoClient({ locale, preventivo }: Props) {
     const id = setInterval(() => setTick(x => x + 1), 60_000);
     return () => clearInterval(id);
   }, [preventivo.status]);
+
+  // Cover Cloudinary (stesso meccanismo di BookingSidebar)
+  const [coverUrl, setCoverUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (!room?.cloudinaryFolder) { setCoverUrl(null); return; }
+    fetchCoversCached().then(covers => setCoverUrl(covers?.[room.cloudinaryFolder] ?? null));
+  }, [room?.cloudinaryFolder]);
 
   if (!room) {
     return (
@@ -122,8 +125,10 @@ export default function PreventivoClient({ locale, preventivo }: Props) {
     (preventivo.numChildren === 1 ? t.andChild :
       preventivo.numChildren > 1 ? fmtSubject(t.andChildren, { count: preventivo.numChildren }) : '');
   const nightsLabel = nights === 1 ? t.night : fmtSubject(t.nights, { count: nights });
-  const photoUrl = cloudUrl(room.cloudinaryFolder, 800, 320);
-  const photoUrlSmall = cloudUrl(room.cloudinaryFolder, 240, 160);
+  // coverUrl arriva async da Cloudinary; usiamo lo stesso URL sia per hero
+  // che per la thumb piccola (CSS object-fit: cover gestisce il ritaglio).
+  const photoUrl = coverUrl;
+  const photoUrlSmall = coverUrl;
   const roomHref = `/${locale}/residenze/${room.slug}?from=preventivo`;
   const utenzeHref = `/${locale}/utenze`;
   const pagaHref = `/${locale}/preventivo/${preventivo.id}/paga`;
@@ -133,7 +138,11 @@ export default function PreventivoClient({ locale, preventivo }: Props) {
 
       {/* Hero foto + titolo */}
       <Link href={roomHref} className="preventivo-view__hero">
-        <img src={photoUrl} alt={room.name} className="preventivo-view__hero-img" />
+        {photoUrl ? (
+          <img src={photoUrl} alt={room.name} className="preventivo-view__hero-img" />
+        ) : (
+          <div className="preventivo-view__hero-img preventivo-view__hero-img--loading" />
+        )}
         <span className="preventivo-view__hero-badge">{t.pageBadge}</span>
       </Link>
 
@@ -227,7 +236,11 @@ export default function PreventivoClient({ locale, preventivo }: Props) {
 
       {/* Box: foto e dettagli casa */}
       <Link href={roomHref} className="preventivo-view__info-box">
-        <img src={photoUrlSmall} alt={room.name} className="preventivo-view__info-img" />
+        {photoUrlSmall ? (
+          <img src={photoUrlSmall} alt={room.name} className="preventivo-view__info-img" />
+        ) : (
+          <div className="preventivo-view__info-img preventivo-view__hero-img--loading" />
+        )}
         <div className="preventivo-view__info-text">
           <p className="preventivo-view__info-title">{t.linkPhotosTitle}</p>
           <p className="preventivo-view__info-desc">{t.linkPhotosDesc}</p>
