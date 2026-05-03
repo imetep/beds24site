@@ -1372,6 +1372,8 @@
       "linkPhotosDesc": "Esplora la scheda completa: planimetria, foto, dotazioni",
       "linkUtenzeTitle": "Come funzionano i consumi",
       "linkUtenzeDesc": "Acqua, energia, gas: tariffe e consigli pratici",
+      "linkDepositTitle": "Deposito cauzionale {amount}",
+      "linkDepositDesc": "Garanzia rimborsabile, separata dal pagamento dell'offerta",
       "expiredTitle": "Preventivo scaduto",
       "expiredText": "Questo preventivo non è più valido. Contattaci per riceverne uno aggiornato.",
       "expiredCta": "Contattaci",

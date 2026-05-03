@@ -1354,6 +1354,8 @@
       "linkPhotosDesc": "Pełny opis: rzut, zdjęcia, wyposażenie",
       "linkUtenzeTitle": "Jak rozliczamy media",
       "linkUtenzeDesc": "Woda, prąd, gaz: stawki i praktyczne porady",
+      "linkDepositTitle": "Kaucja {amount}",
+      "linkDepositDesc": "Zwrotne zabezpieczenie, oddzielne od płatności za ofertę",
       "expiredTitle": "Oferta wygasła",
       "expiredText": "Ta oferta nie jest już aktualna. Skontaktuj się z nami, aby otrzymać nową propozycję.",
       "expiredCta": "Kontakt",

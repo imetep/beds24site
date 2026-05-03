@@ -133,6 +133,7 @@ export default function PreventivoClient({ locale, preventivo, previewMode = fal
   const photoUrlSmall = coverUrl;
   const roomHref = `/${locale}/residenze/${room.slug}?from=preventivo`;
   const utenzeHref = `/${locale}/utenze`;
+  const depositoHref = `/${locale}/deposito`;
   const pagaHref = `/${locale}/preventivo/${preventivo.id}/paga`;
 
   return (
@@ -277,6 +278,22 @@ export default function PreventivoClient({ locale, preventivo, previewMode = fal
         </div>
         <Icon name="arrow-up-right" size={20} />
       </a>
+
+      {/* Box: deposito cauzionale (apre /deposito in nuova tab) */}
+      {room.securityDeposit > 0 && (
+        <a href={depositoHref} target="_blank" rel="noreferrer" className="preventivo-view__info-box preventivo-view__info-box--icon">
+          <span className="preventivo-view__info-icon">
+            <Icon name="shield-lock-fill" size={28} />
+          </span>
+          <div className="preventivo-view__info-text">
+            <p className="preventivo-view__info-title">
+              {fmtSubject(t.linkDepositTitle, { amount: fmtEuro(room.securityDeposit, locale) })}
+            </p>
+            <p className="preventivo-view__info-desc">{t.linkDepositDesc}</p>
+          </div>
+          <Icon name="arrow-up-right" size={20} />
+        </a>
+      )}
 
       {/* CTA Blocca offerta */}
       <button

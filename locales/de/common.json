@@ -1354,6 +1354,8 @@
       "linkPhotosDesc": "Komplette Beschreibung: Grundriss, Fotos, Ausstattung",
       "linkUtenzeTitle": "So funktionieren die Verbrauchskosten",
       "linkUtenzeDesc": "Wasser, Strom, Gas: Tarife und praktische Hinweise",
+      "linkDepositTitle": "Kaution {amount}",
+      "linkDepositDesc": "Rückerstattbare Sicherheit, getrennt von der Angebotszahlung",
       "expiredTitle": "Angebot abgelaufen",
       "expiredText": "Dieses Angebot ist nicht mehr gültig. Kontaktieren Sie uns für ein neues Angebot.",
       "expiredCta": "Kontakt",

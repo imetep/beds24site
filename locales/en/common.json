@@ -1354,6 +1354,8 @@
       "linkPhotosDesc": "Explore the full listing: floor plan, photos, amenities",
       "linkUtenzeTitle": "How utility costs work",
       "linkUtenzeDesc": "Water, electricity, gas: rates and practical tips",
+      "linkDepositTitle": "Security deposit {amount}",
+      "linkDepositDesc": "Refundable guarantee, separate from the offer payment",
       "expiredTitle": "Quote expired",
       "expiredText": "This quote is no longer valid. Contact us for an updated offer.",
       "expiredCta": "Contact us",
