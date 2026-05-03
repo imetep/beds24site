@@ -35,8 +35,8 @@ export default async function PreventivoPage({ params }: Props) {
       ? { ...raw, status: 'expired' }
       : raw;
 
-  // Sanitizza prima di passare al client (no notes/email/name/bookingId)
-  const { notes, customerEmail, customerName, ...safe } = preventivo;
+  // Sanitizza prima di passare al client (no notes/email/name/phone/bookingId)
+  const { notes, customerEmail, customerName, customerPhone, ...safe } = preventivo;
 
   return <PreventivoClient locale={locale} preventivo={safe} />;
 }

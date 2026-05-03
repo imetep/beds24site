@@ -58,6 +58,9 @@ export interface Preventivo {
   paymentMethodChosen?: PaymentMethod;
   customerEmail?: string;
   customerName?: string;
+  customerPhone?: string;
+  /** Importo dell'acconto scelto dal cliente (€) */
+  depositAmount?: number;
 }
 
 export interface PreventivoLock {

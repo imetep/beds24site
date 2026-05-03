@@ -17,7 +17,9 @@ function isAuthed(req: NextRequest): boolean {
  * Il cliente vede solo ciò che serve per decidere e pagare.
  */
 function toPublicView(p: Preventivo) {
-  const { notes, customerEmail, customerName, bookingId, ...publicFields } = p;
+  // bookingId resta visibile (il cliente vede il proprio numero prenotazione
+  // nello stato 'converted'). Stripiamo solo i dati personali e le note interne.
+  const { notes, customerEmail, customerName, customerPhone, ...publicFields } = p;
   return publicFields;
 }
 
