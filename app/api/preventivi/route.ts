@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { randomBytes } from 'crypto';
-import { savePreventivo, listPreventivi } from '@/lib/preventivo-kv';
+import { savePreventivo, listPreventivi, getLockTtl } from '@/lib/preventivo-kv';
 import { PREVENTIVO_TTL_MS, type Preventivo } from '@/lib/preventivo-types';
 import { isValidLocale } from '@/config/i18n';
 
@@ -79,14 +79,18 @@ export async function GET(req: NextRequest) {
   }
 
   const all = await listPreventivi();
-  // Auto-aggiorna stato 'expired' al volo (non riscriviamo: la scadenza KV TTL fa il resto)
   const now = Date.now();
-  const preventivi = all.map(p => {
-    if (p.status === 'active' && p.expiresAt < now) {
-      return { ...p, status: 'expired' as const };
+
+  // Auto-flag expired + arricchisci con lockTtlSec per i bonifici in attesa
+  const preventivi = await Promise.all(all.map(async p => {
+    const status = (p.status === 'active' && p.expiresAt < now) ? 'expired' as const : p.status;
+    let lockTtlSec: number | undefined;
+    if (status === 'active' && p.paymentMethodChosen === 'bonifico') {
+      const ttl = await getLockTtl(p.roomId, p.arrival, p.departure);
+      if (ttl > 0) lockTtlSec = ttl;
     }
-    return p;
-  });
+    return { ...p, status, lockTtlSec };
+  }));
 
   return NextResponse.json({ preventivi });
 }
