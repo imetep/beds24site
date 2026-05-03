@@ -147,7 +147,7 @@ export default function PreventivoPagaClient({
           setError(fmtSubject(t.errorAmountBelow, { amount: fmtEuro(data.minDeposit, locale) }));
         } else if (data.error === 'amount_above_total') {
           setError(fmtSubject(t.errorAmountAbove, { amount: fmtEuro(data.max, locale) }));
-        } else if (data.error === 'room_locked_by_other') {
+        } else if (data.error === 'room_locked_by_other' || data.error === 'room_no_longer_available') {
           setError(t.errorRoomLocked);
         } else if (data.error === 'not_active') {
           setError(t.errorNotActive);

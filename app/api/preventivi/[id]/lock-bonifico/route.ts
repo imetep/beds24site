@@ -71,7 +71,14 @@ export async function POST(req: NextRequest, { params }: Params) {
   // Lock già esistente per le stesse date+camera? (shouldn't happen ma safety)
   const existingLock = await getLock(p.roomId, p.arrival, p.departure);
   if (existingLock && existingLock.preventivoId !== id) {
-    return NextResponse.json({ error: 'room_locked_by_other' }, { status: 409 });
+    return NextResponse.json({ error: 'room_no_longer_available' }, { status: 409 });
+  }
+
+  // Verifica disponibilità Beds24 per le date del preventivo (qualcuno potrebbe
+  // aver prenotato direttamente da /prenota dopo la creazione del preventivo)
+  const beds24Available = await checkBeds24Available(p.roomId, p.arrival, p.departure);
+  if (!beds24Available) {
+    return NextResponse.json({ error: 'room_no_longer_available' }, { status: 409 });
   }
 
   // Salva customer info + paymentMethodChosen + depositAmount
@@ -109,4 +116,38 @@ export async function POST(req: NextRequest, { params }: Params) {
 
 function isEmail(s: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+}
+
+/**
+ * Chiama direttamente Beds24 (no /api/availability per evitare circolarità con
+ * lock già applicati). Se almeno una notte nel range [arrival, departure) è
+ * marcata false → camera occupata.
+ */
+async function checkBeds24Available(
+  roomId: number,
+  arrival: string,
+  departure: string
+): Promise<boolean> {
+  try {
+    const { getToken } = await import('@/lib/beds24-token');
+    const token = await getToken();
+    const url = `https://beds24.com/api/v2/inventory/rooms/availability?roomId=${roomId}&startDate=${arrival}&endDate=${departure}`;
+    const res = await fetch(url, { headers: { token }, cache: 'no-store' });
+    if (!res.ok) {
+      console.warn('[lock-bonifico] availability check failed:', res.status);
+      return true; // fail-open: meglio creare il lock che bloccare il cliente
+    }
+    const data = await res.json();
+    const avail = data?.data?.[0]?.availability ?? {};
+    const startMs = new Date(arrival + 'T00:00:00').getTime();
+    const endMs = new Date(departure + 'T00:00:00').getTime();
+    for (let ms = startMs; ms < endMs; ms += 86_400_000) {
+      const ymd = new Date(ms).toISOString().split('T')[0];
+      if (avail[ymd] === false) return false;
+    }
+    return true;
+  } catch (e) {
+    console.warn('[lock-bonifico] availability check error:', e);
+    return true; // fail-open
+  }
 }
