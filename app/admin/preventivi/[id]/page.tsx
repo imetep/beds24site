@@ -8,6 +8,8 @@ import { PROPERTIES } from '@/config/properties';
 import { UPSELL_TEXTS } from '@/config/upsell-items';
 import { computeTotals, type Preventivo, type PreventivoStatus } from '@/lib/preventivo-types';
 
+type AdminPreventivo = Preventivo & { lockTtlSec?: number };
+
 const STATUS_LABEL: Record<PreventivoStatus, string> = {
   active: 'Attivo',
   expired: 'Scaduto',
@@ -49,7 +51,7 @@ export default function PreventivoDetailPage({ params }: Props) {
   const { id } = use(params);
   const router = useRouter();
   const [authed, setAuthed] = useState<boolean | null>(null);
-  const [preventivo, setPreventivo] = useState<Preventivo | null | undefined>(undefined); // undefined=loading, null=not found
+  const [preventivo, setPreventivo] = useState<AdminPreventivo | null | undefined>(undefined); // undefined=loading, null=not found
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
@@ -59,16 +61,62 @@ export default function PreventivoDetailPage({ params }: Props) {
 
   // L'admin legge i preventivi via lista (include tutti i campi). Il GET pubblico
   // /api/preventivi/[id] è sanitizzato. Per semplicità qui ricarichiamo la lista.
+  const [reloadKey, setReloadKey] = useState(0);
   useEffect(() => {
     if (!authed) return;
     fetch('/api/preventivi')
       .then(r => r.json())
       .then(d => {
-        const found = (d.preventivi as Preventivo[] | undefined)?.find(p => p.id === id);
+        const found = (d.preventivi as AdminPreventivo[] | undefined)?.find(p => p.id === id);
         setPreventivo(found ?? null);
       })
       .catch(e => setError(e.message));
-  }, [authed, id]);
+  }, [authed, id, reloadKey]);
+
+  // Countdown live per lock bonifico
+  useEffect(() => {
+    if (!preventivo?.lockTtlSec || preventivo.lockTtlSec <= 0) return;
+    const id = setInterval(() => {
+      setPreventivo(p => p && p.lockTtlSec ? { ...p, lockTtlSec: Math.max(0, p.lockTtlSec - 1) } : p);
+    }, 1000);
+    return () => clearInterval(id);
+  }, [preventivo?.id]);
+
+  const [confirmAmount, setConfirmAmount] = useState<string>('');
+  // Inizializza confirmAmount quando preventivo cambia
+  useEffect(() => {
+    if (preventivo?.depositAmount && !confirmAmount) {
+      setConfirmAmount(String(preventivo.depositAmount));
+    }
+  }, [preventivo?.depositAmount]);
+
+  async function confermaBonifico() {
+    if (!preventivo) return;
+    const amount = Number(confirmAmount);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      setError('Importo non valido');
+      return;
+    }
+    if (!confirm(`Confermo di aver ricevuto €${amount.toFixed(2)} via bonifico per il preventivo ${preventivo.id}? Verrà creata una booking confermata su Beds24 (calendario bloccato definitivamente).`)) return;
+    setBusy(true); setError('');
+    try {
+      const res = await fetch(`/api/preventivi/${preventivo.id}/conferma-bonifico`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ receivedAmount: amount }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(`Errore: ${data.error ?? 'unknown'}${data.detail ? ` — ${data.detail}` : ''}`);
+        return;
+      }
+      // Successo: ricarica preventivo
+      setReloadKey(k => k + 1);
+      alert(`Booking creata su Beds24: #${data.bookingId}`);
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function rigenera() {
     if (!preventivo) return;
@@ -156,7 +204,7 @@ export default function PreventivoDetailPage({ params }: Props) {
       )}
 
       {/* Link cliente */}
-      {p.status !== 'cancelled' && (
+      {p.status !== 'cancelled' && p.status !== 'converted' && (
         <div className="card shadow-sm mb-3">
           <div className="card-body">
             <p className="small fw-bold text-muted mb-2">Link per il cliente</p>
@@ -171,6 +219,48 @@ export default function PreventivoDetailPage({ params }: Props) {
               <a href={url} target="_blank" rel="noreferrer" className="btn btn-sm btn-outline-secondary">
                 <Icon name="arrow-up-right" />
               </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* BONIFICO IN ATTESA — banner urgente */}
+      {p.status === 'active' && p.paymentMethodChosen === 'bonifico' && p.lockTtlSec && p.lockTtlSec > 0 && (
+        <div className="card shadow-sm mb-3 border-warning">
+          <div className="card-body">
+            <div className="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
+              <p className="fw-bold mb-0 text-warning">
+                <Icon name="hourglass-split" className="me-1" /> Bonifico in attesa
+              </p>
+              <span className="badge bg-warning text-dark">
+                {Math.floor(p.lockTtlSec / 60).toString().padStart(2, '0')}:{(p.lockTtlSec % 60).toString().padStart(2, '0')}
+              </span>
+            </div>
+            <p className="small text-muted mb-2">
+              Il cliente ha scelto bonifico. Il calendario è bloccato per i prossimi minuti — appena ricevi il bonifico in banca, premi conferma per creare la booking su Beds24.
+            </p>
+            <div className="row g-2 align-items-end mb-2">
+              <div className="col-12 col-sm-6">
+                <label className="form-label small mb-1">Importo ricevuto (€)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  className="form-control form-control-sm"
+                  value={confirmAmount}
+                  onChange={e => setConfirmAmount(e.target.value)}
+                />
+              </div>
+              <div className="col-12 col-sm-6">
+                <button
+                  className="btn btn-warning fw-bold w-100"
+                  onClick={confermaBonifico}
+                  disabled={busy}
+                >
+                  <Icon name="check-circle-fill" className="me-1" />
+                  {busy ? 'Conferma in corso…' : 'Conferma bonifico ricevuto'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
