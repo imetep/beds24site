@@ -281,6 +281,7 @@ export default function NuovoPreventivoPage() {
                 className="form-control"
                 value={basePrice}
                 onChange={e => setBasePrice(e.target.value === '' ? '' : Number(e.target.value))}
+                onFocus={e => e.target.select()}
               />
             </div>
             <div className="col-5 col-md-4">
@@ -293,6 +294,7 @@ export default function NuovoPreventivoPage() {
                 className="form-control"
                 value={baseDiscountPct}
                 onChange={e => setBaseDiscountPct(Math.min(100, Math.max(0, Number(e.target.value) || 0)))}
+                onFocus={e => e.target.select()}
               />
             </div>
           </div>
@@ -326,17 +328,20 @@ export default function NuovoPreventivoPage() {
                       <div className="col-4">
                         <label className="form-label small mb-1">Quantità</label>
                         <input type="number" min={1} className="form-control form-control-sm" value={row.qty}
-                          onChange={e => updateUpsell(row.index, { qty: Math.max(1, Number(e.target.value) || 1) })} />
+                          onChange={e => updateUpsell(row.index, { qty: Math.max(1, Number(e.target.value) || 1) })}
+                          onFocus={e => e.target.select()} />
                       </div>
                       <div className="col-4">
                         <label className="form-label small mb-1">Prezzo unit. €</label>
                         <input type="number" min={0} step="1" className="form-control form-control-sm" value={row.unitPrice}
-                          onChange={e => updateUpsell(row.index, { unitPrice: Math.max(0, Number(e.target.value) || 0) })} />
+                          onChange={e => updateUpsell(row.index, { unitPrice: Math.max(0, Number(e.target.value) || 0) })}
+                          onFocus={e => e.target.select()} />
                       </div>
                       <div className="col-4">
                         <label className="form-label small mb-1">Sconto %</label>
                         <input type="number" min={0} max={100} step="1" className="form-control form-control-sm" value={row.discountPct}
-                          onChange={e => updateUpsell(row.index, { discountPct: Math.min(100, Math.max(0, Number(e.target.value) || 0)) })} />
+                          onChange={e => updateUpsell(row.index, { discountPct: Math.min(100, Math.max(0, Number(e.target.value) || 0)) })}
+                          onFocus={e => e.target.select()} />
                       </div>
                     </div>
                   )}
