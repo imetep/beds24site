@@ -46,12 +46,26 @@ export async function createBeds24BookingFromPreventivo(
 
   const notes = buildAuditNotes(p, totals.total, opts);
 
+  // Beds24 conta i bambini ≥ 3 anni come adulti (tariffa piena) e < 3 come
+  // numChild (neonati). Stesso split applicato dal wizard cliente in
+  // WizardStep2.tsx:383-384 — necessario perché altrimenti Beds24 ricalcola
+  // un prezzo diverso da quello concordato nel preventivo.
+  const ages = p.childrenAges ?? [];
+  const childrenAsAdults = ages.filter(a => a >= 3).length;
+  const babies = ages.filter(a => a < 3 && a >= 0).length;
+  // Fallback: se childrenAges non è presente (preventivi pre-fix), conta
+  // tutti i bambini come adulti (più sicuro per overcount lato Beds24)
+  const beds24NumAdult = ages.length === 0
+    ? p.numAdults + p.numChildren
+    : p.numAdults + childrenAsAdults;
+  const beds24NumChild = ages.length === 0 ? 0 : babies;
+
   const payload: Record<string, any> = {
     roomId:    p.roomId,
     arrival:   p.arrival,
     departure: p.departure,
-    numAdult:  p.numAdults,
-    numChild:  p.numChildren,
+    numAdult:  beds24NumAdult,
+    numChild:  beds24NumChild,
     firstName,
     lastName,
     email:     p.customerEmail,
@@ -63,6 +77,9 @@ export async function createBeds24BookingFromPreventivo(
   };
 
   if (p.customerPhone) payload.phone = p.customerPhone;
+  // OfferId: applica le condizioni di cancellazione/pagamento dell'offerta
+  // scelta dall'admin in fase di preventivo (default Beds24 se assente).
+  if (p.offerId) payload.offerId = p.offerId;
 
   const token = await getToken();
   const res = await fetch(`${BEDS24_BASE}/bookings`, {
