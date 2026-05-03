@@ -9961,3 +9961,396 @@ body {
   background: var(--color-primary-dark);
   color: white;
 }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   PREVENTIVO WIZARD PAGAMENTO — /preventivo/[id]/paga
+   3 step (dati / metodo / pagamento), bonifico = unica strada attiva oggi.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.preventivo-paga {
+  padding-top: 16px;
+  padding-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.preventivo-paga__header { padding: 0 4px; }
+.preventivo-paga__back {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--color-text-subtle);
+  text-decoration: none;
+  margin-bottom: 6px;
+}
+.preventivo-paga__back:hover { color: var(--color-primary); }
+.preventivo-paga__title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+}
+@media (min-width: 768px) {
+  .preventivo-paga__title { font-size: 26px; }
+}
+
+/* Stepper indicator */
+.preventivo-paga__steps {
+  list-style: none;
+  display: flex;
+  gap: 8px;
+  margin: 4px 0;
+  padding: 0;
+}
+.preventivo-paga__step {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--color-text-subtle);
+}
+.preventivo-paga__step.is-current {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+.preventivo-paga__step.is-done {
+  background: var(--color-success-bg);
+  border-color: var(--color-success-border);
+  color: var(--color-success-text);
+}
+.preventivo-paga__step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-bg-muted);
+  font-weight: 700;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.preventivo-paga__step.is-current .preventivo-paga__step-num {
+  background: var(--color-primary);
+  color: white;
+}
+.preventivo-paga__step.is-done .preventivo-paga__step-num {
+  background: var(--color-success);
+  color: white;
+}
+.preventivo-paga__step-label {
+  display: none;
+}
+@media (min-width: 600px) {
+  .preventivo-paga__step-label { display: inline; }
+}
+
+/* Riepilogo prezzo top */
+.preventivo-paga__summary {
+  background: var(--color-primary-soft);
+  border: 1px solid var(--color-primary-soft-border);
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+.preventivo-paga__summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.preventivo-paga__summary-row strong {
+  color: var(--color-primary);
+  font-size: 20px;
+}
+
+/* Errore */
+.preventivo-paga__error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff4f4;
+  border: 1px solid #fca5a5;
+  color: #b91c1c;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+/* Card form */
+.preventivo-paga__card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 16px;
+}
+.preventivo-paga__card-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 16px;
+}
+.preventivo-paga__field { margin-bottom: 14px; }
+.preventivo-paga__label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 6px;
+}
+.preventivo-paga__input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  font-size: 16px;        /* >= 16px iOS no-zoom */
+  background: var(--color-bg);
+  transition: border-color 0.15s;
+}
+.preventivo-paga__input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+.preventivo-paga__help {
+  font-size: 12px;
+  color: var(--color-text-subtle);
+  margin: 6px 0 0;
+}
+
+/* Metodi pagamento */
+.preventivo-paga__methods {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.preventivo-paga__method {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: 2px solid var(--color-border);
+  border-radius: 10px;
+  cursor: pointer;
+  background: var(--color-bg);
+  transition: border-color 0.15s, background 0.15s;
+}
+.preventivo-paga__method:hover { border-color: var(--color-primary-soft-border); }
+.preventivo-paga__method.is-checked {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+.preventivo-paga__method.is-disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.preventivo-paga__method input[type="radio"] {
+  margin: 0;
+  flex-shrink: 0;
+}
+.preventivo-paga__method-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--color-bg-muted);
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+.preventivo-paga__method-text { flex: 1; min-width: 0; }
+.preventivo-paga__method-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 15px;
+}
+.preventivo-paga__method-badge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--color-text-accent);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.preventivo-paga__method-desc {
+  display: block;
+  font-size: 13px;
+  color: var(--color-text-subtle);
+  margin-top: 2px;
+}
+
+/* Slider acconto */
+.preventivo-paga__deposit { margin: 16px 0 8px; }
+.preventivo-paga__slider {
+  width: 100%;
+  margin-top: 8px;
+  accent-color: var(--color-primary);
+}
+.preventivo-paga__slider-marks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--color-text-subtle);
+  margin-top: 4px;
+}
+.preventivo-paga__deposit-amount {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--color-primary-soft);
+  border: 1px solid var(--color-primary-soft-border);
+  border-radius: 10px;
+}
+.preventivo-paga__deposit-amount span { font-weight: 700; color: var(--color-primary); }
+.preventivo-paga__deposit-amount strong {
+  color: var(--color-primary);
+  font-size: 22px;
+}
+.preventivo-paga__remaining {
+  font-size: 13px;
+  color: var(--color-text-subtle);
+  margin: 8px 0 0;
+}
+
+/* Actions row (back + cta) */
+.preventivo-paga__actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+.preventivo-paga__back-btn {
+  flex-shrink: 0;
+  padding: 12px 20px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--color-text-subtle);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.preventivo-paga__back-btn:hover { background: var(--color-bg-muted); }
+.preventivo-paga__back-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.preventivo-paga__cta {
+  flex: 1;
+  padding: 14px 20px;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.preventivo-paga__cta:hover:not(:disabled) { background: var(--color-primary-dark); }
+.preventivo-paga__cta:disabled { opacity: 0.5; cursor: not-allowed; }
+.preventivo-paga__pay-summary {
+  font-size: 15px;
+  margin: 0 0 12px;
+  color: var(--color-text-subtle);
+}
+
+/* Bonifico — dati + countdown */
+.preventivo-paga__bonifico {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.preventivo-paga__countdown {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(197, 136, 31, 0.1);
+  color: var(--color-text-accent);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  align-self: flex-start;
+}
+.preventivo-paga__countdown strong {
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+.preventivo-paga__bonifico-field {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  background: var(--color-bg);
+}
+.preventivo-paga__bonifico-field.is-highlight {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+.preventivo-paga__bonifico-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-subtle);
+  margin-bottom: 4px;
+}
+.preventivo-paga__bonifico-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.preventivo-paga__bonifico-value {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+  word-break: break-all;
+}
+.preventivo-paga__bonifico-value.is-mono {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+.preventivo-paga__copy-btn {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  background: var(--color-bg-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.preventivo-paga__copy-btn:hover { background: var(--color-primary-soft); }
+.preventivo-paga__copy-btn.is-copied {
+  background: var(--color-success);
+  color: white;
+  border-color: var(--color-success);
+}
+.preventivo-paga__bonifico-note {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  background: var(--color-bg-muted);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--color-text-subtle);
+  line-height: 1.5;
+}
+.preventivo-paga__bonifico-note > svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--color-primary);
+}
