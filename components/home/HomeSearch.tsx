@@ -49,7 +49,13 @@ function fmtDate(ymd: string, locale: string, monthsShort: string[]): string {
 }
 
 // ─── Componente ───────────────────────────────────────────────────────────────
-export default function HomeSearch({ locale }: { locale: string }) {
+interface HomeSearchProps {
+  locale: string;
+  /** Override: chiamata al click su "Cerca" se le date sono valide (default: redirect a /prenota?from=home) */
+  onCerca?: () => void;
+}
+
+export default function HomeSearch({ locale, onCerca }: HomeSearchProps) {
   const tr = getTranslations(locale as Locale);
   const hs = tr.components.homeSearch;
   const ui   = hs.ui;
@@ -207,7 +213,8 @@ export default function HomeSearch({ locale }: { locale: string }) {
   function handleCerca() {
     if (!checkIn || !checkOut) { setPanel('dates'); return; }
     setPanel('none');
-    router.push(`/${locale}/prenota?from=home`);
+    if (onCerca) onCerca();
+    else router.push(`/${locale}/prenota?from=home`);
   }
 
   // ── Panel calendario ──────────────────────────────────────────────────────
