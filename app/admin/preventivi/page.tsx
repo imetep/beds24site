@@ -6,6 +6,7 @@ import { Icon } from '@/components/ui/Icon';
 import { PROPERTIES } from '@/config/properties';
 import { computeTotals, type Preventivo, type PreventivoStatus } from '@/lib/preventivo-types';
 
+type AdminPreventivo = Preventivo & { lockTtlSec?: number };
 type FilterStatus = 'all' | PreventivoStatus;
 
 const STATUS_LABEL: Record<PreventivoStatus, string> = {
@@ -44,7 +45,7 @@ function fmtEuro(n: number): string {
 
 export default function PreventiviListPage() {
   const [authed, setAuthed] = useState<boolean | null>(null);
-  const [items, setItems] = useState<Preventivo[] | null>(null);
+  const [items, setItems] = useState<AdminPreventivo[] | null>(null);
   const [filter, setFilter] = useState<FilterStatus>('all');
   const [error, setError] = useState('');
 
@@ -150,6 +151,12 @@ export default function PreventiviListPage() {
                       <p className="fw-bold mb-1">
                         {roomName(p.roomId)}
                         <span className={`badge ${STATUS_BADGE[p.status]} ms-2`}>{STATUS_LABEL[p.status]}</span>
+                        {p.lockTtlSec && p.lockTtlSec > 0 && (
+                          <span className="badge bg-warning text-dark ms-2">
+                            <Icon name="hourglass-split" size={12} className="me-1" />
+                            Bonifico {Math.floor(p.lockTtlSec / 60).toString().padStart(2, '0')}:{(p.lockTtlSec % 60).toString().padStart(2, '0')}
+                          </span>
+                        )}
                       </p>
                       <p className="small text-muted mb-1">
                         <Icon name="calendar-fill" size={14} className="me-1" />
