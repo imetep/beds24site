@@ -58,9 +58,14 @@ function getMinPrice(ro: RoomOffers): number {
 }
 
 // ─── Componente principale ───────────────────────────────────────────────────
-interface Props { locale?: string; onBack?: () => void; }
+interface Props {
+  locale?: string;
+  onBack?: () => void;
+  /** Override: chiamata invece di nextStep() al click su "Continua" (admin preventivo) */
+  onContinua?: () => void;
+}
 
-export default function WizardStep1({ locale = 'it', onBack }: Props) {
+export default function WizardStep1({ locale = 'it', onBack, onContinua }: Props) {
   const loc = (SUPPORTED_LOCALES as readonly string[]).includes(locale) ? locale : 'it';
   const t = getTranslations(loc as Locale).components.wizardStep1;
   const sharedT = getTranslations(loc as Locale).shared;
@@ -219,7 +224,8 @@ export default function WizardStep1({ locale = 'it', onBack }: Props) {
   }
   function handleContinua() {
     if (!pickedRoomId || !pickedOfferId) return;
-    nextStep();
+    if (onContinua) onContinua();
+    else nextStep();
   }
   const canContinue = !!pickedRoomId && !!pickedOfferId;
 
