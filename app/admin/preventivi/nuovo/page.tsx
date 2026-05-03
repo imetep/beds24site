@@ -149,7 +149,7 @@ export default function NuovoPreventivoPage() {
                 className="btn btn-primary"
                 onClick={() => navigator.clipboard.writeText(url)}
               >
-                <Icon name="link-2" className="me-1" /> Copia
+                <Icon name="link-45deg" className="me-1" /> Copia
               </button>
             </div>
           </div>
@@ -177,7 +177,7 @@ export default function NuovoPreventivoPage() {
     <div className="container page-top pb-5" style={{ maxWidth: 720 }}>
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h1 className="h4 fw-bold mb-0">
-          <Icon name="file-image" className="me-2" /> Nuovo preventivo
+          <Icon name="file-earmark-image" className="me-2" /> Nuovo preventivo
         </h1>
         <Link href="/admin/preventivi" className="btn btn-sm btn-outline-secondary">Annulla</Link>
       </div>
@@ -341,7 +341,7 @@ export default function NuovoPreventivoPage() {
 
       {error && (
         <div className="alert alert-danger py-2 mb-3">
-          <Icon name="triangle-alert" className="me-2" />{error}
+          <Icon name="exclamation-triangle-fill" className="me-2" />{error}
         </div>
       )}
 

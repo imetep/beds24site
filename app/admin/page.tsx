@@ -104,7 +104,7 @@ export default function AdminPage() {
       color: 'var(--color-primary)',
     },
     {
-      icon: 'file-image',
+      icon: 'file-earmark-image',
       title: 'Preventivi',
       desc: 'Crea offerte personalizzate con sconti per voce, condividi un link valido 48h. Il cliente blocca l\'offerta pagando online o via bonifico.',
       href: '/admin/preventivi',

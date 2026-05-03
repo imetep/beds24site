@@ -91,12 +91,12 @@ export default function PreventiviListPage() {
       <div className="d-flex justify-content-between align-items-center mb-3">
         <div>
           <h1 className="h4 fw-bold mb-0">
-            <Icon name="file-image" className="me-2" /> Preventivi
+            <Icon name="file-earmark-image" className="me-2" /> Preventivi
           </h1>
           <p className="small text-muted mb-0">Gestione offerte personalizzate</p>
         </div>
         <Link href="/admin/preventivi/nuovo" className="btn btn-primary fw-bold">
-          <Icon name="circle-plus" className="me-1" /> Nuovo
+          + Nuovo
         </Link>
       </div>
 
@@ -115,7 +115,7 @@ export default function PreventiviListPage() {
 
       {error && (
         <div className="alert alert-danger py-2 mb-3">
-          <Icon name="triangle-alert" className="me-2" />Errore: {error}
+          <Icon name="exclamation-triangle-fill" className="me-2" />Errore: {error}
         </div>
       )}
 
@@ -125,7 +125,7 @@ export default function PreventiviListPage() {
 
       {items && filtered.length === 0 && (
         <div className="text-center text-muted py-5">
-          <Icon name="file-image" size={48} className="opacity-50 mb-3" />
+          <Icon name="file-earmark-image" size={48} className="opacity-50 mb-3" />
           <p className="mb-2">Nessun preventivo {filter !== 'all' ? `con stato "${STATUS_LABEL[filter as PreventivoStatus].toLowerCase()}"` : ''}.</p>
           {filter === 'all' && (
             <Link href="/admin/preventivi/nuovo" className="btn btn-primary">Crea il primo</Link>
@@ -152,10 +152,10 @@ export default function PreventiviListPage() {
                         <span className={`badge ${STATUS_BADGE[p.status]} ms-2`}>{STATUS_LABEL[p.status]}</span>
                       </p>
                       <p className="small text-muted mb-1">
-                        <Icon name="calendar" size={14} className="me-1" />
+                        <Icon name="calendar-fill" size={14} className="me-1" />
                         {formatDate(p.arrival)} → {formatDate(p.departure)}
                         <span className="mx-2">·</span>
-                        <Icon name="users" size={14} className="me-1" />
+                        <Icon name="people-fill" size={14} className="me-1" />
                         {p.numAdults}{p.numChildren > 0 ? `+${p.numChildren}` : ''}
                       </p>
                       <p className="small text-muted mb-0">

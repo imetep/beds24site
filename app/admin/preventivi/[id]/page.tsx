@@ -113,7 +113,7 @@ export default function PreventivoDetailPage({ params }: Props) {
   if (preventivo === null) {
     return (
       <div className="container page-top text-center">
-        <Icon name="circle-x" size={48} className="text-muted opacity-50 mb-3" />
+        <Icon name="x-circle" size={48} className="text-muted opacity-50 mb-3" />
         <p>Preventivo <code>{id}</code> non trovato (potrebbe essere scaduto e rimosso).</p>
         <Link href="/admin/preventivi" className="btn btn-outline-secondary">Torna alla lista</Link>
       </div>
@@ -151,7 +151,7 @@ export default function PreventivoDetailPage({ params }: Props) {
 
       {error && (
         <div className="alert alert-danger py-2 mb-3">
-          <Icon name="triangle-alert" className="me-2" />Errore: {error}
+          <Icon name="exclamation-triangle-fill" className="me-2" />Errore: {error}
         </div>
       )}
 
@@ -166,7 +166,7 @@ export default function PreventivoDetailPage({ params }: Props) {
                 className="btn btn-sm btn-outline-primary"
                 onClick={() => navigator.clipboard.writeText(url)}
               >
-                <Icon name="link-2" className="me-1" /> Copia
+                <Icon name="link-45deg" className="me-1" /> Copia
               </button>
               <a href={url} target="_blank" rel="noreferrer" className="btn btn-sm btn-outline-secondary">
                 <Icon name="arrow-up-right" />
@@ -270,7 +270,7 @@ export default function PreventivoDetailPage({ params }: Props) {
         <div className="card shadow-sm mb-3 border-warning">
           <div className="card-body">
             <p className="small fw-bold text-muted mb-1">
-              <Icon name="sticky-note" className="me-1" /> Note interne (non mostrate al cliente)
+              <Icon name="sticky-fill" className="me-1" /> Note interne (non mostrate al cliente)
             </p>
             <p className="mb-0" style={{ whiteSpace: 'pre-wrap' }}>{p.notes}</p>
           </div>
@@ -294,12 +294,12 @@ export default function PreventivoDetailPage({ params }: Props) {
       <div className="d-flex gap-2 justify-content-end flex-wrap">
         {canRigenera && (
           <button className="btn btn-outline-primary" onClick={rigenera} disabled={busy}>
-            <Icon name="rotate-cw" className="me-1" /> Rigenera link (48h)
+            <Icon name="arrow-clockwise" className="me-1" /> Rigenera link (48h)
           </button>
         )}
         {canEliminate && (
           <button className="btn btn-outline-danger" onClick={elimina} disabled={busy}>
-            <Icon name="trash-2" className="me-1" /> {p.status === 'converted' ? 'Marca annullato' : 'Elimina'}
+            <Icon name="trash" className="me-1" /> {p.status === 'converted' ? 'Marca annullato' : 'Elimina'}
           </button>
         )}
       </div>

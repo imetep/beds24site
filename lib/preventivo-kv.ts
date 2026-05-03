@@ -194,7 +194,8 @@ async function scanKeys(pattern: string): Promise<string[]> {
   const out: string[] = [];
   let cursor: string | number = 0;
   do {
-    const [next, batch] = await client().scan(cursor, { match: pattern, count: 200 });
+    const [next, batch]: [string | number, string[]] =
+      await client().scan(cursor, { match: pattern, count: 200 });
     out.push(...batch);
     cursor = next;
   } while (String(cursor) !== '0');
