@@ -104,6 +104,13 @@ export default function AdminPage() {
       color: 'var(--color-primary)',
     },
     {
+      icon: 'file-image',
+      title: 'Preventivi',
+      desc: 'Crea offerte personalizzate con sconti per voce, condividi un link valido 48h. Il cliente blocca l\'offerta pagando online o via bonifico.',
+      href: '/admin/preventivi',
+      color: '#dc2626',
+    },
+    {
       icon: 'moon-stars-fill',
       title: 'Biancheria',
       desc: 'Calcolo automatico della biancheria per ogni check-in nel periodo. Configurabile da admin o ospite; totali aggregati per periodo.',
