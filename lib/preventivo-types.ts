@@ -48,6 +48,8 @@ export interface Preventivo {
   locale: Locale;
   /** Nota interna admin, non mostrata al cliente */
   notes?: string;
+  /** Offer Beds24 scelta dall'admin (opzionale, per traceability) */
+  offerId?: number;
   /** epoch ms */
   createdAt: number;
   /** epoch ms (createdAt + 48h) */

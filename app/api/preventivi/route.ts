@@ -60,6 +60,7 @@ export async function POST(req: NextRequest) {
     })) : [],
     locale: body.locale,
     notes: body.notes?.trim() || undefined,
+    offerId: Number.isInteger(body.offerId) ? body.offerId : undefined,
     createdAt: now,
     expiresAt: now + PREVENTIVO_TTL_MS,
     status: 'active',
