@@ -1180,8 +1180,10 @@
         "cancel": "Clear",
         "inspire": "Our residences",
         "dintorni": "Surroundings",
-        "hero_title": "Scauri, like you've never experienced it",
-        "hero_sub": "Book directly with us and save on commissions"
+        "rotator0": "Book direct with us and save",
+        "rotator1": "Best value for money on the Gulf of Gaeta",
+        "rotator2": "Between Rome and Naples, away from mass tourism",
+        "rotator3": "Fill your eyes with green"
       },
       "months": [
         "January",
