@@ -105,6 +105,22 @@ export default function NuovoPreventivoPage() {
     setUpsellRows(rows => rows.map(r => r.index === index ? { ...r, ...patch } : r));
   }
 
+  async function logout() {
+    await fetch('/api/admin/login', { method: 'DELETE' });
+    window.location.href = '/admin';
+  }
+
+  /** Header nav riusabile in tutte le 4 fasi (search/rooms/preventivo/preview) */
+  function NavButtons() {
+    return (
+      <div className="d-flex gap-2 flex-wrap">
+        <Link href="/admin/preventivi" className="btn btn-sm btn-outline-secondary">← Lista</Link>
+        <a href="/admin" className="btn btn-sm btn-outline-secondary">← Admin</a>
+        <button className="btn btn-sm btn-outline-secondary" onClick={logout}>Esci</button>
+      </div>
+    );
+  }
+
   function goToPreview() {
     setError('');
     if (!checkIn || !checkOut) { setError('Date mancanti'); return; }
@@ -167,9 +183,12 @@ export default function NuovoPreventivoPage() {
     const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/${locale}/preventivo/${createdId}`;
     return (
       <div className="container page-top pb-5" style={{ maxWidth: 720 }}>
-        <h1 className="h4 fw-bold mb-3">
-          <Icon name="check-circle-fill" className="me-2" /> Preventivo creato
-        </h1>
+        <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+          <h1 className="h4 fw-bold mb-0">
+            <Icon name="check-circle-fill" className="me-2" /> Preventivo creato
+          </h1>
+          <NavButtons />
+        </div>
         <div className="card border-success shadow-sm mb-3">
           <div className="card-body">
             <p className="small text-muted mb-1">Link per il cliente (valido 48 ore):</p>
@@ -209,11 +228,11 @@ export default function NuovoPreventivoPage() {
   if (phase === 'search') {
     return (
       <div className="container page-top pb-5">
-        <div className="d-flex justify-content-between align-items-center mb-3">
+        <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
           <h1 className="h4 fw-bold mb-0">
             <Icon name="file-earmark-image" className="me-2" /> Nuovo preventivo
           </h1>
-          <Link href="/admin/preventivi" className="btn btn-sm btn-outline-secondary">Annulla</Link>
+          <NavButtons />
         </div>
         <p className="small text-muted mb-3">
           Inizia scegliendo le date e gli ospiti del preventivo (stessa interfaccia del cliente).
@@ -227,11 +246,11 @@ export default function NuovoPreventivoPage() {
   if (phase === 'rooms') {
     return (
       <div className="wizard-container">
-        <div className="d-flex justify-content-between align-items-center mb-3 px-3">
+        <div className="d-flex justify-content-between align-items-center mb-3 px-3 flex-wrap gap-2">
           <h1 className="h5 fw-bold mb-0">
             <Icon name="file-earmark-image" className="me-2" /> Nuovo preventivo · Scegli camera
           </h1>
-          <Link href="/admin/preventivi" className="btn btn-sm btn-outline-secondary">Annulla</Link>
+          <NavButtons />
         </div>
         <div className="wizard-container__layout">
           <div className="wizard-container__main">
@@ -305,13 +324,16 @@ export default function NuovoPreventivoPage() {
   // ─── FASE 3: form preventivo (sconto + upsell + lingua + note) ─────────────
   return (
     <div className="container page-top pb-5" style={{ maxWidth: 720 }}>
-      <div className="d-flex justify-content-between align-items-center mb-3">
+      <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
         <h1 className="h4 fw-bold mb-0">
           <Icon name="file-earmark-image" className="me-2" /> Dettagli preventivo
         </h1>
-        <button onClick={() => setPhase('rooms')} className="btn btn-sm btn-outline-secondary">
-          ← Cambia camera
-        </button>
+        <div className="d-flex gap-2 flex-wrap">
+          <button onClick={() => setPhase('rooms')} className="btn btn-sm btn-outline-secondary">
+            ← Cambia camera
+          </button>
+          <NavButtons />
+        </div>
       </div>
 
       {/* Riepilogo selezione */}
