@@ -7103,10 +7103,12 @@ body {
   .site-main { padding-bottom: 0; }
 }
 .site-footer {
-  background-color: #374151;        /* slate-700: ancora più morbido */
-  color: var(--color-text-muted);
-  padding: 2rem 1.5rem 2rem;        /* desktop: ridotto, niente spazio sprecato */
+  background-color: #374151;        /* slate-700 */
+  color: #d1d5db;                    /* gray-300: 6.2:1 contrast su #374151 (WCAG AA) */
+  padding: 1.75rem 1.5rem;
   margin-top: 0;
+  font-size: 0.85rem;
+  line-height: 1.45;
 }
 @media (max-width: 767px) {
   /* Mobile: bottom extra per non far coprire dal layout-sticky-mobile-bar */
@@ -7114,46 +7116,54 @@ body {
 }
 .site-footer__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--color-border-dark);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);  /* separatore soft */
 }
 .site-footer__company {
   font-weight: 800;
-  font-size: 1.1rem;
-  color: var(--color-on-dark);
-  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  color: #fff;
+  margin: 0 0 0.4rem;
 }
 .site-footer__col-title {
   font-weight: 700;
-  font-size: var(--text-xs);
-  color: var(--color-text-label);
+  font-size: 11px;
+  color: #9ca3af;                    /* gray-400 per label all-caps */
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.4rem;
 }
 .site-footer__line {
-  font-size: var(--text-sm);
-  margin: 0 0 0.35rem;
-  color: var(--color-text-muted);
-  line-height: 1.5;
+  font-size: 0.85rem;
+  margin: 0 0 0.2rem;
+  color: #d1d5db;
+  line-height: 1.45;
 }
 .site-footer__link {
-  color: var(--color-text-muted);
+  color: #d1d5db;
   text-decoration: none;
+}
+.site-footer__link:hover {
+  color: #fff;
+  text-decoration: underline;
 }
 .site-footer__nav-link {
-  color: var(--color-text-muted);
+  color: #d1d5db;
   text-decoration: none;
   display: block;
-  margin-bottom: 0.4rem;
-  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+  font-size: 0.85rem;
+}
+.site-footer__nav-link:hover {
+  color: #fff;
+  text-decoration: underline;
 }
 .site-footer__bottom {
-  margin: 1.25rem 0 0;
-  font-size: var(--text-xs);
-  color: var(--color-text-subtle);
+  margin: 0.75rem 0 0;
+  font-size: 0.75rem;
+  color: #9ca3af;
   text-align: center;
 }
 
