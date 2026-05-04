@@ -14,7 +14,7 @@
 
 import { useEffect, useState, type ReactNode } from 'react';
 import { useWizardStore } from '@/store/wizard-store';
-import { PROPERTIES, OFFER_INFO, calculateTouristTax, formatTouristTaxNote, type Room, type Property } from '@/config/properties';
+import { PROPERTIES, OFFER_INFO, getEffectiveOfferIdForDisplay, calculateTouristTax, formatTouristTaxNote, type Room, type Property } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
 import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import type { Locale } from '@/config/i18n';
@@ -112,7 +112,13 @@ export default function BookingSidebar({
   const roomOffers = cachedOffers?.find((ro: any) => ro.roomId === selectedRoomId);
   const offer = roomOffers?.offers?.find((o: any) => o.offerId === selectedOfferId)
     ?? cachedOffers?.flatMap((ro: any) => ro.offers ?? []).find((o: any) => o.offerId === selectedOfferId);
-  const offerName: string | null = offer ? (OFFER_NAMES[String(offer.offerId)] ?? String(offer.offerName ?? '')) : null;
+  // Effective offerId per display: se la finestra di cancellazione flex è
+  // scaduta, il cliente legge la tariffa come "Non Rimborsabile" (offerId 1).
+  // Logica backend invariata — vedi getEffectiveOfferIdForDisplay.
+  const effectiveOfferId = offer ? getEffectiveOfferIdForDisplay(offer.offerId, checkIn) : null;
+  const offerName: string | null = offer
+    ? (OFFER_NAMES[String(effectiveOfferId)] ?? OFFER_NAMES[String(offer.offerId)] ?? String(offer.offerName ?? ''))
+    : null;
   const offerPrice: number = offer?.price ?? 0;
   const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : 0;
   const perNight = nights > 0 && offerPrice > 0 ? Math.round(offerPrice / nights) : 0;
@@ -127,7 +133,7 @@ export default function BookingSidebar({
     : 0;
   const totalWithTax = basePrice + touristTax + extrasTotal;
 
-  const offerInfo = offer ? OFFER_INFO[offer.offerId as number] : null;
+  const offerInfo = effectiveOfferId ? OFFER_INFO[effectiveOfferId] : null;
   const offerCondition = offerInfo?.conditions[locale] ?? offerInfo?.conditions.it ?? null;
 
   const handleContinua = onContinua ?? nextStep;
