@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { PROPERTIES, type Room } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
@@ -59,8 +60,9 @@ export default function PreventivoPagaClient({
   stripeEnabled,
   paypalEnabled,
 }: Props) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const t = getTranslations(locale).components.preventivoPaga;
-  const tView = getTranslations(locale).components.preventivoView;
   const room = findRoom(preventivo.roomId);
   const totals = useMemo(() => computeTotals(preventivo as Preventivo), [preventivo]);
   const minDeposit = useMemo(() => Math.round(totals.total * 0.30 * 100) / 100, [totals.total]);
@@ -69,7 +71,7 @@ export default function PreventivoPagaClient({
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [method, setMethod] = useState<PaymentMethod>('bonifico');
+  const [method, setMethod] = useState<PaymentMethod>(paypalEnabled ? 'paypal' : 'bonifico');
   const [depositPct, setDepositPct] = useState(30);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -78,6 +80,12 @@ export default function PreventivoPagaClient({
   const [bonifico, setBonifico] = useState<BonificoDati | null>(null);
   const [countdownSec, setCountdownSec] = useState<number>(0);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  // Stato PayPal SDK
+  const [paypalSdkReady, setPaypalSdkReady] = useState(false);
+  const paypalSessionRef = useRef<any>(null);
+  const sdkInstanceRef = useRef<any>(null);
+  const createdBookIdRef = useRef<number | null>(null);
 
   const depositAmount = useMemo(
     () => Math.round(totals.total * (depositPct / 100) * 100) / 100,
@@ -95,11 +103,29 @@ export default function PreventivoPagaClient({
     return () => clearInterval(id);
   }, [bonifico, countdownSec]);
 
+  // Handle redirect callbacks (Stripe success/cancel)
+  useEffect(() => {
+    const paid = searchParams.get('paid');
+    const cancelled = searchParams.get('cancelled');
+    if (paid === '1') {
+      // Marca preventivo converted poi redirect alla view
+      (async () => {
+        await fetch(`/api/preventivi/${preventivo.id}/confirm-online`, { method: 'POST' });
+        router.replace(`/${locale}/preventivo/${preventivo.id}`);
+      })();
+    } else if (cancelled === '1') {
+      // Rollback: cancella booking pending Beds24
+      fetch(`/api/preventivi/${preventivo.id}/cancel-online`, { method: 'POST' });
+      // Rimuovi i query param dall'URL così l'utente può riprovare senza side-effect
+      window.history.replaceState({}, '', `/${locale}/preventivo/${preventivo.id}/paga`);
+    }
+  }, [searchParams, preventivo.id, locale, router]);
+
   if (!room) {
     return <div className="page-container"><p className="text-center py-5">Camera non trovata</p></div>;
   }
 
-  // Stati non-active: redirect alla view (mostra messaggio scaduto/cancelled/converted)
+  // Stati non-active: mostra messaggio
   if (preventivo.status !== 'active') {
     return (
       <div className="page-container preventivo-paga">
@@ -114,6 +140,144 @@ export default function PreventivoPagaClient({
     );
   }
 
+  // ─── PayPal SDK init (quando step=3 e method=paypal) ───────────────────────
+  useEffect(() => {
+    if (step !== 3 || method !== 'paypal') {
+      setPaypalSdkReady(false);
+      return;
+    }
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const tkRes = await fetch('/api/paypal-client-token', { method: 'POST' });
+        const tkData = await tkRes.json();
+        if (cancelled) return;
+        if (!tkRes.ok || !tkData.clientToken) {
+          setError(t.errorGeneric);
+          return;
+        }
+        const mode = tkData.mode === 'sandbox' ? 'sandbox' : 'live';
+        const host = mode === 'sandbox' ? 'www.sandbox.paypal.com' : 'www.paypal.com';
+        const src = `https://${host}/web-sdk/v6/core`;
+
+        const existing = document.getElementById('paypal-sdk-script') as HTMLScriptElement | null;
+        if (!existing || existing.src !== src) {
+          if (existing) existing.remove();
+          const script = document.createElement('script');
+          script.id = 'paypal-sdk-script';
+          script.src = src;
+          script.async = true;
+          await new Promise<void>((resolve, reject) => {
+            script.onload = () => resolve();
+            script.onerror = () => reject(new Error('script load failed'));
+            document.head.appendChild(script);
+          });
+        }
+        if (cancelled) return;
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const paypalGlobal = (window as any).paypal;
+        if (!paypalGlobal?.createInstance) {
+          setError(t.errorGeneric);
+          return;
+        }
+        const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
+        if (!clientId) {
+          setError(t.errorGeneric);
+          return;
+        }
+
+        const instance = await paypalGlobal.createInstance({
+          clientId,
+          components: ['paypal-payments'],
+          pageType: 'checkout',
+        });
+        if (cancelled) return;
+        sdkInstanceRef.current = instance;
+
+        if (typeof instance.createPayPalOneTimePaymentSession === 'function') {
+          paypalSessionRef.current = instance.createPayPalOneTimePaymentSession({
+            onApprove: async (data: { orderId: string }) => {
+              setBusy(true);
+              const bookId = createdBookIdRef.current;
+              if (!bookId) {
+                setError(t.errorGeneric);
+                setBusy(false);
+                return;
+              }
+              try {
+                // Capture PayPal + aggiorna Beds24 (status='new', invoice items)
+                const upsellExtras = preventivo.upsells.map(u => {
+                  const lineNet = u.unitPrice * u.qty * (1 - u.discountPct / 100);
+                  return {
+                    description: `Upsell #${u.index}`,
+                    price: Math.round(lineNet * 100) / 100,
+                    quantity: 1,
+                  };
+                });
+                const accommodation = Math.round(
+                  (preventivo.basePrice * (1 - preventivo.baseDiscountPct / 100)) * 100
+                ) / 100;
+                const capRes = await fetch('/api/paypal-capture', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    orderID: data.orderId,
+                    bookingId: bookId,
+                    amount: depositAmount,
+                    accommodation,
+                    touristTax: totals.touristTax,
+                    discountAmount: 0,
+                    extras: upsellExtras,
+                  }),
+                });
+                const capResult = await capRes.json();
+                if (!capRes.ok || !capResult.ok) throw new Error(capResult.error ?? 'capture_failed');
+
+                // Marca preventivo converted
+                await fetch(`/api/preventivi/${preventivo.id}/confirm-online`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ capturedAmount: capResult.amount ?? depositAmount }),
+                });
+
+                router.replace(`/${locale}/preventivo/${preventivo.id}`);
+              } catch (e: any) {
+                setError(e?.message ?? t.errorGeneric);
+                setBusy(false);
+              }
+            },
+            onCancel: async () => {
+              if (createdBookIdRef.current) {
+                await fetch(`/api/preventivi/${preventivo.id}/cancel-online`, { method: 'POST' });
+                createdBookIdRef.current = null;
+              }
+              setBusy(false);
+            },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onError: async (err: any) => {
+              console.error('[PayPal v6] onError:', err);
+              if (createdBookIdRef.current) {
+                await fetch(`/api/preventivi/${preventivo.id}/cancel-online`, { method: 'POST' });
+                createdBookIdRef.current = null;
+              }
+              setError(t.errorGeneric);
+              setBusy(false);
+            },
+          });
+        }
+
+        setPaypalSdkReady(true);
+      } catch (e) {
+        console.error('[PayPal v6] init error:', e);
+        if (!cancelled) setError(t.errorGeneric);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [step, method, preventivo.id, preventivo.upsells, preventivo.basePrice, preventivo.baseDiscountPct, depositAmount, totals.touristTax, locale, t.errorGeneric, router]);
+
   // ─── Handlers ──────────────────────────────────────────────────────────────
 
   function goToStep2() {
@@ -126,6 +290,42 @@ export default function PreventivoPagaClient({
   function goToStep3() {
     setError('');
     setStep(3);
+  }
+
+  /** Crea booking Beds24 pending, ritorna bookId. Comune a PayPal e Stripe. */
+  async function startOnline(paymentMethod: 'paypal' | 'stripe'): Promise<number | null> {
+    setError('');
+    try {
+      const res = await fetch(`/api/preventivi/${preventivo.id}/start-online`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerName: name.trim(),
+          customerEmail: email.trim(),
+          customerPhone: phone.trim() || undefined,
+          depositAmount,
+          paymentMethod,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        if (data.error === 'amount_below_minimum') {
+          setError(fmtSubject(t.errorAmountBelow, { amount: fmtEuro(data.minDeposit, locale) }));
+        } else if (data.error === 'amount_above_total') {
+          setError(fmtSubject(t.errorAmountAbove, { amount: fmtEuro(data.max, locale) }));
+        } else if (data.error === 'not_active') {
+          setError(t.errorNotActive);
+        } else {
+          setError(t.errorGeneric);
+        }
+        return null;
+      }
+      createdBookIdRef.current = data.bookId;
+      return data.bookId;
+    } catch {
+      setError(t.errorGeneric);
+      return null;
+    }
   }
 
   async function startBonifico() {
@@ -165,6 +365,72 @@ export default function PreventivoPagaClient({
     }
   }
 
+  /** Click sul bottone PayPal → assicura bookId + apre popup PayPal. */
+  async function handlePayPalClick() {
+    if (busy) return;
+    setBusy(true);
+    let bookId = createdBookIdRef.current;
+    if (!bookId) {
+      bookId = await startOnline('paypal');
+      if (!bookId) { setBusy(false); return; }
+    }
+    if (!paypalSessionRef.current?.start) {
+      setError(t.errorGeneric);
+      setBusy(false);
+      return;
+    }
+    try {
+      await paypalSessionRef.current.start(
+        { paymentFlow: 'auto' },
+        { paypalAppearance: { theme: 'default' } }
+      );
+      // Il popup è aperto; busy resta true finché onApprove/onCancel/onError non si triggera
+    } catch (e: any) {
+      console.error('[PayPal] start error:', e);
+      setError(t.errorGeneric);
+      setBusy(false);
+    }
+  }
+
+  /** Click sul bottone Stripe → crea booking + sessione Stripe + redirect. */
+  async function handleStripeClick() {
+    if (busy) return;
+    setBusy(true);
+    const bookId = await startOnline('stripe');
+    if (!bookId) { setBusy(false); return; }
+
+    const origin = window.location.origin;
+    const successUrl = `${origin}/${locale}/preventivo/${preventivo.id}/paga?paid=1&session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = `${origin}/${locale}/preventivo/${preventivo.id}/paga?cancelled=1`;
+
+    try {
+      const res = await fetch('/api/stripe-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bookingId: bookId,
+          amount: depositAmount,
+          total: totals.total,
+          locale,
+          description: `Preventivo ${preventivo.id.toUpperCase()} — ${room?.name ?? ''}`,
+          successUrl,
+          cancelUrl,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.url) {
+        setError(data.error ?? t.errorGeneric);
+        setBusy(false);
+        return;
+      }
+      window.location.href = data.url;
+    } catch (e: any) {
+      console.error('[Stripe] session error:', e);
+      setError(e?.message ?? t.errorGeneric);
+      setBusy(false);
+    }
+  }
+
   function copyToClipboard(value: string, key: string) {
     navigator.clipboard.writeText(value);
     setCopiedKey(key);
@@ -195,7 +461,7 @@ export default function PreventivoPagaClient({
         ))}
       </ol>
 
-      {/* Riepilogo prezzo (sempre visibile in alto) */}
+      {/* Riepilogo prezzo */}
       <div className="preventivo-paga__summary">
         <div className="preventivo-paga__summary-row">
           <span>{t.totalLabel}</span>
@@ -267,7 +533,6 @@ export default function PreventivoPagaClient({
         <div className="preventivo-paga__card">
           <h2 className="preventivo-paga__card-title">{t.step2Title}</h2>
 
-          {/* Metodi */}
           <div className="preventivo-paga__methods">
             {paypalEnabled && (
               <MethodOption
@@ -276,8 +541,6 @@ export default function PreventivoPagaClient({
                 icon="paypal"
                 title={t.methodPaypal}
                 desc={t.methodPaypalDesc}
-                badge={t.methodComingSoon}
-                disabled
               />
             )}
             {stripeEnabled && (
@@ -287,8 +550,6 @@ export default function PreventivoPagaClient({
                 icon="credit-card-fill"
                 title={t.methodStripe}
                 desc={t.methodStripeDesc}
-                badge={t.methodComingSoon}
-                disabled
               />
             )}
             <MethodOption
@@ -313,14 +574,8 @@ export default function PreventivoPagaClient({
               className="preventivo-paga__slider"
             />
             <div className="preventivo-paga__slider-marks">
-              <span>30%</span>
-              <span>40%</span>
-              <span>50%</span>
-              <span>60%</span>
-              <span>70%</span>
-              <span>80%</span>
-              <span>90%</span>
-              <span>100%</span>
+              <span>30%</span><span>40%</span><span>50%</span><span>60%</span>
+              <span>70%</span><span>80%</span><span>90%</span><span>100%</span>
             </div>
             <div className="preventivo-paga__deposit-amount">
               <span>{depositPct}%</span>
@@ -344,6 +599,50 @@ export default function PreventivoPagaClient({
       {/* ─── Step 3: esegui pagamento ─── */}
       {step === 3 && (
         <div className="preventivo-paga__card">
+
+          {/* PayPal */}
+          {method === 'paypal' && (
+            <>
+              <h2 className="preventivo-paga__card-title">{t.step3Title}</h2>
+              <p className="preventivo-paga__pay-summary">
+                {fmtSubject(t.payNowBtn, { amount: fmtEuro(depositAmount, locale) })}
+              </p>
+              <div className="preventivo-paga__actions">
+                <button className="preventivo-paga__back-btn" onClick={() => setStep(2)} disabled={busy}>{t.backBtn}</button>
+                <button
+                  className="preventivo-paga__cta preventivo-paga__cta--paypal"
+                  onClick={handlePayPalClick}
+                  disabled={busy || !paypalSdkReady}
+                >
+                  <Icon name="paypal" size={20} />
+                  {busy ? '…' : !paypalSdkReady ? '…' : fmtSubject(t.payNowBtn, { amount: fmtEuro(depositAmount, locale) })}
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* Stripe */}
+          {method === 'stripe' && (
+            <>
+              <h2 className="preventivo-paga__card-title">{t.step3Title}</h2>
+              <p className="preventivo-paga__pay-summary">
+                {fmtSubject(t.payNowBtn, { amount: fmtEuro(depositAmount, locale) })}
+              </p>
+              <div className="preventivo-paga__actions">
+                <button className="preventivo-paga__back-btn" onClick={() => setStep(2)} disabled={busy}>{t.backBtn}</button>
+                <button
+                  className="preventivo-paga__cta"
+                  onClick={handleStripeClick}
+                  disabled={busy}
+                >
+                  <Icon name="credit-card-fill" size={20} />
+                  {busy ? '…' : fmtSubject(t.payNowBtn, { amount: fmtEuro(depositAmount, locale) })}
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* Bonifico — pagamento iniziale */}
           {method === 'bonifico' && !bonifico && (
             <>
               <h2 className="preventivo-paga__card-title">{t.step3Title}</h2>
@@ -390,7 +689,7 @@ export default function PreventivoPagaClient({
             </div>
           )}
 
-          {/* Lock scaduto */}
+          {/* Bonifico lock scaduto */}
           {method === 'bonifico' && bonifico && countdownSec === 0 && (
             <div className="preventivo-view__status-card">
               <Icon name="hourglass-split" size={56} className="preventivo-view__status-icon" />
@@ -400,20 +699,6 @@ export default function PreventivoPagaClient({
                 {t.lockExpiredCta}
               </button>
             </div>
-          )}
-
-          {/* PayPal/Stripe — disabled placeholder */}
-          {(method === 'paypal' || method === 'stripe') && (
-            <>
-              <h2 className="preventivo-paga__card-title">{t.step3Title}</h2>
-              <div className="preventivo-paga__error">
-                <Icon name="info-circle-fill" size={18} />
-                {t.methodComingSoon} — {t.methodBonificoDesc}
-              </div>
-              <button className="preventivo-paga__back-btn" onClick={() => { setMethod('bonifico'); }}>
-                ← {t.methodBonifico}
-              </button>
-            </>
           )}
         </div>
       )}
