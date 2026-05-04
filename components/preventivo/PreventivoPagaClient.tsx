@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { PROPERTIES, type Room } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
@@ -61,7 +61,6 @@ export default function PreventivoPagaClient({
   paypalEnabled,
 }: Props) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const t = getTranslations(locale).components.preventivoPaga;
   const room = findRoom(preventivo.roomId);
   const totals = useMemo(() => computeTotals(preventivo as Preventivo), [preventivo]);
@@ -109,48 +108,28 @@ export default function PreventivoPagaClient({
     return () => clearInterval(id);
   }, [bonifico, countdownSec]);
 
-  // Handle redirect callbacks (Stripe success/cancel)
+  // Handle redirect callbacks (Stripe success/cancel) — legge da window.location
+  // invece di useSearchParams per evitare hydration mismatch con Suspense.
   useEffect(() => {
-    const paid = searchParams.get('paid');
-    const cancelled = searchParams.get('cancelled');
+    if (typeof window === 'undefined') return;
+    const sp = new URLSearchParams(window.location.search);
+    const paid = sp.get('paid');
+    const cancelled = sp.get('cancelled');
     if (paid === '1') {
-      // Marca preventivo converted poi redirect alla view
       (async () => {
         await fetch(`/api/preventivi/${preventivo.id}/confirm-online`, { method: 'POST' });
         router.replace(`/${locale}/preventivo/${preventivo.id}`);
       })();
     } else if (cancelled === '1') {
-      // Rollback: cancella booking pending Beds24
       fetch(`/api/preventivi/${preventivo.id}/cancel-online`, { method: 'POST' });
-      // Rimuovi i query param dall'URL così l'utente può riprovare senza side-effect
       window.history.replaceState({}, '', `/${locale}/preventivo/${preventivo.id}/paga`);
     }
-  }, [searchParams, preventivo.id, locale, router]);
-
-  if (!mounted) {
-    return <div className="page-container"><p className="text-center text-muted py-5">Caricamento…</p></div>;
-  }
-
-  if (!room) {
-    return <div className="page-container"><p className="text-center py-5">Camera non trovata</p></div>;
-  }
-
-  // Stati non-active: mostra messaggio
-  if (preventivo.status !== 'active') {
-    return (
-      <div className="page-container preventivo-paga">
-        <div className="preventivo-view__status-card">
-          <Icon name="x-circle" size={56} className="preventivo-view__status-icon" />
-          <h1 className="preventivo-view__status-title">{t.errorNotActive}</h1>
-          <Link href={`/${locale}/preventivo/${preventivo.id}`} className="preventivo-view__status-cta">
-            {t.bonificoBackToView}
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  }, [preventivo.id, locale, router]);
 
   // ─── PayPal SDK init (quando step=3 e method=paypal) ───────────────────────
+  // IMPORTANTE: questo useEffect deve stare PRIMA di qualsiasi early return,
+  // altrimenti il numero di hooks chiamati varia tra render e React esplode
+  // con error #310 ("Rendered fewer hooks than expected").
   useEffect(() => {
     if (step !== 3 || method !== 'paypal') {
       setPaypalSdkReady(false);
@@ -287,6 +266,30 @@ export default function PreventivoPagaClient({
 
     return () => { cancelled = true; };
   }, [step, method, preventivo.id, preventivo.upsells, preventivo.basePrice, preventivo.baseDiscountPct, depositAmount, totals.touristTax, locale, t.errorGeneric, router]);
+
+  // ─── Early returns (DOPO tutti gli hooks per non rompere l'ordine) ─────────
+
+  if (!mounted) {
+    return <div className="page-container"><p className="text-center text-muted py-5">Caricamento…</p></div>;
+  }
+
+  if (!room) {
+    return <div className="page-container"><p className="text-center py-5">Camera non trovata</p></div>;
+  }
+
+  if (preventivo.status !== 'active') {
+    return (
+      <div className="page-container preventivo-paga">
+        <div className="preventivo-view__status-card">
+          <Icon name="x-circle" size={56} className="preventivo-view__status-icon" />
+          <h1 className="preventivo-view__status-title">{t.errorNotActive}</h1>
+          <Link href={`/${locale}/preventivo/${preventivo.id}`} className="preventivo-view__status-cta">
+            {t.bonificoBackToView}
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   // ─── Handlers ──────────────────────────────────────────────────────────────
 
