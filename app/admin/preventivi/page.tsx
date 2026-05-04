@@ -53,7 +53,7 @@ export default function PreventiviListPage() {
     fetch('/api/admin/checkin').then(r => setAuthed(r.ok)).catch(() => setAuthed(false));
   }, []);
 
-  useEffect(() => {
+  function loadList() {
     if (!authed) return;
     fetch('/api/preventivi')
       .then(r => r.json())
@@ -62,7 +62,14 @@ export default function PreventiviListPage() {
         else setItems(d.preventivi);
       })
       .catch(e => setError(e.message));
-  }, [authed]);
+  }
+
+  useEffect(() => { loadList(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [authed]);
+
+  async function logout() {
+    await fetch('/api/admin/login', { method: 'DELETE' });
+    window.location.href = '/admin';
+  }
 
   const filtered = useMemo(() => {
     if (!items) return [];
@@ -89,16 +96,21 @@ export default function PreventiviListPage() {
     <div className="container page-top pb-5" style={{ maxWidth: 1100 }}>
 
       {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-3">
+      <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
         <div>
           <h1 className="h4 fw-bold mb-0">
             <Icon name="file-earmark-image" className="me-2" /> Preventivi
           </h1>
           <p className="small text-muted mb-0">Gestione offerte personalizzate</p>
         </div>
-        <Link href="/admin/preventivi/nuovo" className="btn btn-primary fw-bold">
-          + Nuovo
-        </Link>
+        <div className="d-flex gap-2 flex-wrap">
+          <Link href="/admin/preventivi/nuovo" className="btn btn-primary btn-sm fw-bold">
+            + Nuovo
+          </Link>
+          <a href="/admin" className="btn btn-outline-secondary btn-sm">← Admin</a>
+          <button className="btn btn-outline-secondary btn-sm" onClick={loadList}>↻ Aggiorna</button>
+          <button className="btn btn-outline-secondary btn-sm" onClick={logout}>Esci</button>
+        </div>
       </div>
 
       {/* Filter chips */}
