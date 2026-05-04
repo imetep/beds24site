@@ -67,6 +67,12 @@ export default function PreventivoPagaClient({
   const totals = useMemo(() => computeTotals(preventivo as Preventivo), [preventivo]);
   const minDeposit = useMemo(() => Math.round(totals.total * 0.30 * 100) / 100, [totals.total]);
 
+  // Client-only mount: evita hydration mismatch da Intl.NumberFormat (server
+  // Node.js vs browser ICU possono differire su simbolo €/spazi), useSearchParams,
+  // ecc. La pagina è noindex (robots) quindi rendering client-only è OK.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
   const [step, setStep] = useState<WizardStep>(1);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -120,6 +126,10 @@ export default function PreventivoPagaClient({
       window.history.replaceState({}, '', `/${locale}/preventivo/${preventivo.id}/paga`);
     }
   }, [searchParams, preventivo.id, locale, router]);
+
+  if (!mounted) {
+    return <div className="page-container"><p className="text-center text-muted py-5">Caricamento…</p></div>;
+  }
 
   if (!room) {
     return <div className="page-container"><p className="text-center py-5">Camera non trovata</p></div>;
