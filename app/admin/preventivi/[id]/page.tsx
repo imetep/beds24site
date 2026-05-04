@@ -398,6 +398,14 @@ export default function PreventivoDetailPage({ params }: Props) {
       {/* Azioni */}
       <div className="d-flex gap-2 justify-content-end flex-wrap">
         {canRigenera && (
+          <Link
+            href={`/admin/preventivi/nuovo?edit=${p.id}`}
+            className="btn btn-outline-primary"
+          >
+            <Icon name="pencil-fill" className="me-1" /> Modifica
+          </Link>
+        )}
+        {canRigenera && (
           <button className="btn btn-outline-primary" onClick={rigenera} disabled={busy}>
             <Icon name="arrow-clockwise" className="me-1" /> Rigenera link (48h)
           </button>
