@@ -34,6 +34,7 @@ import {
 } from '@/lib/offer-deposit';
 import type { Locale } from '@/config/i18n';
 import { Icon, type IconName } from '@/components/ui/Icon';
+import { PaymentLogos } from '@/components/ui/PaymentLogos';
 import BookingSidebar from './BookingSidebar';
 import PaymentMethodModal from './PaymentMethodModal';
 
@@ -731,11 +732,7 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
             {/* Logo strip metodi accettati */}
             <div className="step2-pagamento-logos" aria-hidden="true">
-              <Icon name="credit-card-2-front-fill" />
-              <Icon name="credit-card-2-back-fill" />
-              <Icon name="credit-card" />
-              <Icon name="paypal" />
-              <Icon name="shield-lock-fill" />
+              <PaymentLogos />
             </div>
           </div>
 
