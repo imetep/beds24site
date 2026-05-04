@@ -71,6 +71,20 @@ export default function PreventiviListPage() {
     window.location.href = '/admin';
   }
 
+  async function cancellaPreventivo(id: string, status: PreventivoStatus) {
+    const msg = status === 'converted'
+      ? `Marcare il preventivo ${id.toUpperCase()} come annullato? La booking su Beds24 va annullata separatamente.`
+      : `Eliminare definitivamente il preventivo ${id.toUpperCase()}?`;
+    if (!confirm(msg)) return;
+    const res = await fetch(`/api/preventivi/${id}`, { method: 'DELETE' });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      alert(`Errore: ${data.error ?? 'unknown'}`);
+      return;
+    }
+    loadList();
+  }
+
   const filtered = useMemo(() => {
     if (!items) return [];
     if (filter === 'all') return items;
@@ -152,52 +166,73 @@ export default function PreventiviListPage() {
           {filtered.map(p => {
             const totals = computeTotals(p);
             return (
-              <Link
-                key={p.id}
-                href={`/admin/preventivi/${p.id}`}
-                className="card text-decoration-none text-reset shadow-sm border-0"
-              >
+              <div key={p.id} className="card shadow-sm border-0">
                 <div className="card-body py-3">
-                  <div className="d-flex justify-content-between align-items-start gap-2 flex-wrap">
-                    <div className="flex-fill">
-                      <p className="fw-bold mb-1">
-                        {roomName(p.roomId)}
-                        <span className={`badge ${STATUS_BADGE[p.status]} ms-2`}>{STATUS_LABEL[p.status]}</span>
-                        {p.lockTtlSec && p.lockTtlSec > 0 && (
-                          <span className="badge bg-warning text-dark ms-2">
-                            <Icon name="hourglass-split" size={12} className="me-1" />
-                            Bonifico {Math.floor(p.lockTtlSec / 60).toString().padStart(2, '0')}:{(p.lockTtlSec % 60).toString().padStart(2, '0')}
-                          </span>
+                  <Link
+                    href={`/admin/preventivi/${p.id}`}
+                    className="text-decoration-none text-reset d-block"
+                  >
+                    <div className="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+                      <div className="flex-fill">
+                        <p className="fw-bold mb-1">
+                          {roomName(p.roomId)}
+                          <span className={`badge ${STATUS_BADGE[p.status]} ms-2`}>{STATUS_LABEL[p.status]}</span>
+                          {p.lockTtlSec && p.lockTtlSec > 0 && (
+                            <span className="badge bg-warning text-dark ms-2">
+                              <Icon name="hourglass-split" size={12} className="me-1" />
+                              Bonifico {Math.floor(p.lockTtlSec / 60).toString().padStart(2, '0')}:{(p.lockTtlSec % 60).toString().padStart(2, '0')}
+                            </span>
+                          )}
+                        </p>
+                        <p className="small text-muted mb-1">
+                          <Icon name="calendar-fill" size={14} className="me-1" />
+                          {formatDate(p.arrival)} → {formatDate(p.departure)}
+                          <span className="mx-2">·</span>
+                          <Icon name="people-fill" size={14} className="me-1" />
+                          {p.numAdults}{p.numChildren > 0 ? `+${p.numChildren}` : ''}
+                        </p>
+                        <p className="small text-muted mb-0">
+                          ID <code>{p.id}</code>
+                          <span className="mx-2">·</span>
+                          Creato {formatDateTime(p.createdAt)}
+                          {p.status === 'active' && (
+                            <>
+                              <span className="mx-2">·</span>
+                              Scade {formatDateTime(p.expiresAt)}
+                            </>
+                          )}
+                        </p>
+                      </div>
+                      <div className="text-end">
+                        <p className="fw-bold mb-0" style={{ color: 'var(--color-primary)' }}>{fmtEuro(totals.total)}</p>
+                        {totals.totalDiscount > 0 && (
+                          <p className="small text-success mb-0">−{fmtEuro(totals.totalDiscount)}</p>
                         )}
-                      </p>
-                      <p className="small text-muted mb-1">
-                        <Icon name="calendar-fill" size={14} className="me-1" />
-                        {formatDate(p.arrival)} → {formatDate(p.departure)}
-                        <span className="mx-2">·</span>
-                        <Icon name="people-fill" size={14} className="me-1" />
-                        {p.numAdults}{p.numChildren > 0 ? `+${p.numChildren}` : ''}
-                      </p>
-                      <p className="small text-muted mb-0">
-                        ID <code>{p.id}</code>
-                        <span className="mx-2">·</span>
-                        Creato {formatDateTime(p.createdAt)}
-                        {p.status === 'active' && (
-                          <>
-                            <span className="mx-2">·</span>
-                            Scade {formatDateTime(p.expiresAt)}
-                          </>
-                        )}
-                      </p>
+                      </div>
                     </div>
-                    <div className="text-end">
-                      <p className="fw-bold mb-0" style={{ color: 'var(--color-primary)' }}>{fmtEuro(totals.total)}</p>
-                      {totals.totalDiscount > 0 && (
-                        <p className="small text-success mb-0">−{fmtEuro(totals.totalDiscount)}</p>
-                      )}
-                    </div>
+                  </Link>
+                  {/* Azioni rapide (fuori dal Link, no propagazione click) */}
+                  <div className="d-flex gap-2 mt-2 flex-wrap">
+                    {p.status !== 'converted' && (
+                      <Link
+                        href={`/admin/preventivi/nuovo?edit=${p.id}`}
+                        className="btn btn-sm btn-outline-primary"
+                      >
+                        <Icon name="pencil-fill" size={12} className="me-1" />
+                        Modifica
+                      </Link>
+                    )}
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-outline-danger"
+                      onClick={() => cancellaPreventivo(p.id, p.status)}
+                    >
+                      <Icon name="trash" size={12} className="me-1" />
+                      {p.status === 'converted' ? 'Annulla' : 'Elimina'}
+                    </button>
                   </div>
                 </div>
-              </Link>
+              </div>
             );
           })}
         </div>
