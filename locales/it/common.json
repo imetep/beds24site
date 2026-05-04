@@ -1198,8 +1198,10 @@
         "cancel": "Cancella",
         "inspire": "Le nostre residenze",
         "dintorni": "Dintorni",
-        "hero_title": "Scauri, come non l'hai mai vissuta",
-        "hero_sub": "Prenota direttamente con noi e risparmia"
+        "rotator0": "Prenota direttamente con noi e risparmia",
+        "rotator1": "Il miglior rapporto qualità-prezzo del Golfo di Gaeta",
+        "rotator2": "Tra Roma e Napoli, lontano dal turismo di massa",
+        "rotator3": "Riempi i tuoi occhi di verde"
       },
       "months": [
         "Gennaio",
