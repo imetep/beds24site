@@ -103,16 +103,16 @@
   --bp-md: 768px;
   --bp-lg: 1024px;
 
-  /* Container max-width scale — wrapper pagina fisso a 985px (Airbnb-pattern grid, vedi .page-container) */
+  /* Container max-width scale — wrapper pagina fisso a 1100px desktop */
   --container-sm: 680px;           /* Form, single-column reading (legali, wizard step) */
   --container-md: 1024px;          /* Layout standard desktop */
-  --container-page: 985px;         /* Wrapper pagina — fisso a 985 (Airbnb-grid container centrale) */
-  --container-lg: 1200px;          /* Hero, gallerie, opt-out --wide */
+  --container-page: 1100px;        /* Wrapper pagina — fisso a 1100 desktop */
+  --container-lg: 1100px;          /* Allineato a --container-page (era opt-out --wide a 1200) */
 
-  /* Wizard checkout — proporzioni Airbnb /book (985 = 540 + 105 + 340) */
-  --wizard-container-max: 985px;   /* Wrapper esterno wizard (sostituisce --container-lg in .wizard-container) */
-  --wizard-main-max: 540px;        /* Colonna SX (lista offerte step1, form step2) */
-  --wizard-sidebar-w: 340px;       /* Colonna DX BookingSidebar */
+  /* Wizard checkout — proporzioni scalate da Airbnb /book (985→1100, ×1.11675) */
+  --wizard-container-max: 1100px;  /* Wrapper esterno wizard */
+  --wizard-main-max: 603px;        /* Colonna SX (lista offerte step1, form step2) — era 540 */
+  --wizard-sidebar-w: 380px;       /* Colonna DX BookingSidebar — era 340 */
   --wizard-sidebar-top: 32px;      /* Offset sticky della BookingSidebar (era 90) */
 
   /* Z-index scale — evita numeri magici sparsi */
@@ -139,7 +139,7 @@ body {
   padding-inline: 16px;
 }
 .page-container--wide {
-  max-width: var(--container-lg);  /* 1200 — opt-out per layout 2-col (es. /paga checkout) */
+  max-width: var(--container-lg);  /* 1100 — allineato a --container-page (uniformato desktop) */
 }
 
 /* Top spacing standard sotto header sticky.
@@ -850,7 +850,7 @@ body {
 }
 
 .wizard-container {
-  max-width: var(--wizard-container-max);  /* 985 — pattern Airbnb /book */
+  max-width: var(--wizard-container-max);  /* 1100 — proporzioni Airbnb /book scalate */
   margin: 0 auto;
   padding: var(--page-pad-top) var(--space-base) var(--space-xl);
 }
@@ -888,7 +888,7 @@ body {
 .wizard-container__main {
   flex: 1;
   min-width: 0;
-  max-width: var(--wizard-main-max);  /* 540 — pattern Airbnb /book */
+  max-width: var(--wizard-main-max);  /* 603 — proporzioni Airbnb /book scalate */
 }
 .wizard-container__main--full {
   max-width: none;
@@ -909,7 +909,7 @@ body {
 /* Box del riepilogo soggiorno nel wizard. Larghezza fissa 340px su desktop,
    sticky top 32 (pattern Airbnb /book). Usato in step 1 e step 2 con stesso DNA. */
 .booking-sidebar {
-  width: var(--wizard-sidebar-w);  /* 340 — pattern Airbnb /book */
+  width: var(--wizard-sidebar-w);  /* 380 — proporzioni Airbnb /book scalate */
   flex-shrink: 0;
   background: var(--color-bg);
   border: 1px solid var(--color-border);
@@ -2838,7 +2838,7 @@ body {
 .wizard-step2__main {
   flex: 1;
   min-width: 0;
-  max-width: var(--wizard-main-max);  /* 540 — allineato a .wizard-container__main */
+  max-width: var(--wizard-main-max);  /* 603 — allineato a .wizard-container__main */
 }
 .wizard-step2__sidebar {
   flex-shrink: 0;
@@ -7831,7 +7831,7 @@ body {
 
 /* ── Wrapper header sticky (riusabile) ── */
 .header-wrap {
-  max-width: 1200px;
+  max-width: 1100px;
   height: 60px;
 }
 .header-logo-img {
