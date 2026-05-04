@@ -7103,16 +7103,20 @@ body {
   .site-main { padding-bottom: 0; }
 }
 .site-footer {
-  background-color: #1f2937;        /* slate-800: meno duro di #111 */
+  background-color: #374151;        /* slate-700: ancora più morbido */
   color: var(--color-text-muted);
-  padding: 3rem 1.5rem 5.5rem;      /* extra bottom per bottone fisso */
-  margin-top: 0;                    /* niente gap bianco extra prima del footer */
+  padding: 2rem 1.5rem 2rem;        /* desktop: ridotto, niente spazio sprecato */
+  margin-top: 0;
+}
+@media (max-width: 767px) {
+  /* Mobile: bottom extra per non far coprire dal layout-sticky-mobile-bar */
+  .site-footer { padding-bottom: 5.5rem; }
 }
 .site-footer__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 2.5rem;
-  padding-bottom: 2rem;
+  gap: 1.5rem;
+  padding-bottom: 1rem;
   border-bottom: 1px solid var(--color-border-dark);
 }
 .site-footer__company {
