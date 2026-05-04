@@ -446,16 +446,15 @@ export default function NuovoPreventivoPage() {
             </div>
             <div className="col-5 col-md-4">
               <label className="form-label small fw-medium">Sconto %</label>
-              <input
-                type="number"
-                step="1"
-                min={0}
-                max={100}
-                className="form-control"
+              <select
+                className="form-select"
                 value={baseDiscountPct}
-                onChange={e => setBaseDiscountPct(Math.min(100, Math.max(0, Number(e.target.value) || 0)))}
-                onFocus={e => e.target.select()}
-              />
+                onChange={e => setBaseDiscountPct(Number(e.target.value))}
+              >
+                {Array.from({ length: 21 }, (_, i) => i * 5).map(v => (
+                  <option key={v} value={v}>{v}%</option>
+                ))}
+              </select>
             </div>
           </div>
         </div>
@@ -487,9 +486,15 @@ export default function NuovoPreventivoPage() {
                     <div className="row g-2">
                       <div className="col-4">
                         <label className="form-label small mb-1">Quantità</label>
-                        <input type="number" min={1} className="form-control form-control-sm" value={row.qty}
-                          onChange={e => updateUpsell(row.index, { qty: Math.max(1, Number(e.target.value) || 1) })}
-                          onFocus={e => e.target.select()} />
+                        <select
+                          className="form-select form-select-sm"
+                          value={row.qty}
+                          onChange={e => updateUpsell(row.index, { qty: Number(e.target.value) })}
+                        >
+                          {Array.from({ length: 20 }, (_, i) => i + 1).map(v => (
+                            <option key={v} value={v}>{v}</option>
+                          ))}
+                        </select>
                       </div>
                       <div className="col-4">
                         <label className="form-label small mb-1">Prezzo unit. €</label>
@@ -499,9 +504,15 @@ export default function NuovoPreventivoPage() {
                       </div>
                       <div className="col-4">
                         <label className="form-label small mb-1">Sconto %</label>
-                        <input type="number" min={0} max={100} step="1" className="form-control form-control-sm" value={row.discountPct}
-                          onChange={e => updateUpsell(row.index, { discountPct: Math.min(100, Math.max(0, Number(e.target.value) || 0)) })}
-                          onFocus={e => e.target.select()} />
+                        <select
+                          className="form-select form-select-sm"
+                          value={row.discountPct}
+                          onChange={e => updateUpsell(row.index, { discountPct: Number(e.target.value) })}
+                        >
+                          {Array.from({ length: 21 }, (_, i) => i * 5).map(v => (
+                            <option key={v} value={v}>{v}%</option>
+                          ))}
+                        </select>
                       </div>
                     </div>
                   )}
