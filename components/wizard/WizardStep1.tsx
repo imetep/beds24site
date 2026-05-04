@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
-import { getAvailableRooms, getPropertyForRoom, PROPERTIES, calculateTouristTax } from '@/config/properties';
+import { getAvailableRooms, getPropertyForRoom, PROPERTIES, calculateTouristTax, getEffectiveOfferIdForDisplay } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
 import { fetchCoversCached } from '@/lib/cloudinary-client-cache';
 import type { Room } from '@/config/properties';
@@ -600,8 +600,12 @@ export default function WizardStep1({ locale = 'it', onBack, onContinua }: Props
                           {offersToShow.map(offer => {
                             const isPicked = isRoomPicked && pickedOfferId === offer.offerId;
                             const perNight = nights > 0 ? Math.round(offer.price / nights) : 0;
-                            const name = OFFER_NAMES[String(offer.offerId)] ?? offer.offerName;
-                            const desc = OFFER_DESC[String(offer.offerId)];
+                            // Display override: se la finestra cancellazione flex
+                            // è scaduta, mostra come "Non Rimborsabile" (offerId 1).
+                            // Backend invariato: pick(...) usa l'offerId originale.
+                            const displayOfferId = getEffectiveOfferIdForDisplay(offer.offerId, checkIn);
+                            const name = OFFER_NAMES[String(displayOfferId)] ?? OFFER_NAMES[String(offer.offerId)] ?? offer.offerName;
+                            const desc = OFFER_DESC[String(displayOfferId)];
                             const avail = offer.unitsAvailable > 0;
                             return (
                               <button
