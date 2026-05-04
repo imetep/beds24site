@@ -311,7 +311,7 @@ export default function NuovoPreventivoPage() {
         <p className="small text-muted mb-3">
           Inizia scegliendo le date e gli ospiti del preventivo (stessa interfaccia del cliente).
         </p>
-        <HomeSearch locale="it" onCerca={() => setPhase('rooms')} />
+        <HomeSearch locale="it" onCerca={() => setPhase('rooms')} hideHero />
       </div>
     );
   }

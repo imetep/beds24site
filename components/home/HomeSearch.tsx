@@ -53,9 +53,11 @@ interface HomeSearchProps {
   locale: string;
   /** Override: chiamata al click su "Cerca" se le date sono valide (default: redirect a /prenota?from=home) */
   onCerca?: () => void;
+  /** Nasconde l'hero promozionale (titolo + subtitle). Usato in admin/preventivi. */
+  hideHero?: boolean;
 }
 
-export default function HomeSearch({ locale, onCerca }: HomeSearchProps) {
+export default function HomeSearch({ locale, onCerca, hideHero = false }: HomeSearchProps) {
   const tr = getTranslations(locale as Locale);
   const hs = tr.components.homeSearch;
   const ui   = hs.ui;
@@ -382,15 +384,17 @@ export default function HomeSearch({ locale, onCerca }: HomeSearchProps) {
     <div className="home-search">
 
       {/* ── Hero UX 3.2 ────────────────────────────────────────────────────── */}
-      <section
-        className="home-search__hero"
-        style={heroBg ? { background: `linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url(${heroBg}) center/cover no-repeat` } : undefined}
-      >
-        <div className="home-search__hero-content">
-          <h1 className="home-search__hero-title">{ui.hero_title}</h1>
-          <p className="home-search__hero-sub">{ui.hero_sub}</p>
-        </div>
-      </section>
+      {!hideHero && (
+        <section
+          className="home-search__hero"
+          style={heroBg ? { background: `linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url(${heroBg}) center/cover no-repeat` } : undefined}
+        >
+          <div className="home-search__hero-content">
+            <h1 className="home-search__hero-title">{ui.hero_title}</h1>
+            <p className="home-search__hero-sub">{ui.hero_sub}</p>
+          </div>
+        </section>
+      )}
 
       <div className="page-container">
 
