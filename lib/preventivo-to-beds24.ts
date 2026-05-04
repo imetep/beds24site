@@ -35,7 +35,13 @@ interface CreateBookingResult {
  */
 export async function createBeds24BookingFromPreventivo(
   p: Preventivo,
-  opts: { paymentMethod: PaymentMethod; receivedAmount: number }
+  opts: {
+    paymentMethod: PaymentMethod;
+    receivedAmount: number;
+    /** 'confirmed' (post-pagamento), 'request' (pending payment online).
+     *  Default 'confirmed' (backward-compat con conferma-bonifico admin). */
+    status?: 'confirmed' | 'request';
+  }
 ): Promise<CreateBookingResult> {
   if (!p.customerEmail || !p.customerName) {
     throw new Error('preventivo senza dati cliente: impossibile creare booking');
@@ -69,7 +75,7 @@ export async function createBeds24BookingFromPreventivo(
     firstName,
     lastName,
     email:     p.customerEmail,
-    status:    'confirmed',
+    status:    opts.status ?? 'confirmed',
     // Tentativo override prezzo: Beds24 normalmente lo ricalcola, ma logghiamo
     // il valore atteso per check post-creazione
     price:     totals.total,
