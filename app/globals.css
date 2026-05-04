@@ -3093,14 +3093,13 @@ body {
 .step2-pagamento-logos {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
+  gap: var(--space-sm);
   margin-top: var(--space-md);
-  font-size: var(--text-lg);
-  color: var(--color-text-muted);
   flex-wrap: wrap;
 }
-.step2-pagamento-logos i {
-  font-size: var(--text-xl);
+.step2-pagamento-logos svg {
+  display: block;
+  flex-shrink: 0;
 }
 
 /* ==========================================================================
