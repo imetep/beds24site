@@ -28,12 +28,19 @@ export default function NuovoPreventivoPage() {
   const [authed, setAuthed] = useState<boolean | null>(null);
   const [phase, setPhase] = useState<Phase>('search');
 
+  // Edit mode: se presente ?edit=ID nell'URL, carichiamo il preventivo
+  // esistente e usiamo PUT al posto di POST. id e expiresAt restano invariati.
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editLoaded, setEditLoaded] = useState(false);
+
   // Wizard store: condiviso con HomeSearch e WizardStep1
+  const wizardStore = useWizardStore();
   const {
     checkIn, checkOut, numAdult, numChild, childrenAges,
     selectedRoomId, selectedOfferId, cachedOffers,
-    setCheckIn, setCheckOut, setSelectedRoomId, setSelectedOfferId,
-  } = useWizardStore();
+    setCheckIn, setCheckOut, setNumAdult, setNumChild,
+    setSelectedRoomId, setSelectedOfferId, setOffers,
+  } = wizardStore;
 
   // Stato preventivo (fase 3)
   const [basePrice, setBasePrice] = useState<number | ''>('');
@@ -52,28 +59,87 @@ export default function NuovoPreventivoPage() {
     [selectedRoomId]
   );
 
-  // Auth
+  // Auth + leggi ?edit=ID dall'URL
   useEffect(() => {
     fetch('/api/admin/checkin').then(r => setAuthed(r.ok)).catch(() => setAuthed(false));
+    if (typeof window !== 'undefined') {
+      const eid = new URLSearchParams(window.location.search).get('edit');
+      if (eid) setEditingId(eid);
+    }
   }, []);
 
-  // Reset wizard-store all'ingresso (evita leftover da una sessione /prenota precedente)
+  // Reset wizard-store all'ingresso SOLO in modalità create (evita leftover da
+  // /prenota). In edit mode lo popoliamo dal preventivo esistente nell'effect
+  // dedicato sotto.
   useEffect(() => {
+    if (editingId) return;
     setCheckIn('');
     setCheckOut('');
     setSelectedRoomId(null);
     setSelectedOfferId(null);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [editingId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Auto-fill basePrice quando entra in fase preventivo (dalla tariffa scelta)
+  // Edit mode: carica il preventivo esistente, precompila tutto, vai a fase preventivo
   useEffect(() => {
+    if (!editingId || !authed || editLoaded) return;
+    (async () => {
+      try {
+        const res = await fetch('/api/preventivi');
+        const data = await res.json();
+        const p = (data.preventivi as Preventivo[] | undefined)?.find(x => x.id === editingId);
+        if (!p) {
+          setError(`Preventivo ${editingId} non trovato`);
+          return;
+        }
+        if (p.status === 'converted') {
+          setError('Preventivo già convertito: non modificabile');
+          return;
+        }
+        // Precompila wizard-store
+        setCheckIn(p.arrival);
+        setCheckOut(p.departure);
+        setNumAdult(p.numAdults);
+        setNumChild(p.numChildren);
+        setSelectedRoomId(p.roomId);
+        setSelectedOfferId(p.offerId ?? null);
+        // Precompila locale + prezzo + sconto + note
+        setLocale(p.locale);
+        setBasePrice(p.basePrice);
+        setBaseDiscountPct(p.baseDiscountPct);
+        setNotes(p.notes ?? '');
+        // Precompila upsellRows: items in p.upsells = enabled
+        const items = UPSELL_TEXTS[p.propertyId] ?? {};
+        const enabledMap = new Map(p.upsells.map(u => [u.index, u]));
+        setUpsellRows(
+          Object.keys(items).map(idxStr => {
+            const idx = Number(idxStr);
+            const u = enabledMap.get(idx);
+            return u
+              ? { index: idx, enabled: true, qty: u.qty, unitPrice: u.unitPrice, discountPct: u.discountPct }
+              : { index: idx, enabled: false, qty: 1, unitPrice: 0, discountPct: 0 };
+          })
+        );
+        // Salta direttamente alla fase form
+        setPhase('preventivo');
+        setEditLoaded(true);
+      } catch (e: any) {
+        setError(`Errore caricamento: ${e?.message ?? 'unknown'}`);
+      }
+    })();
+  }, [editingId, authed, editLoaded, setCheckIn, setCheckOut, setNumAdult, setNumChild, setSelectedRoomId, setSelectedOfferId]);
+
+  // Auto-fill basePrice quando entra in fase preventivo (dalla tariffa scelta).
+  // SKIP in edit mode: il basePrice è già stato precompilato dal preventivo
+  // esistente, non vogliamo sovrascriverlo con il prezzo Beds24 corrente.
+  useEffect(() => {
+    if (editingId) return;
     if (phase !== 'preventivo' || !selectedRoomId || !selectedOfferId) return;
     const roomEntry = cachedOffers.find((ro: any) => ro.roomId === selectedRoomId);
     const offer = roomEntry?.offers?.find((o: any) => o.offerId === selectedOfferId);
     if (offer && typeof offer.price === 'number') {
       setBasePrice(offer.price);
     }
-  }, [phase, selectedRoomId, selectedOfferId, cachedOffers]);
+  }, [phase, selectedRoomId, selectedOfferId, cachedOffers, editingId]);
 
   // Carica righe upsell quando cambia propertyId
   useEffect(() => {
@@ -144,8 +210,10 @@ export default function NuovoPreventivoPage() {
 
     setBusy(true);
     try {
-      const res = await fetch('/api/preventivi', {
-        method: 'POST',
+      const url = editingId ? `/api/preventivi/${editingId}` : '/api/preventivi';
+      const method = editingId ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           propertyId,
@@ -166,6 +234,12 @@ export default function NuovoPreventivoPage() {
       const data = await res.json();
       if (!res.ok) {
         setError(`Errore: ${data.error ?? 'unknown'}`);
+        return;
+      }
+      // In edit mode: redirect direttamente al dettaglio (nessuna schermata
+      // 'creato' perché il link è lo stesso di prima).
+      if (editingId) {
+        window.location.href = `/admin/preventivi/${editingId}`;
         return;
       }
       setCreatedId(data.id);
@@ -313,7 +387,9 @@ export default function NuovoPreventivoPage() {
               ← Modifica
             </button>
             <button className="btn btn-primary fw-bold" disabled={busy} onClick={submit}>
-              {busy ? 'Generazione…' : 'Conferma e genera link'}
+              {busy
+                ? (editingId ? 'Salvataggio…' : 'Generazione…')
+                : (editingId ? 'Salva modifiche' : 'Conferma e genera link')}
             </button>
           </div>
         </div>
@@ -326,7 +402,8 @@ export default function NuovoPreventivoPage() {
     <div className="container page-top pb-5" style={{ maxWidth: 720 }}>
       <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
         <h1 className="h4 fw-bold mb-0">
-          <Icon name="file-earmark-image" className="me-2" /> Dettagli preventivo
+          <Icon name={editingId ? 'pencil-fill' : 'file-earmark-image'} className="me-2" />
+          {editingId ? `Modifica preventivo ${editingId.toUpperCase()}` : 'Dettagli preventivo'}
         </h1>
         <div className="d-flex gap-2 flex-wrap">
           <button onClick={() => setPhase('rooms')} className="btn btn-sm btn-outline-secondary">
@@ -462,7 +539,7 @@ export default function NuovoPreventivoPage() {
       <div className="d-flex gap-2 justify-content-end">
         <button onClick={() => setPhase('rooms')} className="btn btn-outline-secondary">Indietro</button>
         <button className="btn btn-primary fw-bold" onClick={goToPreview}>
-          Anteprima →
+          {editingId ? 'Anteprima modifiche →' : 'Anteprima →'}
         </button>
       </div>
     </div>
