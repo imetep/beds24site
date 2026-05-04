@@ -400,7 +400,7 @@ export default function HomeSearch({ locale, onCerca, compact = false }: HomeSea
       <div className="page-container">
 
       {/* ── Barra ricerca ─────────────────────────────────────────────────── */}
-      <div className="home-search__bar-wrap">
+      <div className={`home-search__bar-wrap${compact ? ' home-search__bar-wrap--compact' : ''}`}>
 
         {/* DESKTOP: una riga orizzontale */}
         <div className="home-search__bar-desktop">

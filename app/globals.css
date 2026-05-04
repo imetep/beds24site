@@ -7933,6 +7933,12 @@ body {
     margin-top: -36px;
   }
 }
+/* Compact: senza hero sopra, azzera il margin negativo che farebbe
+   scivolare il search bar sopra all'header della pagina (admin/preventivi). */
+.home-search__bar-wrap--compact { margin-top: 0; }
+@media (min-width: 768px) {
+  .home-search__bar-wrap--compact { margin-top: 0; }
+}
 
 /* ── Search bar desktop (riga orizzontale, pattern Airbnb little-search espanso) ── */
 .home-search__bar-desktop {
