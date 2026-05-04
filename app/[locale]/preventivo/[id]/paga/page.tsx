@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { isValidLocale, type Locale } from '@/config/i18n';
@@ -35,11 +36,13 @@ export default async function PreventivoPagaPage({ params }: Props) {
   const paypalEnabled = process.env.PAYPAL_ENABLED !== '0'; // default attivo
 
   return (
-    <PreventivoPagaClient
-      locale={locale}
-      preventivo={safe}
-      stripeEnabled={stripeEnabled}
-      paypalEnabled={paypalEnabled}
-    />
+    <Suspense fallback={<div className="text-center py-5 text-muted">Caricamento…</div>}>
+      <PreventivoPagaClient
+        locale={locale}
+        preventivo={safe}
+        stripeEnabled={stripeEnabled}
+        paypalEnabled={paypalEnabled}
+      />
+    </Suspense>
   );
 }
