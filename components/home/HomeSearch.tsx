@@ -53,11 +53,12 @@ interface HomeSearchProps {
   locale: string;
   /** Override: chiamata al click su "Cerca" se le date sono valide (default: redirect a /prenota?from=home) */
   onCerca?: () => void;
-  /** Nasconde l'hero promozionale (titolo + subtitle). Usato in admin/preventivi. */
-  hideHero?: boolean;
+  /** Modalità compatta: nasconde hero promozionale + slider residenze + slider dintorni.
+   *  Usata in admin/preventivi dove serve solo il search bar. */
+  compact?: boolean;
 }
 
-export default function HomeSearch({ locale, onCerca, hideHero = false }: HomeSearchProps) {
+export default function HomeSearch({ locale, onCerca, compact = false }: HomeSearchProps) {
   const tr = getTranslations(locale as Locale);
   const hs = tr.components.homeSearch;
   const ui   = hs.ui;
@@ -384,7 +385,7 @@ export default function HomeSearch({ locale, onCerca, hideHero = false }: HomeSe
     <div className="home-search">
 
       {/* ── Hero UX 3.2 ────────────────────────────────────────────────────── */}
-      {!hideHero && (
+      {!compact && (
         <section
           className="home-search__hero"
           style={heroBg ? { background: `linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url(${heroBg}) center/cover no-repeat` } : undefined}
@@ -524,6 +525,7 @@ export default function HomeSearch({ locale, onCerca, hideHero = false }: HomeSe
       )}
 
       {/* ── Slider residenze ───────────────────────────────────────────────── */}
+      {!compact && (
       <div className="home-search__slider-section">
         <h2 className="home-search__slider-title">{ui.inspire}</h2>
         <div className="home-search__slider-wrap"
@@ -564,9 +566,10 @@ export default function HomeSearch({ locale, onCerca, hideHero = false }: HomeSe
           )}
         </div>
       </div>
+      )}
 
       {/* ── Slider dintorni — solo desktop ─────────────────────────────────── */}
-      {isDesk && dintorniPhotos.length > 0 && (
+      {!compact && isDesk && dintorniPhotos.length > 0 && (
         <div className="home-search__slider-section home-search__slider-section--dintorni">
           <h2 className="home-search__slider-title">{ui.dintorni}</h2>
           <div className="home-search__slider-wrap"
