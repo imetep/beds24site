@@ -365,7 +365,7 @@ export default function PreventivoPagaClient({
     }
   }
 
-  /** Click sul bottone PayPal → assicura bookId + apre popup PayPal. */
+  /** Click sul bottone PayPal → assicura bookId + crea ordine PayPal + apre popup. */
   async function handlePayPalClick() {
     if (busy) return;
     setBusy(true);
@@ -379,14 +379,38 @@ export default function PreventivoPagaClient({
       setBusy(false);
       return;
     }
+
+    // Il SECONDO argomento di .start() deve essere un Promise<{orderId}>.
+    // Stesso pattern di WizardStep2.tsx:491-498.
+    const finalBookId = bookId;
+    const createOrderPromise = (async () => {
+      const oRes = await fetch('/api/paypal-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: depositAmount,
+          bookingId: finalBookId,
+          description: `Preventivo ${preventivo.id.toUpperCase()} — ${room?.name ?? ''}`,
+        }),
+      });
+      const data = await oRes.json();
+      if (!oRes.ok || !data.orderID) {
+        throw new Error(data.error ?? 'paypal_order_failed');
+      }
+      return { orderId: data.orderID as string };
+    })();
+
     try {
       await paypalSessionRef.current.start(
-        { paymentFlow: 'auto' },
-        { paypalAppearance: { theme: 'default' } }
+        { presentationMode: 'auto' },
+        createOrderPromise,
       );
-      // Il popup è aperto; busy resta true finché onApprove/onCancel/onError non si triggera
+      // Popup aperto; busy resta true finché onApprove/onCancel/onError non si triggera
     } catch (e: any) {
       console.error('[PayPal] start error:', e);
+      // Rollback booking pending lato server
+      await fetch(`/api/preventivi/${preventivo.id}/cancel-online`, { method: 'POST' }).catch(() => {});
+      createdBookIdRef.current = null;
       setError(t.errorGeneric);
       setBusy(false);
     }
