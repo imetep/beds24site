@@ -10284,6 +10284,19 @@ body {
 }
 .preventivo-paga__cta:hover:not(:disabled) { background: var(--color-primary-dark); }
 .preventivo-paga__cta:disabled { opacity: 0.5; cursor: not-allowed; }
+.preventivo-paga__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.preventivo-paga__cta--paypal {
+  background: #ffc439;
+  color: #003087;
+}
+.preventivo-paga__cta--paypal:hover:not(:disabled) {
+  background: #f5b832;
+}
 .preventivo-paga__pay-summary {
   font-size: 15px;
   margin: 0 0 12px;
