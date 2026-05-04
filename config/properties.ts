@@ -380,6 +380,8 @@ export interface OfferInfo {
   offerId: number;
   name: Record<string, string>;
   conditions: Record<string, string>;
+  /** Soglia gg per cancellazione gratuita (offerte flex). Assente = non flex. */
+  cancellationDays?: number;
 }
 
 export const OFFER_INFO: Record<number, OfferInfo> = {
@@ -412,6 +414,7 @@ export const OFFER_INFO: Record<number, OfferInfo> = {
       de: 'Keine Zahlung jetzt · Kostenlose Stornierung bis 60 Tage vor Ankunft',
       pl: 'Brak płatności teraz · Bezpłatne anulowanie do 60 dni przed przyjazdem',
     },
+    cancellationDays: 60,
   },
   4: {
     offerId: 4,
@@ -422,6 +425,7 @@ export const OFFER_INFO: Record<number, OfferInfo> = {
       de: 'Keine Zahlung jetzt · Kostenlose Stornierung bis 45 Tage vor Ankunft',
       pl: 'Brak płatności teraz · Bezpłatne anulowanie do 45 dni przed przyjazdem',
     },
+    cancellationDays: 45,
   },
   5: {
     offerId: 5,
@@ -432,6 +436,7 @@ export const OFFER_INFO: Record<number, OfferInfo> = {
       de: 'Keine Zahlung jetzt · Kostenlose Stornierung bis 30 Tage vor Ankunft',
       pl: 'Brak płatności teraz · Bezpłatne anulowanie do 30 dni przed przyjazdem',
     },
+    cancellationDays: 30,
   },
   6: {
     offerId: 6,
@@ -442,5 +447,31 @@ export const OFFER_INFO: Record<number, OfferInfo> = {
       de: 'Keine Zahlung jetzt · Kostenlose Stornierung bis 5 Tage vor Ankunft',
       pl: 'Brak płatności teraz · Bezpłatne anulowanie do 5 dni przed przyjazdem',
     },
+    cancellationDays: 5,
   },
 };
+
+/**
+ * Mappa l'offerId dato all'offerId effettivamente DA MOSTRARE al cliente.
+ * Se la tariffa è flex (cancellationDays) e mancano meno giorni al check-in
+ * della soglia, la finestra di cancellazione gratuita è già chiusa: per il
+ * cliente equivale a una "Non Rimborsabile" → ritorna 1.
+ *
+ * ⚠️ SOLO PER DISPLAY (testo name + conditions). NON cambia logica di
+ * pagamento, deposito, booking lato Beds24. Il backend continua a usare
+ * l'offerId originale.
+ */
+export function getEffectiveOfferIdForDisplay(
+  offerId: number,
+  checkInISO: string | null | undefined,
+): number {
+  if (!checkInISO) return offerId;
+  const info = OFFER_INFO[offerId];
+  if (!info?.cancellationDays) return offerId;
+  const checkIn = new Date(checkInISO);
+  if (isNaN(checkIn.getTime())) return offerId;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const diffDays = Math.floor((checkIn.getTime() - today.getTime()) / 86400000);
+  return diffDays < info.cancellationDays ? 1 : offerId;
+}
