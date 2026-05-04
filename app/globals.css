@@ -7103,68 +7103,189 @@ body {
   .site-main { padding-bottom: 0; }
 }
 .site-footer {
-  background-color: #374151;        /* slate-700 */
-  color: #d1d5db;                    /* gray-300: 6.2:1 contrast su #374151 (WCAG AA) */
-  padding: 1.75rem 1.5rem;
+  background-color: #374151;            /* slate-700 */
+  color: #d1d5db;                       /* gray-300, 6.2:1 contrast su slate-700 (WCAG AA) */
+  padding: 1.25rem 1rem;
   margin-top: 0;
   font-size: 0.85rem;
   line-height: 1.45;
 }
 @media (max-width: 767px) {
-  /* Mobile: bottom extra per non far coprire dal layout-sticky-mobile-bar */
-  .site-footer { padding-bottom: 5.5rem; }
+  .site-footer { padding-bottom: 5.5rem; }   /* spazio per .layout-sticky-mobile-bar */
 }
-.site-footer__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.25rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid rgba(255,255,255,0.08);  /* separatore soft */
+.site-footer__container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+  text-align: center;
+}
+
+/* Riga 1: brand + indirizzo + © inline su desktop, stack su mobile */
+.site-footer__brand {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #d1d5db;
 }
 .site-footer__company {
-  font-weight: 800;
-  font-size: 1rem;
   color: #fff;
-  margin: 0 0 0.4rem;
-}
-.site-footer__col-title {
   font-weight: 700;
-  font-size: 11px;
-  color: #9ca3af;                    /* gray-400 per label all-caps */
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin: 0 0 0.4rem;
+  font-size: 0.95rem;
 }
-.site-footer__line {
-  font-size: 0.85rem;
-  margin: 0 0 0.2rem;
-  color: #d1d5db;
-  line-height: 1.45;
+.site-footer__sep {
+  color: #6b7280;
+  user-select: none;
 }
-.site-footer__link {
+@media (max-width: 600px) {
+  .site-footer__sep { display: none; }    /* su mobile niente separator, va a capo */
+  .site-footer__brand { gap: 0.15rem 0; flex-direction: column; }
+}
+
+/* Riga 2: bottoni contatto (azionabili, ≥44px touch target) */
+.site-footer__contact {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 480px;
+}
+.site-footer__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex: 1 1 auto;
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.site-footer__cta:hover {
+  background: rgba(255,255,255,0.16);
+  border-color: rgba(255,255,255,0.25);
+  color: #fff;
+}
+.site-footer__cta--whatsapp:hover {
+  background: rgba(37,211,102,0.18);     /* hint WhatsApp green */
+  border-color: rgba(37,211,102,0.4);
+}
+
+/* Riga 3: link inline desktop, stack mobile */
+.site-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem 0.85rem;
+  max-width: 720px;
+}
+.site-footer__links .site-footer__link {
   color: #d1d5db;
   text-decoration: none;
+  font-size: 0.85rem;
+  padding: 0.25rem 0;
+  transition: color 0.15s;
 }
-.site-footer__link:hover {
+.site-footer__links .site-footer__link:hover {
   color: #fff;
   text-decoration: underline;
 }
-.site-footer__nav-link {
-  color: #d1d5db;
-  text-decoration: none;
-  display: block;
-  margin-bottom: 0.25rem;
-  font-size: 0.85rem;
+/* Separatori · tra link su desktop */
+@media (min-width: 601px) {
+  .site-footer__links .site-footer__link + .site-footer__link::before {
+    content: "·";
+    color: #6b7280;
+    margin-right: 0.85rem;
+  }
 }
-.site-footer__nav-link:hover {
+/* Mobile: stack verticale con freccia → */
+@media (max-width: 600px) {
+  .site-footer__links {
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    max-width: 320px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 0.25rem 0;
+  }
+  .site-footer__links .site-footer__link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0.65rem 0.5rem;
+    min-height: 44px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .site-footer__links .site-footer__link:last-child { border-bottom: none; }
+  .site-footer__links .site-footer__link::after {
+    content: "›";
+    color: #6b7280;
+    font-size: 1.1rem;
+    margin-left: 0.5rem;
+  }
+}
+
+/* Accordion native <details> per dati legali */
+.site-footer__legal {
+  width: 100%;
+  max-width: 720px;
+}
+.site-footer__legal-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  list-style: none;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  color: #9ca3af;
+  border-radius: 6px;
+  user-select: none;
+  transition: color 0.15s, background 0.15s;
+}
+.site-footer__legal-summary::-webkit-details-marker { display: none; }
+.site-footer__legal-summary:hover {
   color: #fff;
-  text-decoration: underline;
+  background: rgba(255,255,255,0.05);
 }
-.site-footer__bottom {
-  margin: 0.75rem 0 0;
+.site-footer__legal-chevron {
+  display: inline-block;
+  transition: transform 0.2s;
+  font-size: 0.7rem;
+}
+.site-footer__legal[open] .site-footer__legal-chevron {
+  transform: rotate(180deg);
+}
+.site-footer__legal-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem 1rem;
+  margin-top: 0.5rem;
   font-size: 0.75rem;
   color: #9ca3af;
-  text-align: center;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+}
+@media (max-width: 600px) {
+  .site-footer__legal-content {
+    flex-direction: column;
+    gap: 0.3rem;
+    align-items: center;
+  }
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
