@@ -1180,8 +1180,10 @@
         "cancel": "Wyczyść",
         "inspire": "Nasze rezydencje",
         "dintorni": "Okolice",
-        "hero_title": "Scauri, jakiego jeszcze nie znałeś",
-        "hero_sub": "Zarezerwuj bezpośrednio u nas i oszczędzaj na prowizjach"
+        "rotator0": "Zarezerwuj bezpośrednio u nas i oszczędzaj",
+        "rotator1": "Najlepsza relacja jakości do ceny w Zatoce Gaety",
+        "rotator2": "Między Rzymem a Neapolem, z dala od masowej turystyki",
+        "rotator3": "Napełnij oczy zielenią"
       },
       "months": [
         "Styczeń",
