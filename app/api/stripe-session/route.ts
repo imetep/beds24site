@@ -20,6 +20,8 @@ export async function POST(req: NextRequest) {
     bookingType,
     locale = 'it',
     description = 'Soggiorno LivingApple',
+    successUrl: successUrlOverride,
+    cancelUrl: cancelUrlOverride,
   } = body;
   console.log('[stripe-session] Ricevuto:', { bookingId, amount, total, offerId, bookingType });
 
@@ -47,9 +49,15 @@ export async function POST(req: NextRequest) {
   const unitAmount    = Math.round(displayAmount * 100);
   const origin     = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ?? `https://${req.headers.get('host')}`;
 
-  const successUrl = `${origin}/${locale}/prenota/successo?bookingId=${bookingId}&session_id={CHECKOUT_SESSION_ID}`;
+  // Default URLs per il wizard /prenota. Override opzionale via body
+  // (usato dal flusso /preventivo/[id]/paga per redirect alla view preventivo).
+  const successUrl = typeof successUrlOverride === 'string' && successUrlOverride.length > 0
+    ? successUrlOverride
+    : `${origin}/${locale}/prenota/successo?bookingId=${bookingId}&session_id={CHECKOUT_SESSION_ID}`;
   // bookingId incluso nella cancelUrl → Wizard.tsx lo legge e cancella il booking
-  const cancelUrl  = `${origin}/${locale}/prenota?cancelled=1&bookingId=${bookingId}`;
+  const cancelUrl = typeof cancelUrlOverride === 'string' && cancelUrlOverride.length > 0
+    ? cancelUrlOverride
+    : `${origin}/${locale}/prenota?cancelled=1&bookingId=${bookingId}`;
 
   const stripePayload = [{
     action:     'createStripeSession',
