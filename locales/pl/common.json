@@ -1359,6 +1359,8 @@
       "expiredTitle": "Oferta wygasła",
       "expiredText": "Ta oferta nie jest już aktualna. Skontaktuj się z nami, aby otrzymać nową propozycję.",
       "expiredCta": "Kontakt",
+      "unavailableTitle": "Oferta już niedostępna",
+      "unavailableText": "Przepraszamy: ktoś inny w międzyczasie zarezerwował te daty. Skontaktuj się z nami w sprawie alternatyw.",
       "cancelledTitle": "Oferta anulowana",
       "cancelledText": "Ta oferta została anulowana.",
       "convertedTitle": "Oferta zarezerwowana!",

@@ -1377,6 +1377,8 @@
       "expiredTitle": "Preventivo scaduto",
       "expiredText": "Questo preventivo non è più valido. Contattaci per riceverne uno aggiornato.",
       "expiredCta": "Contattaci",
+      "unavailableTitle": "Soluzione non più disponibile",
+      "unavailableText": "Ci dispiace: nel frattempo qualcun altro ha prenotato queste date. Contattaci per opzioni alternative.",
       "cancelledTitle": "Preventivo annullato",
       "cancelledText": "Questo preventivo è stato annullato.",
       "convertedTitle": "Hai bloccato l'offerta!",

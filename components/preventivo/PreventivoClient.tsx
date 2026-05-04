@@ -16,6 +16,8 @@ interface Props {
   preventivo: Omit<Preventivo, 'notes' | 'customerEmail' | 'customerName'>;
   /** Modalità anteprima admin: disabilita CTA "Blocca offerta", mostra banner */
   previewMode?: boolean;
+  /** False → la camera è stata prenotata su Beds24 da altra fonte (mostra "non disponibile") */
+  roomAvailable?: boolean;
 }
 
 function findRoom(roomId: number): Room | null {
@@ -65,7 +67,7 @@ function fmtSubject(template: string, params: Record<string, string | number>): 
   return template.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? ''));
 }
 
-export default function PreventivoClient({ locale, preventivo, previewMode = false }: Props) {
+export default function PreventivoClient({ locale, preventivo, previewMode = false, roomAvailable = true }: Props) {
   const router = useRouter();
   const t = getTranslations(locale).components.preventivoView;
   const room = findRoom(preventivo.roomId);
@@ -95,6 +97,11 @@ export default function PreventivoClient({ locale, preventivo, previewMode = fal
         <p className="text-center text-muted py-5">Camera non trovata.</p>
       </div>
     );
+  }
+
+  // ─── Camera non più disponibile (qualcuno ha prenotato direttamente su Beds24) ─
+  if (preventivo.status === 'active' && !roomAvailable && !previewMode) {
+    return <StatusOnlyView locale={locale} title={t.unavailableTitle} text={t.unavailableText} cta={t.expiredCta} icon="x-circle" />;
   }
 
   // ─── Stati non-active: mostra solo banner messaggio ────────────────────────

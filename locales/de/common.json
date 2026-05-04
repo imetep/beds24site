@@ -1359,6 +1359,8 @@
       "expiredTitle": "Angebot abgelaufen",
       "expiredText": "Dieses Angebot ist nicht mehr gültig. Kontaktieren Sie uns für ein neues Angebot.",
       "expiredCta": "Kontakt",
+      "unavailableTitle": "Angebot nicht mehr verfügbar",
+      "unavailableText": "Es tut uns leid: Jemand anderes hat diese Daten in der Zwischenzeit gebucht. Kontaktieren Sie uns für alternative Optionen.",
       "cancelledTitle": "Angebot storniert",
       "cancelledText": "Dieses Angebot wurde storniert.",
       "convertedTitle": "Angebot gesichert!",
