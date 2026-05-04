@@ -199,15 +199,16 @@ export default function PreventivoPagaClient({
               try {
                 // Capture PayPal + aggiorna Beds24 (status='new', invoice items)
                 const upsellExtras = preventivo.upsells.map(u => {
-                  const lineNet = u.unitPrice * u.qty * (1 - u.discountPct / 100);
-                  // Recupera il nome reale dell'upsell dalla config (per locale).
-                  // Per Beds24 invoice items usiamo l'italiano (admin language).
+                  // Prezzo unitario netto (dopo sconto), quantità reale.
+                  // Beds24 mostrerà 'N × €X = €tot' nell'invoice invece di
+                  // '1 × €totale' che era confondente.
+                  const unitNet = u.unitPrice * (1 - u.discountPct / 100);
                   const name = getUpsellTexts(preventivo.propertyId, u.index)?.name?.it
                     ?? `Upsell #${u.index}`;
                   return {
                     description: name,
-                    price: Math.round(lineNet * 100) / 100,
-                    quantity: 1,
+                    price: Math.round(unitNet * 100) / 100,
+                    quantity: u.qty,
                   };
                 });
                 const accommodation = Math.round(
