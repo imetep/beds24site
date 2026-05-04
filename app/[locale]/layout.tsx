@@ -4,6 +4,7 @@ import { locales, isValidLocale, type Locale } from '@/config/i18n';
 import { CIN, CIR } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
 import HeaderClient from '@/components/HeaderClient';
+import { Icon } from '@/components/ui/Icon';
 
 interface Props {
   children: React.ReactNode;
@@ -51,53 +52,70 @@ export default async function LocaleLayout({ children, params }: Props) {
 
       <main className="site-main">{children}</main>
 
-      {/* ── Footer ─────────────────────────────────────────────────────── */}
+      {/* ── Footer (compact, mobile-first) ──────────────────────────────────── */}
       <footer className="site-footer">
-        <div className="page-container">
+        <div className="page-container site-footer__container">
 
-          {/* Griglia 3 colonne desktop, 1 mobile */}
-          <div className="site-footer__grid">
-
-            {/* Colonna 1 — Brand + contatti */}
-            <div>
-              <p className="site-footer__company">{t.footer.company}</p>
-              <p className="site-footer__line">{t.footer.address}</p>
-              <p className="site-footer__line">WhatsApp: <a href={`https://wa.me/${t.footer.whatsapp.replace(/\D/g,'')}`} className="site-footer__link">{t.footer.whatsapp}</a></p>
-              <p className="site-footer__line">Tel: <a href={`tel:${t.footer.phone}`} className="site-footer__link">{t.footer.phone}</a></p>
-            </div>
-
-            {/* Colonna 2 — Fiscale e legale */}
-            <div>
-              <p className="site-footer__col-title">{t.footer.legal_data}</p>
-              <p className="site-footer__line">{t.footer.vat}</p>
-              <p className="site-footer__line">{t.footer.rea}</p>
-              <p className="site-footer__line">CIN {CIN}</p>
-              <p className="site-footer__line">CIR {CIR}</p>
-            </div>
-
-            {/* Colonna 3 — Link navigazione (nascosta su mobile — sono nell'hamburger) */}
-            <div className="footer-links-col">
-              <p className="site-footer__col-title">{t.footer.useful_links}</p>
-              {[
-                { href: `/${locale}/contatti`,           label: t.footer.contact },
-                { href: `/${locale}/dove-siamo`,         label: t.footer.location },
-                { href: `/${locale}/prenotazione-sicura`,label: t.footer.safe_booking },
-                { href: `/${locale}/condizioni`,         label: t.footer.terms },
-                { href: `/${locale}/privacy`,            label: t.footer.privacy },
-                { href: `/${locale}/trattamento-dati`,   label: t.footer.data },
-              ].map(({ href, label }) => (
-                <a key={href} href={href} className="site-footer__nav-link">
-                  {label}
-                </a>
-              ))}
-            </div>
-
+          {/* Riga brand + indirizzo + © (inline desktop, stack mobile) */}
+          <div className="site-footer__brand">
+            <strong className="site-footer__company">{t.footer.company}</strong>
+            <span className="site-footer__sep">·</span>
+            <span className="site-footer__address">{t.footer.address}</span>
+            <span className="site-footer__sep">·</span>
+            <span className="site-footer__year">© {new Date().getFullYear()}</span>
           </div>
 
-          {/* Bottom bar */}
-          <p className="site-footer__bottom">
-            © {new Date().getFullYear()} {t.footer.company} · {t.footer.all_rights_reserved}
-          </p>
+          {/* CTA contatti: bottoni grandi, click-to-action */}
+          <div className="site-footer__contact">
+            <a
+              href={`https://wa.me/${t.footer.whatsapp.replace(/\D/g,'')}`}
+              target="_blank"
+              rel="noreferrer"
+              className="site-footer__cta site-footer__cta--whatsapp"
+              aria-label={`WhatsApp ${t.footer.whatsapp}`}
+            >
+              <Icon name="whatsapp" size={18} />
+              <span>WhatsApp</span>
+            </a>
+            <a
+              href={`tel:${t.footer.phone}`}
+              className="site-footer__cta"
+              aria-label={`Telefono ${t.footer.phone}`}
+            >
+              <Icon name="telephone-fill" size={18} />
+              <span>{t.footer.phone}</span>
+            </a>
+          </div>
+
+          {/* Link utili: inline su desktop, stack con frecce su mobile */}
+          <nav className="site-footer__links" aria-label="Footer">
+            {[
+              { href: `/${locale}/contatti`,            label: t.footer.contact },
+              { href: `/${locale}/dove-siamo`,          label: t.footer.location },
+              { href: `/${locale}/prenotazione-sicura`, label: t.footer.safe_booking },
+              { href: `/${locale}/condizioni`,          label: t.footer.terms },
+              { href: `/${locale}/privacy`,             label: t.footer.privacy },
+              { href: `/${locale}/trattamento-dati`,    label: t.footer.data },
+            ].map(({ href, label }) => (
+              <a key={href} href={href} className="site-footer__link">
+                {label}
+              </a>
+            ))}
+          </nav>
+
+          {/* Info legali e fiscali — accordion native HTML <details> (SSR-safe, no JS) */}
+          <details className="site-footer__legal">
+            <summary className="site-footer__legal-summary">
+              {t.footer.legal_data}
+              <span className="site-footer__legal-chevron" aria-hidden="true">▾</span>
+            </summary>
+            <div className="site-footer__legal-content">
+              <span>{t.footer.vat}</span>
+              <span>{t.footer.rea}</span>
+              <span>CIN {CIN}</span>
+              <span>CIR {CIR}</span>
+            </div>
+          </details>
 
         </div>
       </footer>
