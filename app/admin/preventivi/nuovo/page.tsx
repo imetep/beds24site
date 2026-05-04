@@ -137,7 +137,9 @@ export default function NuovoPreventivoPage() {
     const roomEntry = cachedOffers.find((ro: any) => ro.roomId === selectedRoomId);
     const offer = roomEntry?.offers?.find((o: any) => o.offerId === selectedOfferId);
     if (offer && typeof offer.price === 'number') {
-      setBasePrice(offer.price);
+      // Arrotondamento a 2 decimali per evitare residui floating-point
+      // (es. Beds24 ritorna 327.675 → JS lo rappresenta come 327.67499999999995)
+      setBasePrice(Math.round(offer.price * 100) / 100);
     }
   }, [phase, selectedRoomId, selectedOfferId, cachedOffers, editingId]);
 
