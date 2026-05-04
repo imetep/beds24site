@@ -7097,6 +7097,11 @@ body {
   padding-bottom: 80px;
   overflow-x: clip;
 }
+@media (min-width: 768px) {
+  /* Su desktop la .layout-sticky-mobile-bar è display:none → niente spazio
+     riservato → niente gap bianco prima del footer. */
+  .site-main { padding-bottom: 0; }
+}
 .site-footer {
   background-color: #1f2937;        /* slate-800: meno duro di #111 */
   color: var(--color-text-muted);
