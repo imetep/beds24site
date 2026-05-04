@@ -1180,8 +1180,10 @@
         "cancel": "Löschen",
         "inspire": "Unsere Residenzen",
         "dintorni": "Umgebung",
-        "hero_title": "Scauri, wie du es noch nie erlebt hast",
-        "hero_sub": "Buchen Sie direkt bei uns und sparen Sie Provisionen"
+        "rotator0": "Buchen Sie direkt bei uns und sparen Sie",
+        "rotator1": "Bestes Preis-Leistungs-Verhältnis am Golf von Gaeta",
+        "rotator2": "Zwischen Rom und Neapel, abseits des Massentourismus",
+        "rotator3": "Lass deine Augen im Grünen ruhen"
       },
       "months": [
         "Januar",
