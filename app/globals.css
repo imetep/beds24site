@@ -7098,10 +7098,10 @@ body {
   overflow-x: clip;
 }
 .site-footer {
-  background-color: var(--color-bg-dark);
+  background-color: #1f2937;        /* slate-800: meno duro di #111 */
   color: var(--color-text-muted);
-  padding: 3rem 1.5rem 5.5rem;  /* extra bottom per bottone fisso */
-  margin-top: 4rem;
+  padding: 3rem 1.5rem 5.5rem;      /* extra bottom per bottone fisso */
+  margin-top: 0;                    /* niente gap bianco extra prima del footer */
 }
 .site-footer__grid {
   display: grid;
