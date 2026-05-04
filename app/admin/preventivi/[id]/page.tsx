@@ -132,6 +132,11 @@ export default function PreventivoDetailPage({ params }: Props) {
     }
   }
 
+  async function logout() {
+    await fetch('/api/admin/login', { method: 'DELETE' });
+    window.location.href = '/admin';
+  }
+
   async function elimina() {
     if (!preventivo) return;
     const msg = preventivo.status === 'converted'
@@ -183,9 +188,6 @@ export default function PreventivoDetailPage({ params }: Props) {
 
       <div className="d-flex justify-content-between align-items-start mb-3 gap-2 flex-wrap">
         <div>
-          <p className="small text-muted mb-1">
-            <Link href="/admin/preventivi" className="text-muted">← Lista preventivi</Link>
-          </p>
           <h1 className="h4 fw-bold mb-1">
             Preventivo <code>{p.id}</code>
             <span className={`badge ${STATUS_BADGE[p.status]} ms-2`}>{STATUS_LABEL[p.status]}</span>
@@ -194,6 +196,12 @@ export default function PreventivoDetailPage({ params }: Props) {
             Creato {formatDateTime(p.createdAt)}
             {p.status === 'active' && <> · Scade {formatDateTime(p.expiresAt)}</>}
           </p>
+        </div>
+        <div className="d-flex gap-2 flex-wrap">
+          <Link href="/admin/preventivi" className="btn btn-sm btn-outline-secondary">← Lista</Link>
+          <a href="/admin" className="btn btn-sm btn-outline-secondary">← Admin</a>
+          <button className="btn btn-sm btn-outline-secondary" onClick={() => setReloadKey(k => k + 1)}>↻ Aggiorna</button>
+          <button className="btn btn-sm btn-outline-secondary" onClick={logout}>Esci</button>
         </div>
       </div>
 
