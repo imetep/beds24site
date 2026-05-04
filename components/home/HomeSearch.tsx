@@ -7,8 +7,16 @@ import { PROPERTIES } from '@/config/properties';
 import { fetchCoversCached, fetchFolderPhotosCached } from '@/lib/cloudinary-client-cache';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
-import { Icon } from '@/components/ui/Icon';
+import { Icon, type IconName } from '@/components/ui/Icon';
 
+// ─── Rotator claims ───────────────────────────────────────────────────────────
+const ROTATOR_ITEMS: { icon: IconName; key: 'rotator0' | 'rotator1' | 'rotator2' | 'rotator3' }[] = [
+  { icon: 'tag-fill',     key: 'rotator0' },
+  { icon: 'star-fill',    key: 'rotator1' },
+  { icon: 'geo-alt-fill', key: 'rotator2' },
+  { icon: 'tree-fill',    key: 'rotator3' },
+];
+const ROTATOR_INTERVAL_MS = 4500;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function toYMD(y: number, m: number, d: number) {
@@ -73,6 +81,8 @@ export default function HomeSearch({ locale, onCerca, compact = false }: HomeSea
   const [panel, setPanel]   = useState<'none' | 'dates' | 'guests'>('none');
   const [hover,  setHover]  = useState<string | null>(null);
   const [isDesk, setDesk]   = useState(false);
+  const [rotIdx, setRotIdx] = useState(0);
+  const [rotPaused, setRotPaused] = useState(false);
   const [covers,       setCovers]   = useState<Record<string, string>>({});
   const [dintorniPhotos, setDintorni] = useState<string[]>([]);
   const [showResArr,   setShowResArr] = useState(false);
@@ -95,6 +105,18 @@ export default function HomeSearch({ locale, onCerca, compact = false }: HomeSea
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
   }, []);
+
+  // Rotator claims sotto la search bar — pausa su hover, rispetta reduced-motion
+  useEffect(() => {
+    if (compact || rotPaused) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
+    const id = window.setInterval(
+      () => setRotIdx(i => (i + 1) % ROTATOR_ITEMS.length),
+      ROTATOR_INTERVAL_MS,
+    );
+    return () => window.clearInterval(id);
+  }, [compact, rotPaused]);
 
   useEffect(() => {
     document.body.style.overflow = (!isDesk && panel !== 'none') ? 'hidden' : '';
@@ -377,26 +399,9 @@ export default function HomeSearch({ locale, onCerca, compact = false }: HomeSea
     );
   }
 
-  // ── Hero BG — pick a generic photo if available else use gradient ─────────
-  const heroBg = dintorniPhotos.length > 0 ? dintorniPhotos[0] : null;
-
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="home-search">
-
-      {/* ── Hero UX 3.2 ────────────────────────────────────────────────────── */}
-      {!compact && (
-        <section
-          className="home-search__hero"
-          style={heroBg ? { background: `linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url(${heroBg}) center/cover no-repeat` } : undefined}
-        >
-          <div className="home-search__hero-content">
-            <h1 className="home-search__hero-title">{ui.hero_title}</h1>
-            <p className="home-search__hero-sub">{ui.hero_sub}</p>
-          </div>
-        </section>
-      )}
-
       <div className="page-container">
 
       {/* ── Barra ricerca ─────────────────────────────────────────────────── */}
@@ -522,6 +527,28 @@ export default function HomeSearch({ locale, onCerca, compact = false }: HomeSea
             {panel === 'guests' && <GuestsContent />}
           </div>
         </>
+      )}
+
+      {/* ── Rotator claims (cross-fade, pausa su hover) ───────────────────── */}
+      {!compact && (
+        <div
+          className="home-search__rotator"
+          onMouseEnter={() => setRotPaused(true)}
+          onMouseLeave={() => setRotPaused(false)}
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {ROTATOR_ITEMS.map((item, i) => (
+            <div
+              key={item.key}
+              className={`home-search__rotator-item ${i === rotIdx ? 'is-active' : ''}`}
+              aria-hidden={i !== rotIdx}
+            >
+              <Icon name={item.icon} className="home-search__rotator-icon" size={18} strokeWidth={1.8} />
+              <span className="home-search__rotator-text">{ui[item.key]}</span>
+            </div>
+          ))}
+        </div>
       )}
 
       {/* ── Slider residenze ───────────────────────────────────────────────── */}
