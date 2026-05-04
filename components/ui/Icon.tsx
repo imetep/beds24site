@@ -19,7 +19,7 @@ import {
   CreditCard, CupSoda, DoorClosed, Droplet, Egg, EggFried, Euro, FileImage, Flame,
   Flower, Globe, Heart, Home, Hourglass, Info, Landmark, Lightbulb, Link2, Lock,
   Mail, MapPin, Maximize2, MessageCircle, Microwave, Moon, MoonStar, Mountain,
-  Newspaper, OctagonAlert, Pencil, RotateCw, Search, Shield, ShieldCheck,
+  Newspaper, OctagonAlert, Pencil, Phone, RotateCw, Search, Shield, ShieldCheck,
   ShoppingBag, ShoppingBasket, SlidersHorizontal, Smile, Snowflake, SquareParking,
   Star, StickyNote, Sun, Tag, ThermometerSnowflake, Trash2, TreePine, TriangleAlert,
   Tv, Umbrella, User, Users, UtensilsCrossed, Waves, Wifi, Wind, X,
@@ -134,6 +134,7 @@ const LUCIDE_MAP = {
   // Comunicazione
   'chat-fill':         MessageCircle,
   'envelope-fill':     Mail,
+  'telephone-fill':    Phone,
   // Documenti / liste
   'card-list':         ClipboardList,
   'clipboard-fill':    Clipboard,
