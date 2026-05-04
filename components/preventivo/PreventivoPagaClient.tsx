@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Icon } from '@/components/ui/Icon';
 import { PROPERTIES, type Room } from '@/config/properties';
+import { getUpsellTexts } from '@/config/upsell-items';
 import { getTranslations } from '@/lib/i18n';
 import type { Locale } from '@/config/i18n';
 import {
@@ -199,8 +200,12 @@ export default function PreventivoPagaClient({
                 // Capture PayPal + aggiorna Beds24 (status='new', invoice items)
                 const upsellExtras = preventivo.upsells.map(u => {
                   const lineNet = u.unitPrice * u.qty * (1 - u.discountPct / 100);
+                  // Recupera il nome reale dell'upsell dalla config (per locale).
+                  // Per Beds24 invoice items usiamo l'italiano (admin language).
+                  const name = getUpsellTexts(preventivo.propertyId, u.index)?.name?.it
+                    ?? `Upsell #${u.index}`;
                   return {
-                    description: `Upsell #${u.index}`,
+                    description: name,
                     price: Math.round(lineNet * 100) / 100,
                     quantity: 1,
                   };
