@@ -31,9 +31,10 @@ export default async function PreventivoPagaPage({ params }: Props) {
   // Sanitizza dati interni
   const { notes, customerEmail, customerName, customerPhone, ...safe } = raw;
 
-  // Feature flags lato server (non NEXT_PUBLIC_ per non bakare in build client)
-  const stripeEnabled = process.env.STRIPE_ENABLED === '1';
-  const paypalEnabled = process.env.PAYPAL_ENABLED !== '0'; // default attivo
+  // Feature flags lato server (non NEXT_PUBLIC_ per non bakare in build client).
+  // Entrambi default attivi (opt-out via env=0). Stripe usa OAuth Beds24 lato dashboard.
+  const stripeEnabled = process.env.STRIPE_ENABLED !== '0';
+  const paypalEnabled = process.env.PAYPAL_ENABLED !== '0';
 
   return (
     <Suspense fallback={<div className="text-center py-5 text-muted">Caricamento…</div>}>
