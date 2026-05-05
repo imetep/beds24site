@@ -17,7 +17,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { Icon } from '@/components/ui/Icon';
 import type { Task, TipoTask } from '@/lib/task-types';
 import type { Ruolo } from '@/lib/operatori-types';
-import { RUOLO_LABEL } from '@/lib/operatori-types';
+import { RUOLI, RUOLO_LABEL } from '@/lib/operatori-types';
 
 interface OperatoreLite {
   id:          string;
@@ -46,10 +46,13 @@ interface SyncResult {
   hasMaster?:       boolean;
 }
 
-const TIPO_LABEL: Record<'turnover' | 'accoglienza' | 'manutenzione', string> = {
+// Etichette tipo task (per badge sulla card)
+const TIPO_LABEL: Record<TipoTask, string> = {
   turnover:     'Turnover',
-  accoglienza:  'Accoglienze',
-  manutenzione: 'Manutenzioni',
+  accoglienza:  'Accoglienza',
+  manutenzione: 'Manutenzione',
+  periodica:    'Periodica',
+  adhoc:        'Ad hoc',
 };
 
 function fmtData(ymd: string): string {
@@ -119,7 +122,7 @@ export default function AdminSmistamento() {
   const [operatori, setOperatori] = useState<OperatoreLite[]>([]);
   const [from,     setFrom]     = useState(todayYMD());
   const [to,       setTo]       = useState(plusDaysYMD(14));
-  const [tipoFiltro, setTipoFiltro] = useState<'turnover' | 'accoglienza' | 'manutenzione' | 'tutti'>('turnover');
+  const [ruoloFiltro, setRuoloFiltro] = useState<Ruolo | 'tutti'>('pulizie');
   const [loading,  setLoading]  = useState(false);
   const [error,    setError]    = useState('');
   const [syncing,  setSyncing]  = useState<'turnover' | 'accoglienza' | null>(null);
@@ -135,7 +138,7 @@ export default function AdminSmistamento() {
     setLoading(true); setError('');
     try {
       const params = new URLSearchParams({ from, to });
-      if (tipoFiltro !== 'tutti') params.set('tipo', tipoFiltro);
+      if (ruoloFiltro !== 'tutti') params.set('ruolo', ruoloFiltro);
       const [tasksRes, opsRes] = await Promise.all([
         fetch(`/api/admin/tasks?${params}`),
         fetch('/api/admin/operatori'),
@@ -148,7 +151,7 @@ export default function AdminSmistamento() {
         setOperatori(opData.operatori ?? []);
       }
     } finally { setLoading(false); }
-  }, [from, to, tipoFiltro]);
+  }, [from, to, ruoloFiltro]);
 
   useEffect(() => { if (authed) load(); }, [authed, load]);
 
@@ -276,13 +279,13 @@ export default function AdminSmistamento() {
       </div>
 
       <div className="d-flex gap-1 flex-wrap mb-3">
-        <span className="small fw-semibold text-muted me-1 align-self-center">Tipo:</span>
-        {(['turnover', 'accoglienza', 'manutenzione', 'tutti'] as const).map(t => {
-          const active = tipoFiltro === t;
+        <span className="small fw-semibold text-muted me-1 align-self-center">Ruolo:</span>
+        {([...RUOLI, 'tutti'] as const).map(r => {
+          const active = ruoloFiltro === r;
           return (
-            <button key={t}
+            <button key={r}
               className="btn btn-sm"
-              onClick={() => setTipoFiltro(t)}
+              onClick={() => setRuoloFiltro(r as Ruolo | 'tutti')}
               style={{
                 border: active ? '2px solid var(--color-primary)' : '1px solid var(--color-border)',
                 borderRadius: 999,
@@ -290,7 +293,7 @@ export default function AdminSmistamento() {
                 color: active ? 'var(--color-primary)' : 'var(--color-text)',
                 fontWeight: active ? 600 : 400,
               }}>
-              {t === 'tutti' ? 'Tutti' : TIPO_LABEL[t]}
+              {r === 'tutti' ? 'Tutti' : RUOLO_LABEL[r as Ruolo]}
             </button>
           );
         })}
