@@ -125,6 +125,13 @@ export default function AdminPage() {
       color: '#16a34a',
     },
     {
+      icon: 'card-list',
+      title: 'Smistamento turnover',
+      desc: 'Pannello giornaliero per assegnare i turnover alle pulizie, sincronizzare le partenze da Beds24 e confermare "Casa pronta" alla chiusura del lavoro.',
+      href: '/admin/smistamento',
+      color: '#0891b2',
+    },
+    {
       icon: 'calendar-x-fill',
       title: 'Buchi',
       desc: 'Finestre libere inferiori a 7 notti nei prossimi 12 mesi. Filtra per mese e ordina per numero di notti.',
