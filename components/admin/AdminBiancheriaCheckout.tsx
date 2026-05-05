@@ -171,6 +171,23 @@ export default function AdminBiancheriaCheckout() {
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState('');
 
+  // Magazzino — valori manuali prima dell'export, reset ad ogni caricamento pagina
+  const ARTICOLI = ['lenzMatrimoniali', 'lenzSingoli', 'federe', 'viso', 'bidet', 'telodoccia', 'scendibagno'] as const;
+  type ArticoloKey = typeof ARTICOLI[number];
+  const ARTICOLI_LABEL: Record<ArticoloKey, string> = {
+    lenzMatrimoniali: 'Lenzuolo matrimoniale',
+    lenzSingoli:      'Lenzuolo singolo',
+    federe:           'Federa sacco cuscino',
+    viso:             'Asciugamano viso',
+    bidet:            'Asciugamano bidet',
+    telodoccia:       'Telo doccia',
+    scendibagno:      'Scendibagno spugna',
+  };
+  const [magazzino, setMagazzino] = useState<Record<ArticoloKey, number>>({
+    lenzMatrimoniali: 0, lenzSingoli: 0, federe: 0,
+    viso: 0, bidet: 0, telodoccia: 0, scendibagno: 0,
+  });
+
   useEffect(() => {
     fetch('/api/admin/checkin')
       .then(r => setAuthed(r.ok))
@@ -200,9 +217,9 @@ export default function AdminBiancheriaCheckout() {
     const sourceLabel = (s: NextArrival['source']) =>
       s === 'guest' ? 'ospite' : s === 'admin' ? 'admin' : 'auto';
 
-    const wsData: (string | number | null)[][] = [
-      ['Esportato il', new Date().toLocaleString('it-IT')],
-      ['Periodo partenze', `${data.from} → ${data.to}`],
+    const wsData: (string | number | Date | null)[][] = [
+      ['importazione del', new Date()],
+      ['maggiorazione manuale del biancheria', 0.2],
       [
         'Data partenza', 'Casa', 'Ospite uscente', 'N. uscenti',
         'Prossimo arrivo', 'Gap (gg)', 'Ospite entrante', 'N. entranti',
@@ -218,7 +235,7 @@ export default function AdminBiancheriaCheckout() {
     for (const item of data.items) {
       const dep = item.departure;
       const next = item.nextArrival;
-      const dataRow: (string | number | null)[] = [
+      const dataRow: (string | number | Date | null)[] = [
         dep.departure,
         dep.roomName,
         dep.guestName,
@@ -255,22 +272,54 @@ export default function AdminBiancheriaCheckout() {
 
     const ws = XLSX.utils.aoa_to_sheet(wsData);
 
-    // Riga totali (solo colonne biancheria)
+    // Riga totali (colonne biancheria I..P: lenz matr/sing, federe, viso, bidet, telo doccia, scendib, culle)
+    const cols = ['I', 'J', 'K', 'L', 'M', 'N', 'O'];   // escludo P (culle) dal calcolo riordino
+    let totRow = lastDataRow;
     if (lastDataRow >= firstDataRow) {
-      const totRow = lastDataRow + 1;
+      totRow = lastDataRow + 1;
       ws[`A${totRow}`] = { v: 'TOTALE', t: 's' };
-      // Colonne biancheria: I..P (lenz matr, lenz sing, federe, viso, bidet, telo doccia, scendib, culle)
-      for (const col of ['I', 'J', 'K', 'L', 'M', 'N', 'O', 'P']) {
+      for (const col of [...cols, 'P']) {
         ws[`${col}${totRow}`] = { f: `SUM(${col}${firstDataRow}:${col}${lastDataRow})`, t: 'n' };
       }
-      ws['!ref'] = `A1:Q${totRow}`;
     }
+
+    // Sezione riordino: tot necessario - magazzino → subtotale → maggiorazione → arrotonda*5
+    const hdrRow = totRow + 3;
+    ws[`D${hdrRow}`] = { v: 'articolo',           t: 's' };
+    ws[`E${hdrRow}`] = { v: 'tot necessario',     t: 's' };
+    ws[`F${hdrRow}`] = { v: 'magazzino',          t: 's' };
+    ws[`G${hdrRow}`] = { v: 'subtotale',          t: 's' };
+    ws[`H${hdrRow}`] = { v: 'maggiorazione',      t: 's' };
+    ws[`I${hdrRow}`] = { v: 'arrotonda e ordina', t: 's' };
+
+    const colMap: Array<{ col: string; label: string; key: ArticoloKey }> = [
+      { col: 'I', label: 'lenzuolo matrimoniale',    key: 'lenzMatrimoniali' },
+      { col: 'J', label: 'LENZUOLO SINGOLO',         key: 'lenzSingoli'      },
+      { col: 'K', label: 'FEDERA SACCO cuscino',     key: 'federe'           },
+      { col: 'L', label: 'ASCIUGAMANO VISO',         key: 'viso'             },
+      { col: 'M', label: 'ASCIUGAMANO BIDET SPUGNA', key: 'bidet'            },
+      { col: 'N', label: 'TELO DOCCIA',              key: 'telodoccia'       },
+      { col: 'O', label: 'SCENDIBAGNO SPUGNA',       key: 'scendibagno'      },
+    ];
+
+    colMap.forEach(({ col, label, key }, idx) => {
+      const r = hdrRow + 1 + idx;
+      ws[`D${r}`] = { v: label,                  t: 's' };
+      ws[`E${r}`] = { f: `${col}${totRow}`,      t: 'n' };
+      ws[`F${r}`] = { v: magazzino[key],         t: 'n' };
+      ws[`G${r}`] = { f: `E${r}-F${r}`,          t: 'n' };
+      ws[`H${r}`] = { f: `(G${r}*$B$2)+G${r}`,  t: 'n' };
+      ws[`I${r}`] = { f: `ROUND(H${r}/5,0)*5`,  t: 'n' };
+    });
+
+    const lastSecRow = hdrRow + colMap.length;
+    ws['!ref'] = `A1:Q${lastSecRow}`;
 
     ws['!cols'] = [
       { wch: 12 }, { wch: 16 }, { wch: 22 }, { wch: 8 },
       { wch: 14 }, { wch: 6 }, { wch: 22 }, { wch: 8 },
-      { wch: 12 }, { wch: 12 }, { wch: 10 },
-      { wch: 8 }, { wch: 8 }, { wch: 12 }, { wch: 12 }, { wch: 8 },
+      { wch: 22 }, { wch: 18 }, { wch: 22 },
+      { wch: 20 }, { wch: 24 }, { wch: 14 }, { wch: 20 }, { wch: 8 },
       { wch: 24 },
     ];
 
@@ -380,6 +429,34 @@ export default function AdminBiancheriaCheckout() {
                 <span><Icon name="person-arms-up" size={14} /> {data.totals.culle} culle</span>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Magazzino disponibile */}
+      {data && data.items.length > 0 && (
+        <div className="card mb-3">
+          <div className="card-body p-3">
+            <p className="small fw-bold text-uppercase text-secondary mb-3" style={{ letterSpacing: '0.06em' }}>
+              <Icon name="box-fill" className="me-1" /> Magazzino disponibile
+            </p>
+            <div className="d-grid gap-2"
+              style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}>
+              {ARTICOLI.map(key => (
+                <label key={key}
+                  className="d-flex align-items-center justify-content-between gap-2 bg-light rounded px-2 py-1 small text-secondary">
+                  <span>{ARTICOLI_LABEL[key]}</span>
+                  <input type="number" min={0}
+                    value={magazzino[key]}
+                    onChange={e => setMagazzino(prev => ({ ...prev, [key]: Math.max(0, parseInt(e.target.value) || 0) }))}
+                    className="form-control form-control-sm text-end"
+                    style={{ width: 60 }} />
+                </label>
+              ))}
+            </div>
+            <p className="small text-muted fst-italic mt-2 mb-0">
+              I valori vengono sottratti dal totale nell&apos;export XLSX. Si azzerano ad ogni ricaricamento della pagina.
+            </p>
           </div>
         </div>
       )}
