@@ -7145,44 +7145,7 @@ body {
   .site-footer__brand { gap: 0.15rem 0; flex-direction: column; }
 }
 
-/* Riga 2: bottoni contatto (azionabili, ≥44px touch target) */
-.site-footer__contact {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.5rem;
-  width: 100%;
-  max-width: 480px;
-}
-.site-footer__cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  flex: 1 1 auto;
-  min-height: 44px;
-  padding: 0.5rem 1rem;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 10px;
-  color: #fff;
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 600;
-  transition: background 0.15s, border-color 0.15s;
-  white-space: nowrap;
-}
-.site-footer__cta:hover {
-  background: rgba(255,255,255,0.16);
-  border-color: rgba(255,255,255,0.25);
-  color: #fff;
-}
-.site-footer__cta--whatsapp:hover {
-  background: rgba(37,211,102,0.18);     /* hint WhatsApp green */
-  border-color: rgba(37,211,102,0.4);
-}
-
-/* Riga 3: link inline desktop, stack mobile */
+/* Riga 2: link inline desktop, stack mobile (WhatsApp/tel rimossi: in /contatti) */
 .site-footer__links {
   display: flex;
   flex-wrap: wrap;
