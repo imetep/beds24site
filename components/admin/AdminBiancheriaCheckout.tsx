@@ -15,6 +15,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Icon } from '@/components/ui/Icon';
+import RangeCalendar from '@/components/admin/RangeCalendar';
 
 // ─── Tipi vista ──────────────────────────────────────────────────────────────
 
@@ -192,6 +193,92 @@ export default function AdminBiancheriaCheckout() {
     setAuthed(false);
   }
 
+  async function exportXlsx() {
+    if (!data || data.items.length === 0) return;
+    const XLSX = await import('xlsx');
+
+    const sourceLabel = (s: NextArrival['source']) =>
+      s === 'guest' ? 'ospite' : s === 'admin' ? 'admin' : 'auto';
+
+    const wsData: (string | number | null)[][] = [
+      ['Esportato il', new Date().toLocaleString('it-IT')],
+      ['Periodo partenze', `${data.from} → ${data.to}`],
+      [
+        'Data partenza', 'Casa', 'Ospite uscente', 'N. uscenti',
+        'Prossimo arrivo', 'Gap (gg)', 'Ospite entrante', 'N. entranti',
+        'Lenz. matrim.', 'Lenz. singole', 'Federe',
+        'Viso', 'Bidet', 'Telo doccia', 'Scendibagno', 'Culle',
+        'Note',
+      ],
+    ];
+
+    const firstDataRow = wsData.length + 1;       // 1-indexed Excel
+    let lastDataRow = firstDataRow - 1;
+
+    for (const item of data.items) {
+      const dep = item.departure;
+      const next = item.nextArrival;
+      const dataRow: (string | number | null)[] = [
+        dep.departure,
+        dep.roomName,
+        dep.guestName,
+        dep.numAdult + dep.numChild,
+      ];
+      if (next) {
+        dataRow.push(
+          next.arrival,
+          item.gapDays ?? '',
+          next.guestName,
+          next.numAdult + next.numChild,
+        );
+        if (next.linen) {
+          dataRow.push(
+            next.linen.lenzMatrimoniali,
+            next.linen.lenzSingoli,
+            next.linen.federe,
+            next.linen.persone,
+            next.linen.persone,
+            next.linen.persone,
+            next.linen.scendibagno ?? 1,
+            next.linen.culle,
+          );
+        } else {
+          dataRow.push(null, null, null, null, null, null, null, null);
+        }
+        dataRow.push(`Config: ${sourceLabel(next.source)}${next.linen ? '' : ' · CONFIG N/D'}`);
+      } else {
+        dataRow.push('—', '—', '—', '—', null, null, null, null, null, null, null, null, 'Nessun prossimo arrivo (90gg)');
+      }
+      wsData.push(dataRow);
+      lastDataRow = wsData.length;
+    }
+
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+    // Riga totali (solo colonne biancheria)
+    if (lastDataRow >= firstDataRow) {
+      const totRow = lastDataRow + 1;
+      ws[`A${totRow}`] = { v: 'TOTALE', t: 's' };
+      // Colonne biancheria: I..P (lenz matr, lenz sing, federe, viso, bidet, telo doccia, scendib, culle)
+      for (const col of ['I', 'J', 'K', 'L', 'M', 'N', 'O', 'P']) {
+        ws[`${col}${totRow}`] = { f: `SUM(${col}${firstDataRow}:${col}${lastDataRow})`, t: 'n' };
+      }
+      ws['!ref'] = `A1:Q${totRow}`;
+    }
+
+    ws['!cols'] = [
+      { wch: 12 }, { wch: 16 }, { wch: 22 }, { wch: 8 },
+      { wch: 14 }, { wch: 6 }, { wch: 22 }, { wch: 8 },
+      { wch: 12 }, { wch: 12 }, { wch: 10 },
+      { wch: 8 }, { wch: 8 }, { wch: 12 }, { wch: 12 }, { wch: 8 },
+      { wch: 24 },
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Biancheria check-out');
+    XLSX.writeFile(wb, `biancheria-checkout_${data.from}_${data.to}.xlsx`);
+  }
+
   if (authed === null) return <div className="text-center text-muted py-5">Caricamento…</div>;
   if (!authed) return <LoginForm onLogin={() => setAuthed(true)} />;
 
@@ -224,6 +311,13 @@ export default function AdminBiancheriaCheckout() {
           <button className="btn btn-outline-secondary btn-sm" onClick={load} disabled={loading}>
             <Icon name="arrow-clockwise" /> Aggiorna
           </button>
+          <button
+            className="btn btn-success btn-sm fw-bold"
+            onClick={exportXlsx}
+            disabled={!data || data.items.length === 0}
+            title="Esporta lista biancheria in Excel">
+            <Icon name="file-earmark-image" className="me-1" /> XLSX
+          </button>
           <button className="btn btn-outline-secondary btn-sm" onClick={logout}>Esci</button>
         </div>
       </div>
@@ -253,14 +347,16 @@ export default function AdminBiancheriaCheckout() {
         </button>
       </div>
 
-      {/* Filtri date */}
-      <div className="d-flex gap-2 align-items-center flex-wrap mb-3">
-        <label className="small fw-semibold text-muted">Partenze dal</label>
-        <input type="date" className="form-control form-control-sm" style={{ maxWidth: 160 }}
-          value={from} onChange={e => setFrom(e.target.value)} />
-        <label className="small fw-semibold text-muted">al</label>
-        <input type="date" className="form-control form-control-sm" style={{ maxWidth: 160 }}
-          value={to} onChange={e => setTo(e.target.value)} />
+      {/* Filtro date — pill calendario condivisa con vista check-in */}
+      <div className="card mb-3">
+        <div className="card-body p-3 d-flex align-items-start justify-content-between gap-3 flex-wrap">
+          <RangeCalendar from={from} to={to}
+            onChange={(f, t) => { setFrom(f); setTo(t); }} />
+          <button className="btn btn-primary align-self-start"
+            onClick={load} disabled={loading}>
+            {loading ? 'Caricamento…' : <><Icon name="search" className="me-1" /> Carica</>}
+          </button>
+        </div>
       </div>
 
       {error && <div className="alert alert-danger py-2 small">{error}</div>}
