@@ -75,16 +75,74 @@ export async function sendMessage(
 }
 
 /**
- * Invia un messaggio all'admin se TELEGRAM_ADMIN_CHAT_ID è settato.
- * Se non lo è (admin non si è ancora registrato al bot), no-op silenzioso e logga.
+ * Invia un messaggio all'admin. Cerca il chatId in tre modi (in ordine):
+ *   1. env var TELEGRAM_ADMIN_CHAT_ID
+ *   2. Redis chiave 'telegram:admin-chat-id' (compilato dal webhook quando
+ *      l'admin clicca il deeplink di registrazione)
+ * Se nessuno è disponibile, no-op silenzioso + log.
  */
 export async function sendToAdmin(text: string, options: SendMessageOptions = {}): Promise<void> {
-  const adminChatId = process.env.TELEGRAM_ADMIN_CHAT_ID;
-  if (!adminChatId) {
-    console.warn('[telegram] sendToAdmin skipped: TELEGRAM_ADMIN_CHAT_ID not set');
+  const fromEnv = process.env.TELEGRAM_ADMIN_CHAT_ID;
+  if (fromEnv) {
+    await sendMessage(fromEnv, text, options);
     return;
   }
-  await sendMessage(adminChatId, text, options);
+  const fromKv = await getAdminChatIdFromKv();
+  if (fromKv) {
+    await sendMessage(fromKv, text, options);
+    return;
+  }
+  console.warn('[telegram] sendToAdmin skipped: nessun admin chatId disponibile (env + Redis vuoti)');
+}
+
+// ─── Admin chatId in KV ─────────────────────────────────────────────────────
+
+const ADMIN_CHATID_KEY = 'telegram:admin-chat-id';
+const ADMIN_REG_PREFIX = 'telegram:admin-registration:';
+
+/**
+ * Lazy import @upstash/redis per non agganciare il modulo se non serve.
+ * (sendToAdmin è il caller principale; in caso fallisca di import logga.)
+ */
+async function getKv() {
+  const url = process.env.KV_REST_API_URL;
+  const tok = process.env.KV_REST_API_TOKEN;
+  if (!url || !tok) return null;
+  const { Redis } = await import('@upstash/redis');
+  return new Redis({ url, token: tok });
+}
+
+export async function getAdminChatIdFromKv(): Promise<string | null> {
+  const kv = await getKv();
+  if (!kv) return null;
+  return kv.get<string>(ADMIN_CHATID_KEY);
+}
+
+export async function setAdminChatIdInKv(chatId: number): Promise<void> {
+  const kv = await getKv();
+  if (!kv) throw new Error('Redis non configurato');
+  await kv.set(ADMIN_CHATID_KEY, String(chatId));
+}
+
+/**
+ * Salva un token di registrazione admin (single-use, TTL 7gg).
+ * Usato dal flusso "/admin/telegram → Genera link admin" → l'admin clicca il
+ * deeplink → webhook riceve /start <token> → recupera che è un token admin
+ * e setta admin chatId.
+ */
+export async function saveAdminRegistrationToken(token: string): Promise<void> {
+  const kv = await getKv();
+  if (!kv) throw new Error('Redis non configurato');
+  await kv.set(`${ADMIN_REG_PREFIX}${token}`, '1', { ex: 7 * 24 * 60 * 60 });
+}
+
+export async function consumeAdminRegistrationToken(token: string): Promise<boolean> {
+  const kv = await getKv();
+  if (!kv) return false;
+  const v = await kv.get<string>(`${ADMIN_REG_PREFIX}${token}`);
+  if (!v) return false;
+  await kv.del(`${ADMIN_REG_PREFIX}${token}`);
+  return true;
 }
 
 // ─── Deeplink registrazione ─────────────────────────────────────────────────

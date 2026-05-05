@@ -17,6 +17,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getTask, saveTask } from '@/lib/task-kv';
 import { getOperatore } from '@/lib/operatori-kv';
+import { getCasa } from '@/lib/case-kv';
+import { sendMessage } from '@/lib/telegram';
+import { RUOLO_LABEL } from '@/lib/operatori-types';
 
 export const runtime = 'nodejs';
 
@@ -58,6 +61,7 @@ export async function POST(req: NextRequest, ctx: RouteContext) {
     }, { status: 400 });
   }
 
+  const wasAssignedToSameOp = task.operatoreId === operatoreId;
   task.operatoreId = operatoreId;
   task.assegnatoAt = Date.now();
   task.assegnatoBy = 'admin';
@@ -66,6 +70,28 @@ export async function POST(req: NextRequest, ctx: RouteContext) {
   task.updatedAt = Date.now();
 
   await saveTask(task);
+
+  // Notifica Telegram operatore (best-effort, solo se non era già assegnato a lui)
+  if (!wasAssignedToSameOp && op.chatIdTelegram) {
+    try {
+      const casa = await getCasa(task.casaId);
+      const ruolo = RUOLO_LABEL[task.ruoloRichiesto];
+      const lines = [
+        `🔔 Nuovo task assegnato`,
+        ``,
+        `${task.titolo}`,
+        casa ? `Casa: ${casa.nome}` : null,
+        `Data: ${task.data}${task.ora ? ` ore ${task.ora}` : ''}`,
+        `Ruolo: ${ruolo}`,
+        ``,
+        `Apri l'app: ${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/op/dashboard`,
+      ].filter(Boolean) as string[];
+      await sendMessage(op.chatIdTelegram, lines.join('\n'));
+    } catch (err) {
+      console.error('[admin/turnover/assign] notifica operatore fallita:', err);
+    }
+  }
+
   return NextResponse.json({ task });
 }
 

@@ -23,6 +23,8 @@ import {
   isValidWebhookRequest,
   parseStartCommand,
   sendMessage,
+  consumeAdminRegistrationToken,
+  setAdminChatIdInKv,
   type TelegramUpdate,
 } from '@/lib/telegram';
 import {
@@ -115,6 +117,19 @@ async function handleStart(
   token:     string,
   firstName: string | undefined,
 ): Promise<void> {
+  // 1) Prova come token admin (se valido, registra chatId admin)
+  const isAdminToken = await consumeAdminRegistrationToken(token);
+  if (isAdminToken) {
+    await setAdminChatIdInKv(chatId);
+    const greet = firstName ? `Ciao ${firstName}!` : 'Ciao!';
+    await sendMessage(chatId,
+      `${greet} ✅ Sei registrato come ADMIN.\n\n` +
+      `Da ora riceverai qui le notifiche di segnalazioni e "Lavoro terminato" dagli operatori.`,
+    );
+    return;
+  }
+
+  // 2) Prova come token operatore
   const operatoreId = await consumeRegistrationToken(token);
   if (!operatoreId) {
     await sendMessage(chatId,
