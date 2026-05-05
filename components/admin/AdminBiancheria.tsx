@@ -753,7 +753,7 @@ export default function AdminBiancheria() {
       <div className="d-flex justify-content-between align-items-center mb-3">
         <div>
           <h1 className="h4 fw-bold mb-0"><Icon name="moon-stars-fill" className="me-1" /> Biancheria</h1>
-          <p className="small text-muted mb-0">Calcolo per check-in nel periodo</p>
+          <p className="small text-muted mb-0">Vista check-in: calcolo per ogni arrivo</p>
         </div>
         <div className="d-flex gap-2 flex-wrap">
           <a href="/admin" className="btn btn-outline-secondary btn-sm">← Admin</a>
@@ -767,6 +767,31 @@ export default function AdminBiancheria() {
           </button>
           <button className="btn btn-outline-secondary btn-sm" onClick={logout}>Esci</button>
         </div>
+      </div>
+
+      {/* Toggle Check-in / Check-out */}
+      <div className="d-flex gap-1 mb-3">
+        <span className="small fw-semibold text-muted me-2 align-self-center">Vista:</span>
+        <button className="btn btn-sm"
+          style={{
+            border: '2px solid var(--color-primary)',
+            borderRadius: 999,
+            background: 'var(--color-primary-soft)',
+            color: 'var(--color-primary)',
+            fontWeight: 600,
+          }}>
+          Check-in
+        </button>
+        <a href="/admin/biancheria-checkout" className="btn btn-sm"
+          style={{
+            border: '1px solid var(--color-border)',
+            borderRadius: 999,
+            background: 'var(--color-bg)',
+            color: 'var(--color-text)',
+            textDecoration: 'none',
+          }}>
+          Check-out
+        </a>
       </div>
 
       {/* Filtro date */}

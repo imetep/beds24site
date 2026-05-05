@@ -113,8 +113,8 @@ export default function AdminPage() {
     {
       icon: 'moon-stars-fill',
       title: 'Biancheria',
-      desc: 'Calcolo automatico della biancheria per ogni check-in nel periodo. Configurabile da admin o ospite; totali aggregati per periodo.',
-      href: '/admin/biancheria',
+      desc: 'Calcolo automatico della biancheria. Vista check-out (default): per ogni partenza, prepara biancheria per il prossimo arrivo. Toggle per vista check-in classica.',
+      href: '/admin/biancheria-checkout',
       color: '#0284c7',
     },
     {
