@@ -10503,3 +10503,31 @@ body {
   margin-top: 2px;
   color: var(--color-primary);
 }
+
+/* ────────────────────────────────────────────────────────────────────────────
+   Modali admin operatori (riusati da AdminOperatori, AdminStrutture, AdminChecklist)
+   ──────────────────────────────────────────────────────────────────────────── */
+.modal-backdrop-custom {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px;
+  z-index: 1050;
+  overflow-y: auto;
+}
+.modal-card-custom {
+  background: var(--color-bg);
+  border-radius: 14px;
+  padding: 24px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+}
+.modal-card-custom--wide { max-width: 720px; }
+@media (max-width: 480px) {
+  .modal-backdrop-custom { padding: 16px 8px; }
+  .modal-card-custom { padding: 18px; }
+}
