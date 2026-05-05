@@ -138,6 +138,34 @@ export default function OpTurnover() {
             <Icon name="house-fill" className="me-1" /> {casa?.nome ?? task.titolo}
           </p>
           <p className="small text-muted mb-2">{task.titolo} · {task.data}</p>
+
+          {/* Orari ospite */}
+          {(task.oraPartenzaOspite || task.oraArrivoProssimo || task.prossimoArrivo) && (
+            <div className="bg-light rounded px-2 py-2 mb-2 small">
+              {task.oraPartenzaOspite && (
+                <p className="mb-1">
+                  <Icon name="clock" className="me-1" />
+                  <b>Check-out ospite uscente:</b> {task.oraPartenzaOspite}
+                </p>
+              )}
+              {task.prossimoArrivo && (
+                <p className="mb-0">
+                  <Icon name="person-fill" className="me-1" />
+                  <b>Prossimo ospite:</b> {task.prossimoArrivo.guestName} ·
+                  arriva il {task.prossimoArrivo.date}
+                  {task.oraArrivoProssimo && <> alle <b>{task.oraArrivoProssimo}</b></>}
+                  {' · '}{task.prossimoArrivo.numAdult} adult{task.prossimoArrivo.numAdult === 1 ? 'o' : 'i'}
+                  {task.prossimoArrivo.numChild > 0 && ` + ${task.prossimoArrivo.numChild} bambin${task.prossimoArrivo.numChild === 1 ? 'o' : 'i'}`}
+                </p>
+              )}
+              {!task.prossimoArrivo && task.oraPartenzaOspite && (
+                <p className="mb-0 text-muted fst-italic">
+                  Nessun arrivo programmato dopo questo check-out — la casa resta vuota.
+                </p>
+              )}
+            </div>
+          )}
+
           {casa?.indirizzo && (
             <p className="small mb-1"><Icon name="geo-alt-fill" className="me-1" /> {casa.indirizzo}</p>
           )}
@@ -159,6 +187,37 @@ export default function OpTurnover() {
           )}
         </div>
       </div>
+
+      {/* Biancheria da preparare (solo task pulizie) */}
+      {task.ruoloRichiesto === 'pulizie' && task.biancheriaProssimo && task.prossimoArrivo && (
+        <div className="card shadow-sm mb-3" style={{ background: '#f0f9ff', borderColor: '#bae6fd' }}>
+          <div className="card-body p-3">
+            <p className="small fw-bold text-uppercase mb-2"
+              style={{ color: '#0369a1', letterSpacing: '0.06em' }}>
+              <Icon name="moon-stars-fill" className="me-1" />
+              Biancheria da preparare per il prossimo ospite
+            </p>
+            {task.biancheriaProssimo.hasConfig ? (
+              <div className="d-flex gap-2 flex-wrap" style={{ color: '#0c4a6e' }}>
+                <BiancheriaChip n={task.biancheriaProssimo.lenzMatrimoniali} label="lenz. matrimoniali" />
+                <BiancheriaChip n={task.biancheriaProssimo.lenzSingoli}      label="lenz. singole" />
+                <BiancheriaChip n={task.biancheriaProssimo.federe}           label="federe" />
+                <BiancheriaChip n={task.biancheriaProssimo.persone}          label="asciugamani viso" />
+                <BiancheriaChip n={task.biancheriaProssimo.persone}          label="asciugamani bidet" />
+                <BiancheriaChip n={task.biancheriaProssimo.persone}          label="teli doccia" />
+                <BiancheriaChip n={task.biancheriaProssimo.scendibagno ?? 1} label="scendibagno" />
+                {task.biancheriaProssimo.culle > 0 && (
+                  <BiancheriaChip n={task.biancheriaProssimo.culle} label="culle" />
+                )}
+              </div>
+            ) : (
+              <p className="small text-warning mb-0">
+                Configurazione letti non ancora censita per questa casa — chiedi all&apos;admin quanti set servono.
+              </p>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Progress + stato */}
       <div className="card shadow-sm mb-3">
@@ -437,6 +496,18 @@ function SegnalazioneModal({ taskId, voce, onClose, onCreated }: {
         </div>
       </div>
     </div>
+  );
+}
+
+// ─── Biancheria chip (visualizzazione singolo articolo) ────────────────────
+
+function BiancheriaChip({ n, label }: { n: number; label: string }) {
+  return (
+    <span className="d-inline-flex align-items-center gap-1 bg-white rounded px-2 py-1"
+      style={{ border: '1px solid #bae6fd', minWidth: 100 }}>
+      <span className="fw-bold fs-5" style={{ color: '#0369a1' }}>{n}</span>
+      <span className="small text-muted">{label}</span>
+    </span>
   );
 }
 
