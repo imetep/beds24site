@@ -51,6 +51,27 @@ export interface Task {
   beds24BookId?:           number;
   beds24BookIdProssimo?:   number;  // turnover: prenotazione successiva (per biancheria)
 
+  // Dati ospite della partenza/arrivo collegato — utili in checklist
+  oraPartenzaOspite?:      string;  // HH:mm dal Beds24 booking corrente (turnover)
+  oraArrivoProssimo?:      string;  // HH:mm prossimo ospite (turnover pulizie)
+  prossimoArrivo?:         {
+    date:        string;      // YYYY-MM-DD
+    bookId:      number;
+    guestName:   string;
+    numAdult:    number;
+    numChild:    number;
+  };
+  biancheriaProssimo?:     {       // calcolata al sync, snapshot per task pulizie
+    lenzMatrimoniali: number;
+    lenzSingoli:      number;
+    federe:           number;
+    persone:          number;
+    scendibagno?:     number;
+    culle:            number;
+    source:           'guest' | 'admin' | 'default';
+    hasConfig:        boolean;
+  };
+
   // Titolo/descrizione (auto-compilati per turnover/accoglienza, manuali per adhoc)
   titolo:           string;
   descrizione?:     string;
