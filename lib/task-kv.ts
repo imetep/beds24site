@@ -52,14 +52,18 @@ const TASKS_BY_OPERATOR  = 'tasks:by-operator:';
 const TASKS_BY_CASA      = 'tasks:by-casa:';
 const TASKS_UNASSIGNED   = 'tasks:non-assegnati';
 const TASKS_OPEN         = 'tasks:open';
-const TURNOVER_BY_BOOK   = 'turnover-by-book:';
-const ACCOGLIENZA_BY_BOOK = 'accoglienza-by-book:';
+const TURNOVER_BY_BOOK   = 'turnover-by-book:';      // schema: turnover-by-book:{ruolo}:{bookId}
+const ACCOGLIENZA_BY_BOOK = 'accoglienza-by-book:';  // schema: accoglienza-by-book:{bookId}
+
+import type { Ruolo } from './operatori-types';
 
 function taskKey(id: string): string             { return `${TASK_PREFIX}${id}`; }
 function byDataKey(date: string): string         { return `${TASKS_BY_DATA}${date}`; }
 function byOperatorKey(opId: string): string     { return `${TASKS_BY_OPERATOR}${opId}`; }
 function byCasaKey(casaId: string): string       { return `${TASKS_BY_CASA}${casaId}`; }
-function turnoverByBookKey(bookId: number): string    { return `${TURNOVER_BY_BOOK}${bookId}`; }
+function turnoverByBookKey(ruolo: Ruolo, bookId: number): string {
+  return `${TURNOVER_BY_BOOK}${ruolo}:${bookId}`;
+}
 function accoglienzaByBookKey(bookId: number): string { return `${ACCOGLIENZA_BY_BOOK}${bookId}`; }
 
 // ─── CRUD ────────────────────────────────────────────────────────────────────
@@ -109,9 +113,9 @@ export async function saveTask(task: Task): Promise<void> {
   if (isTaskAperto(task)) pipe.sadd(TASKS_OPEN, task.id);
   else                    pipe.srem(TASKS_OPEN, task.id);
 
-  // Indici univoci per beds24BookId (turnover/accoglienza)
+  // Indici univoci per beds24BookId (turnover per ruolo + accoglienza)
   if (task.beds24BookId) {
-    if (task.tipo === 'turnover')        pipe.set(turnoverByBookKey(task.beds24BookId), task.id);
+    if (task.tipo === 'turnover')        pipe.set(turnoverByBookKey(task.ruoloRichiesto, task.beds24BookId), task.id);
     else if (task.tipo === 'accoglienza') pipe.set(accoglienzaByBookKey(task.beds24BookId), task.id);
   }
 
@@ -133,7 +137,7 @@ export async function deleteTask(id: string): Promise<void> {
   pipe.srem(TASKS_UNASSIGNED, id);
   pipe.srem(TASKS_OPEN, id);
   if (t.beds24BookId) {
-    if (t.tipo === 'turnover')         pipe.del(turnoverByBookKey(t.beds24BookId));
+    if (t.tipo === 'turnover')         pipe.del(turnoverByBookKey(t.ruoloRichiesto, t.beds24BookId));
     else if (t.tipo === 'accoglienza') pipe.del(accoglienzaByBookKey(t.beds24BookId));
   }
   await pipe.exec();
@@ -141,9 +145,12 @@ export async function deleteTask(id: string): Promise<void> {
 
 // ─── Lookup per beds24BookId ────────────────────────────────────────────────
 
-/** Restituisce il task turnover associato a una prenotazione Beds24 (idempotenza sync). */
-export async function getTurnoverTaskByBookId(bookId: number): Promise<Task | null> {
-  const id = await client().get<string>(turnoverByBookKey(bookId));
+/**
+ * Restituisce il task turnover di un ruolo specifico (pulizie | manutentore)
+ * associato a una prenotazione Beds24. Usato per idempotenza nel sync.
+ */
+export async function getTurnoverTaskByBookId(ruolo: Ruolo, bookId: number): Promise<Task | null> {
+  const id = await client().get<string>(turnoverByBookKey(ruolo, bookId));
   if (!id) return null;
   return getTask(id);
 }

@@ -64,8 +64,9 @@ async function fetchBookings(token: string, fromDate: string, toDate: string): P
 
 // ─── Build checklist istanza dallo snapshot master ──────────────────────────
 
-function buildChecklistIstanzaPulizie(
-  master: NonNullable<Awaited<ReturnType<typeof getChecklistMaster>>>,
+function buildChecklistIstanza(
+  ruolo:        'pulizie' | 'manutentore',
+  master:       NonNullable<Awaited<ReturnType<typeof getChecklistMaster>>>,
   vociFiltrate: Set<string>,
 ): ChecklistIstanza {
   const snapshots: VoceSnapshot[] = [];
@@ -85,7 +86,7 @@ function buildChecklistIstanzaPulizie(
     });
   }
   return {
-    ruolo:     'pulizie',
+    ruolo,
     snapshots,
     stati:     snapshots.map(s => ({ voceId: s.id, spuntata: false })),
   };
@@ -94,12 +95,13 @@ function buildChecklistIstanzaPulizie(
 // ─── Sync ────────────────────────────────────────────────────────────────────
 
 export interface SyncResult {
-  creati:           number;
-  esistenti:        number;
+  creati:           number;       // numero TOTALE di task creati (somma pulizie + manutentore)
+  esistenti:        number;       // numero TOTALE di task già presenti
   senzaCasa:        number;       // partenze su roomId non in anagrafica
-  senzaMaster:      number;       // pulizie master non caricata
+  senzaMaster:      number;       // master pulizie non caricata (non si genera nemmeno il pulizie)
+  senzaMasterMan:   number;       // master manutentore non caricata (skip solo manutentore)
   caseArchiviate:   number;
-  totaleProcessate: number;
+  totaleProcessate: number;       // numero di partenze Beds24 processate
   bookingDettagli?: Array<{ bookId: number; roomId: number; departure: string; outcome: string }>;
 }
 
@@ -121,9 +123,12 @@ export async function syncTurnover(
   const token = await getToken();
   const bookings = await fetchBookings(token, today, maxDate);
 
-  // Pre-cache: master pulizie + tutte le case (1 query)
-  const masterPulizie = await getChecklistMaster('pulizie');
-  const allCase = await listCase(true /* include archiviate per check più chiaro */);
+  // Pre-cache: master pulizie + manutentore + tutte le case (1 query)
+  const [masterPulizie, masterManutentore, allCase] = await Promise.all([
+    getChecklistMaster('pulizie'),
+    getChecklistMaster('manutentore'),
+    listCase(true),
+  ]);
   const caseByRoomId = new Map<number, typeof allCase[number]>();
   for (const c of allCase) caseByRoomId.set(c.beds24RoomId, c);
 
@@ -132,6 +137,7 @@ export async function syncTurnover(
     esistenti:        0,
     senzaCasa:        0,
     senzaMaster:      0,
+    senzaMasterMan:   0,
     caseArchiviate:   0,
     totaleProcessate: bookings.length,
   };
@@ -150,51 +156,76 @@ export async function syncTurnover(
       continue;
     }
 
-    // Idempotenza
-    const existing = await getTurnoverTaskByBookId(b.id);
-    if (existing) {
-      result.esistenti++;
-      if (includeDetails) dettagli.push({ bookId: b.id, roomId: b.roomId, departure: b.departure, outcome: 'esistente' });
-      continue;
-    }
-
-    // Master pulizie disponibile?
-    if (!masterPulizie) {
-      result.senzaMaster++;
-      if (includeDetails) dettagli.push({ bookId: b.id, roomId: b.roomId, departure: b.departure, outcome: 'master-pulizie-mancante' });
-      continue;
-    }
-
-    // Voci N/A per questa casa+ruolo pulizie
-    const vociFiltrate = new Set<string>();
-    for (const voce of masterPulizie.voci) {
-      if (isVoceNonApplicabile(casa, 'pulizie', voce.id)) vociFiltrate.add(voce.id);
-    }
-
-    const checklist = buildChecklistIstanzaPulizie(masterPulizie, vociFiltrate);
-
     const ospite = `${b.firstName} ${b.lastName}`.trim();
     const now = Date.now();
-    const task: Task = {
-      id:               crypto.randomUUID(),
-      tipo:             'turnover',
-      ruoloRichiesto:   'pulizie',
-      casaId:           casa.id,
-      data:             b.departure,
-      beds24BookId:     b.id,
-      titolo:           `Turnover ${casa.nome} (${b.departure})`,
-      descrizione:      `Partenza prenotazione #${b.id}${ospite ? ` — ${ospite}` : ''}`,
-      stato:            'da-assegnare',
-      checklist,
-      segnalazioniIds:  [],
-      createdAt:        now,
-      updatedAt:        now,
-      createdBy:        'system',
-    };
 
-    await saveTask(task);
-    result.creati++;
-    if (includeDetails) dettagli.push({ bookId: b.id, roomId: b.roomId, departure: b.departure, outcome: 'creato' });
+    // ── Task PULIZIE ────────────────────────────────────────────────────────
+    const existingPulizie = await getTurnoverTaskByBookId('pulizie', b.id);
+    if (existingPulizie) {
+      result.esistenti++;
+      if (includeDetails) dettagli.push({ bookId: b.id, roomId: b.roomId, departure: b.departure, outcome: 'pulizie-esistente' });
+    } else if (!masterPulizie) {
+      result.senzaMaster++;
+      if (includeDetails) dettagli.push({ bookId: b.id, roomId: b.roomId, departure: b.departure, outcome: 'master-pulizie-mancante' });
+    } else {
+      const vociFiltratePul = new Set<string>();
+      for (const voce of masterPulizie.voci) {
+        if (isVoceNonApplicabile(casa, 'pulizie', voce.id)) vociFiltratePul.add(voce.id);
+      }
+      const taskPul: Task = {
+        id:               crypto.randomUUID(),
+        tipo:             'turnover',
+        ruoloRichiesto:   'pulizie',
+        casaId:           casa.id,
+        data:             b.departure,
+        beds24BookId:     b.id,
+        titolo:           `Pulizia turnover ${casa.nome} (${b.departure})`,
+        descrizione:      `Partenza prenotazione #${b.id}${ospite ? ` — ${ospite}` : ''}`,
+        stato:            'da-assegnare',
+        checklist:        buildChecklistIstanza('pulizie', masterPulizie, vociFiltratePul),
+        segnalazioniIds:  [],
+        createdAt:        now,
+        updatedAt:        now,
+        createdBy:        'system',
+      };
+      await saveTask(taskPul);
+      result.creati++;
+      if (includeDetails) dettagli.push({ bookId: b.id, roomId: b.roomId, departure: b.departure, outcome: 'pulizie-creato' });
+    }
+
+    // ── Task MANUTENTORE ───────────────────────────────────────────────────
+    const existingMan = await getTurnoverTaskByBookId('manutentore', b.id);
+    if (existingMan) {
+      result.esistenti++;
+      if (includeDetails) dettagli.push({ bookId: b.id, roomId: b.roomId, departure: b.departure, outcome: 'manutentore-esistente' });
+    } else if (!masterManutentore) {
+      result.senzaMasterMan++;
+      if (includeDetails) dettagli.push({ bookId: b.id, roomId: b.roomId, departure: b.departure, outcome: 'master-manutentore-mancante' });
+    } else {
+      const vociFiltrateMan = new Set<string>();
+      for (const voce of masterManutentore.voci) {
+        if (isVoceNonApplicabile(casa, 'manutentore', voce.id)) vociFiltrateMan.add(voce.id);
+      }
+      const taskMan: Task = {
+        id:               crypto.randomUUID(),
+        tipo:             'turnover',
+        ruoloRichiesto:   'manutentore',
+        casaId:           casa.id,
+        data:             b.departure,
+        beds24BookId:     b.id,
+        titolo:           `Controllo manutentore ${casa.nome} (${b.departure})`,
+        descrizione:      `Partenza prenotazione #${b.id}${ospite ? ` — ${ospite}` : ''} — controllo tecnico routine`,
+        stato:            'da-assegnare',
+        checklist:        buildChecklistIstanza('manutentore', masterManutentore, vociFiltrateMan),
+        segnalazioniIds:  [],
+        createdAt:        now,
+        updatedAt:        now,
+        createdBy:        'system',
+      };
+      await saveTask(taskMan);
+      result.creati++;
+      if (includeDetails) dettagli.push({ bookId: b.id, roomId: b.roomId, departure: b.departure, outcome: 'manutentore-creato' });
+    }
   }
 
   if (includeDetails) result.bookingDettagli = dettagli;
