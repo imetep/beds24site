@@ -230,18 +230,19 @@ export async function listTasks(filter: TaskFilter = {}): Promise<Task[]> {
   } else if (filter.casaId) {
     candidates = await listTasksByCasa(filter.casaId);
   } else if (filter.dataFrom && filter.dataTo) {
-    // Iter sui giorni del range. Per range stretti (1-2 settimane) è efficiente.
+    // Range date: parallelizzo le smembers per giorno + mget unica su tutti gli id.
+    // Senza parallelizzazione un range di 14 giorni costa ~30 round-trip sequenziali
+    // (smembers + mget per ogni giorno) — molto lento su Redis remoto.
     const dates = enumerateDates(filter.dataFrom, filter.dataTo);
+    const c = client();
+    const idArrays = await Promise.all(
+      dates.map(d => c.smembers(byDataKey(d))),
+    );
     const seen = new Set<string>();
-    candidates = [];
-    for (const d of dates) {
-      const tasks = await listTasksByDate(d);
-      for (const t of tasks) {
-        if (seen.has(t.id)) continue;
-        seen.add(t.id);
-        candidates.push(t);
-      }
+    for (const arr of idArrays) {
+      for (const id of arr) seen.add(id);
     }
+    candidates = await getTasksByIds(Array.from(seen));
   } else {
     candidates = await listOpenTasks();
   }
