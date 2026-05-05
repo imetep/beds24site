@@ -26,7 +26,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useWizardStore } from '@/store/wizard-store';
 import type { SelectedExtra } from '@/store/wizard-store';
-import { PROPERTIES, getPropertyForRoom, calculateTouristTax } from '@/config/properties';
+import { PROPERTIES, OFFER_INFO, getEffectiveOfferIdForDisplay, getPropertyForRoom, calculateTouristTax } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
 import {
   findOffer, findPropertyByRoom, isFlexBookingType,
@@ -141,8 +141,20 @@ export default function WizardStep2({ locale = 'it' }: Props) {
 
   const offerConfig = findOffer(propertyConfig, selectedRoomId, selectedOfferId);
   const propertyCfg = findPropertyByRoom(propertyConfig, selectedRoomId);
-  const isFlexOffer = isFlexBookingType(offerConfig?.bookingType);
-  const amountToCharge = computeDepositAmount(total, offerConfig, propertyCfg);
+  const baseIsFlexOffer = isFlexBookingType(offerConfig?.bookingType);
+  const baseAmountToCharge = computeDepositAmount(total, offerConfig, propertyCfg);
+
+  // Override "finestra flex scaduta" — mantiene allineamento con il display.
+  // Se il cliente legge "Non Rimborsabile" (effectiveOfferId === 1 su una flex
+  // di base), il flusso pagamento deve davvero processare l'intero importo
+  // come se fosse Non Rimborsabile: addebito immediato 100%, niente vault.
+  const isFlexExpired = !!(
+    offer
+    && OFFER_INFO[offer.offerId as number]?.cancellationDays
+    && getEffectiveOfferIdForDisplay(offer.offerId, checkIn) === 1
+  );
+  const isFlexOffer = baseIsFlexOffer && !isFlexExpired;
+  const amountToCharge = isFlexExpired ? total : baseAmountToCharge;
 
   // Validazione form
   const formValid = !!(
