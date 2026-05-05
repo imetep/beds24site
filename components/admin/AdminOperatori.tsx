@@ -300,7 +300,7 @@ function TelegramLinkModal({ op, onClose }: {
 
 function OperatoreCard({ op, onUpdate, onDelete, onResetPwd, onTelegram }: {
   op:         OperatoreView;
-  onUpdate:   (changed: Partial<OperatoreView>) => void;
+  onUpdate:   (updated: OperatoreView) => void;
   onDelete:   () => void;
   onResetPwd: () => void;
   onTelegram: () => void;

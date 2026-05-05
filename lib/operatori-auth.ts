@@ -85,13 +85,13 @@ async function pbkdf2(
   const enc = new TextEncoder();
   const key = await crypto.subtle.importKey(
     'raw',
-    enc.encode(plaintext),
+    enc.encode(plaintext) as BufferSource,
     { name: 'PBKDF2' },
     false,
     ['deriveBits'],
   );
   const bits = await crypto.subtle.deriveBits(
-    { name: 'PBKDF2', salt, iterations, hash: PBKDF2_HASH },
+    { name: 'PBKDF2', salt: salt as BufferSource, iterations, hash: PBKDF2_HASH },
     key,
     PBKDF2_KEY_BYTES * 8,
   );
