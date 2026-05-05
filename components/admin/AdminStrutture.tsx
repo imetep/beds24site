@@ -517,7 +517,7 @@ export default function AdminStrutture() {
           <p className="small text-muted mb-0">{case_.length} case</p>
         </div>
         <div className="d-flex gap-2 flex-wrap">
-          <a href="/admin" className="btn btn-outline-secondary btn-sm">← Admin</a>
+          <a href="/admin/operativita" className="btn btn-outline-secondary btn-sm">← Area operatori</a>
           <button className="btn btn-outline-secondary btn-sm" onClick={load} disabled={loading}>
             <Icon name="arrow-clockwise" /> Aggiorna
           </button>

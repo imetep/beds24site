@@ -244,7 +244,7 @@ export default function AdminSmistamento() {
           <p className="small text-muted mb-0">{tasks.length} task nel periodo</p>
         </div>
         <div className="d-flex gap-2 flex-wrap">
-          <a href="/admin" className="btn btn-outline-secondary btn-sm">← Admin</a>
+          <a href="/admin/operativita" className="btn btn-outline-secondary btn-sm">← Area operatori</a>
           <button className="btn btn-outline-primary btn-sm" onClick={syncTurnover} disabled={!!syncing}>
             <Icon name="arrow-clockwise" /> {syncing === 'turnover' ? 'Sync…' : 'Sync turnover'}
           </button>
