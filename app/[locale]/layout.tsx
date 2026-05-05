@@ -4,7 +4,6 @@ import { locales, isValidLocale, type Locale } from '@/config/i18n';
 import { CIN, CIR } from '@/config/properties';
 import { getTranslations } from '@/lib/i18n';
 import HeaderClient from '@/components/HeaderClient';
-import { Icon } from '@/components/ui/Icon';
 
 interface Props {
   children: React.ReactNode;
@@ -65,29 +64,8 @@ export default async function LocaleLayout({ children, params }: Props) {
             <span className="site-footer__year">© {new Date().getFullYear()}</span>
           </div>
 
-          {/* CTA contatti: bottoni grandi, click-to-action */}
-          <div className="site-footer__contact">
-            <a
-              href={`https://wa.me/${t.footer.whatsapp.replace(/\D/g,'')}`}
-              target="_blank"
-              rel="noreferrer"
-              className="site-footer__cta site-footer__cta--whatsapp"
-              aria-label={`WhatsApp ${t.footer.whatsapp}`}
-            >
-              <Icon name="whatsapp" size={18} />
-              <span>WhatsApp</span>
-            </a>
-            <a
-              href={`tel:${t.footer.phone}`}
-              className="site-footer__cta"
-              aria-label={`Telefono ${t.footer.phone}`}
-            >
-              <Icon name="telephone-fill" size={18} />
-              <span>{t.footer.phone}</span>
-            </a>
-          </div>
-
-          {/* Link utili: inline su desktop, stack con frecce su mobile */}
+          {/* Link utili: inline su desktop, stack con frecce su mobile.
+              WhatsApp + telefono volutamente fuori dal footer (vedi /contatti). */}
           <nav className="site-footer__links" aria-label="Footer">
             {[
               { href: `/${locale}/contatti`,            label: t.footer.contact },
