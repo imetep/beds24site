@@ -185,13 +185,116 @@ function casaToDraft(c: Casa): DraftCasa {
   };
 }
 
+// ─── StoricoTab ──────────────────────────────────────────────────────────────
+
+interface StoricoTask {
+  id:               string;
+  tipo:             string;
+  ruoloRichiesto:   Ruolo;
+  titolo:           string;
+  data:             string;
+  stato:            string;
+  completatoAt:     number | null;
+  annullatoAt:      number | null;
+  operatore:        { id: string; displayName: string } | null;
+  segnalazioniIds:  string[];
+  noteOperatore:    string | null;
+  noteAdmin:        string | null;
+}
+
+function StoricoTab({ casaId }: { casaId: string }) {
+  const [tasks, setTasks] = useState<StoricoTask[]>([]);
+  const [totale, setTotale] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState('');
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      setLoading(true); setErr('');
+      try {
+        const res = await fetch(`/api/admin/strutture/${casaId}/storico`);
+        if (!res.ok) { setErr('Errore caricamento'); return; }
+        const data = await res.json();
+        if (!cancelled) {
+          setTasks(data.tasks ?? []);
+          setTotale(data.totale ?? 0);
+        }
+      } finally { if (!cancelled) setLoading(false); }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, [casaId]);
+
+  if (loading) return <p className="small text-muted my-2">Caricamento storico…</p>;
+  if (err)     return <p className="small text-danger my-2">{err}</p>;
+  if (tasks.length === 0) {
+    return (
+      <p className="small text-muted my-3">
+        Nessun task chiuso per questa casa. Lo storico si popola con i task completati o annullati.
+      </p>
+    );
+  }
+
+  return (
+    <div>
+      <p className="small text-muted mb-3">
+        Ultimi {tasks.length} task chiusi (totale {totale}). Ordinati per data più recente.
+      </p>
+      {tasks.map(t => {
+        const fineAt = t.completatoAt ?? t.annullatoAt;
+        const stato = t.stato === 'completato' ? 'Completato' : 'Annullato';
+        const statoColor = t.stato === 'completato' ? '#16a34a' : '#dc2626';
+        return (
+          <div key={t.id} className="border-bottom py-2 small">
+            <div className="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+              <div className="flex-fill">
+                <div className="d-flex flex-wrap gap-2 align-items-center mb-1">
+                  <span className="badge text-uppercase"
+                    style={{ background: 'var(--color-bg-muted)', color: 'var(--color-text-subtle)', fontSize: 10 }}>
+                    {t.tipo}
+                  </span>
+                  <span className="badge text-uppercase"
+                    style={{ background: 'var(--color-primary-soft)', color: 'var(--color-primary)', fontSize: 10 }}>
+                    {RUOLO_LABEL[t.ruoloRichiesto]}
+                  </span>
+                  <span className="badge"
+                    style={{ background: statoColor, color: '#fff' }}>
+                    {stato}
+                  </span>
+                </div>
+                <p className="fw-semibold mb-1">{t.titolo}</p>
+                <p className="text-muted mb-0" style={{ fontSize: 12 }}>
+                  Data lavoro: {t.data}
+                  {fineAt && <> · Chiuso il {new Date(fineAt).toLocaleDateString('it-IT')}</>}
+                  {t.operatore && <> · Operatore: <b>{t.operatore.displayName}</b></>}
+                  {t.segnalazioniIds.length > 0 && (
+                    <> · {t.segnalazioniIds.length} segnalazion{t.segnalazioniIds.length === 1 ? 'e' : 'i'}</>
+                  )}
+                </p>
+                {(t.noteOperatore || t.noteAdmin) && (
+                  <p className="text-muted mt-1 mb-0 fst-italic" style={{ fontSize: 12 }}>
+                    {t.noteAdmin && <span><b>Admin:</b> {t.noteAdmin}</span>}
+                    {t.noteAdmin && t.noteOperatore && <br />}
+                    {t.noteOperatore && <span><b>Op:</b> {t.noteOperatore}</span>}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function CasaModal({ casa, onClose, onSaved }: {
   casa:    Casa | null;     // null = nuova
   onClose: () => void;
   onSaved: (c: Casa) => void;
 }) {
   const [draft, setDraft] = useState<DraftCasa>(casa ? casaToDraft(casa) : emptyDraft());
-  const [tab, setTab] = useState<'base' | 'foto' | 'dotazioni' | 'voci'>('base');
+  const [tab, setTab] = useState<'base' | 'foto' | 'dotazioni' | 'voci' | 'storico'>('base');
   const [vociRuolo, setVociRuolo] = useState<Ruolo>('pulizie');
   const [busy, setBusy] = useState(false);
   const [err, setErr]   = useState('');
@@ -245,11 +348,12 @@ function CasaModal({ casa, onClose, onSaved }: {
 
         <ul className="nav nav-tabs mb-3">
           {([
-            { k: 'base',      l: 'Base' },
-            { k: 'foto',      l: `Foto (${draft.fotoUrls.length})` },
-            { k: 'dotazioni', l: `Dotazioni (${draft.dotazioni.length})` },
-            { k: 'voci',      l: `Voci N/A (${draft.vociNonApplicabili.length})` },
-          ] as const).map(t => (
+            { k: 'base',      l: 'Base',           always: true },
+            { k: 'foto',      l: `Foto (${draft.fotoUrls.length})`,           always: true },
+            { k: 'dotazioni', l: `Dotazioni (${draft.dotazioni.length})`,     always: true },
+            { k: 'voci',      l: `Voci N/A (${draft.vociNonApplicabili.length})`, always: true },
+            { k: 'storico',   l: 'Storico',        always: false },  // solo case esistenti
+          ] as const).filter(t => t.always || casa).map(t => (
             <li key={t.k} className="nav-item">
               <button className={`nav-link ${tab === t.k ? 'active' : ''}`}
                 onClick={() => setTab(t.k)}>
@@ -382,6 +486,9 @@ function CasaModal({ casa, onClose, onSaved }: {
               onChange={vociNonApplicabili => setDraft({ ...draft, vociNonApplicabili })} />
           </div>
         )}
+
+        {/* TAB Storico ------------------------------------------------- */}
+        {tab === 'storico' && casa && <StoricoTab casaId={casa.id} />}
 
         {err && <p className="small text-danger mb-2 mt-2">{err}</p>}
 
