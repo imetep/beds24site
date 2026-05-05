@@ -127,6 +127,7 @@ export default function AdminSmistamento() {
   const [error,    setError]    = useState('');
   const [syncing,  setSyncing]  = useState<'turnover' | 'accoglienza' | null>(null);
   const [syncMsg,  setSyncMsg]  = useState<string | null>(null);
+  const [editBiancheria, setEditBiancheria] = useState<TaskEnriched | null>(null);
 
   useEffect(() => {
     fetch('/api/admin/checkin')
@@ -378,6 +379,15 @@ export default function AdminSmistamento() {
                         </p>
                       )}
 
+                      {/* Modifica biancheria — solo task turnover pulizie */}
+                      {t.tipo === 'turnover' && t.ruoloRichiesto === 'pulizie' && t.biancheriaProssimo && (
+                        <button className="btn btn-outline-primary btn-sm"
+                          onClick={() => setEditBiancheria(t)}>
+                          <Icon name="moon-stars-fill" className="me-1" />
+                          Biancheria ({t.biancheriaProssimo.lenzMatrimoniali + t.biancheriaProssimo.lenzSingoli} set)
+                        </button>
+                      )}
+
                       {t.stato === 'lavoro-terminato' && (
                         <button className="btn btn-success btn-sm fw-bold"
                           onClick={() => casaPronta(t.id, t.tipo)}>
@@ -393,6 +403,112 @@ export default function AdminSmistamento() {
           })}
         </div>
       ))}
+
+      {editBiancheria && (
+        <BiancheriaModal task={editBiancheria}
+          onClose={() => setEditBiancheria(null)}
+          onSaved={() => { setEditBiancheria(null); load(); }} />
+      )}
+    </div>
+  );
+}
+
+// ─── Modale modifica biancheria ─────────────────────────────────────────────
+
+function BiancheriaModal({ task, onClose, onSaved }: {
+  task:    TaskEnriched;
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+  const initial = task.biancheriaProssimo;
+  const [draft, setDraft] = useState({
+    lenzMatrimoniali: initial?.lenzMatrimoniali ?? 0,
+    lenzSingoli:      initial?.lenzSingoli ?? 0,
+    federe:           initial?.federe ?? 0,
+    persone:          initial?.persone ?? 0,
+    scendibagno:      initial?.scendibagno ?? 1,
+    culle:            initial?.culle ?? 0,
+  });
+  const [busy, setBusy] = useState(false);
+  const [err,  setErr]  = useState('');
+
+  function num(value: string): number {
+    const n = parseInt(value, 10);
+    return Number.isFinite(n) && n >= 0 ? n : 0;
+  }
+
+  async function submit() {
+    if (busy) return;
+    setBusy(true); setErr('');
+    try {
+      const res = await fetch(`/api/admin/turnover/${task.id}/biancheria`, {
+        method:  'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(draft),
+      });
+      if (!res.ok) {
+        const d = await res.json();
+        setErr(d?.error ?? 'Errore'); return;
+      }
+      onSaved();
+    } finally { setBusy(false); }
+  }
+
+  const fields: Array<{ key: keyof typeof draft; label: string }> = [
+    { key: 'lenzMatrimoniali', label: 'Lenzuola matrimoniali' },
+    { key: 'lenzSingoli',      label: 'Lenzuola singole' },
+    { key: 'federe',           label: 'Federe' },
+    { key: 'persone',          label: 'Asciugamani (viso/bidet/telo doccia, per persona)' },
+    { key: 'scendibagno',      label: 'Scendibagno' },
+    { key: 'culle',            label: 'Culle' },
+  ];
+
+  return (
+    <div className="modal-backdrop-custom" onClick={onClose}>
+      <div className="modal-card-custom" onClick={e => e.stopPropagation()}>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <p className="fs-5 fw-bold mb-0">Modifica biancheria</p>
+          <button className="btn btn-link p-0 text-secondary" onClick={onClose}>
+            <Icon name="x-lg" />
+          </button>
+        </div>
+
+        <div className="alert alert-secondary py-2 small mb-3">
+          <p className="fw-bold mb-1">{task.casa?.nome}</p>
+          {task.prossimoArrivo ? (
+            <p className="mb-0 small">
+              Prossimo: <b>{task.prossimoArrivo.guestName}</b> il {task.prossimoArrivo.date}
+              {' · '}{task.prossimoArrivo.numAdult + task.prossimoArrivo.numChild} ospiti
+            </p>
+          ) : (
+            <p className="mb-0 small text-muted">Nessun prossimo arrivo programmato.</p>
+          )}
+        </div>
+
+        {fields.map(f => (
+          <div key={f.key} className="d-flex align-items-center justify-content-between gap-2 mb-2">
+            <label className="small text-muted flex-fill">{f.label}</label>
+            <input type="number" min={0}
+              className="form-control form-control-sm text-end"
+              style={{ maxWidth: 90 }}
+              value={draft[f.key]}
+              onChange={e => setDraft({ ...draft, [f.key]: num(e.target.value) })} />
+          </div>
+        ))}
+
+        <p className="small text-muted fst-italic mt-2 mb-0">
+          I valori salvati sovrascrivono il calcolo automatico. La pulizia li vedrà nel suo task.
+        </p>
+
+        {err && <p className="small text-danger mt-2 mb-0">{err}</p>}
+
+        <div className="d-flex gap-2 justify-content-end mt-3 pt-3 border-top">
+          <button className="btn btn-outline-secondary" onClick={onClose} disabled={busy}>Annulla</button>
+          <button className="btn btn-success fw-bold" onClick={submit} disabled={busy}>
+            {busy ? 'Salvataggio…' : 'Salva'}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
