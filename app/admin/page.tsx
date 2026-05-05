@@ -132,6 +132,13 @@ export default function AdminPage() {
       color: '#0891b2',
     },
     {
+      icon: 'exclamation-triangle-fill',
+      title: 'Segnalazioni',
+      desc: 'Inbox delle segnalazioni inviate dagli operatori (problemi, danni, dotazioni mancanti). Triage manuale: crea task manutenzione, risolvi direttamente o ignora.',
+      href: '/admin/segnalazioni',
+      color: '#dc2626',
+    },
+    {
       icon: 'calendar-x-fill',
       title: 'Buchi',
       desc: 'Finestre libere inferiori a 7 notti nei prossimi 12 mesi. Filtra per mese e ordina per numero di notti.',
