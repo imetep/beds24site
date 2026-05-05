@@ -15,9 +15,9 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { Icon } from '@/components/ui/Icon';
-import type { Casa } from '@/lib/case-types';
-import type { Task } from '@/lib/task-types';
+import type { Task, TipoTask } from '@/lib/task-types';
 import type { Ruolo } from '@/lib/operatori-types';
+import { RUOLO_LABEL } from '@/lib/operatori-types';
 
 interface OperatoreLite {
   id:          string;
@@ -40,10 +40,17 @@ interface SyncResult {
   creati:           number;
   esistenti:        number;
   senzaCasa:        number;
-  senzaMaster:      number;
+  senzaMaster?:     number;
   caseArchiviate:   number;
   totaleProcessate: number;
+  hasMaster?:       boolean;
 }
+
+const TIPO_LABEL: Record<'turnover' | 'accoglienza' | 'manutenzione', string> = {
+  turnover:     'Turnover',
+  accoglienza:  'Accoglienze',
+  manutenzione: 'Manutenzioni',
+};
 
 function fmtData(ymd: string): string {
   const d = new Date(ymd + 'T12:00:00');
@@ -112,9 +119,10 @@ export default function AdminSmistamento() {
   const [operatori, setOperatori] = useState<OperatoreLite[]>([]);
   const [from,     setFrom]     = useState(todayYMD());
   const [to,       setTo]       = useState(plusDaysYMD(14));
+  const [tipoFiltro, setTipoFiltro] = useState<'turnover' | 'accoglienza' | 'manutenzione' | 'tutti'>('turnover');
   const [loading,  setLoading]  = useState(false);
   const [error,    setError]    = useState('');
-  const [syncing,  setSyncing]  = useState(false);
+  const [syncing,  setSyncing]  = useState<'turnover' | 'accoglienza' | null>(null);
   const [syncMsg,  setSyncMsg]  = useState<string | null>(null);
 
   useEffect(() => {
@@ -126,8 +134,10 @@ export default function AdminSmistamento() {
   const load = useCallback(async () => {
     setLoading(true); setError('');
     try {
+      const params = new URLSearchParams({ from, to });
+      if (tipoFiltro !== 'tutti') params.set('tipo', tipoFiltro);
       const [tasksRes, opsRes] = await Promise.all([
-        fetch(`/api/admin/turnover?from=${from}&to=${to}`),
+        fetch(`/api/admin/tasks?${params}`),
         fetch('/api/admin/operatori'),
       ]);
       if (!tasksRes.ok) { setError('Errore caricamento task'); return; }
@@ -138,7 +148,7 @@ export default function AdminSmistamento() {
         setOperatori(opData.operatori ?? []);
       }
     } finally { setLoading(false); }
-  }, [from, to]);
+  }, [from, to, tipoFiltro]);
 
   useEffect(() => { if (authed) load(); }, [authed, load]);
 
@@ -147,22 +157,40 @@ export default function AdminSmistamento() {
     setAuthed(false);
   }
 
-  async function sync() {
+  async function syncTurnover() {
     if (syncing) return;
-    setSyncing(true); setSyncMsg(null);
+    setSyncing('turnover'); setSyncMsg(null);
     try {
       const res = await fetch('/api/admin/turnover/sync', { method: 'POST' });
       const data: SyncResult & { error?: string } = await res.json();
-      if (!res.ok) { setSyncMsg(`Errore: ${data?.error ?? res.status}`); return; }
+      if (!res.ok) { setSyncMsg(`Errore turnover: ${data?.error ?? res.status}`); return; }
       const parts: string[] = [];
       parts.push(`${data.creati} creati`);
       if (data.esistenti)      parts.push(`${data.esistenti} esistenti`);
-      if (data.senzaCasa)      parts.push(`${data.senzaCasa} senza casa censita`);
-      if (data.caseArchiviate) parts.push(`${data.caseArchiviate} case archiviate`);
+      if (data.senzaCasa)      parts.push(`${data.senzaCasa} senza casa`);
+      if (data.caseArchiviate) parts.push(`${data.caseArchiviate} archiviate`);
       if (data.senzaMaster)    parts.push(`${data.senzaMaster} senza master pulizie`);
-      setSyncMsg(`Sync OK: ${parts.join(' · ')}`);
+      setSyncMsg(`Sync turnover OK: ${parts.join(' · ')}`);
       load();
-    } finally { setSyncing(false); }
+    } finally { setSyncing(null); }
+  }
+
+  async function syncAccoglienza() {
+    if (syncing) return;
+    setSyncing('accoglienza'); setSyncMsg(null);
+    try {
+      const res = await fetch('/api/admin/accoglienza/sync', { method: 'POST' });
+      const data: SyncResult & { error?: string } = await res.json();
+      if (!res.ok) { setSyncMsg(`Errore accoglienza: ${data?.error ?? res.status}`); return; }
+      const parts: string[] = [];
+      parts.push(`${data.creati} creati`);
+      if (data.esistenti)      parts.push(`${data.esistenti} esistenti`);
+      if (data.senzaCasa)      parts.push(`${data.senzaCasa} senza casa`);
+      if (data.caseArchiviate) parts.push(`${data.caseArchiviate} archiviate`);
+      if (data.hasMaster === false) parts.push('master receptionist non caricata (task creati senza checklist)');
+      setSyncMsg(`Sync accoglienza OK: ${parts.join(' · ')}`);
+      load();
+    } finally { setSyncing(null); }
   }
 
   async function assign(taskId: string, operatoreId: string) {
@@ -179,8 +207,9 @@ export default function AdminSmistamento() {
     load();
   }
 
-  async function casaPronta(taskId: string) {
-    if (!confirm('Confermare "Casa pronta"? Il turnover verrà chiuso.')) return;
+  async function casaPronta(taskId: string, tipo: TipoTask) {
+    const label = tipo === 'turnover' ? '"Casa pronta"' : 'come completato';
+    if (!confirm(`Confermare ${label}? Il task verrà chiuso.`)) return;
     const res = await fetch(`/api/admin/turnover/${taskId}/complete`, { method: 'POST' });
     if (!res.ok) {
       const d = await res.json();
@@ -193,8 +222,10 @@ export default function AdminSmistamento() {
   if (authed === null) return <div className="text-center text-muted py-5">Caricamento…</div>;
   if (!authed) return <LoginForm onLogin={() => setAuthed(true)} />;
 
-  // Operatori filtrati per ruolo pulizie
-  const opPulizie = operatori.filter(o => o.ruoli.includes('pulizie'));
+  // Filtra operatori per ruolo del task — calcolo ad hoc
+  function operatoriPerRuolo(ruolo: Ruolo): OperatoreLite[] {
+    return operatori.filter(o => o.ruoli.includes(ruolo));
+  }
 
   // Raggruppa per data
   const byDate = new Map<string, TaskEnriched[]>();
@@ -209,13 +240,16 @@ export default function AdminSmistamento() {
     <div className="container page-top pb-5" style={{ maxWidth: 1100 }}>
       <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
         <div>
-          <h1 className="h4 fw-bold mb-0"><Icon name="brush-fill" className="me-1" /> Smistamento turnover</h1>
-          <p className="small text-muted mb-0">{tasks.length} turnover nel periodo</p>
+          <h1 className="h4 fw-bold mb-0"><Icon name="brush-fill" className="me-1" /> Smistamento</h1>
+          <p className="small text-muted mb-0">{tasks.length} task nel periodo</p>
         </div>
         <div className="d-flex gap-2 flex-wrap">
           <a href="/admin" className="btn btn-outline-secondary btn-sm">← Admin</a>
-          <button className="btn btn-outline-primary btn-sm" onClick={sync} disabled={syncing}>
-            <Icon name="arrow-clockwise" /> {syncing ? 'Sync…' : 'Sincronizza Beds24'}
+          <button className="btn btn-outline-primary btn-sm" onClick={syncTurnover} disabled={!!syncing}>
+            <Icon name="arrow-clockwise" /> {syncing === 'turnover' ? 'Sync…' : 'Sync turnover'}
+          </button>
+          <button className="btn btn-outline-primary btn-sm" onClick={syncAccoglienza} disabled={!!syncing}>
+            <Icon name="arrow-clockwise" /> {syncing === 'accoglienza' ? 'Sync…' : 'Sync accoglienze'}
           </button>
           <button className="btn btn-outline-secondary btn-sm" onClick={load} disabled={loading}>
             <Icon name="arrow-clockwise" /> Aggiorna
@@ -231,7 +265,7 @@ export default function AdminSmistamento() {
         </div>
       )}
 
-      {/* Range data */}
+      {/* Filtri */}
       <div className="d-flex gap-2 align-items-center flex-wrap mb-3">
         <label className="small fw-semibold text-muted">Da</label>
         <input type="date" className="form-control form-control-sm" style={{ maxWidth: 160 }}
@@ -241,12 +275,26 @@ export default function AdminSmistamento() {
           value={to} onChange={e => setTo(e.target.value)} />
       </div>
 
-      {opPulizie.length === 0 && (
-        <div className="alert alert-warning py-2 small">
-          <Icon name="exclamation-triangle-fill" className="me-1" />
-          Nessun operatore con ruolo &quot;pulizie&quot;. Crea gli operatori in <a href="/admin/operatori">/admin/operatori</a>.
-        </div>
-      )}
+      <div className="d-flex gap-1 flex-wrap mb-3">
+        <span className="small fw-semibold text-muted me-1 align-self-center">Tipo:</span>
+        {(['turnover', 'accoglienza', 'manutenzione', 'tutti'] as const).map(t => {
+          const active = tipoFiltro === t;
+          return (
+            <button key={t}
+              className="btn btn-sm"
+              onClick={() => setTipoFiltro(t)}
+              style={{
+                border: active ? '2px solid var(--color-primary)' : '1px solid var(--color-border)',
+                borderRadius: 999,
+                background: active ? 'var(--color-primary-soft)' : 'var(--color-bg)',
+                color: active ? 'var(--color-primary)' : 'var(--color-text)',
+                fontWeight: active ? 600 : 400,
+              }}>
+              {t === 'tutti' ? 'Tutti' : TIPO_LABEL[t]}
+            </button>
+          );
+        })}
+      </div>
 
       {error && (
         <div className="alert alert-danger py-2 small">{error}</div>
@@ -255,11 +303,15 @@ export default function AdminSmistamento() {
       {!loading && tasks.length === 0 && (
         <div className="card">
           <div className="card-body text-center py-4">
-            <p className="text-muted mb-2">Nessun turnover nel periodo.</p>
-            <button className="btn btn-outline-primary btn-sm" onClick={sync} disabled={syncing}>
-              <Icon name="arrow-clockwise" className="me-1" />
-              Sincronizza ora
-            </button>
+            <p className="text-muted mb-2">Nessun task nel periodo.</p>
+            <div className="d-flex gap-2 justify-content-center flex-wrap">
+              <button className="btn btn-outline-primary btn-sm" onClick={syncTurnover} disabled={!!syncing}>
+                <Icon name="arrow-clockwise" className="me-1" /> Sync turnover
+              </button>
+              <button className="btn btn-outline-primary btn-sm" onClick={syncAccoglienza} disabled={!!syncing}>
+                <Icon name="arrow-clockwise" className="me-1" /> Sync accoglienze
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -274,14 +326,26 @@ export default function AdminSmistamento() {
 
           {byDate.get(data)!.map(t => {
             const stato = STATO_CONF[t.stato];
+            const opsCompatibili = operatoriPerRuolo(t.ruoloRichiesto);
             return (
               <div key={t.id} className="card shadow-sm mb-2">
                 <div className="card-body p-3">
                   <div className="d-flex justify-content-between align-items-start gap-2 flex-wrap">
                     <div className="flex-fill">
+                      <div className="d-flex align-items-center gap-2 flex-wrap mb-1">
+                        <span className="badge text-uppercase"
+                          style={{ background: 'var(--color-bg-muted)', color: 'var(--color-text-subtle)', fontSize: 10 }}>
+                          {t.tipo}
+                        </span>
+                        <span className="badge text-uppercase"
+                          style={{ background: 'var(--color-primary-soft)', color: 'var(--color-primary)', fontSize: 10 }}>
+                          {RUOLO_LABEL[t.ruoloRichiesto]}
+                        </span>
+                      </div>
                       <p className="fw-bold mb-0">
                         <Icon name="house-fill" className="me-1" />
                         {t.casa?.nome ?? `Room ${t.casa?.beds24RoomId ?? '?'}`}
+                        {t.ora && <span className="ms-2 small text-muted">⏰ {t.ora}</span>}
                       </p>
                       {t.descrizione && (
                         <p className="small text-muted mb-1">{t.descrizione}</p>
@@ -301,16 +365,21 @@ export default function AdminSmistamento() {
                         onChange={e => assign(t.id, e.target.value)}
                         disabled={t.stato === 'completato' || t.stato === 'annullato'}>
                         <option value="">— Non assegnato —</option>
-                        {opPulizie.map(o => (
+                        {opsCompatibili.map(o => (
                           <option key={o.id} value={o.id}>{o.displayName}</option>
                         ))}
                       </select>
+                      {opsCompatibili.length === 0 && (
+                        <p className="small text-warning mb-0">
+                          Nessun operatore con ruolo {RUOLO_LABEL[t.ruoloRichiesto]}
+                        </p>
+                      )}
 
                       {t.stato === 'lavoro-terminato' && (
                         <button className="btn btn-success btn-sm fw-bold"
-                          onClick={() => casaPronta(t.id)}>
+                          onClick={() => casaPronta(t.id, t.tipo)}>
                           <Icon name="check-circle-fill" className="me-1" />
-                          Casa pronta
+                          {t.tipo === 'turnover' ? 'Casa pronta' : 'Conferma chiusura'}
                         </button>
                       )}
                     </div>
