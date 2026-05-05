@@ -231,79 +231,13 @@ function ResetPasswordModal({ op, onClose, onDone }: {
   );
 }
 
-// ─── Modal deeplink Telegram ────────────────────────────────────────────────
-
-function TelegramLinkModal({ op, onClose }: {
-  op:      OperatoreView;
-  onClose: () => void;
-}) {
-  const [link, setLink] = useState('');
-  const [err,  setErr]  = useState('');
-  const [busy, setBusy] = useState(false);
-  const [copied, setCopied] = useState(false);
-
-  const generate = useCallback(async () => {
-    setBusy(true); setErr('');
-    try {
-      const res = await fetch(`/api/admin/operatori/${op.id}/telegram-link`, { method: 'POST' });
-      const data = await res.json();
-      if (!res.ok) { setErr(data?.error ?? 'Errore'); return; }
-      setLink(data.deeplink);
-    } finally { setBusy(false); }
-  }, [op.id]);
-
-  useEffect(() => { generate(); }, [generate]);
-
-  function copy() {
-    if (!link) return;
-    navigator.clipboard.writeText(link);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }
-
-  return (
-    <div className="modal-backdrop-custom" onClick={onClose}>
-      <div className="modal-card-custom" onClick={e => e.stopPropagation()} style={{ maxWidth: 520 }}>
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <p className="fs-5 fw-bold mb-0">Link Telegram — {op.displayName}</p>
-          <button className="btn btn-link p-0 text-secondary" onClick={onClose}>
-            <Icon name="x-lg" />
-          </button>
-        </div>
-        <p className="small text-muted">
-          Condividi questo link con l&apos;operatore (WhatsApp, SMS, email). Cliccandolo verrà aperta
-          la chat con il bot Telegram, e la sua identità verrà collegata automaticamente.
-          Valido 7 giorni, single-use.
-        </p>
-        {busy && <p className="small text-muted">Generazione…</p>}
-        {err  && <p className="small text-danger">{err}</p>}
-        {link && (
-          <div className="d-flex gap-2">
-            <input className="form-control" readOnly value={link} />
-            <button className="btn btn-primary" onClick={copy}>
-              {copied ? <><Icon name="check-lg" /> Copiato</> : 'Copia'}
-            </button>
-          </div>
-        )}
-        <div className="d-flex gap-2 justify-content-between mt-3">
-          <button className="btn btn-outline-secondary" onClick={generate} disabled={busy}>
-            <Icon name="arrow-clockwise" className="me-1" /> Rigenera
-          </button>
-          <button className="btn btn-outline-secondary" onClick={onClose}>Chiudi</button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ─── Card operatore ──────────────────────────────────────────────────────────
 
-function OperatoreCard({ op, onUpdate, onDelete, onResetPwd, onTelegram }: {
+function OperatoreCard({ op, onUpdate, onDelete, onResetPwd }: {
   op:         OperatoreView;
   onUpdate:   (updated: OperatoreView) => void;
   onDelete:   () => void;
   onResetPwd: () => void;
-  onTelegram: () => void;
 }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState({
@@ -352,27 +286,18 @@ function OperatoreCard({ op, onUpdate, onDelete, onResetPwd, onTelegram }: {
                     </span>
                   ))}
                 </div>
-                {op.chatIdTelegram ? (
-                  <p className="small text-success mb-0">
-                    <Icon name="chat-fill" className="me-1" /> Telegram registrato
-                  </p>
-                ) : (
-                  <p className="small text-muted mb-0">
-                    <Icon name="chat-fill" className="me-1" /> Telegram non collegato
-                  </p>
-                )}
               </div>
               <div className="d-flex gap-1 flex-wrap justify-content-end">
-                <button className="btn btn-outline-secondary btn-sm" onClick={() => setEditing(true)}>
+                <button className="btn btn-outline-secondary btn-sm" onClick={() => setEditing(true)}
+                  title="Modifica">
                   <Icon name="pencil-fill" />
                 </button>
-                <button className="btn btn-outline-secondary btn-sm" onClick={onTelegram}>
-                  <Icon name="chat-fill" />
-                </button>
-                <button className="btn btn-outline-secondary btn-sm" onClick={onResetPwd}>
+                <button className="btn btn-outline-secondary btn-sm" onClick={onResetPwd}
+                  title="Reset password">
                   <Icon name="lock-fill" />
                 </button>
-                <button className="btn btn-outline-danger btn-sm" onClick={onDelete}>
+                <button className="btn btn-outline-danger btn-sm" onClick={onDelete}
+                  title="Elimina">
                   <Icon name="trash" />
                 </button>
               </div>
@@ -431,7 +356,6 @@ export default function AdminOperatori() {
 
   const [showNew,        setShowNew]        = useState(false);
   const [resettingPwd,   setResettingPwd]   = useState<OperatoreView | null>(null);
-  const [tgFor,          setTgFor]          = useState<OperatoreView | null>(null);
 
   useEffect(() => {
     fetch('/api/admin/checkin')
@@ -538,7 +462,6 @@ export default function AdminOperatori() {
           onUpdate={aggiornaOperatore}
           onDelete={() => eliminaOperatore(op)}
           onResetPwd={() => setResettingPwd(op)}
-          onTelegram={() => setTgFor(op)}
         />
       ))}
 
@@ -553,7 +476,6 @@ export default function AdminOperatori() {
           onClose={() => setResettingPwd(null)}
           onDone={() => {}} />
       )}
-      {tgFor && <TelegramLinkModal op={tgFor} onClose={() => setTgFor(null)} />}
     </div>
   );
 }
