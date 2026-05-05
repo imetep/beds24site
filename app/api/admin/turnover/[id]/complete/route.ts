@@ -15,6 +15,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getTask, saveTask } from '@/lib/task-kv';
+import { setUltimaEsecuzione } from '@/lib/periodiche-kv';
 
 export const runtime = 'nodejs';
 
@@ -63,6 +64,25 @@ export async function POST(req: NextRequest, ctx: RouteContext) {
   if (noteAdmin) task.noteAdmin = noteAdmin;
 
   await saveTask(task);
+
+  // Hook periodiche: se task.tipo === 'periodica', registra l'esecuzione
+  // della voce per il calcolo della prossima scadenza.
+  if (task.tipo === 'periodica' && task.checklist && task.checklist.snapshots.length > 0) {
+    try {
+      for (const snap of task.checklist.snapshots) {
+        await setUltimaEsecuzione({
+          casaId:    task.casaId,
+          ruolo:     task.checklist.ruolo,
+          voceId:    snap.id,
+          ultimaAt:  task.completatoAt,
+          taskId:    task.id,
+        });
+      }
+    } catch (err) {
+      console.error('[admin/turnover/complete] update ultimaEsecuzione fallito:', err);
+    }
+  }
+
   return NextResponse.json({ task });
 }
 
