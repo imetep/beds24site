@@ -82,6 +82,13 @@ const SEZIONI: Sezione[] = [
     color: '#0891b2',
   },
   {
+    icon: 'calendar-range',
+    title: 'Periodiche',
+    desc: 'Calendario interventi periodici (settimanali, mensili, stagionali, a richiesta). Schedula task autonomi fuori turnover, vedi le scadenze e quelle già programmate.',
+    href: '/admin/operativita/periodiche',
+    color: '#f59e0b',
+  },
+  {
     icon: 'exclamation-triangle-fill',
     title: 'Segnalazioni',
     desc: 'Inbox delle segnalazioni inviate dagli operatori. Triage manuale: crea task manutenzione, risolvi direttamente o ignora.',
