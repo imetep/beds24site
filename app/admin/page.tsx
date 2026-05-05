@@ -132,6 +132,27 @@ export default function AdminPage() {
       color: '#9333ea',
     },
     {
+      icon: 'people-fill',
+      title: 'Operatori',
+      desc: 'Crea e gestisci gli operatori (pulizie, manutentore, giardiniere, receptionist). Imposta credenziali, ruoli, deeplink Telegram per OTP/notifiche.',
+      href: '/admin/operatori',
+      color: '#0ea5e9',
+    },
+    {
+      icon: 'house-door-fill',
+      title: 'Strutture',
+      desc: 'Anagrafica delle case: mapping Beds24, foto, keybox, dotazioni tecniche, voci checklist non applicabili (no piscina/BBQ/giardino) per ruolo.',
+      href: '/admin/strutture',
+      color: '#84cc16',
+    },
+    {
+      icon: 'card-list',
+      title: 'Checklist',
+      desc: 'Carica le checklist dei 4 ruoli da file .xlsx. Rimpiazzare la master non tocca i turnover già compilati (snapshot congelato).',
+      href: '/admin/checklist',
+      color: '#a855f7',
+    },
+    {
       icon: 'arrow-clockwise',
       title: cacheBusy ? 'Aggiornamento in corso…' : 'Aggiorna foto sito',
       desc: 'Dopo aver caricato nuove foto su Cloudinary, clicca qui per farle apparire sul sito. Svuota le cache (Redis + Next.js).',
