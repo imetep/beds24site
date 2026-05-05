@@ -139,6 +139,13 @@ export default function AdminPage() {
       color: '#dc2626',
     },
     {
+      icon: 'chat-fill',
+      title: 'Telegram',
+      desc: 'Setup webhook del bot operatori, registrazione admin per ricevere notifiche, stato delle integrazioni Telegram.',
+      href: '/admin/telegram',
+      color: '#06b6d4',
+    },
+    {
       icon: 'calendar-x-fill',
       title: 'Buchi',
       desc: 'Finestre libere inferiori a 7 notti nei prossimi 12 mesi. Filtra per mese e ordina per numero di notti.',
